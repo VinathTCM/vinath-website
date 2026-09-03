@@ -393,7 +393,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   // 分散得比较开，贸然大范围改成异步回调风险较高。这里用同步XHR请求(虽然是过时写法，
   // 但只在页面刚打开这一下用，不影响交互流畅度)，保持原来的代码结构不用大动，
   // 只把数据来源从写死的数组换成真实后端。
-  var API_BASE = window.VINATH_API_BASE || 'https://vinath-backend.onrender.com/api';
+  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
   (function loadProductsFromBackendSync(){
     try {
       var xhr = new XMLHttpRequest();
@@ -746,7 +746,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 </div>
 <script>
 (function(){
-  var API_BASE = window.VINATH_API_BASE || 'https://vinath-backend.onrender.com/api';
+  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
   // 聊天消息是任何匿名访客都能提交的内容，管理员打开对话时会看到——不转义就直接拼进innerHTML
   // 的话，访客可以在消息里塞HTML/脚本，在管理员已登录的浏览器里执行（存储型XSS）。
   function escapeHtml(s){

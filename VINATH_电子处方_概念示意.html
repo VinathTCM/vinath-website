@@ -90,7 +90,7 @@ window.scrollTo(0,0);
     // 里出现让人点了才发现进不去。大管理员不受这个开关影响，不用过滤。
     if(myRole==='practitioner'){
       try {
-        var apiBase = window.VINATH_API_BASE || 'https://vinath-backend.onrender.com/api';
+        var apiBase = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
         var res = await fetch(apiBase + '/site-settings/module_access');
         var access = res.ok ? (await res.json() || {}) : {};
         visible = visible.filter(function(t){ return !t.gated || access[t.gated]===true; });
@@ -130,7 +130,7 @@ window.scrollTo(0,0);
     });
   }
   var isPractitioner = cur.type==='senior' || (cur.type==='junior' && (cur.adminType||'practitioner')==='practitioner');
-  var API_BASE = window.VINATH_API_BASE || 'https://vinath-backend.onrender.com/api';
+  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
   var authToken = null;
   try { authToken = sessionStorage.getItem('vinath_auth_token'); } catch(e){}
 

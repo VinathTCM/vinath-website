@@ -297,7 +297,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
 <script>
   (function(){
-    var API_BASE = window.VINATH_API_BASE || 'https://vinath-backend.onrender.com/api';
+    var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
     fetch(API_BASE + '/analytics/pageview', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ page: '商店' })
@@ -531,7 +531,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       });
     } catch(e){}
   }
-  var API_BASE = window.VINATH_API_BASE || 'https://vinath-backend.onrender.com/api';
+  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
 
   async function initFromBackend(){
     try {
@@ -1020,7 +1020,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 </div>
 <script>
 (function(){
-  var API_BASE = window.VINATH_API_BASE || 'https://vinath-backend.onrender.com/api';
+  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
   // 聊天消息是任何匿名访客都能提交的内容，管理员打开对话时会看到——不转义就直接拼进innerHTML
   // 的话，访客可以在消息里塞HTML/脚本，在管理员已登录的浏览器里执行（存储型XSS）。
   function escapeHtml(s){

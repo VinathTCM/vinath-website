@@ -87,7 +87,7 @@
 
 <script>
   (function(){
-    var API_BASE = window.VINATH_API_BASE || 'https://vinath-backend.onrender.com/api';
+    var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
     fetch(API_BASE + '/analytics/pageview', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ page: '政策页面' })
@@ -95,7 +95,7 @@
   })();
 
 (async function(){
-  var API_BASE = window.VINATH_API_BASE || 'https://vinath-backend.onrender.com/api';
+  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
   var POLICY_DOCS = ['privacy','terms','sales','legal','sitemap'];
   var POLICY_LABELS = {privacy:'隐私政策', terms:'使用条款', sales:'销售与退款政策', legal:'法律声明', sitemap:'网站地图'};
   // same defaults as the admin tool ships with, so this page still shows something sensible
@@ -338,7 +338,7 @@ Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.
 </div>
 <script>
 (function(){
-  var API_BASE = window.VINATH_API_BASE || 'https://vinath-backend.onrender.com/api';
+  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
   // 聊天消息是任何匿名访客都能提交的内容，管理员打开对话时会看到——不转义就直接拼进innerHTML
   // 的话，访客可以在消息里塞HTML/脚本，在管理员已登录的浏览器里执行（存储型XSS）。
   function escapeHtml(s){
