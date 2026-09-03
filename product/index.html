@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VINATH · 商品详情</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap');
+
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html{ -webkit-text-size-adjust:100%; }
+body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC","PingFang SC",sans-serif; color:#3B2E22; }
+
+:root{
+  --tan:#C9A876; --tan-deep:#A07A45; --espresso:#3B2E22; --espresso-soft:#6E5F4E;
+  --clay:#BC6E4E; --white-warm:#FFFDF9; --cream:#F7F3EC; --line:rgba(59,46,34,.10); --shadow:rgba(59,46,34,.13);
+  --amber:#B8863C; --amber-soft:rgba(184,134,60,.13);
+  --font-serif:"Noto Serif SC","Songti SC","STSong",serif;
+  --font-en:"Cormorant Garamond",Georgia,serif;
+  --pad: clamp(18px, 4.5vw, 44px);
+}
+
+.page{ max-width:760px; margin:0 auto; position:relative; }
+
+.vh-header{ display:flex; align-items:center; justify-content:space-between; padding: clamp(16px,3vw,24px) var(--pad) clamp(14px,2.5vw,18px); }
+.vh-header .side{ display:flex; align-items:center; gap:10px; min-width:0; }
+.vh-brand{ font-family:var(--font-en); font-variant:small-caps; font-weight:600; font-size:clamp(24px,4vw,28px); letter-spacing:.15em; color:var(--espresso); white-space:nowrap; cursor:pointer; transition:letter-spacing .3s ease; }
+.vh-tm{ font-variant:normal; font-size:.34em; vertical-align:super; opacity:.65; margin-left:1px; }
+.vh-footer{ border-top:1px solid var(--line); margin-top:60px; padding:36px var(--pad) 30px; }
+.vh-footer-top{ margin-bottom:16px; }
+.vh-footer-brand{ font-family:var(--font-en); font-variant:small-caps; font-weight:600; font-size:15px; letter-spacing:.12em; color:var(--espresso); }
+.vh-footer-bottom{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; font-size:12px; color:var(--espresso-soft); opacity:.8; }
+.vh-footer-my{ font-weight:600; letter-spacing:.03em; white-space:nowrap; }
+@media (max-width:480px){ .vh-footer-bottom{ flex-direction:column; align-items:flex-start; gap:5px; } }
+.vh-brand:hover{ letter-spacing:.26em; }
+.vh-icons{ display:flex; gap:18px; flex:none; }
+.vh-ibtn{ display:flex; align-items:center; justify-content:center; color:var(--espresso); cursor:pointer; transition:opacity .15s, transform .15s; flex:none; position:relative; }
+.vh-ibtn:hover{ opacity:.65; } .vh-ibtn:active{ transform:scale(.9); }
+.cart-badge{ position:absolute; top:-7px; right:-9px; background:var(--clay); color:#fff; font-size:10px; font-weight:700; min-width:16px; height:16px; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:0 4px; }
+.vh-acct-wrap{ position:relative; display:flex; }
+.vh-acct-menu{ position:absolute; top:calc(100% + 12px); right:-6px; background:var(--white-warm); border-radius:14px; box-shadow:0 14px 34px rgba(59,46,34,.18);
+  padding:8px; min-width:140px; opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:60; }
+.vh-acct-menu.open{ opacity:1; pointer-events:auto; }
+.vham-item{ padding:11px 14px; font-size:14px; border-radius:9px; cursor:pointer; color:var(--espresso); white-space:nowrap; }
+.vham-item:hover{ background:var(--cream); }
+
+.breadcrumb{ padding:0 var(--pad) 14px; font-size:13.5px; color:var(--espresso-soft); }
+.breadcrumb .bc-link{ color:var(--tan-deep); cursor:pointer; font-weight:600; }
+.breadcrumb .bc-link:hover{ text-decoration:underline; }
+.breadcrumb .sep{ margin:0 7px; opacity:.5; }
+.breadcrumb .bc-current{ color:var(--espresso-soft); }
+
+.content{ padding: 4px var(--pad) clamp(48px,6vw,64px); }
+
+/* ---- hero carousel ---- */
+.pd-hero{ width:100%; aspect-ratio:5/4; border-radius:20px; overflow:hidden; position:relative; box-shadow:0 6px 22px var(--shadow); touch-action:pan-y; margin-bottom:22px; }
+.pd-hero-track{ display:flex; width:100%; height:100%; transition:transform .4s cubic-bezier(.22,.61,.36,1); }
+.pd-hero-slide{ flex:0 0 100%; height:100%; position:relative; background:linear-gradient(135deg,#F3EFE6,#EAE2D2); }
+.pd-hero-slide img{ width:100%; height:100%; object-fit:cover; display:block; }
+.pd-hero-slide .pt-icon{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--tan-deep); }
+.pd-hero-slide .pt-icon svg{ width:18%; height:18%; }
+.pd-dots{ position:absolute; bottom:14px; left:0; right:0; display:flex; justify-content:center; gap:6px; z-index:2; }
+.pd-dot{ width:6px; height:6px; border-radius:3px; background:rgba(255,255,255,.55); transition:width .25s, background .25s; }
+.pd-dot.on{ width:18px; background:#fff; }
+.pd-hero-nav{ position:absolute; top:50%; transform:translateY(-50%); width:36px; height:36px; border-radius:50%; background:rgba(255,253,249,.88); display:flex; align-items:center; justify-content:center; color:var(--espresso); cursor:pointer; z-index:2; transition:opacity .2s; box-shadow:0 2px 8px var(--shadow); }
+.pd-hero-nav.prev{ left:12px; } .pd-hero-nav.next{ right:12px; }
+.pd-hero-nav.hide{ opacity:0; pointer-events:none; }
+.pd-oos-badge{ position:absolute; top:14px; left:14px; background:rgba(40,31,22,.85); color:#FDF8F0; font-size:12px; padding:5px 12px; border-radius:14px; font-weight:600; z-index:2; }
+.pd-wish{ position:absolute; top:14px; right:14px; width:38px; height:38px; border-radius:50%; background:rgba(255,253,249,.92); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:2; box-shadow:0 2px 8px var(--shadow); }
+.pd-wish svg{ stroke:var(--espresso-soft); transition:.15s; }
+.pd-wish.on svg{ fill:var(--clay); stroke:var(--clay); }
+
+/* ---- title/buy block ---- */
+.pd-type{ font-size:12px; font-weight:700; color:var(--tan-deep); letter-spacing:.08em; text-transform:uppercase; margin-bottom:6px; }
+.pd-name{ font-family:var(--font-serif); font-weight:700; font-size:clamp(26px,5vw,32px); margin-bottom:10px; }
+.pd-desc{ font-size:15px; color:var(--espresso-soft); line-height:1.8; margin-bottom:22px; }
+
+.pd-variants{ display:flex; gap:10px; margin-bottom:18px; }
+.pd-variant{ flex:1; border:1.5px solid var(--line); border-radius:14px; padding:13px 14px; cursor:pointer; transition:.15s; }
+.pd-variant.on{ border-color:var(--clay); background:rgba(188,110,78,.07); }
+.pd-variant .vv-lbl{ font-size:12.5px; color:var(--espresso-soft); font-weight:600; }
+.pd-variant .vv-price{ font-family:var(--font-serif); font-weight:700; font-size:17px; margin-top:3px; }
+
+.pd-qty-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.pd-qty-label{ font-size:13px; font-weight:700; color:var(--espresso-soft); }
+.pd-stepper{ display:flex; align-items:center; border:1.5px solid var(--line); border-radius:12px; overflow:hidden; }
+.pd-step-btn{ width:38px; height:38px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--espresso); font-size:17px; background:var(--white-warm); user-select:none; }
+.pd-qty-num{ width:42px; text-align:center; font-weight:700; font-size:15px; }
+
+.pd-oos-msg{ font-size:13px; color:var(--clay); background:rgba(188,110,78,.08); border-radius:10px; padding:10px 14px; margin-bottom:16px; }
+.pd-add{ width:100%; background:var(--espresso); color:#fff; border:none; padding:16px; border-radius:14px; font-size:16px; font-weight:700; cursor:pointer; transition:opacity .15s; }
+.pd-add:hover{ opacity:.9; } .pd-add:disabled{ opacity:.4; cursor:not-allowed; }
+
+/* ---- content sections ---- */
+.pd-section{ margin-top:40px; }
+.pd-section-title{ font-family:var(--font-serif); font-weight:700; font-size:19px; margin-bottom:16px; }
+
+.pd-tags{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+.pd-tag{ font-size:12.5px; padding:6px 13px; border-radius:16px; background:var(--white-warm); border:1px solid var(--line); color:var(--espresso-soft); }
+.pd-journey-link{ font-size:13.5px; color:var(--tan-deep); cursor:pointer; font-weight:600; }
+.pd-journey-link:hover{ text-decoration:underline; }
+.pd-no-tag{ font-size:13.5px; color:var(--espresso-soft); font-style:italic; }
+
+.pd-form-row{ display:flex; gap:8px; align-items:baseline; margin-bottom:16px; font-size:14px; }
+.pd-form-row .fl{ color:var(--espresso-soft); flex:none; }
+.pd-herb-label{ font-size:11.5px; font-weight:700; color:var(--espresso-soft); text-transform:uppercase; letter-spacing:.04em; margin-bottom:9px; }
+.pd-herb-chips{ display:flex; flex-wrap:wrap; gap:9px; margin-bottom:18px; }
+.pd-herb-chip{ font-size:14px; font-weight:600; padding:7px 15px; border-radius:16px; background:var(--white-warm); border:1px solid var(--line); color:var(--espresso); }
+.pd-usage-box{ background:var(--white-warm); border-radius:14px; padding:16px 18px; font-size:14.5px; line-height:1.85; color:var(--espresso); }
+.pd-usage-box b{ color:var(--tan-deep); }
+
+.pd-safety{ background:transparent; border:1.5px dashed var(--tan); border-radius:16px; padding:18px 20px; font-size:13px; line-height:1.9; color:var(--espresso-soft); }
+.pd-safety li{ margin-bottom:6px; }
+.pd-safety ul{ margin:0; padding-left:18px; }
+
+.related-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(130px,1fr)); gap:14px; }
+.related-card{ cursor:pointer; }
+.related-thumb{ width:100%; aspect-ratio:4/3; border-radius:12px; overflow:hidden; position:relative; box-shadow:0 3px 10px var(--shadow); background:linear-gradient(135deg,#F3EFE6,#EAE2D2); }
+.related-thumb img{ width:100%; height:100%; object-fit:cover; display:block; transition:transform .35s ease; }
+.related-thumb .pt-icon{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--tan-deep); transition:transform .35s ease; }
+.related-thumb .pt-icon svg{ width:26%; height:26%; }
+.related-card:hover .related-thumb img, .related-card:hover .related-thumb .pt-icon{ transform:scale(1.08); }
+.related-name{ font-family:var(--font-serif); font-weight:700; font-size:13.5px; margin-top:8px; }
+.related-price{ font-size:12px; color:var(--tan-deep); font-weight:600; margin-top:2px; }
+
+.not-found{ text-align:center; padding:80px 20px; color:var(--espresso-soft); }
+
+.vh-toast{ position:fixed; left:50%; bottom:22px; transform:translate(-50%,10px); background:rgba(40,31,22,.94); color:#FDF8F0; font-size:15px; padding:11px 20px;
+  border-radius:20px; opacity:0; transition:opacity .25s, transform .25s; pointer-events:none; z-index:70; max-width:88vw; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.vh-toast.show{ opacity:1; transform:translate(-50%,0); }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="vh-header">
+    <div class="side">
+      <div class="vh-brand" id="brandBtn">VINATH<span class="vh-tm">™</span></div>
+    </div>
+    <div class="vh-icons">
+      <div class="vh-ibtn" id="searchBtn" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10.3" cy="10.3" r="6.3"/><line x1="19.5" y1="19.5" x2="15" y2="15"/></svg>
+      </div>
+      <span class="vh-acct-wrap">
+        <div class="vh-ibtn" id="acctBtn" aria-label="查询">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 19.5c1.2-3.8 3.9-5.7 7-5.7s5.8 1.9 7 5.7"/></svg>
+        </div>
+        <div class="vh-acct-menu" id="vhAcctMenu">
+          <div class="vham-item" id="vhamOrder">查询订单</div>
+          <div class="vham-item" id="vhamBooking">查询预约</div>
+        </div>
+      </span>
+      <div class="vh-ibtn" id="cartBtn" aria-label="购物包">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="breadcrumb" id="breadcrumb"></div>
+
+  <div class="content" id="mainContent"></div>
+</div>
+
+<div class="vh-footer">
+  <div class="vh-footer-top">
+    <div class="vh-footer-brand">VINATH<span class="vh-tm">™</span></div>
+  </div>
+  <div class="vh-footer-bottom">
+    <span>Copyright &copy; 2026 VINATH TCM HEALTH CARE. All rights reserved.</span>
+    <span class="vh-footer-my">Malaysia</span>
+  </div>
+</div>
+
+<div class="vh-toast" id="toast"></div>
+
+<script>
+(function(){
+  var ICON = {
+    plaster:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="5"/><line x1="12" y1="9" x2="12" y2="15"/><line x1="9" y1="12" x2="15" y2="12"/></svg>',
+    tea:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9z"/><path d="M17 10.5h1.5a2.3 2.3 0 0 1 0 4.6H17"/><path d="M8 4.2c-1 1-1 1.8 0 2.8M12.5 4.2c-1 1-1 1.8 0 2.8"/></svg>',
+    soak:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18c0 4.5-4 8-9 8s-9-3.5-9-8z"/><path d="M9 4.2c0 1.2.9 1.2.9 2.4S9 7.8 9 9"/><path d="M14 4.2c0 1.2.9 1.2.9 2.4S14 7.8 14 9"/></svg>',
+    mask:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4c-4.5 0-7 3.3-7 7.5 0 5.5 3.3 9.5 7 9.5s7-4 7-9.5C19 7.3 16.5 4 12 4z"/><path d="M9 12c.6.6 1.2.6 1.8 0M13.2 12c.6.6 1.2.6 1.8 0"/><path d="M9.5 15.8c1 .8 4 .8 5 0"/></svg>'
+  };
+  var GENERIC_CAT_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="13" rx="2"/><path d="M4 11h16"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2"/></svg>';
+  function getShopCategoriesLocal(){
+    try {
+      var raw = localStorage.getItem('vinath_shop_categories');
+      if(raw) return JSON.parse(raw);
+    } catch(e){}
+    return [{key:'plaster',name:'膏药系列'},{key:'tea',name:'茶饮系列'},{key:'soak',name:'汤包系列'},{key:'mask',name:'外用系列'}];
+  }
+  var TYPE_LABEL = {};
+  getShopCategoriesLocal().forEach(function(c){ TYPE_LABEL[c.key] = c.name; });
+  var CAUTION_HERBS = ['三七','桃仁','红花','益母草','三棱','莪术','牛膝','王不留行','姜黄','乳香','桂枝','肉桂'];
+
+  var TAG_DATA = {
+    '女性调理': [
+      {cond:'月经问题', tags:['痛经','月经过长','经量过多','经量过少','周期紊乱','经间点滴']},
+      {cond:'白带异常', tags:['量多','颜色异常','伴有异味','反复瘙痒']},
+      {cond:'中医备孕', tags:['周期不稳定','体质偏寒','情绪压力','备孕调理']},
+      {cond:'妇科肿块', tags:['体检提示增生','小腹坠胀','经期不适加重']},
+      {cond:'更年期', tags:['潮热盗汗','失眠','情绪波动','心悸']},
+    ],
+    '中医塑体': [
+      {cond:'饮食调理', tags:['进食不规律','嗜甜嗜油','外食频繁','饮食无规划']},
+      {cond:'运动指导', tags:['久坐少动','运动方式不当','难以坚持','运动后恢复慢']},
+      {cond:'产后塑形', tags:['产后气血虚','腹部松弛','体力恢复慢','哺乳期调理']},
+      {cond:'代谢偏慢', tags:['怕冷','易疲劳','水肿','体重难下降']},
+    ],
+    '美容养颜': [
+      {cond:'面色暗沉', tags:['气色发黄','缺乏光泽','疲惫暗沉']},
+      {cond:'皮肤松弛', tags:['弹性下降','初显细纹','面颊松垮']},
+      {cond:'痘痘反复', tags:['反复冒痘','毛孔粗大','泛红刺痛','油光满面']},
+      {cond:'面部轮廓', tags:['面部浮肿','轮廓模糊','双下巴']},
+    ],
+    '日常养生': [
+      {cond:'亚健康', tags:['容易疲劳','精神不振','注意力难集中','免疫力偏弱']},
+      {cond:'气候调养', tags:['湿气重','怕热易出汗','换季不适应']},
+      {cond:'肠胃调理', tags:['食欲不振','消化不良','便秘','腹胀']},
+      {cond:'情绪舒缓', tags:['压力大','易烦躁','情绪紧绷','睡前思虑多']},
+    ],
+    '舒缓疼痛': [
+      {cond:'颈肩腰背', tags:['久坐僵硬','落枕','腰酸背痛','肩颈酸胀']},
+      {cond:'关节不适', tags:['关节酸胀','遇冷加重','活动受限']},
+      {cond:'运动损伤', tags:['肌肉拉伤','扭伤淤青','运动后酸痛']},
+      {cond:'疲劳性疼痛', tags:['周身酸痛','久站久坐不适','反复隐痛']},
+    ],
+    '优质睡眠': [
+      {cond:'入睡困难', tags:['躺下清醒','思绪停不下来','入睡耗时长']},
+      {cond:'睡眠浅易醒', tags:['夜间易醒','醒后难再入睡','对声音敏感']},
+      {cond:'多梦', tags:['梦境频繁','睡眠质量差']},
+      {cond:'晨起疲惫', tags:['睡醒仍困倦','起床困难','日间嗜睡']},
+    ],
+  };
+  var PRODUCTS = [
+    {id:1, name:'月舒贴', type:'plaster', journeys:['女性调理'], tags:['痛经'], price:9, trial:4, desc:'经期腰腹冷痛时敷一敷，温感慢慢散开。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'延胡索', amt:'10g'},{herb:'肉桂', amt:'5g'},{herb:'乌药', amt:'8g'},{herb:'香附', amt:'6g'}], usage:'研末，黄酒或温水调糊，敷关元、气海穴，经前3天开始每日1次，每次4-6小时。'},
+    {id:2, name:'迟汐茶', type:'tea', journeys:['女性调理'], tags:['月经过长'], price:45, trial:16, desc:'经期拖得久、淋漓不净时，喝它帮身体把节奏收一收。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'仙鹤草', amt:'15g'},{herb:'茜草', amt:'6g'},{herb:'乌梅', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'沸水焖泡15分钟或轻煎10分钟，经期第3天起连饮至经净，每日1剂。'},
+    {id:3, name:'满汐茶', type:'tea', journeys:['女性调理'], tags:['经量过多'], price:45, trial:16, desc:'经量偏多的日子，喝一杯，安心一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'15g'},{herb:'煅龙骨（先煎）', amt:'10g'},{herb:'棕榈炭', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'龙骨先煎15分钟，下其余药材再煎10分钟，经期第1-3天每日1剂。'},
+    {id:4, name:'浅汐茶', type:'tea', journeys:['女性调理'], tags:['经量过少'], price:45, trial:16, desc:'经量偏少、颜色偏淡，日常养一养气血。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'当归', amt:'6g'},{herb:'黄精', amt:'10g'},{herb:'白芍', amt:'8g'},{herb:'红枣', amt:'3枚'}], usage:'焖泡或轻煎，经净后连饮1-2周，每日1剂。'},
+    {id:5, name:'弦月茶', type:'tea', journeys:['女性调理'], tags:['周期紊乱'], price:45, trial:16, desc:'周期忽早忽晚没个准，帮身体找回自己的节奏。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'柴胡', amt:'5g'},{herb:'香附', amt:'8g'},{herb:'益母草', amt:'10g'},{herb:'玫瑰花', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'焖泡代茶，非经期每日1剂，连饮2-3周为一周期。'},
+    {id:6, name:'月隙茶', type:'tea', journeys:['女性调理'], tags:['经间点滴'], price:45, trial:16, desc:'两次月经之间偶有点滴，滋阴凉血，静静调理。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'女贞子', amt:'10g'},{herb:'墨旱莲', amt:'10g'},{herb:'生地', amt:'8g'},{herb:'茜草', amt:'5g'}], usage:'轻煎15分钟，排卵期前后（周期第12-16天）每日1剂。'},
+    {id:7, name:'望汐茶', type:'tea', journeys:['女性调理'], tags:['月经过长','经量过多'], price:45, trial:16, desc:'经期又长又多的日子，一杯茶帮忙稳住。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'15g'},{herb:'仙鹤草', amt:'12g'},{herb:'山萸肉', amt:'8g'},{herb:'藕节', amt:'10g'},{herb:'乌梅', amt:'5g'}], usage:'轻煎15分钟，经期第1-4天每日1剂，量多时可加至一剂半。'},
+    {id:8, name:'盈月茶', type:'tea', journeys:['女性调理'], tags:['周期紊乱','经量过少'], price:45, trial:16, desc:'量少又乱的周期，慢慢养、慢慢盈满。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'当归', amt:'8g'},{herb:'黄精', amt:'10g'},{herb:'白芍', amt:'8g'},{herb:'玫瑰花', amt:'4g'},{herb:'红枣', amt:'3枚'}], usage:'焖泡，经净后连饮2周，每日1剂。'},
+    {id:9, name:'云净茶', type:'tea', journeys:['女性调理'], tags:['量多'], price:45, trial:16, desc:'白带量多时，健脾祛湿，清清爽爽。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'白术', amt:'10g'},{herb:'山药', amt:'10g'},{herb:'芡实', amt:'8g'},{herb:'白扁豆', amt:'8g'},{herb:'陈皮', amt:'3g'}], usage:'轻煎15分钟，连饮2周，每日1剂。'},
+    {id:10, name:'素雅茶', type:'tea', journeys:['女性调理'], tags:['颜色异常'], price:45, trial:16, desc:'颜色不对劲但不严重，日常清养一下。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯苓', amt:'10g'},{herb:'黄柏', amt:'4g'},{herb:'薏苡仁', amt:'12g'},{herb:'甘草', amt:'3g'}], usage:'轻煎10分钟，连饮1-2周，每日1剂。'},
+    {id:11, name:'芷兰茶', type:'tea', journeys:['女性调理'], tags:['伴有异味'], price:45, trial:16, desc:'伴有异味时，清热祛湿，找回清爽。', active:true, inStock:false, featured:false, imgs:[], form:'茶', herbs:[{herb:'蒲公英', amt:'10g'},{herb:'土茯苓', amt:'12g'},{herb:'车前子（包煎）', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'车前子包煎，余药同煎15分钟，连饮1-2周，每日1剂。'},
+    {id:12, name:'兰汤坐浴包', type:'soak', journeys:['女性调理'], tags:['反复瘙痒'], price:25, trial:10, desc:'反复瘙痒不适，煮一煮，泡个安心的热水澡。', active:true, inStock:true, featured:false, imgs:[], form:'外用坐浴', herbs:[{herb:'苦参', amt:'15g'},{herb:'蛇床子', amt:'12g'},{herb:'黄柏', amt:'10g'},{herb:'花椒', amt:'5g'},{herb:'艾叶', amt:'10g'}], usage:'布袋包好，加水2000ml煮沸15分钟，待温（约40°C）坐浴15分钟，每晚1次，连用5-7天，经期停用。'},
+    {id:13, name:'澄澈茶', type:'tea', journeys:['女性调理'], tags:['伴有异味','颜色异常'], price:45, trial:16, desc:'颜色和异味同时出现，双管齐下清一清。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄柏', amt:'5g'},{herb:'车前子（包煎）', amt:'10g'},{herb:'薏苡仁', amt:'12g'},{herb:'蒲公英', amt:'8g'},{herb:'土茯苓', amt:'10g'}], usage:'车前子包煎，余药同煎15分钟，连饮2周，每日1剂，症状明显时每日一剂半。'},
+    {id:14, name:'芷澄茶', type:'tea', journeys:['女性调理'], tags:['伴有异味','量多','颜色异常'], price:45, trial:16, desc:'量多、颜色、异味都有的日子，全面清养。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'山药', amt:'15g'},{herb:'芡实', amt:'10g'},{herb:'黄柏', amt:'5g'},{herb:'苍术', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'轻煎10-15分钟，连饮2-3周，量多色黄味重时每日一剂半。'},
+    {id:15, name:'月序茶', type:'tea', journeys:['女性调理'], tags:['周期不稳定'], price:45, trial:16, desc:'备孕期间周期总不稳，疏肝理气帮忙调顺。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'柴胡', amt:'5g'},{herb:'香附', amt:'8g'},{herb:'当归', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'焖泡，经净后开始连饮2周，经期停用。'},
+    {id:16, name:'煦暖贴', type:'plaster', journeys:['女性调理'], tags:['体质偏寒'], price:9, trial:4, desc:'体质偏寒手脚凉，敷一敷，暖到心里。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'肉桂', amt:'6g'},{herb:'艾叶', amt:'10g'},{herb:'小茴香', amt:'8g'},{herb:'干姜', amt:'6g'}], usage:'研末姜汁调糊，敷关元、命门穴，每周3-4次，每次4-6小时，经期停用。'},
+    {id:17, name:'绿萼茶', type:'tea', journeys:['女性调理'], tags:['情绪压力'], price:45, trial:16, desc:'备孕路上压力大，喝一杯，松一口气。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'合欢花', amt:'6g'},{herb:'绿萼梅', amt:'5g'},{herb:'茯苓', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'焖泡代茶饮，情绪紧张期每日1剂。'},
+    {id:18, name:'兰馨茶', type:'tea', journeys:['女性调理'], tags:['备孕调理'], price:45, trial:16, desc:'日常备孕体质调养，平补肝肾打基础。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'菟丝子', amt:'12g'},{herb:'覆盆子', amt:'10g'},{herb:'枸杞子', amt:'10g'},{herb:'桑葚', amt:'8g'}], usage:'轻煎15分钟，日常保健每周4-5次，每次1剂。'},
+    {id:19, name:'梅悦茶', type:'tea', journeys:['女性调理'], tags:['周期不稳定','情绪压力'], price:45, trial:16, desc:'周期不稳又心情烦躁，疏肝养血一起来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'柴胡', amt:'5g'},{herb:'白芍', amt:'10g'},{herb:'合欢花', amt:'5g'},{herb:'绿萼梅', amt:'4g'},{herb:'茯苓', amt:'10g'}], usage:'焖泡，非经期每日1剂，连饮2-3周。'},
+    {id:20, name:'兰序茶', type:'tea', journeys:['女性调理'], tags:['周期不稳定','备孕调理','情绪压力'], price:45, trial:16, desc:'备孕期间周期、情绪都需要照顾时的全面调理茶。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'菟丝子', amt:'12g'},{herb:'白芍', amt:'10g'},{herb:'枸杞子', amt:'10g'},{herb:'柴胡', amt:'4g'},{herb:'合欢花', amt:'5g'},{herb:'红枣', amt:'3枚'}], usage:'经净后开始每日1剂，连饮约2周，情绪紧张期可加至一剂半，经期停用。确认怀孕后停用并咨询医师。'},
+    {id:21, name:'静玉贴', type:'plaster', journeys:['女性调理'], tags:['体检提示增生'], price:9, trial:4, desc:'体检提示有增生，日常辅助调理，请配合定期复查。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'三棱', amt:'6g'},{herb:'莪术', amt:'6g'},{herb:'皂角刺', amt:'8g'},{herb:'桂枝', amt:'5g'}], usage:'研末醋调糊，敷小腹部（避开经期），每周3次，每次4小时。需配合定期复查，孕期禁用。'},
+    {id:22, name:'和风茶', type:'tea', journeys:['女性调理'], tags:['小腹坠胀'], price:45, trial:16, desc:'小腹总是坠胀，理气化开那股闷闷的感觉。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'乌药', amt:'6g'},{herb:'佛手', amt:'6g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'焖泡代茶，日常不适时每日1剂。'},
+    {id:23, name:'绛华茶', type:'tea', journeys:['女性调理'], tags:['经期不适加重'], price:45, trial:16, desc:'经期这几天特别不舒服，活血化开那股滞涩。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'益母草', amt:'10g'},{herb:'香附', amt:'8g'},{herb:'山楂', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，经期前3天开始每日1剂至经净。'},
+    {id:24, name:'暖溪茶', type:'tea', journeys:['女性调理'], tags:['小腹坠胀','经期不适加重'], price:45, trial:16, desc:'坠胀加上经期加重，一起温柔化开。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'益母草', amt:'10g'},{herb:'乌药', amt:'8g'},{herb:'佛手', amt:'6g'},{herb:'山楂', amt:'8g'},{herb:'月季花', amt:'4g'}], usage:'轻煎15分钟，经期前3天至经期第3天每日1剂。'},
+    {id:25, name:'清露茶', type:'tea', journeys:['女性调理'], tags:['潮热盗汗'], price:45, trial:16, desc:'潮热盗汗睡不安稳，滋阴敛汗清清爽爽。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'浮小麦', amt:'12g'},{herb:'地骨皮', amt:'8g'},{herb:'桑叶', amt:'6g'},{herb:'麦冬', amt:'8g'},{herb:'五味子', amt:'5g'}], usage:'轻煎15分钟，午后饮用尤宜，连饮2-4周。'},
+    {id:26, name:'月枕贴', type:'plaster', journeys:['女性调理'], tags:['失眠'], price:9, trial:4, desc:'翻来覆去睡不着，睡前敷一敷涌泉穴。', active:true, inStock:true, featured:false, imgs:[], form:'贴，涌泉穴外用', herbs:[{herb:'酸枣仁', amt:'15g'},{herb:'首乌藤', amt:'15g'},{herb:'远志', amt:'8g'},{herb:'吴茱萸', amt:'6g'}], usage:'研末醋调糊，睡前敷双侧涌泉穴，胶布固定，次晨取下，连用1-2周。'},
+    {id:27, name:'兰心茶', type:'tea', journeys:['女性调理'], tags:['情绪波动'], price:45, trial:16, desc:'情绪忽上忽下，喝一杯，静下来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'淮小麦', amt:'20g'},{herb:'大枣', amt:'6枚'},{herb:'甘草', amt:'5g'},{herb:'合欢皮', amt:'8g'},{herb:'郁金', amt:'6g'}], usage:'轻煎15-20分钟，情绪波动期每日1剂。'},
+    {id:28, name:'静澜茶', type:'tea', journeys:['女性调理'], tags:['心悸'], price:45, trial:16, desc:'心跳总不安稳，清心宁悸，慢慢平复。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'丹参', amt:'10g'},{herb:'茯神', amt:'12g'},{herb:'柏子仁', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'焖泡或轻煎，心悸明显时每日1剂，连饮1-2周。'},
+    {id:29, name:'素月贴', type:'plaster', journeys:['女性调理'], tags:['失眠','心悸'], price:9, trial:4, desc:'又睡不好又心悸，睡前敷一敷，双重安顿。', active:true, inStock:true, featured:false, imgs:[], form:'贴，涌泉穴外用', herbs:[{herb:'酸枣仁', amt:'10g'},{herb:'首乌藤', amt:'10g'},{herb:'远志', amt:'6g'},{herb:'丹参', amt:'8g'},{herb:'吴茱萸', amt:'5g'}], usage:'研末醋调糊，睡前敷涌泉穴，次晨取下，连用1-2周。'},
+    {id:30, name:'静好茶', type:'tea', journeys:['女性调理'], tags:['失眠','心悸','情绪波动','潮热盗汗'], price:49, trial:18, desc:'更年期诸多不适一起来，一杯茶陪你稳稳走过。', active:true, inStock:true, featured:true, imgs:[], form:'茶', herbs:[{herb:'女贞子', amt:'12g'},{herb:'酸枣仁', amt:'15g'},{herb:'淮小麦', amt:'20g'},{herb:'麦冬', amt:'10g'},{herb:'丹参', amt:'10g'},{herb:'五味子', amt:'5g'}], usage:'焖泡或轻煎，午后至睡前饮用，连饮2-4周，症状明显时可每日一剂半。'},
+    {id:31, name:'晨谷茶', type:'tea', journeys:['中医塑体'], tags:['进食不规律'], price:45, trial:16, desc:'三餐没规律，健脾和胃，找回吃饭的节奏。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'白术', amt:'10g'},{herb:'陈皮', amt:'6g'},{herb:'山楂', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，早餐后饮用，连续2周。'},
+    {id:32, name:'岚隐茶', type:'tea', journeys:['中医塑体'], tags:['嗜甜嗜油'], price:45, trial:16, desc:'爱吃甜爱吃油，化痰祛湿，给身体减减负。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'陈皮', amt:'8g'},{herb:'茯苓', amt:'10g'},{herb:'荷叶', amt:'6g'},{herb:'山楂', amt:'8g'}], usage:'焖泡，餐后饮用，每日1剂。'},
+    {id:33, name:'家膳茶', type:'tea', journeys:['中医塑体'], tags:['外食频繁'], price:45, trial:16, desc:'外食吃多了，清养脾胃，清清爽爽。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'薏苡仁', amt:'15g'},{herb:'绿豆衣', amt:'8g'},{herb:'麦芽', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，外食较多的日子饮用。'},
+    {id:34, name:'晨序茶', type:'tea', journeys:['中医塑体'], tags:['饮食无规划'], price:45, trial:16, desc:'饮食毫无规划，健脾益气，打好基础再谈其他。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'党参', amt:'10g'},{herb:'白术', amt:'8g'},{herb:'茯苓', amt:'8g'},{herb:'陈皮', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，每周4-5次。'},
+    {id:35, name:'云隐茶', type:'tea', journeys:['中医塑体'], tags:['嗜甜嗜油','饮食无规划'], price:45, trial:16, desc:'嗜甜嗜油又没规划，双重化浊，轻装上阵。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'荷叶', amt:'8g'},{herb:'决明子', amt:'8g'},{herb:'山楂', amt:'10g'},{herb:'陈皮', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'焖泡，餐后饮用，连续2-3周。'},
+    {id:36, name:'晴川茶', type:'tea', journeys:['中医塑体'], tags:['久坐少动'], price:45, trial:16, desc:'久坐不动，理气活血，让气血重新流动起来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'陈皮', amt:'6g'},{herb:'丹参', amt:'8g'},{herb:'薏苡仁', amt:'12g'},{herb:'甘草', amt:'3g'}], usage:'焖泡，久坐后饮用。'},
+    {id:37, name:'鹤姿茶', type:'tea', journeys:['中医塑体'], tags:['运动方式不当'], price:45, trial:16, desc:'运动方式不太对，养血舒筋，动作更从容。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'当归', amt:'8g'},{herb:'木瓜', amt:'8g'},{herb:'伸筋草', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，运动前后饮用。'},
+    {id:38, name:'恒晨茶', type:'tea', journeys:['中医塑体'], tags:['难以坚持'], price:45, trial:16, desc:'三天打鱼两天晒网，益气健脾，慢慢养出坚持的底气。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'白术', amt:'8g'},{herb:'陈皮', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用，连续调理。'},
+    {id:39, name:'暮川茶', type:'tea', journeys:['中医塑体'], tags:['运动后恢复慢'], price:45, trial:16, desc:'运动完总是很难恢复，益气养血，加速回血。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'当归', amt:'6g'},{herb:'桂枝', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'运动后饮用。'},
+    {id:40, name:'鹤川茶', type:'tea', journeys:['中医塑体'], tags:['久坐少动','运动方式不当'], price:45, trial:16, desc:'久坐又运动姿势不对，一起舒展开来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'丹参', amt:'10g'},{herb:'当归', amt:'8g'},{herb:'木瓜', amt:'6g'},{herb:'陈皮', amt:'4g'}], usage:'轻煎，每日1剂。'},
+    {id:41, name:'恒川茶', type:'tea', journeys:['中医塑体'], tags:['运动后恢复慢','难以坚持'], price:45, trial:16, desc:'难坚持又恢复慢，气血双补撑住状态。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'15g'},{herb:'白术', amt:'8g'},{herb:'当归', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'晨起或运动后饮用。'},
+    {id:42, name:'初曦贴', type:'plaster', journeys:['中医塑体'], tags:['产后气血虚'], price:9, trial:4, desc:'产后气血两虚，温和敷一敷，慢慢补回来。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'当归', amt:'10g'},{herb:'黄芪', amt:'12g'},{herb:'熟地', amt:'8g'}], usage:'姜汁调糊，敷神阙穴，每周3次，每次4-6小时。'},
+    {id:43, name:'晓月贴', type:'plaster', journeys:['中医塑体'], tags:['腹部松弛'], price:9, trial:4, desc:'腹部松弛没力气，敷一敷帮忙提一提。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'黄芪', amt:'15g'},{herb:'升麻', amt:'6g'},{herb:'枳壳', amt:'8g'}], usage:'姜汁调糊，敷腹部，每周3-4次。'},
+    {id:44, name:'暮归茶', type:'tea', journeys:['中医塑体'], tags:['体力恢复慢'], price:45, trial:16, desc:'产后体力恢复得慢，气血双补陪你慢慢来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'当归', amt:'8g'},{herb:'熟地', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'产后2周起，每日1剂。'},
+    {id:45, name:'甘露茶', type:'tea', journeys:['中医塑体'], tags:['哺乳期调理'], price:45, trial:16, desc:'哺乳期需要更多气血支持，温和滋养。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'王不留行', amt:'8g'},{herb:'黄芪', amt:'10g'},{herb:'当归', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'哺乳期每日1剂。'},
+    {id:46, name:'产后元气贴', type:'plaster', journeys:['中医塑体'], tags:['产后气血虚','体力恢复慢'], price:9, trial:4, desc:'产后气血虚又恢复慢，加强版一起养回来。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'黄芪', amt:'15g'},{herb:'当归', amt:'10g'},{herb:'熟地', amt:'8g'},{herb:'白术', amt:'6g'}], usage:'姜汁调糊，敷神阙穴，每周3-4次。'},
+    {id:47, name:'暖阳贴', type:'plaster', journeys:['中医塑体'], tags:['怕冷'], price:9, trial:4, desc:'手脚怕冷，温阳散寒，敷一敷暖起来。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'肉桂', amt:'8g'},{herb:'干姜', amt:'10g'},{herb:'小茴香', amt:'8g'},{herb:'艾叶', amt:'10g'}], usage:'姜汁调糊，敷关元穴，每周3次。'},
+    {id:48, name:'晴曦茶', type:'tea', journeys:['中医塑体'], tags:['易疲劳'], price:45, trial:16, desc:'总是提不起劲，益气健脾，找回精神。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'党参', amt:'10g'},{herb:'黄芪', amt:'8g'},{herb:'陈皮', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
+    {id:49, name:'云澈茶', type:'tea', journeys:['中医塑体'], tags:['水肿'], price:45, trial:16, desc:'身体水肿沉重，健脾利水，轻盈一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯苓', amt:'12g'},{herb:'泽泻', amt:'8g'},{herb:'冬瓜皮', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，每日1剂。'},
+    {id:50, name:'轻盈茶', type:'tea', journeys:['中医塑体'], tags:['体重难下降'], price:45, trial:16, desc:'体重总卡关，化湿健脾，帮忙松动一下代谢。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'荷叶', amt:'8g'},{herb:'白术', amt:'8g'},{herb:'泽泻', amt:'8g'},{herb:'陈皮', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'餐后饮用。'},
+    {id:51, name:'暖身茶', type:'tea', journeys:['中医塑体'], tags:['怕冷','易疲劳'], price:45, trial:16, desc:'又怕冷又疲劳，温阳益气一起来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'肉桂', amt:'6g'},{herb:'党参', amt:'8g'},{herb:'干姜', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
+    {id:52, name:'岚澈茶', type:'tea', journeys:['中医塑体'], tags:['体重难下降','水肿'], price:45, trial:16, desc:'水肿又体重难降，双重祛湿消肿。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯苓', amt:'12g'},{herb:'薏苡仁', amt:'15g'},{herb:'泽泻', amt:'8g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，每日1剂。'},
+    {id:53, name:'晨颜茶', type:'tea', journeys:['美容养颜'], tags:['气色发黄'], price:45, trial:16, desc:'气色发黄没精神，益气养血，慢慢透出红润。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'8g'},{herb:'当归', amt:'6g'},{herb:'白术', amt:'6g'},{herb:'红枣', amt:'3枚'}], usage:'晨起饮用。'},
+    {id:54, name:'玉泽茶', type:'tea', journeys:['美容养颜'], tags:['缺乏光泽'], price:45, trial:16, desc:'皮肤缺水没光泽，滋阴润燥，养出水润感。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'玉竹', amt:'8g'},{herb:'麦冬', amt:'8g'},{herb:'枸杞子', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'焖泡，每日1剂。'},
+    {id:55, name:'霞光茶', type:'tea', journeys:['美容养颜'], tags:['疲惫暗沉'], price:45, trial:16, desc:'疲惫写在脸上，气血双补，找回气色。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'当归', amt:'6g'},{herb:'枸杞子', amt:'8g'},{herb:'陈皮', amt:'3g'}], usage:'晨起饮用。'},
+    {id:56, name:'曦辉贴', type:'plaster', journeys:['美容养颜'], tags:['气色发黄','疲惫暗沉'], price:9, trial:4, desc:'气色差又疲惫，敷一敷双重提气色。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'黄芪', amt:'12g'},{herb:'当归', amt:'10g'},{herb:'红花', amt:'3g'}], usage:'姜汁调糊，敷相关穴位，每周2-3次。'},
+    {id:57, name:'凝脂茶', type:'tea', journeys:['美容养颜'], tags:['弹性下降'], price:45, trial:16, desc:'皮肤弹性下降，益气养阴，帮肌肤找回紧实感。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'山药', amt:'10g'},{herb:'枸杞子', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:58, name:'霜华茶', type:'tea', journeys:['美容养颜'], tags:['初显细纹'], price:45, trial:16, desc:'细纹开始出现，滋阴润肤，抚平初显的痕迹。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'玉竹', amt:'10g'},{herb:'白芍', amt:'8g'},{herb:'当归', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:59, name:'晚霞贴', type:'plaster', journeys:['美容养颜'], tags:['面颊松垮'], price:9, trial:4, desc:'面颊有点松垮，敷一敷帮忙提一提。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'黄芪', amt:'10g'},{herb:'升麻', amt:'5g'},{herb:'当归', amt:'6g'}], usage:'姜汁调糊，敷面部相关穴位，每周2-3次。'},
+    {id:60, name:'凝脂贴', type:'plaster', journeys:['美容养颜'], tags:['初显细纹','弹性下降','面颊松垮'], price:9, trial:4, desc:'松弛、细纹、垮脸一起出现，全面提升方案。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'黄芪', amt:'12g'},{herb:'升麻', amt:'6g'},{herb:'当归', amt:'10g'},{herb:'白芍', amt:'8g'}], usage:'姜汁调糊，敷相关穴位，每周3次。'},
+    {id:61, name:'翠萼茶', type:'tea', journeys:['美容养颜'], tags:['反复冒痘'], price:45, trial:16, desc:'痘痘反反复复，清热祛湿，慢慢调理体质。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'蒲公英', amt:'8g'},{herb:'连翘', amt:'6g'},{herb:'薏苡仁', amt:'12g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:62, name:'玉肌茶', type:'tea', journeys:['美容养颜'], tags:['毛孔粗大'], price:45, trial:16, desc:'毛孔粗大，健脾渗湿，肌肤更细腻。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'薏苡仁', amt:'12g'},{herb:'茯苓', amt:'10g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:63, name:'芷若茶', type:'tea', journeys:['美容养颜'], tags:['泛红刺痛'], price:45, trial:16, desc:'泛红刺痛，凉血清热，舒缓敏感状态。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'生地', amt:'8g'},{herb:'牡丹皮', amt:'6g'},{herb:'金银花', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:64, name:'青荷茶', type:'tea', journeys:['美容养颜'], tags:['油光满面'], price:45, trial:16, desc:'满脸油光，清热祛湿，控油更清爽。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄柏', amt:'4g'},{herb:'薏苡仁', amt:'12g'},{herb:'茯苓', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:65, name:'翠荷茶', type:'tea', journeys:['美容养颜'], tags:['反复冒痘','油光满面'], price:45, trial:16, desc:'痘痘加油光一起来，双重清热祛湿。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'蒲公英', amt:'10g'},{herb:'黄柏', amt:'5g'},{herb:'薏苡仁', amt:'15g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂，连饮2-3周。'},
+    {id:66, name:'轻颜茶', type:'tea', journeys:['美容养颜'], tags:['面部浮肿'], price:45, trial:16, desc:'脸部有点浮肿，健脾利水，消消肿。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯苓', amt:'10g'},{herb:'冬瓜皮', amt:'8g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:67, name:'月轮茶', type:'tea', journeys:['美容养颜'], tags:['轮廓模糊'], price:45, trial:16, desc:'轮廓不够清晰，益气养血，帮忙找回线条。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'8g'},{herb:'当归', amt:'6g'},{herb:'陈皮', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:68, name:'云颔茶', type:'tea', journeys:['美容养颜'], tags:['双下巴'], price:45, trial:16, desc:'双下巴困扰，化痰祛湿，帮忙化开。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'陈皮', amt:'8g'},{herb:'茯苓', amt:'10g'},{herb:'浙贝母', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:69, name:'月澈茶', type:'tea', journeys:['美容养颜'], tags:['双下巴','面部浮肿'], price:45, trial:16, desc:'浮肿加双下巴，一起消一消。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯苓', amt:'12g'},{herb:'陈皮', amt:'8g'},{herb:'冬瓜皮', amt:'8g'},{herb:'浙贝母', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂，连饮2周。'},
+    {id:70, name:'晨露茶', type:'tea', journeys:['日常养生'], tags:['容易疲劳'], price:45, trial:16, desc:'总是很疲惫，益气健脾，找回精神头。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'党参', amt:'10g'},{herb:'黄芪', amt:'8g'},{herb:'陈皮', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
+    {id:71, name:'朝晖茶', type:'tea', journeys:['日常养生'], tags:['精神不振'], price:45, trial:16, desc:'精神不振提不起劲，升阳益气，唤醒活力。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'升麻', amt:'4g'},{herb:'柴胡', amt:'3g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
+    {id:72, name:'松风茶', type:'tea', journeys:['日常养生'], tags:['注意力难集中'], price:45, trial:16, desc:'注意力很难集中，开窍宁神，思路更清晰。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'远志', amt:'6g'},{herb:'石菖蒲', amt:'6g'},{herb:'茯苓', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'上午饮用。'},
+    {id:73, name:'屏山茶', type:'tea', journeys:['日常养生'], tags:['免疫力偏弱'], price:45, trial:16, desc:'容易生病抵抗力弱，益气固表，加固防护力。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'白术', amt:'8g'},{herb:'防风', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂，连续调理。'},
+    {id:74, name:'朝阳茶', type:'tea', journeys:['日常养生'], tags:['容易疲劳','精神不振'], price:45, trial:16, desc:'疲惫又没精神，双重益气升阳。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'党参', amt:'10g'},{herb:'升麻', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
+    {id:75, name:'岚雾茶', type:'tea', journeys:['日常养生'], tags:['湿气重'], price:45, trial:16, desc:'湿气重身体沉，健脾祛湿，轻盈一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'苍术', amt:'8g'},{herb:'茯苓', amt:'10g'},{herb:'薏苡仁', amt:'12g'},{herb:'陈皮', amt:'4g'}], usage:'每日1剂。'},
+    {id:76, name:'荷露茶', type:'tea', journeys:['日常养生'], tags:['怕热易出汗'], price:45, trial:16, desc:'一动就一身汗，敛汗益气，收一收。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'浮小麦', amt:'12g'},{herb:'五味子', amt:'5g'},{herb:'麦冬', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:77, name:'四时茶', type:'tea', journeys:['日常养生'], tags:['换季不适应'], price:45, trial:16, desc:'换季总不适应，调和营卫，帮身体更快适应变化。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'桂枝', amt:'5g'},{herb:'白芍', amt:'6g'},{herb:'黄芪', amt:'8g'},{herb:'炙甘草', amt:'3g'},{herb:'生姜', amt:'3片'},{herb:'大枣', amt:'2枚'}], usage:'换季前后每日1剂。'},
+    {id:78, name:'谷芽茶', type:'tea', journeys:['日常养生'], tags:['食欲不振'], price:45, trial:16, desc:'没什么胃口，健胃消食，找回食欲。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'山楂', amt:'8g'},{herb:'麦芽', amt:'10g'},{herb:'鸡内金', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'餐前饮用。'},
+    {id:79, name:'晚膳茶', type:'tea', journeys:['日常养生'], tags:['消化不良'], price:45, trial:16, desc:'消化总是慢半拍，消食和胃，饭后更舒服。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'山楂', amt:'10g'},{herb:'神曲', amt:'8g'},{herb:'莱菔子', amt:'6g'},{herb:'陈皮', amt:'5g'}], usage:'餐后饮用。'},
+    {id:80, name:'暖芝茶', type:'tea', journeys:['日常养生'], tags:['便秘'], price:45, trial:16, desc:'排便不太顺畅，润肠通便，温和调理。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'火麻仁', amt:'10g'},{herb:'郁李仁', amt:'8g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:81, name:'晚风茶', type:'tea', journeys:['日常养生'], tags:['腹胀'], price:45, trial:16, desc:'肚子总是胀胀的，理气消胀，舒服一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'陈皮', amt:'8g'},{herb:'枳壳', amt:'6g'},{herb:'厚朴', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'餐后饮用。'},
+    {id:82, name:'谷雨茶', type:'tea', journeys:['日常养生'], tags:['消化不良','腹胀'], price:45, trial:16, desc:'消化不良又腹胀，一起理顺。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'山楂', amt:'10g'},{herb:'枳实', amt:'6g'},{herb:'莱菔子', amt:'8g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'餐后饮用。'},
+    {id:83, name:'谷序茶', type:'tea', journeys:['日常养生'], tags:['便秘','消化不良','腹胀','食欲不振'], price:45, trial:16, desc:'胃口、消化、排便、腹胀全都不太顺，整体调一调。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'党参', amt:'10g'},{herb:'白术', amt:'8g'},{herb:'陈皮', amt:'6g'},{herb:'枳壳', amt:'6g'},{herb:'山楂', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂，连续调理。'},
+    {id:84, name:'松岚茶', type:'tea', journeys:['日常养生'], tags:['压力大'], price:45, trial:16, desc:'压力山大，疏肝理气，松一口气。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'柴胡', amt:'5g'},{herb:'香附', amt:'8g'},{herb:'佛手', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:85, name:'竹韵茶', type:'tea', journeys:['日常养生'], tags:['易烦躁'], price:45, trial:16, desc:'容易心浮气躁，清心除烦，静一静。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'栀子', amt:'5g'},{herb:'淡竹叶', amt:'6g'},{herb:'合欢皮', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:86, name:'竹影茶', type:'tea', journeys:['日常养生'], tags:['情绪紧绷'], price:45, trial:16, desc:'情绪总是紧绷，疏肝解郁，放松下来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'合欢皮', amt:'8g'},{herb:'郁金', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:87, name:'夜合茶', type:'tea', journeys:['日常养生'], tags:['睡前思虑多'], price:45, trial:16, desc:'睡前脑子停不下来，养心安神，帮忙放空。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯神', amt:'10g'},{herb:'酸枣仁', amt:'10g'},{herb:'龙眼肉', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:88, name:'竹松茶', type:'tea', journeys:['日常养生'], tags:['压力大','易烦躁'], price:45, trial:16, desc:'压力大又烦躁，双重疏肝清心。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'柴胡', amt:'6g'},{herb:'栀子', amt:'5g'},{herb:'白芍', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:89, name:'忘忧茶', type:'tea', journeys:['日常养生'], tags:['情绪紧绷','睡前思虑多'], price:45, trial:16, desc:'情绪紧绷又思虑重，一杯茶，把忧愁放一放。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'淮小麦', amt:'20g'},{herb:'大枣', amt:'6枚'},{herb:'合欢皮', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:90, name:'松节贴', type:'plaster', journeys:['舒缓疼痛'], tags:['久坐僵硬'], price:9, trial:4, desc:'久坐后脖子肩膀僵硬，敷一敷松一松。', active:true, inStock:true, featured:true, imgs:[], form:'贴，外用', herbs:[{herb:'伸筋草', amt:'12g'},{herb:'透骨草', amt:'10g'},{herb:'红花', amt:'5g'}], usage:'姜汁调糊，敷颈肩部，每日1次。'},
+    {id:91, name:'葛悠贴', type:'plaster', journeys:['舒缓疼痛'], tags:['落枕'], price:9, trial:4, desc:'落枕转不了头，敷一敷解肌舒筋。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'葛根', amt:'10g'},{herb:'羌活', amt:'8g'},{herb:'桂枝', amt:'6g'}], usage:'姜汁调糊，敷患处，每日1-2次。'},
+    {id:92, name:'山岳贴', type:'plaster', journeys:['舒缓疼痛'], tags:['腰酸背痛'], price:9, trial:4, desc:'腰酸背痛，敷一敷补肝肾、强腰背。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'杜仲', amt:'12g'},{herb:'续断', amt:'10g'},{herb:'桑寄生', amt:'8g'}], usage:'姜汁调糊，敷腰部，每日1次。'},
+    {id:93, name:'云肩贴', type:'plaster', journeys:['舒缓疼痛'], tags:['肩颈酸胀'], price:9, trial:4, desc:'肩颈酸胀不适，敷一敷活血通络。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'姜黄', amt:'10g'},{herb:'桑枝', amt:'10g'},{herb:'红花', amt:'5g'}], usage:'姜汁调糊，敷肩颈部，每日1次。'},
+    {id:94, name:'云松贴', type:'plaster', journeys:['舒缓疼痛'], tags:['久坐僵硬','肩颈酸胀'], price:9, trial:4, desc:'久坐又肩颈酸胀，一起舒缓。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'姜黄', amt:'10g'},{herb:'伸筋草', amt:'10g'},{herb:'桑枝', amt:'8g'},{herb:'红花', amt:'4g'}], usage:'姜汁调糊，敷患处，每日1次。'},
+    {id:95, name:'暖节贴', type:'plaster', journeys:['舒缓疼痛'], tags:['关节酸胀'], price:9, trial:4, desc:'关节酸胀不适，敷一敷祛湿通络。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'独活', amt:'10g'},{herb:'薏苡仁', amt:'10g'},{herb:'防风', amt:'6g'}], usage:'姜汁调糊，敷关节处，每日1次。'},
+    {id:96, name:'晴岚贴', type:'plaster', journeys:['舒缓疼痛'], tags:['遇冷加重'], price:9, trial:4, desc:'一遇冷就加重，敷一敷温经散寒。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'羌活', amt:'10g'},{herb:'桂枝', amt:'8g'},{herb:'艾叶', amt:'8g'}], usage:'姜汁调糊，敷患处，注意保暖。'},
+    {id:97, name:'展翼贴', type:'plaster', journeys:['舒缓疼痛'], tags:['活动受限'], price:9, trial:4, desc:'活动起来不太利索，敷一敷舒筋活络。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'木瓜', amt:'10g'},{herb:'伸筋草', amt:'10g'},{herb:'牛膝', amt:'8g'}], usage:'姜汁调糊，敷患处，每日1次。'},
+    {id:98, name:'暖岚贴', type:'plaster', journeys:['舒缓疼痛'], tags:['关节酸胀','遇冷加重'], price:9, trial:4, desc:'关节又酸又怕冷，双重驱寒祛湿。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'羌活', amt:'8g'},{herb:'独活', amt:'8g'},{herb:'桂枝', amt:'6g'},{herb:'艾叶', amt:'6g'}], usage:'姜汁调糊，敷患处，每日1次。'},
+    {id:99, name:'赤霞贴', type:'plaster', journeys:['舒缓疼痛'], tags:['肌肉拉伤'], price:9, trial:4, desc:'肌肉拉伤了，敷一敷活血止痛。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'三七', amt:'6g'},{herb:'红花', amt:'5g'},{herb:'乳香', amt:'4g'}], usage:'姜汁调糊，敷患处（急性肿胀期建议48小时后使用）。'},
+    {id:100, name:'紫云贴', type:'plaster', journeys:['舒缓疼痛'], tags:['扭伤淤青'], price:9, trial:4, desc:'扭伤淤青，敷一敷化瘀消肿。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'桃仁', amt:'6g'},{herb:'红花', amt:'5g'},{herb:'当归尾', amt:'6g'}], usage:'姜汁调糊，敷患处，每日1次。'},
+    {id:101, name:'暮筋茶', type:'tea', journeys:['舒缓疼痛'], tags:['运动后酸痛'], price:45, trial:16, desc:'运动完浑身酸痛，喝一杯养血活血。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'当归', amt:'8g'},{herb:'鸡血藤', amt:'10g'},{herb:'丹参', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'运动后饮用。'},
+    {id:102, name:'霞云贴', type:'plaster', journeys:['舒缓疼痛'], tags:['扭伤淤青','肌肉拉伤'], price:9, trial:4, desc:'拉伤又淤青，一起活血化瘀。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'三七', amt:'10g'},{herb:'桃仁', amt:'8g'},{herb:'红花', amt:'6g'},{herb:'乳香', amt:'5g'}], usage:'姜汁调糊，敷患处，每日1次。'},
+    {id:103, name:'川野茶', type:'tea', journeys:['舒缓疼痛'], tags:['周身酸痛'], price:45, trial:16, desc:'浑身酸痛没劲，气血双补，慢慢缓解。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'当归', amt:'8g'},{herb:'鸡血藤', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:104, name:'晚立贴', type:'plaster', journeys:['舒缓疼痛'], tags:['久站久坐不适'], price:9, trial:4, desc:'站久坐久都不舒服，敷一敷舒筋活络。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'伸筋草', amt:'10g'},{herb:'透骨草', amt:'8g'},{herb:'红花', amt:'4g'}], usage:'姜汁调糊，敷酸痛部位。'},
+    {id:105, name:'隐山茶', type:'tea', journeys:['舒缓疼痛'], tags:['反复隐痛'], price:45, trial:16, desc:'疼痛反反复复，养血通络，慢慢调理。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'鸡血藤', amt:'12g'},{herb:'当归', amt:'8g'},{herb:'丹参', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂，连续调理。'},
+    {id:106, name:'川隐茶', type:'tea', journeys:['舒缓疼痛'], tags:['反复隐痛','周身酸痛'], price:45, trial:16, desc:'浑身酸痛又反复隐痛，双重气血通络。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'当归', amt:'10g'},{herb:'鸡血藤', amt:'12g'},{herb:'丹参', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:107, name:'暮合贴', type:'plaster', journeys:['优质睡眠'], tags:['躺下清醒'], price:9, trial:4, desc:'一躺下就很清醒，睡前敷一敷涌泉穴。', active:true, inStock:true, featured:false, imgs:[], form:'贴，涌泉穴外用', herbs:[{herb:'酸枣仁', amt:'10g'},{herb:'肉桂', amt:'3g'},{herb:'吴茱萸', amt:'5g'}], usage:'研末醋调糊，睡前敷涌泉穴，次晨取下。'},
+    {id:108, name:'星语茶', type:'tea', journeys:['优质睡眠'], tags:['思绪停不下来'], price:45, trial:16, desc:'脑子里的念头停不下来，养心安神，帮忙静下来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'淮小麦', amt:'15g'},{herb:'合欢皮', amt:'8g'},{herb:'郁金', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:109, name:'夜阑茶', type:'tea', journeys:['优质睡眠'], tags:['入睡耗时长'], price:45, trial:16, desc:'入睡总要很久，养心安神，帮忙更快入睡。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'酸枣仁', amt:'12g'},{herb:'柏子仁', amt:'8g'},{herb:'茯神', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:110, name:'星阑茶', type:'tea', journeys:['优质睡眠'], tags:['入睡耗时长','思绪停不下来'], price:45, trial:16, desc:'思绪多又难入睡，双重安神助眠。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'酸枣仁', amt:'12g'},{herb:'淮小麦', amt:'15g'},{herb:'合欢皮', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:111, name:'暮霭茶', type:'tea', journeys:['优质睡眠'], tags:['夜间易醒'], price:45, trial:16, desc:'夜里总醒，养心益气，睡得更沉一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯神', amt:'10g'},{herb:'酸枣仁', amt:'10g'},{herb:'黄芪', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:112, name:'月阑贴', type:'plaster', journeys:['优质睡眠'], tags:['醒后难再入睡'], price:9, trial:4, desc:'醒了就很难再睡着，睡前敷一敷帮忙回笼。', active:true, inStock:true, featured:false, imgs:[], form:'贴，涌泉穴外用', herbs:[{herb:'酸枣仁', amt:'10g'},{herb:'首乌藤', amt:'10g'},{herb:'五味子', amt:'5g'}], usage:'研末醋调糊，睡前敷涌泉穴，次晨取下。'},
+    {id:113, name:'静巷茶', type:'tea', journeys:['优质睡眠'], tags:['对声音敏感'], price:45, trial:16, desc:'一点动静就醒，宁心安神，睡得更安稳。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯神', amt:'10g'},{herb:'远志', amt:'6g'},{herb:'柏子仁', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:114, name:'霭月茶', type:'tea', journeys:['优质睡眠'], tags:['夜间易醒','醒后难再入睡'], price:45, trial:16, desc:'易醒又难再入睡，双重安神稳睡。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯神', amt:'10g'},{herb:'酸枣仁', amt:'12g'},{herb:'首乌藤', amt:'10g'},{herb:'五味子', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:115, name:'蝶梦茶', type:'tea', journeys:['优质睡眠'], tags:['梦境频繁'], price:45, trial:16, desc:'晚上梦特别多，养心安神，睡得更踏实。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'龙眼肉', amt:'8g'},{herb:'酸枣仁', amt:'10g'},{herb:'茯神', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:116, name:'子夜茶', type:'tea', journeys:['优质睡眠'], tags:['睡眠质量差'], price:45, trial:16, desc:'整体睡眠质量不好，养心安神，慢慢改善。', active:false, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯苓', amt:'10g'},{herb:'酸枣仁', amt:'10g'},{herb:'合欢皮', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:117, name:'蝶影茶', type:'tea', journeys:['优质睡眠'], tags:['梦境频繁','睡眠质量差'], price:45, trial:16, desc:'多梦又睡不安稳，双重养心安神。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'龙眼肉', amt:'10g'},{herb:'酸枣仁', amt:'12g'},{herb:'茯神', amt:'10g'},{herb:'合欢皮', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:118, name:'晓岚茶', type:'tea', journeys:['优质睡眠'], tags:['睡醒仍困倦'], price:45, trial:16, desc:'醒来还是很困，益气升阳，唤醒清醒感。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'8g'},{herb:'升麻', amt:'4g'},{herb:'石菖蒲', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
+    {id:119, name:'卯时茶', type:'tea', journeys:['优质睡眠'], tags:['起床困难'], price:45, trial:16, desc:'起床特别困难，温阳益气，帮忙醒过来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'肉桂', amt:'3g'},{herb:'升麻', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
+    {id:120, name:'午昼茶', type:'tea', journeys:['优质睡眠'], tags:['日间嗜睡'], price:45, trial:16, desc:'白天总是犯困，健脾升阳，提振精神。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'苍术', amt:'8g'},{herb:'升麻', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'上午饮用。'},
+    {id:121, name:'晨曦茶', type:'tea', journeys:['优质睡眠'], tags:['日间嗜睡','起床困难'], price:45, trial:16, desc:'起床难又犯困，双重升阳醒神。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'肉桂', amt:'4g'},{herb:'升麻', amt:'5g'},{herb:'苍术', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
+    {id:122, name:'晓霞膜', type:'mask', journeys:[], tags:[], price:39, trial:15, desc:'不针对特定症状，日常美白提亮，周末宠爱自己的仪式感。', active:true, inStock:true, featured:true, imgs:[], form:'外用面膜', herbs:[{herb:'白芷', amt:'8g'},{herb:'白及', amt:'6g'},{herb:'绿豆粉', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'研极细粉，加蜂蜜或温水调成糊状，敷面15-20分钟后温水洗净，每周2-3次。'},
+  ];
+
+  // [stated bug fix] same gap as 商店 had — this page ran off its own frozen product copy with
+  // zero connection to 商品管理. Now overlays the shared catalog onto this page's own copy before
+  // building the id-index below, so edits made in the admin tool (price/stock/desc/etc.) show up
+  // here too.
+  function mergeCatalogFromStorage(){
+    try {
+      var raw = localStorage.getItem('vinath_product_catalog');
+      if(!raw) return;
+      var byId = {};
+      JSON.parse(raw).forEach(function(c){ byId[c.id] = c; });
+      PRODUCTS.forEach(function(p){
+        var c = byId[p.id];
+        if(!c) return;
+        if(typeof c.stockQty === 'number'){ p.stockQty = c.stockQty; p.inStock = c.stockQty > 0; }
+        if(c.name) p.name = c.name;
+        if(c.nameEn !== undefined) p.nameEn = c.nameEn;
+        if(typeof c.price === 'number') p.price = c.price;
+        if(c.type) p.type = c.type;
+        if(typeof c.trial === 'number') p.trial = c.trial;
+        if(c.desc !== undefined) p.desc = c.desc;
+        if(typeof c.active === 'boolean') p.active = c.active;
+        if(typeof c.featured === 'boolean') p.featured = c.featured;
+        if(c.tags) p.tags = c.tags;
+        if(c.journeys) p.journeys = c.journeys;
+        if(c.form !== undefined) p.form = c.form;
+        if(c.herbs) p.herbs = c.herbs;
+        if(c.usage !== undefined) p.usage = c.usage;
+        if(c.imgs && c.imgs.length) p.imgs = c.imgs;
+      });
+    } catch(e){}
+  }
+  // [stated] 这个文件后面几百行有不少直接依赖 PRODUCTS_BY_ID / product 已经就绪的同步代码，
+  // 分散得比较开，贸然大范围改成异步回调风险较高。这里用同步XHR请求(虽然是过时写法，
+  // 但只在页面刚打开这一下用，不影响交互流畅度)，保持原来的代码结构不用大动，
+  // 只把数据来源从写死的数组换成真实后端。
+  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+  (function loadProductsFromBackendSync(){
+    try {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', API_BASE + '/products', false); // false = 同步
+      xhr.send(null);
+      if(xhr.status === 200){
+        var backendProducts = JSON.parse(xhr.responseText);
+        PRODUCTS.length = 0;
+        backendProducts.forEach(function(p){
+          PRODUCTS.push({ id:p.id, name:p.name, nameEn:p.name_en, type:p.type, price:p.price,
+            trial:(typeof p.trial_price === 'number' ? p.trial_price : p.price),
+            desc:p.description, active:p.active, inStock:p.stock_qty > 0, stockQty:p.stock_qty,
+            featured:p.featured, imgs:p.images||[], form:'', herbs:[], usage:p.usage_note||'',
+            journeys:[], tags:[] });
+        });
+      }
+    } catch(e){ console.error('连接后端失败:', e); }
+  })();
+
+  var TAG_LOOKUP = {};
+  Object.keys(TAG_DATA).forEach(function(journey){
+    TAG_DATA[journey].forEach(function(g){
+      g.tags.forEach(function(tag){ TAG_LOOKUP[tag] = {journey:journey, cond:g.cond}; });
+    });
+  });
+  var PRODUCTS_BY_ID = {};
+  PRODUCTS.forEach(function(p){ PRODUCTS_BY_ID[p.id] = p; });
+
+  function cartFromURL(){
+    var raw = new URLSearchParams(window.location.search).get('cart');
+    if(!raw) return [];
+    return raw.split(',').map(function(chunk){
+      var parts = chunk.split(':'); var id = parts[0];
+      return id ? {id:id, variant:(parts[1]==='t'?'trial':'full'), qty:Number(parts[2])||1} : null;
+    }).filter(Boolean);
+  }
+  function cartToParam(items){ return items.map(function(it){ return it.id+':'+(it.variant==='trial'?'t':'f')+':'+it.qty; }).join(','); }
+  function withCart(url, items){
+    var cartStr = cartToParam(items);
+    if(!cartStr) return url;
+    var hashIdx = url.indexOf('#');
+    var hash = hashIdx === -1 ? '' : url.slice(hashIdx);
+    var base = hashIdx === -1 ? url : url.slice(0, hashIdx);
+    return base + (base.indexOf('?')===-1 ? '?' : '&') + 'cart=' + encodeURIComponent(cartStr) + hash;
+  }
+  var cartItems = cartFromURL();
+  function cartTotalQty(){ return cartItems.reduce(function(s,it){ return s+it.qty; }, 0); }
+  function updateCartBadge(){
+    var total = cartTotalQty();
+    var badge = document.getElementById('cartBadge');
+    badge.textContent = total;
+    badge.style.display = total > 0 ? 'flex' : 'none';
+  }
+
+  var params = new URLSearchParams(window.location.search);
+  var productId = params.get('id');
+  // ---- 收藏/心愿单: per-browser/per-device, same as the shopping cart (no login system exists) ----
+  var WISHLIST_KEY = 'vinath_wishlist';
+  function getWishlist(){
+    try { var raw = localStorage.getItem(WISHLIST_KEY); return raw ? JSON.parse(raw) : []; } catch(e){ return []; }
+  }
+  function saveWishlist(list){ try { localStorage.setItem(WISHLIST_KEY, JSON.stringify(list)); } catch(e){} }
+  function isWishlisted(id){ return getWishlist().indexOf(id) !== -1; }
+  function toggleWishlist(id){
+    var list = getWishlist();
+    var idx = list.indexOf(id);
+    var isAdding = idx===-1;
+    if(isAdding) list.push(id); else list.splice(idx,1);
+    saveWishlist(list);
+    // 这条收藏/取消收藏动作同时上报给后端做匿名聚合统计（"这件商品现在有多少人收藏着"）；
+    // 客户自己的收藏列表本身还是留在本地——这个项目没有真实客户账号体系，没法做到真正跨设备同步
+    if(product){
+      fetch(API_BASE + '/analytics/wishlist-event', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId:id, productName:product.name, action: isAdding?'add':'remove' })
+      }).catch(function(){});
+    }
+  }
+
+  var product = PRODUCTS_BY_ID[productId];
+
+  if(product){
+    fetch(API_BASE + '/analytics/pageview', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ page: '商品详情-' + product.name })
+    }).catch(function(){});
+    // 商品关注度统计——记录停留时长，方便后台看"用户对哪些商品感兴趣（停留时间较长）"；
+    // 离开/切到后台标签页/关闭页面都会触发一次，只记一次，避免重复计入。用 fetch 搭配
+    // keepalive:true（不是 navigator.sendBeacon）——实测过 sendBeacon 在这个环境下发出的请求
+    // 在网络层直接失败，根本到不了服务端；keepalive就是fetch专门为"页面卸载前仍要发出去"
+    // 这种场景设计的选项，跟这个项目里其他地方一直稳定工作的fetch用的是同一套机制。
+    (function(){
+      var startTime = Date.now();
+      var logged = false;
+      function logInterest(){
+        if(logged) return;
+        logged = true;
+        fetch(API_BASE + '/analytics/product-interest', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true,
+          body: JSON.stringify({ productId: product.id, productName: product.name, dwellMs: Date.now()-startTime })
+        }).catch(function(){});
+      }
+      window.addEventListener('beforeunload', logInterest);
+      document.addEventListener('visibilitychange', function(){ if(document.visibilityState === 'hidden') logInterest(); });
+    })();
+  }
+
+  var selectedVariant = 'full';
+  var qty = 1;
+  var imgIdx = 0;
+  var pdImgs = [];
+
+  function renderNotFound(){
+    document.getElementById('breadcrumb').innerHTML = '<span class="bc-link" id="bcHome">首页</span><span class="sep">›</span><span class="bc-link" id="bcShop">商店</span><span class="sep">›</span><span class="bc-current">商品未找到</span>';
+    document.getElementById('mainContent').innerHTML = '<div class="not-found">没有找到这个商品，可能已下架或链接有误。</div>';
+    bindHeaderNav();
+  }
+
+  function renderPdImage(){
+    document.getElementById('pdTrack').style.transform = 'translateX(-'+(imgIdx*100)+'%)';
+    document.querySelectorAll('.pd-dot').forEach(function(d,i){ d.classList.toggle('on', i===imgIdx); });
+    var prevBtn = document.getElementById('pdPrev'), nextBtn = document.getElementById('pdNext');
+    if(prevBtn) prevBtn.classList.toggle('hide', imgIdx===0 || pdImgs.length<2);
+    if(nextBtn) nextBtn.classList.toggle('hide', imgIdx===pdImgs.length-1 || pdImgs.length<2);
+  }
+  function goPdImg(i){ imgIdx = Math.max(0, Math.min(pdImgs.length-1, i)); renderPdImage(); }
+
+  function buildHero(){
+    var hasImgs = product.imgs && product.imgs.length;
+    pdImgs = hasImgs ? product.imgs.slice() : [null];
+    var slides = pdImgs.map(function(src){
+      return '<div class="pd-hero-slide">' + (src ? '<img src="'+src+'" alt="'+product.name+'">' : '<div class="pt-icon">'+(ICON[product.type]||GENERIC_CAT_ICON)+'</div>') + '</div>';
+    }).join('');
+    var dots = pdImgs.length>1 ? pdImgs.map(function(_,i){ return '<span class="pd-dot'+(i===0?' on':'')+'"></span>'; }).join('') : '';
+    return '<div class="pd-hero" id="pdHero">'
+      + (!product.inStock ? '<div class="pd-oos-badge">暂时缺货</div>' : '')
+      + '<span class="pd-wish'+(isWishlisted(product.id)?' on':'')+'" id="pdWishBtn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9.5-9C.5 8 2 4 6 4c2 0 3.5 1 4 2 .5-1 2-2 4-2 4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg></span>'
+      + '<div class="pd-hero-track" id="pdTrack">'+slides+'</div>'
+      + '<div class="pd-hero-nav prev hide" id="pdPrev"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l-7 7 7 7"/></svg></div>'
+      + '<div class="pd-hero-nav next hide" id="pdNext"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5l7 7-7 7"/></svg></div>'
+      + '<div class="pd-dots">'+dots+'</div></div>';
+  }
+
+  function buildFormulaSection(){
+    if(!product.herbs || !product.herbs.length) return '';
+    var chips = product.herbs.map(function(h){ return '<span class="pd-herb-chip">'+h.herb+'</span>'; }).join('');
+    return '<div class="pd-section"><div class="pd-section-title">配方与用法</div>'
+      + '<div class="pd-form-row"><span class="fl">剂型</span><span>'+product.form+'</span></div>'
+      + '<div class="pd-herb-label">成分</div>'
+      + '<div class="pd-herb-chips">'+chips+'</div>'
+      + '<div class="pd-usage-box"><b>用法：</b>'+product.usage+'</div>'
+      + '</div>';
+  }
+
+  function buildSafetySection(){
+    var items = [];
+    if(product.type === 'plaster'){
+      items.push('首次使用建议先小面积试敷，观察是否有皮肤敏感反应；皮肤破损或有炎症的部位禁用。');
+    } else if(product.type === 'tea'){
+      items.push('本品为药食同源材料的日常调理配伍，并非诊断治疗用药；症状持续或加重，建议及时咨询专业医师。');
+    } else if(product.type === 'soak'){
+      items.push('外用煎汤，经期或阴道出血期间请暂停使用。');
+    } else if(product.type === 'mask'){
+      items.push('使用前建议先在耳后或手腕内侧小范围试用，无不适再用于面部。');
+    }
+    if(product.herbs && product.herbs.some(function(h){ return CAUTION_HERBS.indexOf(h.herb)!==-1; })){
+      items.push('配方中含活血类药材，孕期请勿使用，如有疑问建议先咨询医师。');
+    }
+    items.push('中医讲究辨证论治、因人而异，如需更精准的个性化方案，建议通过「相约」预约一对一咨询。');
+    return '<div class="pd-section"><div class="pd-section-title">使用须知</div><div class="pd-safety"><ul>'
+      + items.map(function(i){ return '<li>'+i+'</li>'; }).join('')
+      + '</ul></div></div>';
+  }
+
+  function buildRelatedSection(){
+    var related = PRODUCTS.filter(function(p){
+      return p.id !== product.id && p.active && p.type === product.type;
+    });
+    if(!related.length) return '';
+    var cards = related.slice(0, 8).map(function(p){
+      var hasImg = p.imgs && p.imgs[0];
+      return '<div class="related-card" data-id="'+p.id+'">'
+        + '<div class="related-thumb">' + (hasImg ? '<img src="'+p.imgs[0]+'" alt="'+p.name+'">' : '<div class="pt-icon">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>') + '</div>'
+        + '<div class="related-name">'+p.name+'</div><div class="related-price">MYR '+p.trial+' 起</div></div>';
+    }).join('');
+    return '<div class="pd-section"><div class="pd-section-title">同类商品 · '+TYPE_LABEL[product.type]+'</div><div class="related-grid">'+cards+'</div></div>';
+  }
+
+  function render(){
+    document.getElementById('breadcrumb').innerHTML = '<span class="bc-link" id="bcHome">首页</span><span class="sep">›</span><span class="bc-link" id="bcShop">商店</span><span class="sep">›</span><span class="bc-current">'+product.name+'</span>';
+
+    var html = buildHero();
+    html += '<div class="pd-type">'+TYPE_LABEL[product.type]+'</div>';
+    html += '<div class="pd-name">'+product.name+'</div>';
+    html += '<div class="pd-desc">'+product.desc+'</div>';
+
+    html += '<div class="pd-variants">'
+      + '<div class="pd-variant on" data-v="full"><div class="vv-lbl">正装</div><div class="vv-price">MYR '+product.price+'</div></div>'
+      + '<div class="pd-variant" data-v="trial"><div class="vv-lbl">试用装</div><div class="vv-price">MYR '+product.trial+'</div></div>'
+      + '</div>';
+
+    html += '<div class="pd-qty-row"><div class="pd-qty-label">数量</div>'
+      + '<div class="pd-stepper"><div class="pd-step-btn" id="pdMinus">－</div><div class="pd-qty-num" id="pdQtyNum">1</div><div class="pd-step-btn" id="pdPlus">＋</div></div></div>';
+
+    if(!product.inStock) html += '<div class="pd-oos-msg">这款暂时缺货，补货后会自动恢复上架。</div>';
+    html += '<button class="pd-add" id="pdAdd"'+(product.inStock?'':' disabled')+'>'+(product.inStock?'加入购物车':'暂时缺货')+'</button>';
+
+    html += buildFormulaSection();
+    html += buildSafetySection();
+    html += buildRelatedSection();
+
+    document.getElementById('mainContent').innerHTML = html;
+    bindPageEvents();
+    updateCartBadge();
+  }
+
+  function bindPageEvents(){
+    document.querySelectorAll('.pd-variant').forEach(function(v){
+      v.addEventListener('click', function(){
+        selectedVariant = this.getAttribute('data-v');
+        document.querySelectorAll('.pd-variant').forEach(function(x){ x.classList.remove('on'); });
+        this.classList.add('on');
+      });
+    });
+    document.getElementById('pdMinus').addEventListener('click', function(){
+      qty = Math.max(1, qty-1);
+      document.getElementById('pdQtyNum').textContent = qty;
+    });
+    document.getElementById('pdPlus').addEventListener('click', function(){
+      qty += 1;
+      document.getElementById('pdQtyNum').textContent = qty;
+    });
+    var addBtn = document.getElementById('pdAdd');
+    if(addBtn){
+      addBtn.addEventListener('click', function(){
+        if(!product.inStock) return;
+        var existing = cartItems.find(function(it){ return it.id===product.id && it.variant===selectedVariant; });
+        if(existing){ existing.qty += qty; } else { cartItems.push({id:product.id, variant:selectedVariant, qty:qty}); }
+        updateCartBadge();
+        var variantLbl = selectedVariant==='trial' ? '试用装' : '正装';
+        showToast('已加入购物车：'+product.name+'（'+variantLbl+'）×'+qty);
+      });
+    }
+    var prevBtn = document.getElementById('pdPrev'), nextBtn = document.getElementById('pdNext');
+    if(prevBtn) prevBtn.addEventListener('click', function(){ goPdImg(imgIdx-1); });
+    if(nextBtn) nextBtn.addEventListener('click', function(){ goPdImg(imgIdx+1); });
+    var wishBtn = document.getElementById('pdWishBtn');
+    if(wishBtn) wishBtn.addEventListener('click', function(){
+      toggleWishlist(product.id);
+      wishBtn.classList.toggle('on');
+    });
+    var hero = document.getElementById('pdHero');
+    if(hero){
+      var sx=0, dx=0, touching=false;
+      var track = document.getElementById('pdTrack');
+      hero.addEventListener('touchstart', function(e){ sx=e.touches[0].clientX; dx=0; touching=true; track.style.transition='none'; }, {passive:true});
+      hero.addEventListener('touchmove', function(e){
+        if(!touching) return;
+        dx = e.touches[0].clientX - sx;
+        var eff = dx;
+        if((imgIdx===0 && dx>0) || (imgIdx===pdImgs.length-1 && dx<0)) eff = dx*0.35;
+        track.style.transform = 'translateX(calc(-'+(imgIdx*100)+'% + '+eff+'px))';
+      }, {passive:true});
+      hero.addEventListener('touchend', function(){
+        touching=false; track.style.transition='';
+        if(Math.abs(dx)>40){ dx<0 ? goPdImg(imgIdx+1) : goPdImg(imgIdx-1); } else { renderPdImage(); }
+        dx=0;
+      });
+    }
+    document.querySelectorAll('.related-card').forEach(function(c){
+      c.addEventListener('click', function(){
+        window.location.href = withCart('/product/?id=' + this.getAttribute('data-id'), cartItems);
+      });
+    });
+    bindHeaderNav();
+  }
+
+  function bindHeaderNav(){
+    document.getElementById('brandBtn').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
+    document.getElementById('bcHome').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
+    document.getElementById('bcShop').addEventListener('click', function(){ window.location.href = withCart('/shop/', cartItems); });
+    document.getElementById('searchBtn').addEventListener('click', function(){ showToast('搜索 · 功能开发中'); });
+    var vhAcctMenu = document.getElementById('vhAcctMenu');
+  document.getElementById('acctBtn').addEventListener('click', function(e){
+    e.stopPropagation();
+    vhAcctMenu.classList.toggle('open');
+  });
+  document.getElementById('vhamOrder').addEventListener('click', function(){
+    window.location.href = withCart('/orders/', cartItems);
+  });
+  document.getElementById('vhamBooking').addEventListener('click', function(){
+    window.location.href = withCart('/bookings/', cartItems);
+  });
+  document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
+  vhAcctMenu.addEventListener('click', function(e){ e.stopPropagation(); });
+    document.getElementById('cartBtn').addEventListener('click', function(){
+      if(!cartItems.length){ showToast('购物车是空的'); return; }
+      var encoded = cartItems.map(function(it){ return it.id+':'+(it.variant==='trial'?'t':'f')+':'+it.qty; }).join(',');
+      window.location.href = '/checkout/?cart=' + encodeURIComponent(encoded);
+    });
+  }
+
+  var toast = document.getElementById('toast');
+  var toastTimer = null;
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2000);
+  }
+
+  if(product){ render(); } else { renderNotFound(); }
+})();
+</script>
+<style>
+.vh-chat-fab{ position:fixed; right:22px; bottom:22px; width:56px; height:56px; border-radius:50%; background:var(--forest,#26362B); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 24px rgba(32,29,25,.28); z-index:9000; transition:transform .15s ease; }
+.vh-chat-fab:hover{ transform:scale(1.06); }
+.vh-chat-fab .vh-chat-badge{ position:absolute; top:-3px; right:-3px; background:#C0503A; color:#fff; font-size:10.5px; font-weight:700; min-width:18px; height:18px; border-radius:9px; display:none; align-items:center; justify-content:center; padding:0 4px; }
+.vh-chat-panel{ position:fixed; right:22px; bottom:90px; width:328px; max-width:calc(100vw - 44px); height:440px; max-height:calc(100vh - 140px); background:#fff; border-radius:18px; box-shadow:0 20px 50px rgba(32,29,25,.28); z-index:9000; display:none; flex-direction:column; overflow:hidden; font-family:'Noto Sans SC',sans-serif; }
+.vh-chat-panel.open{ display:flex; }
+.vh-chat-hd{ background:var(--forest,#26362B); color:#fff; padding:14px 16px; flex:none; }
+.vh-chat-hd-title{ font-size:14px; font-weight:700; }
+.vh-chat-hd-sub{ font-size:11.5px; opacity:.8; margin-top:2px; }
+.vh-chat-close{ position:absolute; top:14px; right:14px; cursor:pointer; opacity:.75; }
+.vh-chat-body{ flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px; background:#FAF7F1; }
+.vh-chat-msg{ max-width:78%; padding:9px 12px; border-radius:14px; font-size:13px; line-height:1.5; }
+.vh-chat-msg.customer{ align-self:flex-end; background:var(--forest,#26362B); color:#fff; border-bottom-right-radius:4px; }
+.vh-chat-msg.admin{ align-self:flex-start; background:#fff; color:#222; border:1px solid #E6E1D6; border-bottom-left-radius:4px; }
+.vh-chat-empty{ margin:auto; text-align:center; color:#8a8478; font-size:12.5px; padding:0 20px; line-height:1.7; }
+.vh-chat-input-row{ flex:none; display:flex; gap:8px; padding:11px; border-top:1px solid #E6E1D6; background:#fff; }
+.vh-chat-input-row input{ flex:1; border:1.5px solid #E6E1D6; border-radius:100px; padding:9px 14px; font-size:13px; font-family:inherit; outline:none; }
+.vh-chat-input-row input:focus{ border-color:var(--forest,#26362B); }
+.vh-chat-input-row button{ flex:none; width:36px; height:36px; border-radius:50%; background:var(--forest,#26362B); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+</style>
+<div class="vh-chat-fab" id="vhChatFab">
+  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+  <span class="vh-chat-badge" id="vhChatBadge"></span>
+</div>
+<div class="vh-chat-panel" id="vhChatPanel">
+  <div class="vh-chat-hd">
+    <div class="vh-chat-hd-title" id="vhChatTitle">在线咨询</div>
+    <div class="vh-chat-hd-sub" id="vhChatSub">正在与 龚诗宏医师 对话</div>
+    <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
+  </div>
+  <div class="vh-chat-body" id="vhChatBody"></div>
+  <div class="vh-chat-input-row">
+    <input type="text" id="vhChatInput" placeholder="输入消息…" maxlength="300">
+    <button type="button" id="vhChatSend"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+<script>
+(function(){
+  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+  // 聊天消息是任何匿名访客都能提交的内容，管理员打开对话时会看到——不转义就直接拼进innerHTML
+  // 的话，访客可以在消息里塞HTML/脚本，在管理员已登录的浏览器里执行（存储型XSS）。
+  function escapeHtml(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  var CUSTOMER_ID_KEY = 'vinath_customer_chat_id';
+  var pollTimer = null;
+  var currentThread = null;
+  var currentMessages = [];
+
+  function getCustomerId(){
+    try {
+      var id = localStorage.getItem(CUSTOMER_ID_KEY);
+      if(!id){ id = 'cust_' + Date.now() + '_' + Math.random().toString(36).slice(2,8); localStorage.setItem(CUSTOMER_ID_KEY, id); }
+      return id;
+    } catch(e){ return 'cust_temp'; }
+  }
+  // 客户端第一次打开聊天面板时调用——后端会自动处理"这个人是不是第一次来"、要不要插入欢迎语，
+  // 前端不用再自己判断这些
+  async function ensureMyThread(){
+    try {
+      var res = await fetch(API_BASE + '/chat/ensure-thread', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerId: getCustomerId() })
+      });
+      if(!res.ok) return null;
+      var data = await res.json();
+      currentThread = data.thread;
+      currentMessages = data.messages;
+      return currentThread;
+    } catch(e){ console.error('聊天初始化失败:', e); return null; }
+  }
+  async function refreshMyThread(){
+    try {
+      var res = await fetch(API_BASE + '/chat/threads/' + getCustomerId());
+      if(!res.ok) return null;
+      var data = await res.json();
+      currentThread = data.thread;
+      currentMessages = data.messages;
+      return currentThread;
+    } catch(e){ return null; }
+  }
+
+  function renderMessages(){
+    var body = document.getElementById('vhChatBody');
+    var sub = document.getElementById('vhChatSub');
+    if(!currentThread || !currentMessages.length){
+      body.innerHTML = '<div class="vh-chat-empty">您好，有任何问题都可以在这里留言，我们会尽快回复您。</div>';
+    } else {
+      body.innerHTML = currentMessages.map(function(m){
+        return '<div class="vh-chat-msg '+m.from+'">'+escapeHtml(m.text)+'</div>';
+      }).join('');
+      body.scrollTop = body.scrollHeight;
+    }
+    if(currentThread) sub.textContent = '正在与 ' + currentThread.assignedToName + ' 对话';
+    updateBadge();
+  }
+  function updateBadge(){
+    var badge = document.getElementById('vhChatBadge');
+    var panelOpen = document.getElementById('vhChatPanel').classList.contains('open');
+    if(currentThread && currentThread.unreadForCustomer && !panelOpen){
+      badge.style.display = 'flex'; badge.textContent = '1';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  document.getElementById('vhChatFab').addEventListener('click', async function(){
+    var panel = document.getElementById('vhChatPanel');
+    panel.classList.toggle('open');
+    if(panel.classList.contains('open')){
+      await ensureMyThread();
+      renderMessages();
+    }
+    updateBadge();
+  });
+  document.getElementById('vhChatClose').addEventListener('click', function(){
+    document.getElementById('vhChatPanel').classList.remove('open');
+  });
+  async function sendMsg(){
+    var input = document.getElementById('vhChatInput');
+    var text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    input.disabled = true;
+    try {
+      await fetch(API_BASE + '/chat/threads/' + getCustomerId() + '/messages', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text })
+      });
+      await refreshMyThread();
+      renderMessages();
+    } catch(e){ console.error('发送失败:', e); }
+    input.disabled = false;
+    input.focus();
+  }
+  document.getElementById('vhChatSend').addEventListener('click', sendMsg);
+  document.getElementById('vhChatInput').addEventListener('keydown', function(e){ if(e.key==='Enter') sendMsg(); });
+
+  // poll for admin replies / handoff changes while the widget is on screen
+  pollTimer = setInterval(async function(){
+    if(!currentThread) return; // 还没打开过聊天面板，没必要轮询
+    await refreshMyThread();
+    renderMessages();
+  }, 4000);
+})();
+</script>
+
+</body>
+</html>
