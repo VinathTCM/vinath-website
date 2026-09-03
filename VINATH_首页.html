@@ -698,7 +698,7 @@
   // 出现在这两处。现在改成跟细节页模板一样，从共享数据里读取、按active过滤，同时保留跟其他页面
   // 一致的"版本化种子"逻辑（内容管理没被手动编辑过的旅程，未来文案更新还是能正常刷新过来）。
   (async function(){
-    var API_BASE = window.VINATH_API_BASE || 'http://localhost:3001/api';
+    var API_BASE = window.VINATH_API_BASE || 'https://vinath-backend.onrender.com/api';
     var journeysData;
     try {
       var res = await fetch(API_BASE + '/site-settings/health_journeys');
@@ -743,7 +743,7 @@
     });
   }
   (function(){
-    var API_BASE = window.VINATH_API_BASE || 'http://localhost:3001/api';
+    var API_BASE = window.VINATH_API_BASE || 'https://vinath-backend.onrender.com/api';
     var whatsapp = '60138092888';
     fetch(API_BASE + '/site-settings/business_info').then(function(res){ return res.ok ? res.json() : null; }).then(function(info){
       if(info && info.whatsapp) whatsapp = info.whatsapp;
@@ -755,7 +755,7 @@
     });
   })();
   (async function(){
-    var API_BASE = window.VINATH_API_BASE || 'http://localhost:3001/api';
+    var API_BASE = window.VINATH_API_BASE || 'https://vinath-backend.onrender.com/api';
     var seed = [
       {text:'西马订单满 RM100 免运费', enabled:true},
       {text:'「晓霞膜」补货中，预计7月底恢复上架', enabled:true},
@@ -1129,7 +1129,7 @@
 </div>
 <script>
 (function(){
-  var API_BASE = window.VINATH_API_BASE || 'http://localhost:3001/api';
+  var API_BASE = window.VINATH_API_BASE || 'https://vinath-backend.onrender.com/api';
   // 聊天消息是任何匿名访客都能提交的内容，管理员打开对话时会看到——不转义就直接拼进innerHTML
   // 的话，访客可以在消息里塞HTML/脚本，在管理员已登录的浏览器里执行（存储型XSS）。
   function escapeHtml(s){

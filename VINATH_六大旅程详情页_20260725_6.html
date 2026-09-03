@@ -214,7 +214,7 @@ body{
 
 <script>
   (function(){
-    var API_BASE = window.VINATH_API_BASE || 'http://localhost:3001/api';
+    var API_BASE = window.VINATH_API_BASE || 'https://vinath-backend.onrender.com/api';
     fetch(API_BASE + '/analytics/pageview', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ page: '旅程详情页' })
@@ -336,7 +336,7 @@ body{
   var JOURNEY_KEY_BY_TITLE = {'女性调理':'women','中医塑体':'sculpt','美容养颜':'beauty','日常养生':'wellness','舒缓疼痛':'pain','优质睡眠':'sleep'};
   (function(){
     try {
-      var API_BASE = window.VINATH_API_BASE || 'http://localhost:3001/api';
+      var API_BASE = window.VINATH_API_BASE || 'https://vinath-backend.onrender.com/api';
       var xhr = new XMLHttpRequest();
       xhr.open('GET', API_BASE + '/site-settings/health_journeys', false);
       xhr.send(null);
@@ -676,7 +676,7 @@ body{
 </div>
 <script>
 (function(){
-  var API_BASE = window.VINATH_API_BASE || 'http://localhost:3001/api';
+  var API_BASE = window.VINATH_API_BASE || 'https://vinath-backend.onrender.com/api';
   // 聊天消息是任何匿名访客都能提交的内容，管理员打开对话时会看到——不转义就直接拼进innerHTML
   // 的话，访客可以在消息里塞HTML/脚本，在管理员已登录的浏览器里执行（存储型XSS）。
   function escapeHtml(s){
