@@ -11,7 +11,15 @@
 const Database = require('better-sqlite3');
 const path = require('path');
 
-const db = new Database(path.join(__dirname, 'vinath.db'));
+// 数据库文件路径：优先读 DB_PATH 环境变量（生产环境挂载持久磁盘时指向磁盘目录），
+// 默认存到本文件同目录（本地开发用）。
+const DB_FILE = process.env.DB_PATH || path.join(__dirname, 'vinath.db');
+if (process.env.DB_PATH) {
+  const fs = require('fs');
+  const dir = path.dirname(process.env.DB_PATH);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+}
+const db = new Database(DB_FILE);
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
