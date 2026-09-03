@@ -722,6 +722,7 @@
     });
     document.getElementById('navJourneyList').innerHTML = navHtml;
     document.getElementById('journeyRail').innerHTML = cardHtml;
+    if(window.initJourneyRail) window.initJourneyRail();
   })();
 })();
 
@@ -948,10 +949,12 @@
   var rail = document.getElementById('journeyRail');
   var arrowLeft = document.getElementById('railArrowLeft');
   var arrowRight = document.getElementById('railArrowRight');
-  var railCards = Array.prototype.slice.call(rail.querySelectorAll('.card'));
+  var railCards = [];
   var railHasInteracted = false;
+  var railEventsBound = false;
 
   function updateCardScales(){
+    if (railCards.length < 2) return;
     if (!railHasInteracted) {
       railCards.forEach(function(card){
         card.style.transform = 'scale(1)';
@@ -984,15 +987,29 @@
   function scrollOneCard(direction){
     railHasInteracted = true;
     var maxScroll = rail.scrollWidth - rail.clientWidth;
+    if(railCards.length < 2 || maxScroll <= 0) return;
     var step = maxScroll / (railCards.length - 1);
     rail.scrollBy({ left: direction * step, behavior: 'smooth' });
   }
-  arrowLeft.addEventListener('click', function(){ scrollOneCard(-1); });
-  arrowRight.addEventListener('click', function(){ scrollOneCard(1); });
-  rail.addEventListener('scroll', onRailScroll, { passive:true });
-  window.addEventListener('resize', function(){ updateArrows(); updateCardScales(); });
-  updateArrows();
-  updateCardScales();
+  function bindRailEvents(){
+    if(railEventsBound) return;
+    railEventsBound = true;
+    arrowLeft.addEventListener('click', function(){ scrollOneCard(-1); });
+    arrowRight.addEventListener('click', function(){ scrollOneCard(1); });
+    rail.addEventListener('scroll', onRailScroll, { passive:true });
+    window.addEventListener('resize', function(){ updateArrows(); updateCardScales(); });
+  }
+  function refreshRail(){
+    railCards = Array.prototype.slice.call(rail.querySelectorAll('.card'));
+    updateArrows();
+    updateCardScales();
+  }
+  function initJourneyRail(){
+    bindRailEvents();
+    refreshRail();
+  }
+  initJourneyRail();
+  window.initJourneyRail = initJourneyRail;
 
   document.getElementById('startJourneyBtn').addEventListener('click', function(){
     window.location.href = withCart('/journeys/', cartItems);
