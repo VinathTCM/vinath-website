@@ -431,7 +431,8 @@ body{
     var titleRow = content.querySelector('.j-title-row');
     if(titleRow){
       titleRow.addEventListener('click', function(){
-        window.location.href = withCart('VINATH_' + this.getAttribute('data-title') + '_细节页.html', cartItems);
+        var _jkey = JOURNEY_KEY_BY_TITLE[this.getAttribute('data-title')];
+        if(_jkey){ window.location.href = withCart('/journeys/detail/?j=' + _jkey, cartItems); }
       });
     }
     var yue = document.getElementById('yueBtn');
