@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VINATH · 支持</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap');
+
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html{ -webkit-text-size-adjust:100%; }
+body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC","PingFang SC",sans-serif; color:#3B2E22; }
+
+:root{
+  --tan:#C9A876; --tan-deep:#A07A45; --espresso:#3B2E22; --espresso-soft:#6E5F4E;
+  --clay:#BC6E4E; --white-warm:#FFFDF9; --cream:#F7F3EC; --line:rgba(59,46,34,.10); --shadow:rgba(59,46,34,.13);
+  --amber:#B8863C; --sage:#8C9B7A;
+  --font-serif:"Noto Serif SC","Songti SC","STSong",serif;
+  --font-en:"Cormorant Garamond",Georgia,serif;
+  --pad: clamp(18px, 4.5vw, 44px);
+}
+
+.page{ max-width:820px; margin:0 auto; position:relative; }
+
+.vh-header{ display:flex; align-items:center; justify-content:space-between; padding: clamp(16px,3vw,24px) var(--pad) clamp(14px,2.5vw,18px); }
+.vh-header .side{ display:flex; align-items:center; gap:10px; min-width:0; }
+.vh-brand{ font-family:var(--font-en); font-variant:small-caps; font-weight:600; font-size:clamp(24px,4vw,28px); letter-spacing:.15em; color:var(--espresso); white-space:nowrap; cursor:pointer; transition:letter-spacing .3s ease; }
+.vh-tm{ font-variant:normal; font-size:.34em; vertical-align:super; opacity:.65; margin-left:1px; }
+.vh-footer{ border-top:1px solid var(--line); margin-top:60px; padding:36px var(--pad) 30px; }
+.vh-footer-top{ margin-bottom:16px; }
+.vh-footer-brand{ font-family:var(--font-en); font-variant:small-caps; font-weight:600; font-size:15px; letter-spacing:.12em; color:var(--espresso); }
+.vh-footer-bottom{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; font-size:12px; color:var(--espresso-soft); opacity:.8; }
+.vh-footer-my{ font-weight:600; letter-spacing:.03em; white-space:nowrap; }
+@media (max-width:480px){ .vh-footer-bottom{ flex-direction:column; align-items:flex-start; gap:5px; } }
+.vh-brand:hover{ letter-spacing:.26em; }
+.vh-icons{ display:flex; gap:18px; flex:none; }
+.vh-ibtn{ display:flex; align-items:center; justify-content:center; color:var(--espresso); cursor:pointer; transition:opacity .15s, transform .15s; flex:none; position:relative; }
+.vh-ibtn:hover{ opacity:.65; } .vh-ibtn:active{ transform:scale(.9); }
+.cart-badge{ position:absolute; top:-7px; right:-9px; background:var(--clay); color:#fff; font-size:10px; font-weight:700; min-width:16px; height:16px; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:0 4px; }
+.vh-acct-wrap{ position:relative; display:flex; }
+.vh-acct-menu{ position:absolute; top:calc(100% + 12px); right:-6px; background:var(--white-warm); border-radius:14px; box-shadow:0 14px 34px rgba(59,46,34,.18);
+  padding:8px; min-width:140px; opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:60; }
+.vh-acct-menu.open{ opacity:1; pointer-events:auto; }
+.vham-item{ padding:11px 14px; font-size:14px; border-radius:9px; cursor:pointer; color:var(--espresso); white-space:nowrap; }
+.vham-item:hover{ background:var(--cream); }
+
+.breadcrumb{ padding:0 var(--pad) 14px; font-size:13.5px; color:var(--espresso-soft); }
+.breadcrumb .bc-link{ color:var(--tan-deep); cursor:pointer; font-weight:600; }
+.breadcrumb .bc-link:hover{ text-decoration:underline; }
+.breadcrumb .sep{ margin:0 7px; opacity:.5; }
+.breadcrumb .bc-current{ color:var(--espresso-soft); }
+
+.content{ padding: 4px var(--pad) clamp(56px,7vw,80px); }
+
+/* ---- page title ---- */
+.sp-title-block{ text-align:center; padding:36px 10px 46px; border-bottom:1px solid var(--line); }
+.sp-title{ font-family:var(--font-serif); font-weight:700; font-size:clamp(28px,5vw,36px); margin-bottom:10px; }
+.sp-sub{ font-size:15px; color:var(--espresso-soft); }
+
+/* ---- section shared ---- */
+.ab-section{ margin-top:56px; }
+.ab-eyebrow{ font-size:14px; font-weight:700; color:var(--tan-deep); letter-spacing:.1em; text-transform:uppercase; text-align:center; margin-bottom:10px; }
+.ab-section-title{ font-family:var(--font-serif); font-weight:700; font-size:clamp(24px,4vw,30px); text-align:center; margin-bottom:34px; }
+
+/* ---- FAQ accordion ---- */
+.sp-faq-item{ border-bottom:1px solid var(--line); }
+.sp-faq-item:first-child{ border-top:1px solid var(--line); }
+.sp-faq-q{ display:flex; align-items:center; justify-content:space-between; gap:14px; padding:20px 4px; cursor:pointer; }
+.sp-faq-q-text{ font-family:var(--font-serif); font-weight:700; font-size:17px; }
+.sp-faq-chev{ flex:none; color:var(--tan-deep); transition:transform .2s; }
+.sp-faq-item.open .sp-faq-chev{ transform:rotate(180deg); }
+.sp-faq-a{ max-height:0; overflow:hidden; transition:max-height .25s ease; }
+.sp-faq-item.open .sp-faq-a{ max-height:400px; }
+.sp-faq-a-inner{ padding:0 4px 22px; font-size:16px; line-height:1.85; color:var(--espresso-soft); text-align:justify; }
+
+/* ---- shipping/returns ---- */
+.sp-info-card{ background:var(--white-warm); border:1px solid var(--line); border-radius:18px; padding:26px 28px; margin-bottom:18px; }
+.sp-info-card h3{ font-family:var(--font-serif); font-size:17.5px; margin:0 0 14px; }
+.sp-info-row{ display:flex; justify-content:space-between; gap:16px; font-size:16px; padding:9px 0; border-bottom:1px dashed var(--line); }
+.sp-info-row:last-child{ border-bottom:none; }
+.sp-info-row .l{ color:var(--espresso-soft); flex:none; }
+.sp-info-row .r{ font-weight:600; text-align:right; }
+.sp-info-note{ font-size:14.5px; color:var(--espresso-soft); line-height:1.8; margin-top:14px; }
+.sp-info-list{ font-size:16px; line-height:1.9; color:var(--espresso-soft); margin:0; padding-left:22px; }
+.sp-info-list li{ margin-bottom:8px; }
+.sp-info-list li:last-child{ margin-bottom:0; }
+
+/* ---- contact ---- */
+.sp-contact-card{ text-align:center; max-width:52ch; margin:0 auto; }
+.sp-contact-text{ font-size:16px; line-height:1.85; color:var(--espresso-soft); margin-bottom:24px; }
+.sp-contact-btn{ display:inline-flex; align-items:center; gap:10px; background:var(--espresso); color:#fff; text-decoration:none; padding:15px 30px; border-radius:14px; font-size:15.5px; font-weight:700; transition:opacity .15s; }
+.sp-contact-btn:hover{ opacity:.88; }
+.sp-contact-hours{ font-size:14px; color:var(--espresso-soft); margin-top:18px; }
+.sp-contact-alt{ font-size:14.5px; color:var(--espresso-soft); margin-top:10px; }
+.sp-contact-alt a{ color:var(--tan-deep); font-weight:600; text-decoration:none; cursor:pointer; }
+.sp-contact-alt a:hover{ text-decoration:underline; }
+
+/* ---- lookup cards ---- */
+.sp-lookup-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.sp-lookup-card{ background:var(--white-warm); border:1px solid var(--line); border-radius:18px; padding:26px 22px; text-align:center; cursor:pointer; transition:.15s; text-decoration:none; color:var(--espresso); display:block; }
+.sp-lookup-card:hover{ border-color:var(--clay); transform:translateY(-2px); }
+.sp-lookup-icon{ color:var(--tan-deep); margin-bottom:12px; }
+.sp-lookup-name{ font-family:var(--font-serif); font-weight:700; font-size:17px; margin-bottom:6px; }
+.sp-lookup-desc{ font-size:13.5px; color:var(--espresso-soft); }
+
+@media (max-width:520px){
+  .sp-lookup-grid{ grid-template-columns:1fr; }
+  .sp-info-row{ flex-direction:column; gap:2px; }
+  .sp-info-row .r{ text-align:left; }
+}
+
+@media (min-width:860px){
+  .sp-faq-q-text{ font-size:18px; }
+  .sp-faq-a-inner{ font-size:17px; }
+  .sp-info-row{ font-size:17px; }
+  .sp-info-note{ font-size:15.5px; }
+  .sp-info-list{ font-size:17px; }
+  .sp-contact-text{ font-size:17px; }
+  .sp-sub{ font-size:16px; }
+}
+
+.vh-toast{ position:fixed; left:50%; bottom:22px; transform:translate(-50%,10px); background:rgba(40,31,22,.94); color:#FDF8F0; font-size:15px; padding:11px 20px;
+  border-radius:20px; opacity:0; transition:opacity .25s, transform .25s; pointer-events:none; z-index:70; max-width:88vw; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.vh-toast.show{ opacity:1; transform:translate(-50%,0); }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="vh-header">
+    <div class="side">
+      <div class="vh-brand" id="brandBtn">VINATH<span class="vh-tm">™</span></div>
+    </div>
+    <div class="vh-icons">
+      <div class="vh-ibtn" id="searchBtn" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10.3" cy="10.3" r="6.3"/><line x1="19.5" y1="19.5" x2="15" y2="15"/></svg>
+      </div>
+      <span class="vh-acct-wrap">
+        <div class="vh-ibtn" id="acctBtn" aria-label="查询">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 19.5c1.2-3.8 3.9-5.7 7-5.7s5.8 1.9 7 5.7"/></svg>
+        </div>
+        <div class="vh-acct-menu" id="vhAcctMenu">
+          <div class="vham-item" id="vhamOrder">查询订单</div>
+          <div class="vham-item" id="vhamBooking">查询预约</div>
+        </div>
+      </span>
+      <div class="vh-ibtn" id="cartBtn" aria-label="购物包">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="breadcrumb"><span class="bc-link" id="bcHome">首页</span><span class="sep">›</span><span class="bc-current">支持</span></div>
+
+  <div class="content">
+    <div class="sp-title-block">
+      <div class="sp-title">支持中心</div>
+      <div class="sp-sub">订单与预约查询、常见问题、配送与退换、联系客服，都在这里</div>
+    </div>
+
+    <div class="ab-section" id="lookup">
+      <div class="ab-eyebrow">Quick Actions</div>
+      <div class="ab-section-title">查询订单 / 预约</div>
+      <div class="sp-lookup-grid">
+        <a href="VINATH_订单查询.html" class="sp-lookup-card" id="lookupOrder">
+          <div class="sp-lookup-icon"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 016 0v2"/></svg></div>
+          <div class="sp-lookup-name">查询订单</div>
+          <div class="sp-lookup-desc">凭订单编号与联系方式查看订单状态</div>
+        </a>
+        <a href="VINATH_预约查询.html" class="sp-lookup-card" id="lookupBooking">
+          <div class="sp-lookup-icon"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></div>
+          <div class="sp-lookup-name">查询预约</div>
+          <div class="sp-lookup-desc">凭预约编号与联系方式查看居家会诊状态</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="ab-section" id="faq">
+      <div class="ab-eyebrow">FAQ</div>
+      <div class="ab-section-title">常见问题</div>
+      <div id="faqList"></div>
+    </div>
+
+    <div class="ab-section" id="shipping">
+      <div class="ab-eyebrow">Shipping & Returns</div>
+      <div class="ab-section-title">配送与退换</div>
+
+      <div class="sp-info-card">
+        <h3>配送范围与费用</h3>
+        <div class="sp-info-row"><span class="l">西马地区</span><span class="r">运费 MYR 8　·　下单后 3–7 个工作日送达</span></div>
+        <div class="sp-info-row"><span class="l">东马（沙巴、砂拉越、纳闽）</span><span class="r">运费 MYR 18　·　下单后 5–10 个工作日送达</span></div>
+        <div class="sp-info-note">下单后 48 小时内发货，实际送达时效以快递公司为准，公共假期或天气等特殊情况可能影响配送时间。</div>
+      </div>
+
+      <div class="sp-info-card">
+        <h3>退换政策</h3>
+        <ul class="sp-info-list">
+          <li>由于本店商品多为可食用或外用调理类产品，从卫生与品质保障角度考虑，<b>已拆封、已使用的商品恕不接受退换</b></li>
+          <li>若收到商品时存在破损、错发、少发等情况，请于<b>收货后 7 天内</b>联系客服并附上商品照片，我们会尽快为您处理</li>
+          <li><b>未拆封</b>商品如需退换，请于<b>收货后 7 天内</b>联系客服说明原因，退换运费由责任方承担（商品本身问题由我们承担，个人原因退换需自理运费）</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ab-section" id="contact">
+      <div class="ab-eyebrow">Get In Touch</div>
+      <div class="ab-section-title">联系客服</div>
+      <div class="sp-contact-card">
+        <div class="sp-contact-text">有任何产品或订单上的疑问，欢迎随时通过 WhatsApp 与我们联系，我们会尽快回复您。</div>
+        <a href="https://wa.me/60123456789?text=%E6%82%A8%E5%A5%BD%EF%BC%8C%E6%88%91%E6%83%B3%E5%92%A8%E8%AF%A2VINATH%E7%9B%B8%E5%85%B3%E9%97%AE%E9%A2%98%E3%80%82" class="sp-contact-btn" id="waLinkSupport">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+          WhatsApp 咨询
+        </a>
+        <div class="sp-contact-hours">服务时间：周一至周六</div>
+        <div class="sp-contact-alt">想要更专业的一对一建议？也可以预约 <a id="ziyueLink">「相约」</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="vh-footer">
+  <div class="vh-footer-top">
+    <div class="vh-footer-brand">VINATH<span class="vh-tm">™</span></div>
+  </div>
+  <div class="vh-footer-bottom">
+    <span>Copyright &copy; 2026 VINATH TCM HEALTH CARE. All rights reserved.</span>
+    <span class="vh-footer-my">Malaysia</span>
+  </div>
+</div>
+
+<div class="vh-toast" id="toast"></div>
+
+<script>
+  (function(){
+    var API_BASE = window.VINATH_API_BASE || 'http://localhost:3001/api';
+    fetch(API_BASE + '/analytics/pageview', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ page: '支持' })
+    }).catch(function(){});
+  })();
+
+(function(){
+  (function(){
+    var whatsapp = '60138092888';
+    try {
+      var raw = localStorage.getItem('vinath_business_info');
+      if(raw){ var info = JSON.parse(raw); if(info.whatsapp) whatsapp = info.whatsapp; }
+    } catch(e){}
+    var el = document.getElementById('waLinkSupport');
+    if(el) el.href = el.href.replace('60123456789', whatsapp);
+  })();
+  var FAQS = [
+    {q:'我该怎么知道适合我的产品？', a:'每个"旅程"页面都列出了常见的日常养生关注方向，您可以先了解一下、心里有个方向；更准确的建议欢迎通过「相约」预约一对一咨询，由执业中医师根据您的具体情况给出建议，也可以在商店里按膏药/茶饮等分类自行选购。'},
+    {q:'产品安全吗？有什么需要注意的？', a:'所有产品均由执业中医师团队调配，选用药食同源材料，不添加防腐剂及化学药物成分。每款商品详情页都有「使用须知」板块，会标注该产品的注意事项（如孕期慎用等），建议购买前仔细查看。'},
+    {q:'贴剂、茶饮、坐浴包要怎么使用？', a:'每款商品详情页的「配方与用法」板块都有具体的使用方法和频率说明，请按照说明使用。如有疑问，也可以联系客服咨询。'},
+    {q:'孕期或哺乳期可以使用吗？', a:'部分产品含有活血类药材，孕期不建议使用，详情页「使用须知」中会有特别标注。如有疑问，建议先咨询医师后再使用，不确定的情况下可以通过「相约」直接联系我们。'},
+    {q:'需要注册账号才能下单吗？', a:'不需要。VINATH 支持访客下单，无需注册登录。下单成功后我们会提供订单编号，您可以随时通过「订单查询」，凭订单编号和联系方式查看订单状态。'},
+    {q:'忘记订单号怎么办？', a:'建议在下单成功页面截图保存订单编号。如果找不到了，欢迎通过 WhatsApp 联系客服，我们可以协助您查询。'},
+    {q:'「居家会诊」是什么？', a:'「居家会诊」是我们提供的上门中医调理服务，由执业中医师根据您的情况上门问诊。目前服务范围以巴西古当・巴西富地（Pasir Putih, Pasir Gudang）为中心，车程约35分钟内的区域（含新山市区）。'},
+    {q:'「居家会诊」的预约可以取消或改期吗？', a:'可以。前往「预约查询」找到您的预约后即可自助取消——为保障各位客户的问诊安排，同一手机号每周最多可取消1次、每月最多3次。如需改期，或已达到取消次数上限但有特殊情况，请通过 WhatsApp 联系我们协助处理。'}
+  ];
+
+  var faqHtml = FAQS.map(function(item, i){
+    return '<div class="sp-faq-item" data-i="'+i+'">'
+      + '<div class="sp-faq-q"><span class="sp-faq-q-text">'+item.q+'</span><span class="sp-faq-chev"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span></div>'
+      + '<div class="sp-faq-a"><div class="sp-faq-a-inner">'+item.a+'</div></div>'
+      + '</div>';
+  }).join('');
+  document.getElementById('faqList').innerHTML = faqHtml;
+  document.querySelectorAll('.sp-faq-item').forEach(function(item){
+    item.querySelector('.sp-faq-q').addEventListener('click', function(){
+      item.classList.toggle('open');
+    });
+  });
+
+  function cartFromURL(){
+    var raw = new URLSearchParams(window.location.search).get('cart');
+    if(!raw) return [];
+    return raw.split(',').map(function(chunk){
+      var parts = chunk.split(':'); var id = Number(parts[0]);
+      return id ? {id:id, variant:(parts[1]==='t'?'trial':'full'), qty:Number(parts[2])||1} : null;
+    }).filter(Boolean);
+  }
+  function cartToParam(items){ return items.map(function(it){ return it.id+':'+(it.variant==='trial'?'t':'f')+':'+it.qty; }).join(','); }
+  function withCart(url, items){
+    var cartStr = cartToParam(items);
+    if(!cartStr) return url;
+    var hashIdx = url.indexOf('#');
+    var hash = hashIdx === -1 ? '' : url.slice(hashIdx);
+    var base = hashIdx === -1 ? url : url.slice(0, hashIdx);
+    return base + (base.indexOf('?')===-1 ? '?' : '&') + 'cart=' + encodeURIComponent(cartStr) + hash;
+  }
+  var cartItems = cartFromURL();
+  function updateCartBadge(){
+    var total = cartItems.reduce(function(s,it){ return s+it.qty; }, 0);
+    var badge = document.getElementById('cartBadge');
+    badge.textContent = total;
+    badge.style.display = total > 0 ? 'flex' : 'none';
+  }
+  updateCartBadge();
+  if(cartItems.length){
+    var cartStr = cartToParam(cartItems);
+    document.querySelectorAll('a[href^="VINATH_"]').forEach(function(a){
+      var href = a.getAttribute('href');
+      var hashIdx = href.indexOf('#');
+      var hash = hashIdx === -1 ? '' : href.slice(hashIdx);
+      var base = hashIdx === -1 ? href : href.slice(0, hashIdx);
+      var sep = base.indexOf('?')===-1 ? '?' : '&';
+      a.setAttribute('href', base + sep + 'cart=' + encodeURIComponent(cartStr) + hash);
+    });
+  }
+
+  var toast = document.getElementById('toast');
+  var toastTimer = null;
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2000);
+  }
+
+  document.getElementById('brandBtn').addEventListener('click', function(){ window.location.href = withCart('VINATH_首页.html', cartItems); });
+  document.getElementById('bcHome').addEventListener('click', function(){ window.location.href = withCart('VINATH_首页.html', cartItems); });
+  document.getElementById('searchBtn').addEventListener('click', function(){ showToast('搜索 · 功能开发中'); });
+  var vhAcctMenu = document.getElementById('vhAcctMenu');
+  document.getElementById('acctBtn').addEventListener('click', function(e){
+    e.stopPropagation();
+    vhAcctMenu.classList.toggle('open');
+  });
+  document.getElementById('vhamOrder').addEventListener('click', function(){
+    window.location.href = withCart('VINATH_订单查询.html', cartItems);
+  });
+  document.getElementById('vhamBooking').addEventListener('click', function(){
+    window.location.href = withCart('VINATH_预约查询.html', cartItems);
+  });
+  document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
+  vhAcctMenu.addEventListener('click', function(e){ e.stopPropagation(); });
+  document.getElementById('cartBtn').addEventListener('click', function(){
+    if(!cartItems.length){ showToast('购物车是空的'); return; }
+    window.location.href = withCart('VINATH_购物车结算.html', cartItems);
+  });
+  document.getElementById('ziyueLink').addEventListener('click', function(){
+    window.location.href = withCart('VINATH_首页.html', cartItems) + '#consult';
+  });
+})();
+</script>
+<style>
+.vh-chat-fab{ position:fixed; right:22px; bottom:22px; width:56px; height:56px; border-radius:50%; background:var(--forest,#26362B); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 24px rgba(32,29,25,.28); z-index:9000; transition:transform .15s ease; }
+.vh-chat-fab:hover{ transform:scale(1.06); }
+.vh-chat-fab .vh-chat-badge{ position:absolute; top:-3px; right:-3px; background:#C0503A; color:#fff; font-size:10.5px; font-weight:700; min-width:18px; height:18px; border-radius:9px; display:none; align-items:center; justify-content:center; padding:0 4px; }
+.vh-chat-panel{ position:fixed; right:22px; bottom:90px; width:328px; max-width:calc(100vw - 44px); height:440px; max-height:calc(100vh - 140px); background:#fff; border-radius:18px; box-shadow:0 20px 50px rgba(32,29,25,.28); z-index:9000; display:none; flex-direction:column; overflow:hidden; font-family:'Noto Sans SC',sans-serif; }
+.vh-chat-panel.open{ display:flex; }
+.vh-chat-hd{ background:var(--forest,#26362B); color:#fff; padding:14px 16px; flex:none; }
+.vh-chat-hd-title{ font-size:14px; font-weight:700; }
+.vh-chat-hd-sub{ font-size:11.5px; opacity:.8; margin-top:2px; }
+.vh-chat-close{ position:absolute; top:14px; right:14px; cursor:pointer; opacity:.75; }
+.vh-chat-body{ flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px; background:#FAF7F1; }
+.vh-chat-msg{ max-width:78%; padding:9px 12px; border-radius:14px; font-size:13px; line-height:1.5; }
+.vh-chat-msg.customer{ align-self:flex-end; background:var(--forest,#26362B); color:#fff; border-bottom-right-radius:4px; }
+.vh-chat-msg.admin{ align-self:flex-start; background:#fff; color:#222; border:1px solid #E6E1D6; border-bottom-left-radius:4px; }
+.vh-chat-empty{ margin:auto; text-align:center; color:#8a8478; font-size:12.5px; padding:0 20px; line-height:1.7; }
+.vh-chat-input-row{ flex:none; display:flex; gap:8px; padding:11px; border-top:1px solid #E6E1D6; background:#fff; }
+.vh-chat-input-row input{ flex:1; border:1.5px solid #E6E1D6; border-radius:100px; padding:9px 14px; font-size:13px; font-family:inherit; outline:none; }
+.vh-chat-input-row input:focus{ border-color:var(--forest,#26362B); }
+.vh-chat-input-row button{ flex:none; width:36px; height:36px; border-radius:50%; background:var(--forest,#26362B); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+</style>
+<div class="vh-chat-fab" id="vhChatFab">
+  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+  <span class="vh-chat-badge" id="vhChatBadge"></span>
+</div>
+<div class="vh-chat-panel" id="vhChatPanel">
+  <div class="vh-chat-hd">
+    <div class="vh-chat-hd-title" id="vhChatTitle">在线咨询</div>
+    <div class="vh-chat-hd-sub" id="vhChatSub">正在与 龚诗宏医师 对话</div>
+    <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
+  </div>
+  <div class="vh-chat-body" id="vhChatBody"></div>
+  <div class="vh-chat-input-row">
+    <input type="text" id="vhChatInput" placeholder="输入消息…" maxlength="300">
+    <button type="button" id="vhChatSend"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+<script>
+(function(){
+  var API_BASE = window.VINATH_API_BASE || 'http://localhost:3001/api';
+  // 聊天消息是任何匿名访客都能提交的内容，管理员打开对话时会看到——不转义就直接拼进innerHTML
+  // 的话，访客可以在消息里塞HTML/脚本，在管理员已登录的浏览器里执行（存储型XSS）。
+  function escapeHtml(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  var CUSTOMER_ID_KEY = 'vinath_customer_chat_id';
+  var pollTimer = null;
+  var currentThread = null;
+  var currentMessages = [];
+
+  function getCustomerId(){
+    try {
+      var id = localStorage.getItem(CUSTOMER_ID_KEY);
+      if(!id){ id = 'cust_' + Date.now() + '_' + Math.random().toString(36).slice(2,8); localStorage.setItem(CUSTOMER_ID_KEY, id); }
+      return id;
+    } catch(e){ return 'cust_temp'; }
+  }
+  // 客户端第一次打开聊天面板时调用——后端会自动处理"这个人是不是第一次来"、要不要插入欢迎语，
+  // 前端不用再自己判断这些
+  async function ensureMyThread(){
+    try {
+      var res = await fetch(API_BASE + '/chat/ensure-thread', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerId: getCustomerId() })
+      });
+      if(!res.ok) return null;
+      var data = await res.json();
+      currentThread = data.thread;
+      currentMessages = data.messages;
+      return currentThread;
+    } catch(e){ console.error('聊天初始化失败:', e); return null; }
+  }
+  async function refreshMyThread(){
+    try {
+      var res = await fetch(API_BASE + '/chat/threads/' + getCustomerId());
+      if(!res.ok) return null;
+      var data = await res.json();
+      currentThread = data.thread;
+      currentMessages = data.messages;
+      return currentThread;
+    } catch(e){ return null; }
+  }
+
+  function renderMessages(){
+    var body = document.getElementById('vhChatBody');
+    var sub = document.getElementById('vhChatSub');
+    if(!currentThread || !currentMessages.length){
+      body.innerHTML = '<div class="vh-chat-empty">您好，有任何问题都可以在这里留言，我们会尽快回复您。</div>';
+    } else {
+      body.innerHTML = currentMessages.map(function(m){
+        return '<div class="vh-chat-msg '+m.from+'">'+escapeHtml(m.text)+'</div>';
+      }).join('');
+      body.scrollTop = body.scrollHeight;
+    }
+    if(currentThread) sub.textContent = '正在与 ' + currentThread.assignedToName + ' 对话';
+    updateBadge();
+  }
+  function updateBadge(){
+    var badge = document.getElementById('vhChatBadge');
+    var panelOpen = document.getElementById('vhChatPanel').classList.contains('open');
+    if(currentThread && currentThread.unreadForCustomer && !panelOpen){
+      badge.style.display = 'flex'; badge.textContent = '1';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  document.getElementById('vhChatFab').addEventListener('click', async function(){
+    var panel = document.getElementById('vhChatPanel');
+    panel.classList.toggle('open');
+    if(panel.classList.contains('open')){
+      await ensureMyThread();
+      renderMessages();
+    }
+    updateBadge();
+  });
+  document.getElementById('vhChatClose').addEventListener('click', function(){
+    document.getElementById('vhChatPanel').classList.remove('open');
+  });
+  async function sendMsg(){
+    var input = document.getElementById('vhChatInput');
+    var text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    input.disabled = true;
+    try {
+      await fetch(API_BASE + '/chat/threads/' + getCustomerId() + '/messages', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text })
+      });
+      await refreshMyThread();
+      renderMessages();
+    } catch(e){ console.error('发送失败:', e); }
+    input.disabled = false;
+    input.focus();
+  }
+  document.getElementById('vhChatSend').addEventListener('click', sendMsg);
+  document.getElementById('vhChatInput').addEventListener('keydown', function(e){ if(e.key==='Enter') sendMsg(); });
+
+  // poll for admin replies / handoff changes while the widget is on screen
+  pollTimer = setInterval(async function(){
+    if(!currentThread) return; // 还没打开过聊天面板，没必要轮询
+    await refreshMyThread();
+    renderMessages();
+  }, 4000);
+})();
+</script>
+
+</body>
+</html>

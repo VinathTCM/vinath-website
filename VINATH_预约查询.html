@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VINATH · 预约查询</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap');
+
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html{ -webkit-text-size-adjust:100%; }
+body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC","PingFang SC",sans-serif; color:#3B2E22; }
+
+:root{
+  --tan:#C9A876; --tan-deep:#A07A45; --espresso:#3B2E22; --espresso-soft:#6E5F4E;
+  --clay:#BC6E4E; --white-warm:#FFFDF9; --cream:#F7F3EC; --line:rgba(59,46,34,.10); --shadow:rgba(59,46,34,.13);
+  --amber:#B8863C; --amber-soft:rgba(184,134,60,.13); --sage:#8C9B7A;
+  --font-serif:"Noto Serif SC","Songti SC","STSong",serif;
+  --font-en:"Cormorant Garamond",Georgia,serif;
+  --pad: clamp(18px, 4.5vw, 44px);
+}
+
+.page{ max-width:760px; margin:0 auto; position:relative; }
+
+.vh-header{ display:flex; align-items:center; justify-content:space-between; padding: clamp(16px,3vw,24px) var(--pad) clamp(14px,2.5vw,18px); }
+.vh-header .side{ display:flex; align-items:center; gap:10px; min-width:0; }
+.vh-brand{ font-family:var(--font-en); font-variant:small-caps; font-weight:600; font-size:clamp(24px,4vw,28px); letter-spacing:.15em; color:var(--espresso); white-space:nowrap; cursor:pointer; transition:letter-spacing .3s ease; }
+.vh-tm{ font-variant:normal; font-size:.34em; vertical-align:super; opacity:.65; margin-left:1px; }
+.vh-footer{ border-top:1px solid var(--line); margin-top:60px; padding:36px var(--pad) 30px; }
+.vh-footer-top{ margin-bottom:16px; }
+.vh-footer-brand{ font-family:var(--font-en); font-variant:small-caps; font-weight:600; font-size:15px; letter-spacing:.12em; color:var(--espresso); }
+.vh-footer-bottom{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; font-size:12px; color:var(--espresso-soft); opacity:.8; }
+.vh-footer-my{ font-weight:600; letter-spacing:.03em; white-space:nowrap; }
+@media (max-width:480px){ .vh-footer-bottom{ flex-direction:column; align-items:flex-start; gap:5px; } }
+.vh-brand:hover{ letter-spacing:.26em; }
+.vh-icons{ display:flex; gap:18px; flex:none; }
+.vh-ibtn{ display:flex; align-items:center; justify-content:center; color:var(--espresso); cursor:pointer; transition:opacity .15s, transform .15s; flex:none; position:relative; }
+.vh-ibtn:hover{ opacity:.65; } .vh-ibtn:active{ transform:scale(.9); }
+.cart-badge{ position:absolute; top:-7px; right:-9px; background:var(--clay); color:#fff; font-size:10px; font-weight:700; min-width:16px; height:16px; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:0 4px; }
+.vh-acct-wrap{ position:relative; display:flex; }
+.vh-acct-menu{ position:absolute; top:calc(100% + 12px); right:-6px; background:var(--white-warm); border-radius:14px; box-shadow:0 14px 34px rgba(59,46,34,.18);
+  padding:8px; min-width:140px; opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:60; }
+.vh-acct-menu.open{ opacity:1; pointer-events:auto; }
+.vham-item{ padding:11px 14px; font-size:14px; border-radius:9px; cursor:pointer; color:var(--espresso); white-space:nowrap; }
+.vham-item:hover{ background:var(--cream); }
+
+.breadcrumb{ padding:0 var(--pad) 14px; font-size:13.5px; color:var(--espresso-soft); }
+.breadcrumb .bc-link{ color:var(--tan-deep); cursor:pointer; font-weight:600; }
+.breadcrumb .bc-link:hover{ text-decoration:underline; }
+.breadcrumb .sep{ margin:0 7px; opacity:.5; }
+.breadcrumb .bc-current{ color:var(--espresso-soft); }
+
+.content{ padding: 4px var(--pad) clamp(48px,6vw,64px); }
+.oq-title{ font-family:var(--font-serif); font-weight:700; font-size:clamp(28px,5vw,34px); margin:6px 0 8px; }
+.oq-sub{ font-size:14.5px; color:var(--espresso-soft); line-height:1.7; margin-bottom:28px; max-width:44ch; }
+
+.oq-form{ background:var(--white-warm); border:1px solid var(--line); border-radius:18px; padding:22px 22px 20px; margin-bottom:8px; }
+.oq-field{ margin-bottom:16px; }
+.oq-field label{ display:block; font-size:12.5px; font-weight:700; color:var(--espresso-soft); margin-bottom:7px; }
+.oq-field input{ width:100%; padding:12px 14px; border:1.5px solid var(--line); border-radius:12px; font-size:14.5px; font-family:inherit; color:var(--espresso); background:#fff; }
+.oq-field input:focus{ outline:none; border-color:var(--clay); }
+.oq-btn{ width:100%; background:var(--espresso); color:#fff; border:none; padding:15px; border-radius:14px; font-size:15px; font-weight:700; cursor:pointer; transition:opacity .15s; margin-top:4px; }
+.oq-btn:hover{ opacity:.9; }
+.oq-error{ font-size:13px; color:var(--clay); margin-top:4px; display:none; }
+.oq-error.show{ display:block; }
+.oq-hint-examples{ font-size:12px; color:var(--espresso-soft); margin-top:14px; line-height:1.8; }
+.oq-hint-examples b{ color:var(--tan-deep); cursor:pointer; }
+.oq-hint-examples b:hover{ text-decoration:underline; }
+
+/* ---- result ---- */
+.oq-result{ margin-top:30px; }
+.oq-result-hd{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:22px; flex-wrap:wrap; gap:8px; }
+.oq-order-no{ font-family:var(--font-serif); font-weight:700; font-size:19px; }
+.oq-order-date{ font-size:12.5px; color:var(--espresso-soft); }
+
+.stepper-wrap{ display:flex; margin-bottom:30px; }
+.step{ flex:1; text-align:center; position:relative; }
+.step-dot{ width:26px; height:26px; border-radius:50%; background:var(--white-warm); border:2px solid var(--line); display:flex; align-items:center; justify-content:center; margin:0 auto 8px; color:var(--espresso-soft); font-size:11px; font-weight:700; position:relative; z-index:2; }
+.step-line{ position:absolute; top:13px; left:-50%; width:100%; height:2px; background:var(--line); z-index:1; }
+.step:first-child .step-line{ display:none; }
+.step.done .step-dot{ background:var(--sage); border-color:var(--sage); color:#fff; }
+.step.done .step-line{ background:var(--sage); }
+.step.current .step-dot{ background:var(--clay); border-color:var(--clay); color:#fff; }
+.step-label{ font-size:11.5px; color:var(--espresso-soft); }
+.step.done .step-label, .step.current .step-label{ color:var(--espresso); font-weight:600; }
+
+.oq-items-card{ background:var(--white-warm); border:1px solid var(--line); border-radius:16px; padding:16px 20px; margin-bottom:14px; }
+.oq-item{ display:flex; justify-content:space-between; font-size:14px; color:var(--espresso-soft); padding:6px 0; }
+.oq-item.total{ font-weight:700; color:var(--espresso); border-top:1px solid var(--line); margin-top:6px; padding-top:12px; font-size:15.5px; }
+.oq-meta-row{ display:flex; justify-content:space-between; font-size:13px; color:var(--espresso-soft); padding:10px 0; border-top:1px dashed var(--line); }
+.oq-demo-note{ font-size:12px; color:var(--tan-deep); background:rgba(160,122,69,.08); border-radius:10px; padding:9px 13px; margin-top:6px; }
+
+.oq-cancelled-banner{ display:flex; align-items:center; gap:9px; background:rgba(188,110,78,.1); color:var(--clay); font-weight:700; font-size:14.5px; border-radius:12px; padding:13px 16px; margin-bottom:14px; }
+.oq-items-card.cancelled{ opacity:.55; }
+.oq-cancel-btn{ width:100%; background:none; border:1.5px solid var(--line); color:var(--espresso-soft); padding:13px; border-radius:12px; font-size:14px; font-weight:600; cursor:pointer; transition:.15s; }
+.oq-cancel-btn:hover{ border-color:var(--clay); color:var(--clay); }
+.oq-cancel-note{ font-size:12px; color:var(--espresso-soft); text-align:center; margin-top:9px; line-height:1.6; }
+.oq-review-card{ background:var(--white-warm); border:1.5px solid var(--line); border-radius:16px; padding:20px 22px; margin-top:16px; }
+.oq-review-title{ font-family:var(--font-serif); font-weight:700; font-size:15.5px; margin-bottom:4px; }
+.oq-review-hint{ font-size:12px; color:var(--espresso-soft); margin-bottom:16px; line-height:1.6; }
+.oq-star-row{ display:flex; gap:6px; margin-bottom:16px; }
+.oq-star{ font-size:30px; line-height:1; cursor:pointer; color:var(--line); transition:.12s; }
+.oq-star.on{ color:var(--tan-deep); }
+.oq-review-card textarea{ width:100%; min-height:80px; padding:11px 13px; border:1.5px solid var(--line); border-radius:12px; font-size:13.5px; font-family:inherit; resize:vertical; margin-bottom:14px; }
+.oq-review-submit{ background:var(--clay); color:#fff; border:none; border-radius:100px; padding:11px 24px; font-weight:700; font-size:13.5px; cursor:pointer; }
+.oq-review-submit:disabled{ background:var(--line); color:var(--espresso-soft); cursor:default; }
+.oq-review-done{ text-align:center; padding:6px 4px; }
+.oq-review-done .stars-display{ font-size:22px; color:var(--tan-deep); margin-bottom:8px; }
+.oq-review-done .cmt{ font-size:13px; color:var(--espresso-soft); line-height:1.7; font-style:italic; }
+.oq-cancel-blocked{ font-size:13.5px; color:var(--clay); background:rgba(188,110,78,.08); border-radius:12px; padding:14px 16px; line-height:1.75; }
+.oq-cancel-confirm{ background:var(--white-warm); border:1px solid var(--line); border-radius:14px; padding:16px 18px; text-align:center; }
+.oq-cancel-confirm-text{ font-size:14.5px; font-weight:600; margin-bottom:14px; }
+.oq-cancel-confirm-btns{ display:flex; gap:10px; }
+.oq-cancel-back, .oq-cancel-yes{ flex:1; padding:11px; border-radius:10px; font-size:13.5px; font-weight:700; cursor:pointer; border:none; }
+.oq-cancel-back{ background:var(--cream); color:var(--espresso-soft); }
+.oq-cancel-yes{ background:var(--clay); color:#fff; }
+
+.not-found-box{ text-align:center; padding:36px 20px; color:var(--espresso-soft); }
+.not-found-box svg{ color:var(--tan); margin-bottom:14px; }
+
+.vh-toast{ position:fixed; left:50%; bottom:22px; transform:translate(-50%,10px); background:rgba(40,31,22,.94); color:#FDF8F0; font-size:15px; padding:11px 20px;
+  border-radius:20px; opacity:0; transition:opacity .25s, transform .25s; pointer-events:none; z-index:70; max-width:88vw; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.vh-toast.show{ opacity:1; transform:translate(-50%,0); }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="vh-header">
+    <div class="side">
+      <div class="vh-brand" id="brandBtn">VINATH<span class="vh-tm">™</span></div>
+    </div>
+    <div class="vh-icons">
+      <div class="vh-ibtn" id="searchBtn" aria-label="搜索">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10.3" cy="10.3" r="6.3"/><line x1="19.5" y1="19.5" x2="15" y2="15"/></svg>
+      </div>
+      <span class="vh-acct-wrap">
+        <div class="vh-ibtn" id="acctBtn" aria-label="查询">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 19.5c1.2-3.8 3.9-5.7 7-5.7s5.8 1.9 7 5.7"/></svg>
+        </div>
+        <div class="vh-acct-menu" id="vhAcctMenu">
+          <div class="vham-item" id="vhamOrder">查询订单</div>
+          <div class="vham-item" id="vhamBooking">查询预约</div>
+        </div>
+      </span>
+      <div class="vh-ibtn" id="cartBtn" aria-label="购物包">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="breadcrumb"><span class="bc-link" id="bcHome">首页</span><span class="sep">›</span><span class="bc-current">预约查询</span></div>
+
+  <div class="content">
+    <h1 class="oq-title">预约查询</h1>
+    <p class="oq-sub">不需要注册登录，输入预约编号和预约时留的联系方式，就能查看预约状态。</p>
+
+    <div class="oq-form">
+      <div class="oq-field">
+        <label>预约编号</label>
+        <input type="text" id="orderInput" placeholder="例如：BK20260720001">
+      </div>
+      <div class="oq-field">
+        <label>手机号</label>
+        <input type="text" id="contactInput" placeholder="预约时留的手机号">
+      </div>
+      <div class="oq-error" id="oqError">没有找到匹配的预约，请确认预约编号和联系方式是否正确。</div>
+      <button class="oq-btn" id="lookupBtn">查询预约</button>
+      <div class="oq-hint-examples" id="demoHint"></div>
+    </div>
+
+    <div id="resultArea"></div>
+  </div>
+</div>
+
+<div class="vh-footer">
+  <div class="vh-footer-top">
+    <div class="vh-footer-brand">VINATH<span class="vh-tm">™</span></div>
+  </div>
+  <div class="vh-footer-bottom">
+    <span>Copyright &copy; 2026 VINATH TCM HEALTH CARE. All rights reserved.</span>
+    <span class="vh-footer-my">Malaysia</span>
+  </div>
+</div>
+
+<div class="vh-toast" id="toast"></div>
+
+<script>
+  (function(){
+    var API_BASE = window.VINATH_API_BASE || 'http://localhost:3001/api';
+    fetch(API_BASE + '/analytics/pageview', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ page: '预约查询' })
+    }).catch(function(){});
+  })();
+
+(function(){
+  var STATUS_LABELS = ['待确认','已确认','已完成'];
+
+  var API_BASE = window.VINATH_API_BASE || 'http://localhost:3001/api';
+
+  async function findBooking(bookingNo, contact){
+    var res = await fetch(API_BASE + '/bookings/lookup?bookingNo=' + encodeURIComponent(bookingNo) + '&phone=' + encodeURIComponent(contact));
+    if(!res.ok) return null;
+    var b = await res.json();
+    return { bookingNo:b.booking_no, contact:contact, status:b.status, date:(b.created_at||'').slice(0,10),
+      doctor:b.practitioner_name, apptDate:b.appt_date, slot:b.slot, area:b.area, method:'whatsapp', cancelled:b.cancelled };
+  }
+
+  var currentContact = '';
+  function cancellationKey(contact){ return 'vinath_cancellations_' + contact.trim().toLowerCase(); }
+  function getCancellationHistory(contact){
+    try {
+      var raw = localStorage.getItem(cancellationKey(contact));
+      return raw ? JSON.parse(raw) : [];
+    } catch(e) { return []; }
+  }
+  function recordCancellation(contact){
+    var history = getCancellationHistory(contact);
+    history.push(Date.now());
+    try { localStorage.setItem(cancellationKey(contact), JSON.stringify(history)); } catch(e){}
+  }
+  function checkCancellationLimit(contact){
+    var history = getCancellationHistory(contact);
+    var now = Date.now();
+    var weekAgo = now - 7*24*60*60*1000;
+    var monthAgo = now - 30*24*60*60*1000;
+    var thisWeek = history.filter(function(t){ return t > weekAgo; }).length;
+    var thisMonth = history.filter(function(t){ return t > monthAgo; }).length;
+    if(thisWeek >= 1) return {allowed:false, reason:'week'};
+    if(thisMonth >= 3) return {allowed:false, reason:'month'};
+    return {allowed:true};
+  }
+
+  // ---- 服务评价: only for completed, non-cancelled bookings — one review per booking number. ----
+  async function findReview(bookingNo){
+    try {
+      var res = await fetch(API_BASE + '/reviews/' + encodeURIComponent(bookingNo));
+      return res.ok ? await res.json() : null;
+    } catch(e){ return null; }
+  }
+  async function renderReviewSection(booking){
+    var existing = await findReview(booking.bookingNo);
+    var area = document.getElementById('reviewArea');
+    if(existing){
+      area.innerHTML = '<div class="oq-review-card"><div class="oq-review-title">感谢您的评价</div>'
+        + '<div class="oq-review-done"><div class="stars-display">'+'★'.repeat(existing.rating)+'☆'.repeat(5-existing.rating)+'</div>'
+        + (existing.comment ? '<div class="cmt">"'+existing.comment+'"</div>' : '')
+        + '</div></div>';
+      return;
+    }
+    area.innerHTML = '<div class="oq-review-card"><div class="oq-review-title">为这次服务评价</div>'
+      + '<div class="oq-review-hint">医师是否准时、专业？上门服务体验如何？您的反馈能帮助我们持续改进。</div>'
+      + '<div class="oq-star-row" id="starRow">'
+      + [1,2,3,4,5].map(function(i){ return '<span class="oq-star" data-v="'+i+'">★</span>'; }).join('')
+      + '</div>'
+      + '<textarea id="reviewComment" placeholder="想补充的话（选填）"></textarea>'
+      + '<button class="oq-review-submit" id="reviewSubmitBtn" disabled>提交评价</button></div>';
+    var rating = 0;
+    var stars = document.querySelectorAll('#starRow .oq-star');
+    stars.forEach(function(star){
+      star.addEventListener('click', function(){
+        rating = Number(this.getAttribute('data-v'));
+        stars.forEach(function(s){ s.classList.toggle('on', Number(s.getAttribute('data-v'))<=rating); });
+        document.getElementById('reviewSubmitBtn').disabled = false;
+      });
+    });
+    document.getElementById('reviewSubmitBtn').addEventListener('click', async function(){
+      if(!rating) return;
+      var btn = this;
+      btn.disabled = true;
+      try {
+        var res = await fetch(API_BASE + '/reviews', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            bookingNo: booking.bookingNo, doctor: booking.doctor, area: booking.area,
+            rating: rating, comment: document.getElementById('reviewComment').value.trim()
+          })
+        });
+        if(!res.ok){ var err = await res.json(); alert(err.error || '提交失败，请重试'); btn.disabled = false; return; }
+        renderReviewSection(booking);
+      } catch(e){
+        alert('连不上服务器，请检查网络后重试');
+        btn.disabled = false;
+      }
+    });
+  }
+
+  function renderResult(booking){
+    var html = '<div class="oq-result">'
+      + '<div class="oq-result-hd"><div class="oq-order-no">预约编号 '+booking.bookingNo+'</div><div class="oq-order-date">提交日期 '+booking.date+'</div></div>';
+
+    if(booking.cancelled){
+      html += '<div class="oq-cancelled-banner"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>该预约已取消</div>';
+    } else {
+      html += '<div class="stepper-wrap">';
+      STATUS_LABELS.forEach(function(label, i){
+        var cls = i < booking.status ? 'done' : i === booking.status ? 'current' : '';
+        html += '<div class="step '+cls+'"><div class="step-line"></div><div class="step-dot">'+(i<booking.status?'✓':(i+1))+'</div><div class="step-label">'+label+'</div></div>';
+      });
+      html += '</div>';
+    }
+
+    html += '<div class="oq-items-card'+(booking.cancelled?' cancelled':'')+'">'
+      + '<div class="oq-item"><span>预约医师</span><span>'+booking.doctor+'</span></div>'
+      + '<div class="oq-item"><span>预约时间</span><span>'+booking.apptDate+' '+booking.slot+'</span></div>'
+      + '<div class="oq-item"><span>服务区域</span><span>'+booking.area+'</span></div>'
+      + '<div class="oq-item"><span>联系方式</span><span>'+(booking.method==='call'?'电话':'WhatsApp')+'</span></div>'
+      + '</div>';
+
+    if(!booking.cancelled && booking.status < 2){
+      html += '<div id="cancelArea"><button class="oq-cancel-btn" id="cancelBtn">取消此预约</button>'
+        + '<div class="oq-cancel-note">为保障各位客户的问诊安排，同一手机号每周最多可取消1次、每月最多3次。</div></div>';
+    }
+    html += '</div>';
+    if(!booking.cancelled && booking.status === 2){
+      html += '<div id="reviewArea"></div>';
+    }
+    document.getElementById('resultArea').innerHTML = html;
+    if(!booking.cancelled && booking.status === 2){
+      renderReviewSection(booking);
+    }
+
+    var cancelBtn = document.getElementById('cancelBtn');
+    if(cancelBtn){
+      cancelBtn.addEventListener('click', function(){
+        var limit = checkCancellationLimit(currentContact);
+        var area = document.getElementById('cancelArea');
+        if(!limit.allowed){
+          var msg = limit.reason === 'week'
+            ? '您本周（近7天内）已取消过一次预约。如有紧急情况需要调整，请通过 WhatsApp 联系我们协助处理。'
+            : '您本月（近30天内）的取消次数已达到上限（3次）。如有紧急情况需要调整，请通过 WhatsApp 联系我们协助处理。';
+          area.innerHTML = '<div class="oq-cancel-blocked">'+msg+'</div>';
+          return;
+        }
+        area.innerHTML = '<div class="oq-cancel-confirm">'
+          + '<div class="oq-cancel-confirm-text">确定要取消这个预约吗？</div>'
+          + '<div class="oq-cancel-confirm-btns"><button class="oq-cancel-back" id="cancelBack">再想想</button><button class="oq-cancel-yes" id="cancelYes">确认取消</button></div>'
+          + '</div>';
+        document.getElementById('cancelBack').addEventListener('click', function(){ renderResult(booking); });
+        document.getElementById('cancelYes').addEventListener('click', async function(){
+          var yesBtn = this;
+          yesBtn.disabled = true;
+          try {
+            var res = await fetch(API_BASE + '/bookings/' + encodeURIComponent(booking.bookingNo) + '/cancel', {
+              method: 'PUT', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ phone: currentContact })
+            });
+            if(!res.ok){
+              var err = await res.json();
+              area.innerHTML = '<div class="oq-cancel-blocked">'+(err.error||'取消失败，请稍后重试')+'</div>';
+              return;
+            }
+            recordCancellation(currentContact);
+            booking.cancelled = true;
+            renderResult(booking);
+          } catch(e){
+            area.innerHTML = '<div class="oq-cancel-blocked">暂时无法连接服务器，请稍后重试。</div>';
+          }
+        });
+      });
+    }
+  }
+
+  function renderNotFound(){
+    document.getElementById('resultArea').innerHTML =
+      '<div class="not-found-box"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>'
+      + '<p>没有找到匹配的预约，请确认预约编号和联系方式。</p></div>';
+  }
+
+  var orderInput = document.getElementById('orderInput');
+  var contactInput = document.getElementById('contactInput');
+  var errorEl = document.getElementById('oqError');
+
+  document.getElementById('lookupBtn').addEventListener('click', async function(){
+    var bookingNo = orderInput.value.trim();
+    var contact = contactInput.value.trim();
+    if(!bookingNo || !contact){
+      errorEl.textContent = '请填写预约编号和联系方式。';
+      errorEl.classList.add('show');
+      document.getElementById('resultArea').innerHTML = '';
+      return;
+    }
+    var btn = this;
+    btn.disabled = true;
+    try {
+      var booking = await findBooking(bookingNo, contact);
+      if(booking){
+        errorEl.classList.remove('show');
+        currentContact = contact;
+        renderResult(booking);
+      } else {
+        errorEl.textContent = '没有找到匹配的预约，请确认预约编号和联系方式是否正确。';
+        errorEl.classList.add('show');
+        document.getElementById('resultArea').innerHTML = '';
+      }
+    } catch(e){
+      errorEl.textContent = '暂时无法连接服务器，请稍后重试。';
+      errorEl.classList.add('show');
+    }
+    btn.disabled = false;
+  });
+
+  function cartFromURL(){
+    var raw = new URLSearchParams(window.location.search).get('cart');
+    if(!raw) return [];
+    return raw.split(',').map(function(chunk){
+      var parts = chunk.split(':'); var id = Number(parts[0]);
+      return id ? {id:id, variant:(parts[1]==='t'?'trial':'full'), qty:Number(parts[2])||1} : null;
+    }).filter(Boolean);
+  }
+  function cartToParam(items){ return items.map(function(it){ return it.id+':'+(it.variant==='trial'?'t':'f')+':'+it.qty; }).join(','); }
+  function withCart(url, items){
+    var cartStr = cartToParam(items);
+    if(!cartStr) return url;
+    var hashIdx = url.indexOf('#');
+    var hash = hashIdx === -1 ? '' : url.slice(hashIdx);
+    var base = hashIdx === -1 ? url : url.slice(0, hashIdx);
+    return base + (base.indexOf('?')===-1 ? '?' : '&') + 'cart=' + encodeURIComponent(cartStr) + hash;
+  }
+  var cartItems = cartFromURL();
+  function updateCartBadge(){
+    var total = cartItems.reduce(function(s,it){ return s+it.qty; }, 0);
+    var badge = document.getElementById('cartBadge');
+    badge.textContent = total;
+    badge.style.display = total > 0 ? 'flex' : 'none';
+  }
+  updateCartBadge();
+
+  var toast = document.getElementById('toast');
+  var toastTimer = null;
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2000);
+  }
+
+  document.getElementById('brandBtn').addEventListener('click', function(){ window.location.href = withCart('VINATH_首页.html', cartItems); });
+  document.getElementById('bcHome').addEventListener('click', function(){ window.location.href = withCart('VINATH_首页.html', cartItems); });
+  document.getElementById('searchBtn').addEventListener('click', function(){ showToast('搜索 · 功能开发中'); });
+  var vhAcctMenu = document.getElementById('vhAcctMenu');
+  document.getElementById('acctBtn').addEventListener('click', function(e){
+    e.stopPropagation();
+    vhAcctMenu.classList.toggle('open');
+  });
+  document.getElementById('vhamOrder').addEventListener('click', function(){
+    window.location.href = withCart('VINATH_订单查询.html', cartItems);
+  });
+  document.getElementById('vhamBooking').addEventListener('click', function(){
+    showToast('当前就在预约查询页');
+    vhAcctMenu.classList.remove('open');
+  });
+  document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
+  vhAcctMenu.addEventListener('click', function(e){ e.stopPropagation(); });
+  document.getElementById('cartBtn').addEventListener('click', function(){
+    if(!cartItems.length){ showToast('购物车是空的'); return; }
+    window.location.href = withCart('VINATH_购物车结算.html', cartItems);
+  });
+})();
+</script>
+<style>
+.vh-chat-fab{ position:fixed; right:22px; bottom:22px; width:56px; height:56px; border-radius:50%; background:var(--forest,#26362B); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 8px 24px rgba(32,29,25,.28); z-index:9000; transition:transform .15s ease; }
+.vh-chat-fab:hover{ transform:scale(1.06); }
+.vh-chat-fab .vh-chat-badge{ position:absolute; top:-3px; right:-3px; background:#C0503A; color:#fff; font-size:10.5px; font-weight:700; min-width:18px; height:18px; border-radius:9px; display:none; align-items:center; justify-content:center; padding:0 4px; }
+.vh-chat-panel{ position:fixed; right:22px; bottom:90px; width:328px; max-width:calc(100vw - 44px); height:440px; max-height:calc(100vh - 140px); background:#fff; border-radius:18px; box-shadow:0 20px 50px rgba(32,29,25,.28); z-index:9000; display:none; flex-direction:column; overflow:hidden; font-family:'Noto Sans SC',sans-serif; }
+.vh-chat-panel.open{ display:flex; }
+.vh-chat-hd{ background:var(--forest,#26362B); color:#fff; padding:14px 16px; flex:none; }
+.vh-chat-hd-title{ font-size:14px; font-weight:700; }
+.vh-chat-hd-sub{ font-size:11.5px; opacity:.8; margin-top:2px; }
+.vh-chat-close{ position:absolute; top:14px; right:14px; cursor:pointer; opacity:.75; }
+.vh-chat-body{ flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px; background:#FAF7F1; }
+.vh-chat-msg{ max-width:78%; padding:9px 12px; border-radius:14px; font-size:13px; line-height:1.5; }
+.vh-chat-msg.customer{ align-self:flex-end; background:var(--forest,#26362B); color:#fff; border-bottom-right-radius:4px; }
+.vh-chat-msg.admin{ align-self:flex-start; background:#fff; color:#222; border:1px solid #E6E1D6; border-bottom-left-radius:4px; }
+.vh-chat-empty{ margin:auto; text-align:center; color:#8a8478; font-size:12.5px; padding:0 20px; line-height:1.7; }
+.vh-chat-input-row{ flex:none; display:flex; gap:8px; padding:11px; border-top:1px solid #E6E1D6; background:#fff; }
+.vh-chat-input-row input{ flex:1; border:1.5px solid #E6E1D6; border-radius:100px; padding:9px 14px; font-size:13px; font-family:inherit; outline:none; }
+.vh-chat-input-row input:focus{ border-color:var(--forest,#26362B); }
+.vh-chat-input-row button{ flex:none; width:36px; height:36px; border-radius:50%; background:var(--forest,#26362B); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+</style>
+<div class="vh-chat-fab" id="vhChatFab">
+  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+  <span class="vh-chat-badge" id="vhChatBadge"></span>
+</div>
+<div class="vh-chat-panel" id="vhChatPanel">
+  <div class="vh-chat-hd">
+    <div class="vh-chat-hd-title" id="vhChatTitle">在线咨询</div>
+    <div class="vh-chat-hd-sub" id="vhChatSub">正在与 龚诗宏医师 对话</div>
+    <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
+  </div>
+  <div class="vh-chat-body" id="vhChatBody"></div>
+  <div class="vh-chat-input-row">
+    <input type="text" id="vhChatInput" placeholder="输入消息…" maxlength="300">
+    <button type="button" id="vhChatSend"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+  </div>
+</div>
+<script>
+(function(){
+  var API_BASE = window.VINATH_API_BASE || 'http://localhost:3001/api';
+  // 聊天消息是任何匿名访客都能提交的内容，管理员打开对话时会看到——不转义就直接拼进innerHTML
+  // 的话，访客可以在消息里塞HTML/脚本，在管理员已登录的浏览器里执行（存储型XSS）。
+  function escapeHtml(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  var CUSTOMER_ID_KEY = 'vinath_customer_chat_id';
+  var pollTimer = null;
+  var currentThread = null;
+  var currentMessages = [];
+
+  function getCustomerId(){
+    try {
+      var id = localStorage.getItem(CUSTOMER_ID_KEY);
+      if(!id){ id = 'cust_' + Date.now() + '_' + Math.random().toString(36).slice(2,8); localStorage.setItem(CUSTOMER_ID_KEY, id); }
+      return id;
+    } catch(e){ return 'cust_temp'; }
+  }
+  // 客户端第一次打开聊天面板时调用——后端会自动处理"这个人是不是第一次来"、要不要插入欢迎语，
+  // 前端不用再自己判断这些
+  async function ensureMyThread(){
+    try {
+      var res = await fetch(API_BASE + '/chat/ensure-thread', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerId: getCustomerId() })
+      });
+      if(!res.ok) return null;
+      var data = await res.json();
+      currentThread = data.thread;
+      currentMessages = data.messages;
+      return currentThread;
+    } catch(e){ console.error('聊天初始化失败:', e); return null; }
+  }
+  async function refreshMyThread(){
+    try {
+      var res = await fetch(API_BASE + '/chat/threads/' + getCustomerId());
+      if(!res.ok) return null;
+      var data = await res.json();
+      currentThread = data.thread;
+      currentMessages = data.messages;
+      return currentThread;
+    } catch(e){ return null; }
+  }
+
+  function renderMessages(){
+    var body = document.getElementById('vhChatBody');
+    var sub = document.getElementById('vhChatSub');
+    if(!currentThread || !currentMessages.length){
+      body.innerHTML = '<div class="vh-chat-empty">您好，有任何问题都可以在这里留言，我们会尽快回复您。</div>';
+    } else {
+      body.innerHTML = currentMessages.map(function(m){
+        return '<div class="vh-chat-msg '+m.from+'">'+escapeHtml(m.text)+'</div>';
+      }).join('');
+      body.scrollTop = body.scrollHeight;
+    }
+    if(currentThread) sub.textContent = '正在与 ' + currentThread.assignedToName + ' 对话';
+    updateBadge();
+  }
+  function updateBadge(){
+    var badge = document.getElementById('vhChatBadge');
+    var panelOpen = document.getElementById('vhChatPanel').classList.contains('open');
+    if(currentThread && currentThread.unreadForCustomer && !panelOpen){
+      badge.style.display = 'flex'; badge.textContent = '1';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  document.getElementById('vhChatFab').addEventListener('click', async function(){
+    var panel = document.getElementById('vhChatPanel');
+    panel.classList.toggle('open');
+    if(panel.classList.contains('open')){
+      await ensureMyThread();
+      renderMessages();
+    }
+    updateBadge();
+  });
+  document.getElementById('vhChatClose').addEventListener('click', function(){
+    document.getElementById('vhChatPanel').classList.remove('open');
+  });
+  async function sendMsg(){
+    var input = document.getElementById('vhChatInput');
+    var text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    input.disabled = true;
+    try {
+      await fetch(API_BASE + '/chat/threads/' + getCustomerId() + '/messages', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text })
+      });
+      await refreshMyThread();
+      renderMessages();
+    } catch(e){ console.error('发送失败:', e); }
+    input.disabled = false;
+    input.focus();
+  }
+  document.getElementById('vhChatSend').addEventListener('click', sendMsg);
+  document.getElementById('vhChatInput').addEventListener('keydown', function(e){ if(e.key==='Enter') sendMsg(); });
+
+  // poll for admin replies / handoff changes while the widget is on screen
+  pollTimer = setInterval(async function(){
+    if(!currentThread) return; // 还没打开过聊天面板，没必要轮询
+    await refreshMyThread();
+    renderMessages();
+  }, 4000);
+})();
+</script>
+
+</body>
+</html>

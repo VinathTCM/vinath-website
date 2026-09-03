@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VINATH · 电子处方（概念原型）</title>
+<style>
+:root{
+  --clay:#BC6E4E; --clay-soft:rgba(188,110,78,.12);
+  --tan:#C9A876; --line:#E6E1D6; --ink:#332A21; --ink-soft:#7A6F60;
+  --white:#FFFFFF; --shadow:0 3px 14px rgba(51,42,33,.07);
+  --amber:#B8863C; --amber-soft:rgba(184,134,60,.13);
+  --sage:#7A8B6F; --sage-soft:rgba(122,139,111,.13);
+  --font-serif:"Noto Serif SC",serif;
+}
+*{box-sizing:border-box;}
+body{ margin:0; font-family:"Noto Sans SC",sans-serif; background:#FBF8F3; color:var(--ink); }
+.wrap{ max-width:960px; margin:0 auto; padding:26px 20px 80px; }
+h1{ font-family:var(--font-serif); font-size:22px; margin:0 0 4px; }
+.sub{ color:var(--ink-soft); font-size:13.5px; margin-bottom:20px; }
+.proto-banner{ background:var(--amber-soft); border:1px solid rgba(184,134,60,.3); border-radius:12px; padding:14px 16px; font-size:13px; line-height:1.65; color:#6B4E1E; margin-bottom:22px; }
+.card{ background:var(--white); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); padding:20px 22px; margin-bottom:16px; }
+.section-title{ font-weight:700; font-size:15px; margin-bottom:12px; }
+.field{ margin-bottom:16px; }
+.field label{ display:block; font-size:12.5px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.03em; margin-bottom:7px; }
+.field input[type=text], .field input[type=number], .field textarea, .field select{ width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:10px; font-family:inherit; font-size:13.5px; }
+.two-col{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media (max-width:640px){ .two-col{ grid-template-columns:1fr; } }
+.btn-primary{ background:var(--clay); color:#fff; border:none; border-radius:10px; padding:11px 22px; font-size:14px; font-weight:700; cursor:pointer; }
+.btn-secondary{ background:none; border:1.5px solid var(--line); color:var(--ink); border-radius:10px; padding:10px 20px; font-size:13.5px; cursor:pointer; }
+.btn-small{ background:var(--clay-soft); color:var(--clay); border:none; border-radius:8px; padding:7px 14px; font-size:12.5px; font-weight:700; cursor:pointer; }
+.top-actions{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:10px; }
+.rx-row{ border:1.5px solid var(--line); border-radius:12px; padding:14px 16px; margin-bottom:10px; }
+.rx-row-hd{ display:flex; justify-content:space-between; align-items:center; }
+.rx-row .rxname{ font-weight:700; font-size:14.5px; }
+.rx-row .rxmeta{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
+.status-badge{ font-size:11.5px; font-weight:700; padding:4px 11px; border-radius:100px; }
+.status-awaiting_pharmacy{ background:var(--amber-soft); color:var(--amber); }
+.status-brewing{ background:var(--clay-soft); color:var(--clay); }
+.status-shipping{ background:rgba(122,139,111,.2); color:var(--sage); }
+.status-delivered{ background:#E4EFE0; color:#4C6B3F; }
+.herb-item-row{ display:grid; grid-template-columns:1.6fr .8fr 1.4fr auto; gap:8px; margin-bottom:8px; align-items:center; }
+@media (max-width:640px){ .herb-item-row{ grid-template-columns:1fr; } }
+.herb-item-row input{ padding:8px 10px; border:1.5px solid var(--line); border-radius:8px; font-family:inherit; font-size:13px; }
+.remove-herb{ background:none; border:none; color:var(--ink-soft); cursor:pointer; font-size:17px; }
+.empty-state{ text-align:center; padding:40px 20px; color:var(--ink-soft); font-size:13.5px; }
+.warn{ color:#B0503A; font-size:12.5px; margin-top:6px; display:none; }
+.warn.show{ display:block; }
+.login-gate{ max-width:480px; margin:80px auto; text-align:center; padding:0 20px; }
+.admin-toast{ position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff; padding:12px 22px; border-radius:100px; font-size:13.5px; box-shadow:0 10px 28px rgba(0,0,0,.22); z-index:200; opacity:0; pointer-events:none; transition:.25s; }
+.admin-toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+.status-flow{ display:flex; align-items:center; gap:6px; margin-top:10px; flex-wrap:wrap; }
+.status-flow .sf-step{ font-size:11.5px; padding:5px 10px; border-radius:100px; background:var(--line); color:var(--ink-soft); }
+.status-flow .sf-step.done{ background:var(--sage-soft); color:var(--sage); }
+.status-flow .sf-arrow{ color:var(--ink-soft); font-size:11px; }
+.logistics-row{ margin-top:10px; padding-top:10px; border-top:1px solid var(--line); display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.logistics-row select, .logistics-row input{ padding:7px 10px; border:1.5px solid var(--line); border-radius:8px; font-family:inherit; font-size:12.5px; }
+.vinath-admin-nav{ background:#332A21; }
+.vinath-admin-nav-inner{ max-width:1200px; margin:0 auto; display:flex; gap:2px; padding:0 20px; overflow-x:auto; }
+.van-item{ color:rgba(255,255,255,.62); font-size:13px; padding:13px 14px; text-decoration:none; white-space:nowrap; border-bottom:2.5px solid transparent; display:inline-block; }
+.van-item:hover{ color:#fff; }
+.van-item.current{ color:#fff; border-bottom-color:#BC6E4E; font-weight:700; }
+</style>
+</head>
+<body>
+
+<div class="vinath-admin-nav" id="vinathAdminNav"></div>
+<div id="app"></div>
+<div class="admin-toast" id="adminToast"></div>
+
+<script>
+if(window.history.scrollRestoration) window.history.scrollRestoration = "manual";
+window.scrollTo(0,0);
+
+(function(){
+  async function renderVinathAdminNav(navAdmin){
+    if(!navAdmin) return;
+    var ALL_ADMIN_TOOLS = [
+      {label:'订单预约管理', file:'VINATH_订单预约管理_概念示意.html', roles:['senior','practitioner','fulfillment','support']},
+      {label:'商品管理', file:'VINATH_商品管理_概念示意.html', roles:['senior']},
+      {label:'内容管理', file:'VINATH_内容管理_概念示意.html', roles:['senior']},
+      {label:'电子病历', file:'VINATH_电子病历_概念示意.html', roles:['senior','practitioner'], gated:'medicalRecords'},
+      {label:'电子处方', file:'VINATH_电子处方_概念示意.html', roles:['senior','practitioner'], gated:'prescriptions'},
+      {label:'电子收据', file:'VINATH_电子收据_概念示意.html', roles:['senior','practitioner'], gated:'receipts'},
+      {label:'智能排班', file:'VINATH_智能排班_概念示意.html', roles:['senior','practitioner']}
+    ];
+    var myRole = navAdmin.type==='senior' ? 'senior' : (navAdmin.adminType||'practitioner');
+    var visible = ALL_ADMIN_TOOLS.filter(function(t){ return t.roles.indexOf(myRole)!==-1; });
+    // I类执业医师看到的导航栏，要跟实际的功能开关状态一致——开关没打开的工具，不该在导航栏
+    // 里出现让人点了才发现进不去。大管理员不受这个开关影响，不用过滤。
+    if(myRole==='practitioner'){
+      try {
+        var apiBase = window.VINATH_API_BASE || 'http://localhost:3001/api';
+        var res = await fetch(apiBase + '/site-settings/module_access');
+        var access = res.ok ? (await res.json() || {}) : {};
+        visible = visible.filter(function(t){ return !t.gated || access[t.gated]===true; });
+      } catch(e){ console.error('拉取功能开关状态失败:', e); }
+    }
+    var currentFile = decodeURIComponent(window.location.pathname.split('/').pop());
+    var navEl = document.getElementById('vinathAdminNav');
+    if(!navEl) return;
+    navEl.innerHTML = '<div class="vinath-admin-nav-inner">' + visible.map(function(t){
+      return (currentFile === t.file) ? '<span class="van-item current">'+t.label+'</span>' : '<a class="van-item" href="'+t.file+'">'+t.label+'</a>';
+    }).join('') + '</div>';
+  }
+
+  var toastTimer = null;
+  function showToast(msg){
+    var el = document.getElementById('adminToast');
+    el.textContent = msg;
+    el.classList.add('show');
+    if(toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2600);
+  }
+
+  function getCurrentAdmin(){
+    try { var raw = localStorage.getItem('vinath_current_admin'); return raw ? JSON.parse(raw) : null; } catch(e){ return null; }
+  }
+  var cur = getCurrentAdmin();
+  if(!cur){
+    document.getElementById('app').innerHTML =
+      '<div class="wrap"><div class="login-gate"><h1>请先登录</h1>'
+      + '<div class="sub" style="margin-top:10px;">请先在 <a href="VINATH_订单预约管理_概念示意.html" style="color:var(--clay);font-weight:700;">订单预约管理</a> 页面登录，登录后回到这个页面即可看到内容——同一个浏览器里，两边共享登录状态。开具处方需要执业医师身份（大管理员 / I类），查看和更新药房订单状态目前任何登录身份都可以操作——等以后有专门的药房/配药人员账号，可以把这部分权限单独收窄。</div></div></div>';
+    return;
+  }
+  renderVinathAdminNav(cur);
+  function escapeHtml(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  var isPractitioner = cur.type==='senior' || (cur.type==='junior' && (cur.adminType||'practitioner')==='practitioner');
+  var API_BASE = window.VINATH_API_BASE || 'http://localhost:3001/api';
+  var authToken = null;
+  try { authToken = sessionStorage.getItem('vinath_auth_token'); } catch(e){}
+
+  var FORMULA_TYPE_LABELS = {granule:'颗粒剂', decoction:'饮片', custom:'配方'};
+  var STATUS_LABELS = {awaiting_pharmacy:'待药房接单', brewing:'煎药中', shipping:'配送中', delivered:'已送达'};
+  var STATUS_ORDER = ['awaiting_pharmacy','brewing','shipping','delivered'];
+  var LOGISTICS_LABELS = {grab_express:'GrabExpress', lalamove:'Lalamove', post:'邮寄（Pos Laju等）', self:'医师本人配送'};
+
+  async function fetchMedicalRecordsForPatient(phone){
+    if(!authToken) return [];
+    try {
+      var res = await fetch(API_BASE + '/admin/medical-records?patientPhone=' + encodeURIComponent(phone), { headers: { 'Authorization': 'Bearer ' + authToken } });
+      if(!res.ok) return [];
+      var records = await res.json();
+      return records.map(function(r){ return Object.assign({ id:r.id, visitDate:r.visit_date }, r.data); });
+    } catch(e){ return []; }
+  }
+  async function fetchBookingsForPatient(phone){
+    if(!authToken) return [];
+    try {
+      var res = await fetch(API_BASE + '/admin/bookings', { headers: { 'Authorization': 'Bearer ' + authToken } });
+      if(!res.ok) return [];
+      var all = await res.json();
+      return all.filter(function(b){ return b.customer_phone===phone && !b.cancelled; })
+        .map(function(b){ return { id:b.id, apptDate:b.appt_date, slot:b.slot, doctor:b.practitioner_name }; });
+    } catch(e){ return []; }
+  }
+
+  var view = 'list';
+  var editingRx = null;
+
+  // 从电子病历等其他工具跳转过来时，带着患者信息——直接进入开处方表单并预填，不用重新输入
+  var urlParams = new URLSearchParams(window.location.search);
+  if(urlParams.get('patientPhone') && isPractitioner){
+    editingRx = {
+      patientName: urlParams.get('patientName') || '',
+      patientPhone: (urlParams.get('patientPhone') || '').replace(/[^0-9]/g,'')
+    };
+    view = 'form';
+  }
+
+  function render(){
+    if(view==='list') renderList();
+    else if(view==='form') renderForm();
+  }
+
+  async function renderList(){
+    var list = [];
+    if(authToken){
+      try {
+        var res = await fetch(API_BASE + '/admin/prescriptions', { headers: { 'Authorization': 'Bearer ' + authToken } });
+        if(res.ok){
+          var rows = await res.json();
+          list = rows.map(function(p){ return { id:p.id, patientName:p.patient_name, patientPhone:p.patient_phone,
+            medicalRecordId:p.medical_record_id, bookingId:p.booking_id, practitionerName:p.practitioner_name,
+            formulaType:p.formula_type, items:p.items, usageInstructions:p.usage_instructions, status:p.status,
+            logisticsProvider:p.logistics_provider, trackingId:p.tracking_id, createdAt:p.created_at }; });
+        }
+      } catch(e){ console.error('拉取处方列表失败:', e); }
+    }
+    list.sort(function(a,b){ return b.createdAt.localeCompare(a.createdAt); });
+    var html = '<div class="wrap">'
+      + '<div class="top-actions"><div><h1>电子处方</h1><div class="sub">开具处方、跟踪药房制备与配送状态。</div></div>'
+      + (isPractitioner ? '<button class="btn-primary" id="newRxBtn">+ 开具新处方</button>' : '')
+      + '</div>'
+      + '<div class="proto-banner"><b>数据已经存进真实后端数据库。</b>药材名称与剂量完全由医师自己填写决定，软件只负责准确记录和流转，不提供任何剂量建议——这个边界是刻意的，避免出现执业范围之外的用药指导。物流状态目前是人工手动推进的，GrabExpress/Lalamove/邮寄这些只是预留的选项位，还没有对接真实的第三方物流API，需要真实的商户账号才能往下接。</div>'
+      + '<div class="card">'
+      + (list.length ? list.map(renderRxRow).join('') : '<div class="empty-state">还没有任何处方记录</div>')
+      + '</div></div>';
+    document.getElementById('app').innerHTML = html;
+
+    if(isPractitioner){
+      document.getElementById('newRxBtn').addEventListener('click', function(){
+        editingRx = {};
+        view = 'form';
+        render();
+      });
+    }
+    wireRxRowEvents();
+  }
+
+  function renderRxRow(rx){
+    var stepIdx = STATUS_ORDER.indexOf(rx.status);
+    var flowHtml = STATUS_ORDER.map(function(s, i){
+      return '<span class="sf-step'+(i<=stepIdx?' done':'')+'">'+STATUS_LABELS[s]+'</span>'
+        + (i<STATUS_ORDER.length-1 ? '<span class="sf-arrow">→</span>' : '');
+    }).join('');
+    var herbsText = rx.items.map(function(it){ return escapeHtml(it.herbName)+' '+it.dosageGrams+'g'; }).join('、');
+    var nextStatus = STATUS_ORDER[stepIdx+1];
+
+    return '<div class="rx-row" data-id="'+rx.id+'">'
+      + '<div class="rx-row-hd"><div><span class="rxname">'+escapeHtml(rx.patientName)+'</span> <span class="status-badge status-'+rx.status+'">'+STATUS_LABELS[rx.status]+'</span></div>'
+      + '<div class="rxmeta">'+rx.createdAt.slice(0,10)+'</div></div>'
+      + '<div class="rxmeta">'+FORMULA_TYPE_LABELS[rx.formulaType]+' · '+herbsText+'</div>'
+      + '<div class="rxmeta">开方医师：'+escapeHtml(rx.practitionerName)+' · 服法：'+escapeHtml(rx.usageInstructions)+'</div>'
+      + (rx.logisticsProvider ? '<div class="rxmeta">配送方式：'+escapeHtml(rx.logisticsProvider)+(rx.trackingId?' · 运单号：'+escapeHtml(rx.trackingId):'')+'</div>' : '')
+      + '<div class="status-flow">'+flowHtml+'</div>'
+      + (nextStatus ? '<div class="logistics-row">'
+          + (nextStatus==='shipping' ? (function(){
+              var presetMatch = rx.logisticsProvider && LOGISTICS_LABELS[rx.logisticsProvider];
+              var isCustom = rx.logisticsProvider && !presetMatch;
+              return '<select class="logistics-provider-select" data-id="'+rx.id+'"><option value="">选择配送方式</option>'
+                + Object.keys(LOGISTICS_LABELS).map(function(k){ return '<option value="'+k+'"'+(rx.logisticsProvider===k?' selected':'')+'>'+LOGISTICS_LABELS[k]+'</option>'; }).join('')
+                + '<option value="__other__"'+(isCustom?' selected':'')+'>其他（手动填写）</option>'
+                + '</select>'
+                + '<input type="text" class="logistics-other-input" data-id="'+rx.id+'" placeholder="物流商名称" value="'+escapeHtml(isCustom?rx.logisticsProvider:'')+'" style="'+(isCustom?'':'display:none;')+'">'
+                + '<input type="text" class="tracking-input" data-id="'+rx.id+'" placeholder="运单号（选填）" value="'+escapeHtml(rx.trackingId||'')+'">';
+            })() : '')
+          + '<button class="btn-small advance-status-btn" data-id="'+rx.id+'" data-next="'+nextStatus+'">推进到"'+STATUS_LABELS[nextStatus]+'"</button>'
+        + '</div>' : '')
+      + '</div>';
+  }
+
+  function wireRxRowEvents(){
+    document.querySelectorAll('.logistics-provider-select').forEach(function(sel){
+      sel.addEventListener('change', function(){
+        var otherInput = document.querySelector('.logistics-other-input[data-id="'+this.getAttribute('data-id')+'"]');
+        if(otherInput) otherInput.style.display = this.value==='__other__' ? '' : 'none';
+      });
+    });
+    document.querySelectorAll('.advance-status-btn').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        var id = this.getAttribute('data-id');
+        var next = this.getAttribute('data-next');
+        var payload = { status: next };
+        if(next==='shipping'){
+          var provSel = document.querySelector('.logistics-provider-select[data-id="'+id+'"]');
+          var selVal = provSel ? provSel.value : '';
+          if(selVal==='__other__'){
+            var otherInp = document.querySelector('.logistics-other-input[data-id="'+id+'"]');
+            selVal = otherInp ? otherInp.value.trim() : '';
+          }
+          payload.logisticsProvider = selVal;
+          var trackInp = document.querySelector('.tracking-input[data-id="'+id+'"]');
+          payload.trackingId = trackInp ? trackInp.value.trim() : '';
+        }
+        btn.disabled = true;
+        try {
+          await fetch(API_BASE + '/admin/prescriptions/' + id + '/status', {
+            method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+            body: JSON.stringify(payload)
+          });
+          showToast('状态已更新为「'+STATUS_LABELS[next]+'」');
+          render();
+        } catch(e){ showToast('更新失败，请检查网络后重试'); btn.disabled = false; }
+      });
+    });
+  }
+
+  function renderForm(){
+    var rx = editingRx;
+    rx.items = rx.items || [{herbName:'', dosageGrams:'', notes:''}];
+
+    var html = '<div class="wrap">'
+      + '<div class="top-actions"><h1>开具新处方</h1><button class="btn-secondary" id="cancelRxFormBtn">← 取消</button></div>'
+
+      + '<div class="card"><div class="section-title">患者信息</div>'
+      + '<div class="two-col">'
+      + '<div class="field"><label>患者姓名</label><input type="text" id="rxPatientNameInput" value="'+escapeHtml(rx.patientName||'')+'"></div>'
+      + '<div class="field"><label>患者手机号（不带0）</label><input type="text" id="rxPatientPhoneInput" value="'+escapeHtml(rx.patientPhone||'')+'"></div>'
+      + '</div>'
+      + '<div class="field"><label>关联病历（可选）</label><select id="rxRecordSelect"><option value="">不关联病历</option></select></div>'
+      + '<div class="field"><label>关联预约（可选——关联后，处方会自动出现在这条预约的"治疗/商品"明细里，方便后续开收据）</label><select id="rxBookingSelect"><option value="">不关联预约</option></select></div>'
+      + '</div>'
+
+      + '<div class="card"><div class="section-title">配方类型</div>'
+      + '<select id="rxFormulaTypeInput"><option value="granule">颗粒剂</option><option value="decoction">饮片</option><option value="custom">配方</option></select>'
+      + '</div>'
+
+      + '<div class="card"><div class="section-title">药材明细</div>'
+      + '<div id="herbItemsList"></div>'
+      + '<button type="button" class="btn-secondary" id="addHerbBtn" style="margin-top:6px;">+ 添加一味药</button>'
+      + '<div style="font-size:12px;color:var(--ink-soft);margin-top:10px;">药材名称、剂量、煎法备注（如"先煎""后下"）完全由您填写决定，这里不提供任何预设或建议剂量。</div>'
+      + '</div>'
+
+      + '<div class="card"><div class="section-title">服法</div>'
+      + '<textarea id="rxUsageInput" placeholder="例如：每日一剂，分三次饭后温服">'+escapeHtml(rx.usageInstructions||'')+'</textarea>'
+      + '<div class="warn" id="rxWarn"></div>'
+      + '</div>'
+
+      + '<button class="btn-primary" id="saveRxBtn" style="width:100%;padding:14px;font-size:15px;">提交处方</button>'
+      + '</div>';
+    document.getElementById('app').innerHTML = html;
+
+    document.getElementById('rxFormulaTypeInput').value = rx.formulaType || 'granule';
+    document.getElementById('cancelRxFormBtn').addEventListener('click', function(){ view='list'; render(); });
+
+    async function refreshRecordOptions(){
+      var phone = document.getElementById('rxPatientPhoneInput').value.trim().replace(/[^0-9]/g,'');
+      var records = await fetchMedicalRecordsForPatient(phone);
+      document.getElementById('rxRecordSelect').innerHTML = '<option value="">不关联病历</option>' + records.map(function(r){
+        return '<option value="'+r.id+'">'+r.visitDate+' · '+(r.tcmDiagnosis||'未填写诊断')+'</option>';
+      }).join('');
+    }
+    document.getElementById('rxPatientPhoneInput').addEventListener('blur', refreshRecordOptions);
+    refreshRecordOptions();
+
+    async function refreshBookingOptions(){
+      var phone = document.getElementById('rxPatientPhoneInput').value.trim().replace(/[^0-9]/g,'');
+      var bookings = await fetchBookingsForPatient(phone);
+      document.getElementById('rxBookingSelect').innerHTML = '<option value="">不关联预约</option>' + bookings.map(function(b){
+        return '<option value="'+b.id+'">'+b.apptDate+' '+b.slot+' · '+b.doctor+'</option>';
+      }).join('');
+    }
+    document.getElementById('rxPatientPhoneInput').addEventListener('blur', refreshBookingOptions);
+    refreshBookingOptions();
+
+    function renderHerbItems(){
+      document.getElementById('herbItemsList').innerHTML = rx.items.map(function(it, i){
+        return '<div class="herb-item-row">'
+          + '<input type="text" placeholder="药材名称" data-herb-name-idx="'+i+'" value="'+escapeHtml(it.herbName)+'">'
+          + '<input type="text" placeholder="剂量(g)" data-herb-dose-idx="'+i+'" value="'+it.dosageGrams+'">'
+          + '<input type="text" placeholder="煎法备注（选填）" data-herb-notes-idx="'+i+'" value="'+it.notes+'">'
+          + '<button type="button" class="remove-herb" data-rm-herb-idx="'+i+'">×</button>'
+          + '</div>';
+      }).join('');
+      document.querySelectorAll('[data-herb-name-idx]').forEach(function(inp){
+        inp.addEventListener('input', function(){ rx.items[Number(this.getAttribute('data-herb-name-idx'))].herbName = this.value; });
+      });
+      document.querySelectorAll('[data-herb-dose-idx]').forEach(function(inp){
+        inp.addEventListener('input', function(){ rx.items[Number(this.getAttribute('data-herb-dose-idx'))].dosageGrams = this.value; });
+      });
+      document.querySelectorAll('[data-herb-notes-idx]').forEach(function(inp){
+        inp.addEventListener('input', function(){ rx.items[Number(this.getAttribute('data-herb-notes-idx'))].notes = this.value; });
+      });
+      document.querySelectorAll('[data-rm-herb-idx]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          if(rx.items.length<=1) return;
+          rx.items.splice(Number(this.getAttribute('data-rm-herb-idx')), 1);
+          renderHerbItems();
+        });
+      });
+    }
+    renderHerbItems();
+    document.getElementById('addHerbBtn').addEventListener('click', function(){
+      rx.items.push({herbName:'', dosageGrams:'', notes:''});
+      renderHerbItems();
+    });
+
+    document.getElementById('saveRxBtn').addEventListener('click', async function(){
+      var patientName = document.getElementById('rxPatientNameInput').value.trim();
+      var patientPhone = document.getElementById('rxPatientPhoneInput').value.trim().replace(/[^0-9]/g,'');
+      var usage = document.getElementById('rxUsageInput').value.trim();
+      var validItems = rx.items.filter(function(it){ return it.herbName.trim() && it.dosageGrams; });
+      var warnEl = document.getElementById('rxWarn');
+      if(!patientName || !patientPhone){ warnEl.textContent='请填写患者姓名和手机号'; warnEl.classList.add('show'); return; }
+      if(!validItems.length){ warnEl.textContent='请至少填写一味药材及剂量'; warnEl.classList.add('show'); return; }
+      if(!usage){ warnEl.textContent='请填写服法'; warnEl.classList.add('show'); return; }
+      warnEl.classList.remove('show');
+
+      var payload = {
+        patientName: patientName, patientPhone: patientPhone,
+        medicalRecordId: document.getElementById('rxRecordSelect').value || null,
+        bookingId: document.getElementById('rxBookingSelect').value || null,
+        formulaType: document.getElementById('rxFormulaTypeInput').value,
+        items: validItems,
+        usageInstructions: usage
+      };
+      var btn = this;
+      btn.disabled = true;
+      try {
+        var res = await fetch(API_BASE + '/admin/prescriptions', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+          body: JSON.stringify(payload)
+        });
+        if(!res.ok){
+          var err = await res.json();
+          warnEl.textContent = err.error || '提交失败，请重试';
+          warnEl.classList.add('show');
+          btn.disabled = false;
+          return;
+        }
+        showToast(payload.bookingId ? '处方已提交，并已加入对应预约的治疗/商品明细' : '处方已提交，等待药房接单');
+        view = 'list';
+        render();
+      } catch(e){
+        warnEl.textContent = '连不上服务器，请检查网络后重试';
+        warnEl.classList.add('show');
+        btn.disabled = false;
+      }
+    });
+  }
+
+  // 用列表接口本身做一次探测——大管理员永远通过；I类医师则要看大管理员有没有为这个工具打开
+  // 开关。被拒绝的话直接换成清晰的提示页面，不显示成"还没有任何处方记录"这种容易让人误会的
+  // 空状态。只在页面首次加载时查一次，不在每次内部刷新界面(render())时重复查。
+  (async function(){
+    try {
+      var res = await fetch(API_BASE + '/admin/prescriptions', { headers: { 'Authorization': 'Bearer ' + authToken } });
+      if(res.status === 403){
+        document.getElementById('app').innerHTML =
+          '<div class="wrap"><div class="login-gate"><h1>这个功能还没有对你开放</h1>'
+          + '<div class="sub" style="margin-top:10px;">电子处方目前只开放给大管理员使用，I类执业医师是否能用由大管理员按需开关——如果需要用到这个工具，请联系大管理员开启。</div></div></div>';
+        return;
+      }
+    } catch(e){}
+    render();
+  })();
+})();
+</script>
+</body>
+</html>

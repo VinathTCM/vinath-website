@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VINATH · 电子病历（概念原型）</title>
+<style>
+:root{
+  --clay:#BC6E4E; --clay-soft:rgba(188,110,78,.12);
+  --tan:#C9A876; --line:#E6E1D6; --ink:#332A21; --ink-soft:#7A6F60;
+  --white:#FFFFFF; --shadow:0 3px 14px rgba(51,42,33,.07);
+  --amber:#B8863C; --amber-soft:rgba(184,134,60,.13);
+  --font-serif:"Noto Serif SC",serif;
+}
+*{box-sizing:border-box;}
+body{ margin:0; font-family:"Noto Sans SC",sans-serif; background:#FBF8F3; color:var(--ink); }
+.wrap{ max-width:1080px; margin:0 auto; padding:26px 20px 80px; }
+h1{ font-family:var(--font-serif); font-size:22px; margin:0 0 4px; }
+.sub{ color:var(--ink-soft); font-size:13.5px; margin-bottom:20px; }
+.proto-banner{ background:var(--amber-soft); border:1px solid rgba(184,134,60,.3); border-radius:12px; padding:14px 16px; font-size:13px; line-height:1.65; color:#6B4E1E; margin-bottom:22px; }
+.card{ background:var(--white); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); padding:20px 22px; margin-bottom:16px; }
+.section-title{ font-weight:700; font-size:15px; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.section-title .zh-tag{ background:var(--clay); color:#fff; font-size:11px; padding:2px 8px; border-radius:100px; font-weight:700; }
+.field{ margin-bottom:16px; }
+.field label{ display:block; font-size:12.5px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.03em; margin-bottom:7px; }
+.field input[type=text], .field textarea, .field select{ width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:10px; font-family:inherit; font-size:13.5px; }
+.field textarea{ min-height:70px; resize:vertical; }
+.chip-row{ display:flex; flex-wrap:wrap; gap:8px; }
+.chip{ padding:7px 14px; border:1.5px solid var(--line); border-radius:100px; font-size:13px; cursor:pointer; transition:.15s; background:#fff; }
+.chip.on{ border-color:var(--clay); background:var(--clay-soft); color:var(--clay); font-weight:700; }
+.custom-input{ width:100%; margin-top:9px; padding:8px 12px; border:1.5px dashed var(--line); border-radius:9px; font-family:inherit; font-size:12.5px; color:var(--ink); background:#FBF8F3; }
+.custom-input::placeholder{ color:var(--ink-soft); }
+.custom-input:focus{ border-color:var(--clay); background:#fff; outline:none; }
+.two-col{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media (max-width:640px){ .two-col{ grid-template-columns:1fr; } }
+.btn-primary{ background:var(--clay); color:#fff; border:none; border-radius:10px; padding:11px 22px; font-size:14px; font-weight:700; cursor:pointer; }
+.btn-primary:hover{ opacity:.9; }
+.btn-secondary{ background:none; border:1.5px solid var(--line); color:var(--ink); border-radius:10px; padding:10px 20px; font-size:13.5px; cursor:pointer; }
+.top-actions{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:10px; }
+.patient-search{ display:flex; gap:8px; }
+.patient-search input{ padding:10px 14px; border:1.5px solid var(--line); border-radius:10px; font-size:13.5px; width:220px; }
+.patient-row{ display:flex; align-items:center; justify-content:space-between; padding:13px 16px; border:1.5px solid var(--line); border-radius:12px; margin-bottom:8px; cursor:pointer; transition:.15s; }
+.patient-row:hover{ border-color:var(--clay); background:var(--clay-soft); }
+.patient-row .pname{ font-weight:700; font-size:14.5px; }
+.patient-row .pmeta{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
+.empty-state{ text-align:center; padding:40px 20px; color:var(--ink-soft); font-size:13.5px; }
+.body-diagram-wrap{ display:flex; gap:20px; flex-wrap:wrap; }
+.body-svg-box{ flex:none; text-align:center; }
+.body-view-toggle{ display:flex; gap:6px; justify-content:center; margin-bottom:10px; }
+.body-view-toggle .chip{ padding:5px 16px; }
+.acu-point{ cursor:pointer; }
+.acu-point circle{ fill:var(--tan); stroke:var(--white); stroke-width:1.5; transition:.15s; }
+.acu-point:hover circle{ fill:var(--clay); r:6; }
+.acu-point.selected circle{ fill:var(--clay); stroke:var(--amber); stroke-width:2; }
+.acu-point-label{ font-size:8px; fill:var(--ink-soft); pointer-events:none; }
+.selected-points-list{ flex:1; min-width:260px; }
+.point-tag{ background:var(--clay-soft); border-radius:10px; padding:10px 12px; margin-bottom:8px; }
+.point-tag-hd{ display:flex; align-items:center; justify-content:space-between; }
+.point-tag .pname{ font-weight:700; font-size:13.5px; color:var(--clay); }
+.point-tag select{ font-size:12.5px; padding:5px 8px; border-radius:7px; border:1.5px solid var(--line); margin-left:8px; }
+.point-tag .remove-pt{ background:none; border:none; color:var(--ink-soft); cursor:pointer; font-size:16px; padding:0 4px; }
+.point-tag .pt-notes{ width:100%; margin-top:7px; padding:6px 10px; border:1.5px solid var(--line); border-radius:7px; font-family:inherit; font-size:12px; box-sizing:border-box; }
+.point-tag .pt-method-other{ width:120px; margin-left:6px; padding:5px 8px; border:1.5px solid var(--line); border-radius:7px; font-family:inherit; font-size:12px; }
+.photo-upload-grid{ display:flex; flex-wrap:wrap; gap:12px; }
+.photo-box{ width:96px; height:96px; border-radius:12px; border:1.5px dashed var(--line); display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; position:relative; background:var(--white); }
+.photo-box img{ width:100%; height:100%; object-fit:cover; }
+.photo-box .del-photo{ position:absolute; top:3px; right:3px; background:rgba(0,0,0,.55); color:#fff; border:none; border-radius:50%; width:18px; height:18px; font-size:11px; cursor:pointer; }
+.photo-box span{ font-size:11px; color:var(--ink-soft); text-align:center; padding:0 6px; }
+.timeline{ position:relative; padding-left:22px; }
+.timeline::before{ content:''; position:absolute; left:6px; top:6px; bottom:6px; width:2px; background:var(--line); }
+.timeline-item{ position:relative; margin-bottom:22px; }
+.timeline-item-clickable{ cursor:pointer; border-radius:10px; padding:8px 10px; margin-left:-10px; transition:.15s; }
+.timeline-item-clickable:hover{ background:var(--clay-soft); }
+.timeline-edit-hint{ float:right; color:var(--clay); font-weight:700; opacity:0; transition:.15s; }
+.timeline-item-clickable:hover .timeline-edit-hint{ opacity:1; }
+.timeline-item::before{ content:''; position:absolute; left:-22px; top:4px; width:11px; height:11px; border-radius:50%; background:var(--clay); border:2px solid var(--white); box-shadow:0 0 0 1.5px var(--clay); }
+.timeline-date{ font-size:12px; color:var(--ink-soft); font-weight:700; margin-bottom:6px; }
+.type-badge{ display:inline-block; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:100px; margin-right:8px; letter-spacing:.02em; }
+.tb-record{ background:var(--clay-soft); color:var(--clay); }
+.tb-booking{ background:var(--amber-soft); color:var(--amber); }
+.tb-rx{ background:rgba(122,139,111,.18); color:#5A7350; }
+.timeline-photos{ display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+.timeline-photos img{ width:64px; height:64px; object-fit:cover; border-radius:8px; }
+.warn{ color:#B0503A; font-size:12.5px; margin-top:6px; display:none; }
+.warn.show{ display:block; }
+.login-gate{ max-width:480px; margin:80px auto; text-align:center; padding:0 20px; }
+.admin-toast{ position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff; padding:12px 22px; border-radius:100px; font-size:13.5px; box-shadow:0 10px 28px rgba(0,0,0,.22); z-index:200; opacity:0; pointer-events:none; transition:.25s; }
+.admin-toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+.vinath-admin-nav{ background:#332A21; }
+.vinath-admin-nav-inner{ max-width:1200px; margin:0 auto; display:flex; gap:2px; padding:0 20px; overflow-x:auto; }
+.van-item{ color:rgba(255,255,255,.62); font-size:13px; padding:13px 14px; text-decoration:none; white-space:nowrap; border-bottom:2.5px solid transparent; display:inline-block; }
+.van-item:hover{ color:#fff; }
+.van-item.current{ color:#fff; border-bottom-color:#BC6E4E; font-weight:700; }
+</style>
+</head>
+<body>
+
+<div class="vinath-admin-nav" id="vinathAdminNav"></div>
+<div id="app"></div>
+<div class="admin-toast" id="adminToast"></div>
+
+<script>
+if(window.history.scrollRestoration) window.history.scrollRestoration = "manual";
+window.scrollTo(0,0);
+
+(function(){
+  async function renderVinathAdminNav(navAdmin){
+    if(!navAdmin) return;
+    var ALL_ADMIN_TOOLS = [
+      {label:'订单预约管理', file:'VINATH_订单预约管理_概念示意.html', roles:['senior','practitioner','fulfillment','support']},
+      {label:'商品管理', file:'VINATH_商品管理_概念示意.html', roles:['senior']},
+      {label:'内容管理', file:'VINATH_内容管理_概念示意.html', roles:['senior']},
+      {label:'电子病历', file:'VINATH_电子病历_概念示意.html', roles:['senior','practitioner'], gated:'medicalRecords'},
+      {label:'电子处方', file:'VINATH_电子处方_概念示意.html', roles:['senior','practitioner'], gated:'prescriptions'},
+      {label:'电子收据', file:'VINATH_电子收据_概念示意.html', roles:['senior','practitioner'], gated:'receipts'},
+      {label:'智能排班', file:'VINATH_智能排班_概念示意.html', roles:['senior','practitioner']}
+    ];
+    var myRole = navAdmin.type==='senior' ? 'senior' : (navAdmin.adminType||'practitioner');
+    var visible = ALL_ADMIN_TOOLS.filter(function(t){ return t.roles.indexOf(myRole)!==-1; });
+    // I类执业医师看到的导航栏，要跟实际的功能开关状态一致——开关没打开的工具，不该在导航栏
+    // 里出现让人点了才发现进不去。大管理员不受这个开关影响，不用过滤。
+    if(myRole==='practitioner'){
+      try {
+        var apiBase = window.VINATH_API_BASE || 'http://localhost:3001/api';
+        var res = await fetch(apiBase + '/site-settings/module_access');
+        var access = res.ok ? (await res.json() || {}) : {};
+        visible = visible.filter(function(t){ return !t.gated || access[t.gated]===true; });
+      } catch(e){ console.error('拉取功能开关状态失败:', e); }
+    }
+    var currentFile = decodeURIComponent(window.location.pathname.split('/').pop());
+    var navEl = document.getElementById('vinathAdminNav');
+    if(!navEl) return;
+    navEl.innerHTML = '<div class="vinath-admin-nav-inner">' + visible.map(function(t){
+      return (currentFile === t.file) ? '<span class="van-item current">'+t.label+'</span>' : '<a class="van-item" href="'+t.file+'">'+t.label+'</a>';
+    }).join('') + '</div>';
+  }
+
+  var toastTimer = null;
+  function showToast(msg){
+    var el = document.getElementById('adminToast');
+    el.textContent = msg;
+    el.classList.add('show');
+    if(toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2600);
+  }
+
+  // === 复用订单预约管理已有的登录会话（同一浏览器内，两个页面共享localStorage） ===
+  function getCurrentAdmin(){
+    try { var raw = localStorage.getItem('vinath_current_admin'); return raw ? JSON.parse(raw) : null; } catch(e){ return null; }
+  }
+  var cur = getCurrentAdmin();
+  var isPractitioner = cur && (cur.type==='senior' || (cur.type==='junior' && (cur.adminType||'practitioner')==='practitioner'));
+
+  if(!isPractitioner){
+    document.getElementById('app').innerHTML =
+      '<div class="wrap"><div class="login-gate"><h1>请先登录</h1>'
+      + '<div class="sub" style="margin-top:10px;">电子病历只对执业医师（大管理员 / I类小管理员）开放。请先在 <a href="VINATH_订单预约管理_概念示意.html" style="color:var(--clay);font-weight:700;">订单预约管理</a> 页面登录，登录后回到这个页面即可看到内容——同一个浏览器里，两边共享登录状态。</div></div></div>';
+    return;
+  }
+  renderVinathAdminNav(cur);
+  function escapeHtml(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  var API_BASE = window.VINATH_API_BASE || 'http://localhost:3001/api';
+  var authToken = null;
+  try { authToken = sessionStorage.getItem('vinath_auth_token'); } catch(e){}
+
+  // 占位数据说明：以下坐标是常用穴位的大致体表参考位置，用于医师记录"做了什么"，
+  // 不是精确解剖坐标，也不构成任何治疗建议——软件只负责准确记录医师自己的专业判断。
+  // [stated] 之前是在一张示意人体图上点坐标，图不准、点的位置也只是大致估计，容易给人"好像
+  // 挺精确"的错觉，其实经不起推敲。改成"先选部位、再选穴位"的方式——不用画图定位置，选中后
+  // 直接显示这个穴位归属哪条经络，信息更准确、也更容易核对。归经信息是标准中医教材内容，
+  // 不是根据患者情况给出的判断。
+  var ACUPOINTS_BY_REGION = {
+    '头面部': [
+      {name:'百会', code:'GV20', meridian:'督脉'},
+      {name:'印堂', code:'EX-HN3', meridian:'经外奇穴'},
+      {name:'太阳', code:'EX-HN5', meridian:'经外奇穴'},
+      {name:'迎香', code:'LI20', meridian:'手阳明大肠经'},
+      {name:'风池', code:'GB20', meridian:'足少阳胆经'}
+    ],
+    '颈项部': [
+      {name:'大椎', code:'GV14', meridian:'督脉'},
+      {name:'肩井', code:'GB21', meridian:'足少阳胆经'}
+    ],
+    '胸腹部': [
+      {name:'膻中', code:'CV17', meridian:'任脉'},
+      {name:'中脘', code:'CV12', meridian:'任脉'},
+      {name:'神阙', code:'CV8', meridian:'任脉'},
+      {name:'气海', code:'CV6', meridian:'任脉'},
+      {name:'关元', code:'CV4', meridian:'任脉'},
+      {name:'中极', code:'CV3', meridian:'任脉'},
+      {name:'天枢', code:'ST25', meridian:'足阳明胃经'}
+    ],
+    '背腰部': [
+      {name:'肺俞', code:'BL13', meridian:'足太阳膀胱经'},
+      {name:'心俞', code:'BL15', meridian:'足太阳膀胱经'},
+      {name:'脾俞', code:'BL20', meridian:'足太阳膀胱经'},
+      {name:'肾俞', code:'BL23', meridian:'足太阳膀胱经'},
+      {name:'命门', code:'GV4', meridian:'督脉'},
+      {name:'腰阳关', code:'GV3', meridian:'督脉'},
+      {name:'至阳', code:'GV9', meridian:'督脉'}
+    ],
+    '上肢': [
+      {name:'内关', code:'PC6', meridian:'手厥阴心包经'},
+      {name:'合谷', code:'LI4', meridian:'手阳明大肠经'},
+      {name:'曲池', code:'LI11', meridian:'手阳明大肠经'}
+    ],
+    '下肢': [
+      {name:'足三里', code:'ST36', meridian:'足阳明胃经'},
+      {name:'三阴交', code:'SP6', meridian:'足太阴脾经'},
+      {name:'血海', code:'SP10', meridian:'足太阴脾经'},
+      {name:'阳陵泉', code:'GB34', meridian:'足少阳胆经'},
+      {name:'悬钟', code:'GB39', meridian:'足少阳胆经'},
+      {name:'环跳', code:'GB30', meridian:'足少阳胆经'},
+      {name:'太冲', code:'LR3', meridian:'足厥阴肝经'},
+      {name:'委中', code:'BL40', meridian:'足太阳膀胱经'},
+      {name:'承山', code:'BL57', meridian:'足太阳膀胱经'}
+    ]
+  };
+
+  var PRESETS = {
+    complexion: ['正常','苍白','潮红','萎黄','青紫'],
+    tongueBodyColor: ['淡红','淡白','红','绛红','青紫'],
+    tongueCoating: ['薄白','厚白','黄腻','少苔','无苔','薄黄'],
+    tongueShape: ['胖大','瘦薄','齿痕','裂纹','点刺'],
+    pulseType: ['浮','沉','迟','数','滑','涩','弦','细','洪','弱'],
+    constitution: ['平和质','气虚质','阳虚质','阴虚质','痰湿质','湿热质','血瘀质','气郁质','特禀质'],
+    treatmentMethod: ['针灸','推拿','艾灸','拔罐','刮痧','其他']
+  };
+
+  var view = 'list'; // list | form | timeline
+  var activePatientPhone = null;
+  var editingRecord = null;
+
+  async function initFromBackend(){
+    var accessDenied = await checkModuleAccess();
+    if(accessDenied) return;
+
+    // 从订单预约管理"客户档案"面板跳转过来时，URL带着患者手机号/姓名——直接定位到这个患者，
+    // 不需要再手动搜索或重新打一遍手机号姓名
+    var urlParams = new URLSearchParams(window.location.search);
+    var jumpPhone = urlParams.get('patientPhone');
+    var jumpName = urlParams.get('patientName');
+    if(jumpPhone){
+      var existingForJumpPatient = await fetchRecordsForPatient(jumpPhone);
+      if(existingForJumpPatient.length){
+        activePatientPhone = jumpPhone;
+        view = 'timeline';
+      } else {
+        editingRecord = { patientPhone: jumpPhone, patientName: jumpName || '' };
+        view = 'form';
+      }
+    }
+    render();
+  }
+
+  // 用患者列表接口本身做一次探测——大管理员永远通过；I类医师则要看大管理员有没有为这个工具
+  // 打开开关。被拒绝的话直接换成清晰的提示页面，不会误显示成"还没有任何病历记录"这种容易
+  // 让人误会的空状态。
+  async function checkModuleAccess(){
+    try {
+      var res = await fetch(API_BASE + '/admin/medical-records/patients', { headers: { 'Authorization': 'Bearer ' + authToken } });
+      if(res.status === 403){
+        document.getElementById('app').innerHTML =
+          '<div class="wrap"><div class="login-gate"><h1>这个功能还没有对你开放</h1>'
+          + '<div class="sub" style="margin-top:10px;">电子病历目前只开放给大管理员使用，I类执业医师是否能用由大管理员按需开关——如果需要用到这个工具，请联系大管理员开启。</div></div></div>';
+        return true;
+      }
+      return false;
+    } catch(e){ return false; } // 网络错误等其它情况不拦，交给后面各自的请求自己处理
+  }
+
+  async function fetchRecordsForPatient(phone){
+    if(!authToken) return [];
+    try {
+      var res = await fetch(API_BASE + '/admin/medical-records?patientPhone=' + encodeURIComponent(phone), { headers: { 'Authorization': 'Bearer ' + authToken } });
+      if(!res.ok) return [];
+      var records = await res.json();
+      // data字段(JSON blob)展开合并到病历对象本身,让下面几百行原有的字段读写方式(r.chiefComplaint等)不用大改
+      return records.map(function(r){ return Object.assign({ id:r.id, patientPhone:r.patient_phone, patientName:r.patient_name,
+        practitionerId:r.practitioner_id, practitionerName:r.practitioner_name, visitDate:r.visit_date, createdAt:r.created_at }, r.data); });
+    } catch(e){ console.error('拉取病历失败:', e); return []; }
+  }
+
+  function render(){
+    if(view==='list') renderPatientList();
+    else if(view==='timeline') renderTimeline();
+    else if(view==='form') renderForm();
+  }
+
+  async function renderPatientList(){
+    var patientsFromBackend = authToken ? await (async function(){
+      try {
+        var res = await fetch(API_BASE + '/admin/medical-records/patients', { headers: { 'Authorization': 'Bearer ' + authToken } });
+        return res.ok ? await res.json() : [];
+      } catch(e){ console.error('拉取患者列表失败:', e); return []; }
+    })() : [];
+    var list = patientsFromBackend;
+
+    // 从居家会诊实际产生的预约记录里，把出现过的患者去重列出来，方便直接选、不用手打
+    var bookedPatients = {};
+    try {
+      var bres = await fetch(API_BASE + '/admin/bookings', { headers: { 'Authorization': 'Bearer ' + authToken } });
+      var bookings = bres.ok ? await bres.json() : [];
+      bookings.forEach(function(b){ if(!bookedPatients[b.customer_phone]) bookedPatients[b.customer_phone] = b.customer_name; });
+    } catch(e){}
+    var bookedPatientOptions = Object.keys(bookedPatients).map(function(phone){
+      return '<option value="'+phone+'">'+bookedPatients[phone]+' · +60'+phone+'</option>';
+    }).join('');
+
+    var html = '<div class="wrap">'
+      + '<h1>电子病历</h1>'
+      + '<div class="sub">按四诊记录病历，标注穴位，管理患处/舌苔照片时间轴。</div>'
+      + '<div class="proto-banner"><b>这里的数据已经存进真实的后端数据库，不再只留在这台设备本地。</b>但目前只做了登录门槛和角色权限这两层基础保护，还没有做加密存储、访问日志这些更完整的安全措施，也还没有经过正式的PDPA合规审查——正式用来记录真实患者信息之前，请先完成这部分工作。</div>'
+      + '<div class="top-actions"><div class="patient-search">'
+      + '<select id="bookedPatientSelect" style="min-width:200px;"><option value="">— 从已预约客户中选择 —</option>'+bookedPatientOptions+'</select>'
+      + '<span style="color:var(--ink-soft);font-size:12.5px;align-self:center;">或</span>'
+      + '<input type="text" id="newPhoneInput" placeholder="手机号（不带0）"><input type="text" id="newNameInput" placeholder="姓名"></div>'
+      + '<button class="btn-primary" id="newRecordBtn">+ 新建病历</button></div>'
+      + '<div class="card"><div class="section-title">患者列表</div>'
+      + (list.length ? list.map(function(p){
+          return '<div class="patient-row" data-phone="'+escapeHtml(p.phone)+'" data-name="'+escapeHtml(p.name)+'"><div><div class="pname">'+escapeHtml(p.name)+'</div><div class="pmeta">+60'+escapeHtml(p.phone)+' · 共 '+p.count+' 次就诊记录 · 最近：'+p.lastVisit+'</div></div><span style="color:var(--ink-soft);">查看时间轴 →</span></div>';
+        }).join('') : '<div class="empty-state">还没有任何病历记录，点右上角"新建病历"开始</div>')
+      + '</div></div>';
+    document.getElementById('app').innerHTML = html;
+
+    document.getElementById('bookedPatientSelect').addEventListener('change', function(){
+      if(!this.value) return;
+      document.getElementById('newPhoneInput').value = this.value;
+      document.getElementById('newNameInput').value = bookedPatients[this.value];
+    });
+
+    document.querySelectorAll('.patient-row').forEach(function(row){
+      row.addEventListener('click', function(){
+        activePatientPhone = this.getAttribute('data-phone');
+        view = 'timeline';
+        render();
+      });
+    });
+    document.getElementById('newRecordBtn').addEventListener('click', function(){
+      var phone = document.getElementById('newPhoneInput').value.trim().replace(/[^0-9]/g,'');
+      var name = document.getElementById('newNameInput').value.trim();
+      if(!phone || !name){ showToast('请先选择或填写患者手机号和姓名'); return; }
+      activePatientPhone = phone;
+      editingRecord = { patientPhone: phone, patientName: name };
+      view = 'form';
+      render();
+    });
+  }
+
+  // 把chip选中的预设值和补充输入框的自由文字合并成一句话展示——两者是"并且"关系
+  function combineDisplay(record, field){
+    var parts = [];
+    var base = record[field];
+    if(Array.isArray(base)){ if(base.length) parts.push(base.join('、')); }
+    else if(base){ parts.push(base); }
+    if(record[field+'Custom']) parts.push(record[field+'Custom']);
+    return parts.join('；');
+  }
+
+  var STATUS_LABELS_RX = {awaiting_pharmacy:'待药房接单', brewing:'煎药中', shipping:'配送中', delivered:'已送达'};
+
+  async function renderTimeline(){
+    var records = await fetchRecordsForPatient(activePatientPhone);
+    var patientName = records.length ? records[0].patientName : '';
+
+    // [stated] 复诊时需要一眼看到这个患者的完整历史——不只是病历，还有之前的预约、处方，
+    // 混在同一条时间线里，按日期排列，而不是要分别打开三个工具才能拼出完整情况
+    var bookings = [];
+    try {
+      var bres = await fetch(API_BASE + '/admin/bookings', { headers: { 'Authorization': 'Bearer ' + authToken } });
+      var allBookings = bres.ok ? await bres.json() : [];
+      bookings = allBookings.filter(function(b){ return b.customer_phone===activePatientPhone; })
+        .map(function(b){ return { contact:b.customer_phone, name:b.customer_name, apptDate:b.appt_date, apptDateISO:b.appt_date_iso, slot:b.slot,
+          doctor:b.practitioner_name, cancelled:b.cancelled, need:b.need, doctorNote:b.doctor_note, treatments:b.treatments||[] }; });
+      if(bookings.length && !patientName) patientName = bookings[0].name;
+    } catch(e){}
+    var prescriptions = [];
+    try { prescriptions = JSON.parse(localStorage.getItem('vinath_prescriptions')||'[]').filter(function(p){ return p.patientPhone===activePatientPhone; }); } catch(e){}
+
+    var entries = [];
+    records.forEach(function(r){
+      var pts = (r.treatmentPoints||[]).map(function(p){
+        var method = p.treatmentMethod==='其他' ? (p.treatmentMethodOther||'其他') : p.treatmentMethod;
+        return escapeHtml(p.pointName)+'（'+escapeHtml(method)+(p.notes?'：'+escapeHtml(p.notes):'')+'）';
+      }).join('、');
+      entries.push({ date: r.visitDate, type:'record', sortKey: r.visitDate+'_2', html:
+        '<div class="timeline-item timeline-item-clickable" data-record-id="'+r.id+'">'
+        + '<div class="timeline-date"><span class="type-badge tb-record">病历</span>'+r.visitDate+' · '+(r.visitType==='home_visit'?'居家会诊':r.visitType==='follow_up'?'复诊':'门诊')+'<span class="timeline-edit-hint">点击编辑 →</span></div>'
+        + '<div style="font-weight:700;margin-bottom:4px;">'+escapeHtml(r.tcmDiagnosis||'（未填写诊断）')+(r.syndromePattern?' · '+escapeHtml(r.syndromePattern):'')+'</div>'
+        + (r.chiefComplaint ? '<div style="font-size:13px;color:var(--ink-soft);margin-bottom:4px;">主诉：'+escapeHtml(r.chiefComplaint)+'</div>' : '')
+        + (combineDisplay(r,'tongueBodyColor') || combineDisplay(r,'tongueCoating') ? '<div style="font-size:12.5px;color:var(--ink-soft);">舌象：'+escapeHtml(combineDisplay(r,'tongueBodyColor'))+' '+escapeHtml(combineDisplay(r,'tongueCoating'))+'</div>' : '')
+        + (combineDisplay(r,'pulseType') ? '<div style="font-size:12.5px;color:var(--ink-soft);">脉象：'+escapeHtml(combineDisplay(r,'pulseType'))+'</div>' : '')
+        + (combineDisplay(r,'constitutionType') ? '<div style="font-size:12.5px;color:var(--ink-soft);">体质：'+escapeHtml(combineDisplay(r,'constitutionType'))+'</div>' : '')
+        + (pts ? '<div style="font-size:12.5px;color:var(--ink-soft);">穴位/部位：'+pts+'</div>' : '')
+        + (r.photos && r.photos.length ? '<div class="timeline-photos">'+r.photos.map(function(p){ return '<img src="'+p.photoUrl+'" title="'+escapeHtml(p.photoType)+'">'; }).join('')+'</div>' : '')
+        + '</div>' });
+    });
+    bookings.forEach(function(b){
+      var dateKey = b.apptDateISO || (b.apptDate||'').slice(0,10) || '0000-00-00';
+      entries.push({ date: dateKey, type:'booking', sortKey: dateKey+'_1', html:
+        '<div class="timeline-item">'
+        + '<div class="timeline-date"><span class="type-badge tb-booking">预约</span>'+(b.apptDate||dateKey)+' '+(b.slot||'')+(b.cancelled?' · 已取消':'')+'</div>'
+        + '<div style="font-weight:700;margin-bottom:4px;">医师：'+escapeHtml(b.doctor||'—')+'</div>'
+        + (b.need ? '<div style="font-size:13px;color:var(--ink-soft);">需求：'+escapeHtml(b.need)+'</div>' : '')
+        + (b.doctorNote ? '<div style="font-size:12.5px;color:var(--ink-soft);">医师记录：'+escapeHtml(b.doctorNote)+'</div>' : '')
+        + (b.treatments && b.treatments.length ? '<div style="font-size:12.5px;color:var(--ink-soft);">治疗/商品：'+b.treatments.map(function(t){ return escapeHtml(t.name); }).join('、')+'</div>' : '')
+        + '</div>' });
+    });
+    prescriptions.forEach(function(rx){
+      var dateKey = (rx.createdAt||'').slice(0,10) || '0000-00-00';
+      var herbSummary = (rx.items||[]).map(function(it){ return it.herbName+' '+it.dosageGrams+'g'; }).join('、');
+      entries.push({ date: dateKey, type:'prescription', sortKey: dateKey+'_3', html:
+        '<div class="timeline-item">'
+        + '<div class="timeline-date"><span class="type-badge tb-rx">处方</span>'+dateKey+' · '+(STATUS_LABELS_RX[rx.status]||rx.status)+'</div>'
+        + '<div style="font-weight:700;margin-bottom:4px;">'+herbSummary+'</div>'
+        + (rx.usageInstructions ? '<div style="font-size:12.5px;color:var(--ink-soft);">服法：'+rx.usageInstructions+'</div>' : '')
+        + '<div style="font-size:12px;color:var(--ink-soft);">开方医师：'+rx.practitionerName+'</div>'
+        + '</div>' });
+    });
+    entries.sort(function(a,b){ return b.sortKey.localeCompare(a.sortKey); });
+
+    var html = '<div class="wrap">'
+      + '<div class="top-actions"><div><h1>'+patientName+' 的完整病历时间轴</h1><div class="sub">+60'+activePatientPhone+' · 病历 '+records.length+' 次 · 预约 '+bookings.length+' 次 · 处方 '+prescriptions.length+' 次</div></div>'
+      + '<div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn-secondary" id="backToListBtn">← 返回患者列表</button>'
+      + '<a href="VINATH_电子处方_概念示意.html?patientPhone='+encodeURIComponent(activePatientPhone)+'&patientName='+encodeURIComponent(patientName)+'" target="_blank" class="btn-secondary" style="text-decoration:none;display:inline-flex;align-items:center;">开具处方 →</a>'
+      + '<a href="VINATH_订单预约管理_概念示意.html?openPatient='+encodeURIComponent(activePatientPhone)+'" target="_blank" class="btn-secondary" style="text-decoration:none;display:inline-flex;align-items:center;">查看预约记录 →</a>'
+      + '<button class="btn-primary" id="newVisitBtn">+ 新增一次就诊记录</button></div></div>'
+      + '<div class="card"><div class="timeline">'
+      + (entries.length ? entries.map(function(e){ return e.html; }).join('') : '<div class="empty-state">这个患者还没有任何记录</div>')
+      + '</div></div></div>';
+    document.getElementById('app').innerHTML = html;
+
+    document.getElementById('backToListBtn').addEventListener('click', function(){ view='list'; render(); });
+    document.getElementById('newVisitBtn').addEventListener('click', function(){
+      editingRecord = { patientPhone: activePatientPhone, patientName: patientName };
+      view = 'form';
+      render();
+    });
+    // [stated bug fix] 之前保存过的病历记录，时间轴上完全没有入口能再打开来改——只能新建，
+    // 改不了已经存过的。保存逻辑其实早就支持"有id就更新"，只是缺一个点进去的入口，现在补上。
+    document.querySelectorAll('.timeline-item-clickable').forEach(function(item){
+      item.addEventListener('click', function(){
+        var id = this.getAttribute('data-record-id');
+        editingRecord = records.find(function(r){ return r.id===id; });
+        view = 'form';
+        render();
+      });
+    });
+  }
+
+  function toggleChip(arr, val){
+    var idx = arr.indexOf(val);
+    if(idx===-1) arr.push(val); else arr.splice(idx,1);
+  }
+
+  function renderForm(){
+    var r = editingRecord;
+    r.tongueShape = r.tongueShape || [];
+    r.pulseType = r.pulseType || [];
+    r.treatmentPoints = r.treatmentPoints || [];
+    r.photos = r.photos || [];
+    var bodyView = 'front';
+
+    function chipRow(field, options, multi){
+      var customVal = r[field+'Custom'] || '';
+      return '<div class="chip-row" data-field="'+field+'">' + options.map(function(o){
+        var on = multi ? r[field].indexOf(o)!==-1 : r[field]===o;
+        return '<span class="chip'+(on?' on':'')+'" data-val="'+o+'">'+o+'</span>';
+      }).join('') + '</div>'
+      + '<input type="text" class="custom-input" data-custom-field="'+field+'" placeholder="以上都不太对？在这里补充说明" value="'+customVal+'">';
+    }
+
+    var html = '<div class="wrap">'
+      + '<div class="top-actions"><h1>'+escapeHtml(r.patientName)+' · '+(r.id?'编辑就诊记录':'新增就诊记录')+'</h1>'
+      + '<button class="btn-secondary" id="cancelFormBtn">← 取消</button></div>'
+
+      + '<div class="card"><div class="section-title">基本信息</div>'
+      + '<div class="two-col">'
+      + '<div class="field"><label>就诊日期</label><input type="text" id="visitDateInput" value="'+(r.visitDate||new Date().toISOString().slice(0,10))+'"></div>'
+      + '<div class="field"><label>就诊方式</label><select id="visitTypeInput"><option value="home_visit">居家会诊</option><option value="clinic">门诊</option><option value="follow_up">复诊</option></select></div>'
+      + '</div></div>'
+
+      + '<div class="card"><div class="section-title"><span class="zh-tag">问</span>主诉与病史</div>'
+      + '<div class="field"><label>主诉</label><textarea id="chiefComplaintInput">'+(r.chiefComplaint||'')+'</textarea></div>'
+      + '<div class="field"><label>现病史</label><textarea id="presentIllnessInput">'+(r.presentIllness||'')+'</textarea></div>'
+      + '<div class="field"><label>既往史</label><textarea id="medicalHistoryInput">'+(r.medicalHistory||'')+'</textarea></div>'
+      + '</div>'
+
+      + '<div class="card"><div class="section-title"><span class="zh-tag">望闻切</span>舌脉</div>'
+      + '<div class="field"><label>面色</label>'+chipRow('complexion', PRESETS.complexion, false)+'</div>'
+      + '<div class="field"><label>舌质</label>'+chipRow('tongueBodyColor', PRESETS.tongueBodyColor, false)+'</div>'
+      + '<div class="field"><label>舌苔</label>'+chipRow('tongueCoating', PRESETS.tongueCoating, false)+'</div>'
+      + '<div class="field"><label>舌形（可多选）</label>'+chipRow('tongueShape', PRESETS.tongueShape, true)+'</div>'
+      + '<div class="field"><label>脉象（可多选）</label>'+chipRow('pulseType', PRESETS.pulseType, true)+'</div>'
+      + '<div class="field"><label>脉诊备注</label><textarea id="pulseNotesInput">'+(r.pulseNotes||'')+'</textarea></div>'
+      + '<div class="field"><label>声音气息备注（闻诊）</label><textarea id="voiceNotesInput">'+(r.voiceNotes||'')+'</textarea></div>'
+      + '</div>'
+
+      + '<div class="card"><div class="section-title">体质辨识</div>'
+      + '<div class="field">'+chipRow('constitutionType', PRESETS.constitution, false)+'</div>'
+      + '</div>'
+
+      + '<div class="card"><div class="section-title">诊断、辨证、治则治法</div>'
+      + '<div class="two-col">'
+      + '<div class="field"><label>中医诊断</label><input type="text" id="tcmDiagnosisInput" value="'+(r.tcmDiagnosis||'')+'" placeholder="例如：痛经"></div>'
+      + '<div class="field"><label>辨证 / 证型</label><input type="text" id="syndromePatternInput" value="'+(r.syndromePattern||'')+'" placeholder="例如：气滞血瘀型"></div>'
+      + '</div>'
+      + '<div class="field"><label>治则治法</label><textarea id="treatmentPlanInput">'+(r.treatmentPlan||'')+'</textarea></div>'
+      + '</div>'
+
+      + '<div class="card"><div class="section-title">穴位 / 部位标注</div>'
+      + '<div class="field"><label>先选部位</label><select id="regionSelect"><option value="">— 请选择部位 —</option>'
+      + Object.keys(ACUPOINTS_BY_REGION).map(function(rg){ return '<option value="'+rg+'">'+rg+'</option>'; }).join('')
+      + '</select></div>'
+      + '<div class="field" id="pointSelectField" style="display:none;"><label>再选穴位</label><select id="pointSelect"><option value="">— 请选择穴位 —</option></select>'
+      + '<div id="meridianDisplay" style="font-size:12.5px;color:var(--clay);margin-top:6px;display:none;"></div></div>'
+      + '<button type="button" class="btn-secondary" id="addPointBtn" style="margin-top:4px;" disabled>+ 加入这个穴位</button>'
+      + '<div class="custom-point-row" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);">'
+      + '<label style="display:block;font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:7px;">找不到？也可以直接手动填写部位/穴位</label>'
+      + '<div class="two-col"><input type="text" id="customPointNameInput" placeholder="部位或穴位名称"><button type="button" class="btn-secondary" id="addCustomPointBtn">+ 加入</button></div>'
+      + '</div>'
+      + '<div id="pointsList" style="margin-top:16px;"></div>'
+      + '</div>'
+
+      + '<div class="card"><div class="section-title">照片（患处 / 舌苔）</div>'
+      + '<div class="photo-upload-grid" id="photoGrid"></div>'
+      + '<input type="file" id="photoFileInput" accept="image/*" style="display:none;">'
+      + '</div>'
+
+      + '<button class="btn-primary" id="saveRecordBtn" style="width:100%;padding:14px;font-size:15px;">保存病历</button>'
+      + '</div>';
+
+    document.getElementById('app').innerHTML = html;
+
+    document.getElementById('cancelFormBtn').addEventListener('click', function(){ view = activePatientPhone ? 'timeline' : 'list'; render(); });
+    document.getElementById('visitTypeInput').value = r.visitType || 'home_visit';
+
+    // chip交互——单选类字段点了就切换值，多选类字段(舌形/脉象)是数组、可以多个同时选中
+    document.querySelectorAll('.chip-row').forEach(function(row){
+      var field = row.getAttribute('data-field');
+      var multi = Array.isArray(r[field]);
+      row.querySelectorAll('.chip').forEach(function(chip){
+        chip.addEventListener('click', function(){
+          var val = this.getAttribute('data-val');
+          if(multi){
+            toggleChip(r[field], val);
+            this.classList.toggle('on');
+          } else {
+            r[field] = (r[field]===val) ? '' : val;
+            row.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
+            if(r[field]) this.classList.add('on');
+          }
+        });
+      });
+    });
+    // 补充输入框——跟上面的chip选择是"并且"关系，不是"二选一"：选了预设选项、
+    // 同时又想补充说明的情况很常见（比如舌质选了"淡红"，但想加一句"舌尖略红"）
+    document.querySelectorAll('.custom-input').forEach(function(inp){
+      inp.addEventListener('input', function(){
+        r[this.getAttribute('data-custom-field')+'Custom'] = this.value;
+      });
+    });
+
+    // 穴位选择——先选部位、再选具体穴位，选中后显示归经；也支持直接手动填写找不到的部位/穴位
+    var regionSelect = document.getElementById('regionSelect');
+    var pointSelect = document.getElementById('pointSelect');
+    var pointSelectField = document.getElementById('pointSelectField');
+    var meridianDisplay = document.getElementById('meridianDisplay');
+    var addPointBtn = document.getElementById('addPointBtn');
+
+    regionSelect.addEventListener('change', function(){
+      var region = this.value;
+      pointSelectField.style.display = region ? '' : 'none';
+      meridianDisplay.style.display = 'none';
+      addPointBtn.disabled = true;
+      if(!region) return;
+      pointSelect.innerHTML = '<option value="">— 请选择穴位 —</option>'
+        + ACUPOINTS_BY_REGION[region].map(function(p, i){ return '<option value="'+i+'">'+p.name+' ('+p.code+')</option>'; }).join('');
+    });
+    pointSelect.addEventListener('change', function(){
+      var region = regionSelect.value;
+      if(!region || this.value===''){ meridianDisplay.style.display='none'; addPointBtn.disabled=true; return; }
+      var p = ACUPOINTS_BY_REGION[region][Number(this.value)];
+      meridianDisplay.textContent = '归经：'+p.meridian;
+      meridianDisplay.style.display = '';
+      addPointBtn.disabled = false;
+    });
+    addPointBtn.addEventListener('click', function(){
+      var region = regionSelect.value;
+      var idx = pointSelect.value;
+      if(!region || idx==='') return;
+      var p = ACUPOINTS_BY_REGION[region][Number(idx)];
+      r.treatmentPoints.push({pointName:p.name, pointCode:p.code, meridian:p.meridian, region:region, treatmentMethod:PRESETS.treatmentMethod[0], notes:''});
+      renderPointsList();
+    });
+    document.getElementById('addCustomPointBtn').addEventListener('click', function(){
+      var inp = document.getElementById('customPointNameInput');
+      var name = inp.value.trim();
+      if(!name) return;
+      r.treatmentPoints.push({pointName:name, pointCode:'', meridian:'', region:'', custom:true, treatmentMethod:PRESETS.treatmentMethod[0], notes:''});
+      inp.value = '';
+      renderPointsList();
+    });
+
+    function renderPointsList(){
+      document.getElementById('pointsList').innerHTML = r.treatmentPoints.length ? r.treatmentPoints.map(function(p, i){
+        var isOther = p.treatmentMethod === '其他';
+        return '<div class="point-tag">'
+          + '<div class="point-tag-hd"><div><span class="pname">'+escapeHtml(p.pointName)+'</span> '
+          + (p.pointCode ? '<span style="font-size:11px;color:var(--ink-soft);">'+escapeHtml(p.pointCode)+(p.meridian?' · '+escapeHtml(p.meridian):'')+'</span>' : '<span style="font-size:11px;color:var(--ink-soft);">手动填写</span>')
+          + '<select data-pt-idx="'+i+'">'+PRESETS.treatmentMethod.map(function(m){ return '<option value="'+m+'"'+(p.treatmentMethod===m?' selected':'')+'>'+m+'</option>'; }).join('')+'</select>'
+          + (isOther ? '<input type="text" class="pt-method-other" data-pt-method-other-idx="'+i+'" placeholder="具体是什么方式" value="'+escapeHtml(p.treatmentMethodOther||'')+'">' : '')
+          + '</div>'
+          + '<button class="remove-pt" data-rm-idx="'+i+'">×</button></div>'
+          + '<input type="text" class="pt-notes" data-pt-notes-idx="'+i+'" placeholder="备注（力度、手法、疗程等，选填）" value="'+escapeHtml(p.notes||'')+'">'
+          + '</div>';
+      }).join('') : '<div style="font-size:12.5px;color:var(--ink-soft);">还没有添加任何穴位/部位</div>';
+      document.querySelectorAll('[data-pt-idx]').forEach(function(sel){
+        sel.addEventListener('change', function(){
+          r.treatmentPoints[Number(this.getAttribute('data-pt-idx'))].treatmentMethod = this.value;
+          renderPointsList();
+        });
+      });
+      document.querySelectorAll('[data-pt-method-other-idx]').forEach(function(inp){
+        inp.addEventListener('input', function(){ r.treatmentPoints[Number(this.getAttribute('data-pt-method-other-idx'))].treatmentMethodOther = this.value; });
+      });
+      document.querySelectorAll('[data-pt-notes-idx]').forEach(function(inp){
+        inp.addEventListener('input', function(){ r.treatmentPoints[Number(this.getAttribute('data-pt-notes-idx'))].notes = this.value; });
+      });
+      document.querySelectorAll('[data-rm-idx]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          r.treatmentPoints.splice(Number(this.getAttribute('data-rm-idx')), 1);
+          renderPointsList();
+        });
+      });
+    }
+    renderPointsList();
+
+    // 照片上传
+    var pendingPhotoType = null;
+    function renderPhotoGrid(){
+      var html = r.photos.map(function(p, i){
+        return '<div class="photo-box"><img src="'+p.photoUrl+'"><button class="del-photo" data-rm-photo="'+i+'">×</button></div>';
+      }).join('');
+      html += '<div class="photo-box" id="addTongueBox"><span>+ 舌苔照片</span></div>';
+      html += '<div class="photo-box" id="addAreaBox"><span>+ 患处照片</span></div>';
+      document.getElementById('photoGrid').innerHTML = html;
+      document.querySelectorAll('[data-rm-photo]').forEach(function(btn){
+        btn.addEventListener('click', function(e){
+          e.stopPropagation();
+          r.photos.splice(Number(this.getAttribute('data-rm-photo')), 1);
+          renderPhotoGrid();
+        });
+      });
+      document.getElementById('addTongueBox').addEventListener('click', function(){ pendingPhotoType='tongue'; document.getElementById('photoFileInput').click(); });
+      document.getElementById('addAreaBox').addEventListener('click', function(){ pendingPhotoType='affected_area'; document.getElementById('photoFileInput').click(); });
+    }
+    document.getElementById('photoFileInput').addEventListener('change', function(e){
+      var file = e.target.files[0];
+      if(!file) return;
+      var reader = new FileReader();
+      reader.onload = function(ev){
+        r.photos.push({photoType:pendingPhotoType, photoUrl:ev.target.result, uploadedBy:'practitioner', takenAt:new Date().toISOString()});
+        renderPhotoGrid();
+      };
+      reader.readAsDataURL(file);
+      this.value = '';
+    });
+    renderPhotoGrid();
+
+    document.getElementById('saveRecordBtn').addEventListener('click', async function(){
+      r.visitDate = document.getElementById('visitDateInput').value.trim() || new Date().toISOString().slice(0,10);
+      r.visitType = document.getElementById('visitTypeInput').value;
+      r.voiceNotes = document.getElementById('voiceNotesInput').value.trim();
+      r.chiefComplaint = document.getElementById('chiefComplaintInput').value.trim();
+      r.presentIllness = document.getElementById('presentIllnessInput').value.trim();
+      r.medicalHistory = document.getElementById('medicalHistoryInput').value.trim();
+      r.pulseNotes = document.getElementById('pulseNotesInput').value.trim();
+      r.tcmDiagnosis = document.getElementById('tcmDiagnosisInput').value.trim();
+      r.syndromePattern = document.getElementById('syndromePatternInput').value.trim();
+      r.treatmentPlan = document.getElementById('treatmentPlanInput').value.trim();
+      if(!r.chiefComplaint){ showToast('请至少填写"主诉"再保存'); return; }
+
+      // data里打包的是除了"患者是谁/哪次就诊/谁看的"这几个用来查询筛选的字段之外的全部具体问诊内容——
+      // 这类字段还可能随实际使用继续调整，整体存JSON，不用为每次调整字段都写数据库迁移
+      var dataPayload = {};
+      ['visitType','voiceNotes','chiefComplaint','presentIllness','medicalHistory','pulseNotes','pulseType',
+       'tongueBodyColor','tongueBodyColorCustom','tongueCoating','tongueCoatingCustom','tongueShape','tongueShapeCustom',
+       'constitutionType','constitutionTypeCustom','tcmDiagnosis','syndromePattern','treatmentPlan','treatmentPoints','photos'
+      ].forEach(function(k){ if(r[k]!==undefined) dataPayload[k] = r[k]; });
+
+      var btn = this;
+      btn.disabled = true;
+      try {
+        var url = r.id ? API_BASE + '/admin/medical-records/' + r.id : API_BASE + '/admin/medical-records';
+        var res = await fetch(url, {
+          method: r.id ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+          body: JSON.stringify({ patientPhone: r.patientPhone, patientName: r.patientName, visitDate: r.visitDate, data: dataPayload })
+        });
+        if(!res.ok){ showToast('保存失败，请重试'); btn.disabled = false; return; }
+        showToast('病历已保存');
+        activePatientPhone = r.patientPhone;
+        view = 'timeline';
+        render();
+      } catch(e){
+        showToast('连不上服务器，请检查网络后重试');
+        btn.disabled = false;
+      }
+    });
+  }
+
+  initFromBackend();
+})();
+</script>
+</body>
+</html>
