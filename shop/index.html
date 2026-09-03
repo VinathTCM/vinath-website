@@ -610,11 +610,17 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   var WISH_HEART_SVG = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9.5-9C.5 8 2 4 6 4c2 0 3.5 1 4 2 .5-1 2-2 4-2 4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg>';
   var WISHLIST_KEY = 'vinath_wishlist';
   function getWishlist(){
-    try { var raw = localStorage.getItem(WISHLIST_KEY); return raw ? JSON.parse(raw) : []; } catch(e){ return []; }
+    try {
+      var raw = localStorage.getItem(WISHLIST_KEY);
+      var arr = raw ? JSON.parse(raw) : [];
+      if(!Array.isArray(arr)) return [];
+      return arr.map(String).filter(function(x){ return x && x !== 'NaN' && x !== 'null' && x !== 'undefined'; });
+    } catch(e){ return []; }
   }
   function saveWishlist(list){ try { localStorage.setItem(WISHLIST_KEY, JSON.stringify(list)); } catch(e){} }
-  function isWishlisted(id){ return getWishlist().indexOf(id) !== -1; }
+  function isWishlisted(id){ return getWishlist().indexOf(String(id)) !== -1; }
   function toggleWishlist(id){
+    id = String(id);
     var list = getWishlist();
     var idx = list.indexOf(id);
     if(idx===-1) list.push(id); else list.splice(idx,1);
@@ -642,12 +648,12 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     }
     document.getElementById('prodGroups').innerHTML = '<div class="prod-grid">' + list.map(renderProductCard).join('') + '</div>';
     document.querySelectorAll('.prod-card').forEach(function(c){
-      c.addEventListener('click', function(){ openQuickView(Number(this.getAttribute('data-id'))); });
+      c.addEventListener('click', function(){ openQuickView(this.getAttribute('data-id')); });
     });
     document.querySelectorAll('.prod-wish').forEach(function(w){
       w.addEventListener('click', function(e){
         e.stopPropagation();
-        toggleWishlist(Number(this.getAttribute('data-wid')));
+        toggleWishlist(this.getAttribute('data-wid'));
         this.classList.toggle('on');
         updateWishFilterCount();
       });
@@ -780,12 +786,12 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     });
     featGrid.innerHTML = html || '<div class="prod-empty">暂无精选商品</div>';
     featGrid.querySelectorAll('.feat-card').forEach(function(c){
-      c.addEventListener('click', function(){ openQuickView(Number(this.getAttribute('data-id'))); });
+      c.addEventListener('click', function(){ openQuickView(this.getAttribute('data-id')); });
     });
     featGrid.querySelectorAll('.prod-wish').forEach(function(w){
       w.addEventListener('click', function(e){
         e.stopPropagation();
-        toggleWishlist(Number(this.getAttribute('data-wid')));
+        toggleWishlist(this.getAttribute('data-wid'));
         this.classList.toggle('on');
         updateWishFilterCount();
       });
@@ -1133,3 +1139,4 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
 </body>
 </html>
+
