@@ -658,15 +658,38 @@ window.scrollTo(0,0);
       document.getElementById('addTongueBox').addEventListener('click', function(){ pendingPhotoType='tongue'; document.getElementById('photoFileInput').click(); });
       document.getElementById('addAreaBox').addEventListener('click', function(){ pendingPhotoType='affected_area'; document.getElementById('photoFileInput').click(); });
     }
-    document.getElementById('photoFileInput').addEventListener('change', function(e){
-      var file = e.target.files[0];
-      if(!file) return;
+    function compressPhoto(file, maxDim, quality, cb){
       var reader = new FileReader();
       reader.onload = function(ev){
-        r.photos.push({photoType:pendingPhotoType, photoUrl:ev.target.result, uploadedBy:'practitioner', takenAt:new Date().toISOString()});
-        renderPhotoGrid();
+        var img = new Image();
+        img.onload = function(){
+          try {
+            var scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+            var cw = Math.max(1, Math.round(img.width * scale));
+            var ch = Math.max(1, Math.round(img.height * scale));
+            var canvas = document.createElement('canvas');
+            canvas.width = cw; canvas.height = ch;
+            var ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, cw, ch);
+            ctx.drawImage(img, 0, 0, cw, ch);
+            cb(canvas.toDataURL('image/jpeg', quality));
+          } catch(err) { cb(ev.target.result); }
+        };
+        img.onerror = function(){ cb(ev.target.result); };
+        img.src = ev.target.result;
       };
       reader.readAsDataURL(file);
+    }
+    // 照片前端压缩：后端接口 body 上限 13MB，手机原图 base64 膨胀约 1.33 倍，多张照片很容易
+    // 超限导致保存 413 失败。这里压到最长边 1280px / JPEG 0.72，单张约 100-300KB，多张也不会超限。
+    document.getElementById('photoFileInput').addEventListener('change', function(e){
+      var f = e.target.files && e.target.files[0];
+      if(!f) return;
+      compressPhoto(f, 1280, 0.72, function(dataUrl){
+        r.photos.push({photoType:pendingPhotoType, photoUrl:dataUrl, uploadedBy:'practitioner', takenAt:new Date().toISOString()});
+        renderPhotoGrid();
+      });
       this.value = '';
     });
     renderPhotoGrid();
