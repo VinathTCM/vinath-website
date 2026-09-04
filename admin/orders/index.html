@@ -3489,6 +3489,16 @@ window.escapeHtml = function(s){
         });
         if(!res.ok){ showToast('保存失败，请重试'); btn.disabled = false; return; }
         syncServiceAreasFromJunior({regions: seniorPickedRegions});
+        // [bug fix] 出诊地区之前只写后端+服务地区设置，没同步到前端医师档案 vinath_practitioner_profiles，
+        // 导致居家会诊页 getPractitionersForArea() 读到的 regions 恒为空 → 大管理员在所有地区都显示。
+        // 现在保存时同步 regions（连同头像/擅长）到该档案，前端医师卡片才能按勾选的地区过滤。
+        var profs = getPractitionerProfiles();
+        if(!profs[id]) profs[id] = {};
+        profs[id].regions = seniorPickedRegions.slice();
+        if(avatarData) profs[id].avatar = avatarData;
+        var _sp = document.getElementById('seniorSpecialtyInput').value.trim();
+        if(_sp) profs[id].specialty = _sp;
+        savePractitionerProfiles(profs);
         closePanel();
         renderSeniorList();
         showToast('资料已保存');
