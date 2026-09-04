@@ -61,9 +61,14 @@ h1{ font-family:var(--font-serif); font-size:22px; margin:0 0 4px; }
 .qr-placeholder div:nth-child(3n){ opacity:.2; }
 .qr-caption{ font-size:10.5px; color:var(--ink-soft); text-align:center; margin-top:6px; max-width:110px; }
 .receipt-disclaimer{ font-size:11px; color:var(--ink-soft); margin-top:24px; line-height:1.6; border-top:1px solid var(--line); padding-top:14px; }
+@page{ size:A4; margin:12mm; }
 @media print{
   body{ background:#fff; }
+  /* 打印时只保留收据文档本身：隐藏导航等非 #app 元素、以及收据外的其他区块，
+     避免它们占高度把内容挤出空白第二页。 */
+  body > :not(#app){ display:none !important; }
   .no-print{ display:none !important; }
+  .wrap > :not(.receipt-doc){ display:none !important; }
   .receipt-doc{ border:none; box-shadow:none; padding:0; }
   .wrap{ max-width:none; padding:0; }
 }

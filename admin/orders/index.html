@@ -334,10 +334,13 @@ tbody tr:hover{ background:#FBFAF7; }
 /* ---- print-only receipt ---- */
 .print-receipt, .print-receipt-thermal{ display:none; }
 @media print{
-  body *{ visibility:hidden; }
-  .print-receipt, .print-receipt *, .print-receipt-thermal, .print-receipt-thermal *{ visibility:visible; }
-  .print-receipt{ display:block; position:absolute; top:0; left:0; width:100%; padding:36px 44px; }
-  .print-receipt-thermal{ display:block; position:absolute; top:0; left:0; width:58mm; padding:0; }
+  /* 隐藏所有非打印内容且不占空间——原方案 body *{visibility:hidden} 只隐藏不释放布局高度，
+     打印元素 absolute 定位在 top:0 时，页面主体（后台管理界面）的高度会把打印撑出空白第二页。
+     改为直接 display:none 掉 body 的非打印直接子元素，打印内容正常流式排版，一页放得下就是一页，
+     项目多时按内容自然分页。 */
+  body > :not(.print-receipt):not(.print-receipt-thermal){ display:none !important; }
+  .print-receipt{ display:block; position:static; width:100%; padding:36px 44px; box-sizing:border-box; }
+  .print-receipt-thermal{ display:block; position:static; width:58mm; padding:0; }
 }
 .receipt-brandrow{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:26px; }
 .receipt-brand{ font-family:var(--font-serif); font-weight:700; font-size:21px; letter-spacing:.1em; }
