@@ -37,6 +37,7 @@ app.use('/api', require('./routes/wholesale'));
 app.use('/api', require('./routes/instant'));
 app.use('/api', require('./routes/medical'));
 app.use('/api', require('./routes/prescriptions'));
+app.use('/api', require('./routes/formulas'));
 app.use('/api', require('./routes/receipts'));
 app.use('/api', require('./routes/schedule'));
 app.use('/api', require('./routes/chat'));

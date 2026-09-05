@@ -55,6 +55,8 @@ h1{ font-family:var(--font-serif); font-size:22px; margin:0 0 4px; }
 .status-flow .sf-arrow{ color:var(--ink-soft); font-size:11px; }
 .logistics-row{ margin-top:10px; padding-top:10px; border-top:1px solid var(--line); display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
 .logistics-row select, .logistics-row input{ padding:7px 10px; border:1.5px solid var(--line); border-radius:8px; font-family:inherit; font-size:12.5px; }
+.rx-from-formula{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
+.rx-from-formula select{ padding:8px 10px; border:1.5px solid var(--line); border-radius:8px; font-family:inherit; font-size:13px; flex:1 1 180px; }
 .vinath-admin-nav{ background:#332A21; }
 .vinath-admin-nav-inner{ max-width:1200px; margin:0 auto; display:flex; gap:2px; padding:0 20px; overflow-x:auto; }
 .van-item{ color:rgba(255,255,255,.62); font-size:13px; padding:13px 14px; text-decoration:none; white-space:nowrap; border-bottom:2.5px solid transparent; display:inline-block; }
@@ -301,6 +303,7 @@ window.scrollTo(0,0);
       + '</div>'
 
       + '<div class="card"><div class="section-title">药材明细</div>'
+      + '<div class="rx-from-formula"><select id="loadFormulaSelect"><option value="">从我的协定方载入…</option></select><button type="button" class="btn-small" id="loadFormulaBtn">载入</button></div>'
       + '<div id="herbItemsList"></div>'
       + '<button type="button" class="btn-secondary" id="addHerbBtn" style="margin-top:6px;">+ 添加一味药</button>'
       + '<div style="font-size:12px;color:var(--ink-soft);margin-top:10px;">药材名称、剂量、煎法备注（如"先煎""后下"）完全由您填写决定，这里不提供任何预设或建议剂量。</div>'
@@ -368,6 +371,29 @@ window.scrollTo(0,0);
     document.getElementById('addHerbBtn').addEventListener('click', function(){
       rx.items.push({herbName:'', dosageGrams:'', notes:''});
       renderHerbItems();
+    });
+
+    // 从我的协定方一键载入基础方，再加减调整
+    var myFormulas = [];
+    (async function(){
+      try {
+        var fRes = await fetch(API_BASE + '/admin/personal-formulas', { headers:{'Authorization':'Bearer '+authToken} });
+        myFormulas = fRes.ok ? await fRes.json() : [];
+        document.getElementById('loadFormulaSelect').innerHTML = '<option value="">从我的协定方载入…</option>' + myFormulas.map(function(f){ return '<option value="'+f.id+'">'+f.name+'（'+FORMULA_TYPE_LABELS[(f.formula_type||f.formulaType)]+'）</option>'; }).join('');
+      } catch(e){}
+    })();
+    document.getElementById('loadFormulaBtn').addEventListener('click', function(){
+      var sel = document.getElementById('loadFormulaSelect');
+      var f = null;
+      for(var i=0;i<myFormulas.length;i++){ if(myFormulas[i].id===sel.value){ f = myFormulas[i]; break; } }
+      if(!f){ showToast('请先选择一个协定方'); return; }
+      rx.formulaType = (f.formula_type||f.formulaType) || 'granule';
+      rx.items = (f.items && f.items.length) ? f.items.map(function(it){ return {herbName:it.herbName, dosageGrams:it.dosageGrams, notes:it.notes||''}; }) : [{herbName:'', dosageGrams:'', notes:''}];
+      rx.usageInstructions = (f.usage_instructions||f.usageInstructions) || '';
+      document.getElementById('rxFormulaTypeInput').value = rx.formulaType;
+      document.getElementById('rxUsageInput').value = rx.usageInstructions;
+      renderHerbItems();
+      showToast('已载入协定方「'+f.name+'」，可加减调整');
     });
 
     document.getElementById('saveRxBtn').addEventListener('click', async function(){

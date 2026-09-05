@@ -11,15 +11,7 @@
 const Database = require('better-sqlite3');
 const path = require('path');
 
-// 数据库文件路径：优先读 DB_PATH 环境变量（生产环境挂载持久磁盘时指向磁盘目录），
-// 默认存到本文件同目录（本地开发用）。
-const DB_FILE = process.env.DB_PATH || path.join(__dirname, 'vinath.db');
-if (process.env.DB_PATH) {
-  const fs = require('fs');
-  const dir = path.dirname(process.env.DB_PATH);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-}
-const db = new Database(DB_FILE);
+const db = new Database(path.join(__dirname, 'vinath.db'));
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
@@ -324,6 +316,18 @@ db.exec(`
     patient_phone TEXT,
     detail TEXT,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS personal_formulas (
+    id TEXT PRIMARY KEY,
+    practitioner_id TEXT NOT NULL,
+    practitioner_name TEXT,
+    name TEXT NOT NULL,
+    formula_type TEXT NOT NULL DEFAULT 'granule',
+    items TEXT NOT NULL DEFAULT '[]',
+    usage_instructions TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT DEFAULT CURRENT_TIMESTAMP
   );
 `);
 

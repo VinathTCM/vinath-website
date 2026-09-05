@@ -2,6 +2,7 @@
 const express = require('express');
 const db = require('../db');
 const { authMiddleware, requireRole, requireModuleAccess } = require('../middleware/auth');
+const { visiblePatientPhonesFor } = require('./visibility');
 
 const router = express.Router();
 
@@ -22,7 +23,21 @@ function logAccess(req, action, recordId, patientPhone){
 router.get('/admin/medical-records', authMiddleware, requireModuleAccess('medicalRecords'), (req, res) => {
   const { patientPhone } = req.query;
   let rows;
-  if(patientPhone){
+  if(req.admin.role === 'PRACTITIONER'){
+    // 小管理员：只能看到自己名下"未过期"预约的病人的病历（可见规则见 visibility.js）。
+    // 有未过期预约的病人 → 能看到该病人的全部历史病历（不限书写者）。
+    const visiblePhones = visiblePatientPhonesFor(req.admin.sub, Date.now());
+    if(patientPhone){
+      if(visiblePhones.indexOf(patientPhone) === -1) return res.json([]);
+      rows = db.prepare('SELECT * FROM medical_records WHERE patient_phone = ? ORDER BY visit_date DESC').all(patientPhone);
+      logAccess(req, 'view', null, patientPhone);
+    } else {
+      if(!visiblePhones.length) return res.json([]);
+      const ph = visiblePhones.map(function(){ return '?'; }).join(',');
+      rows = db.prepare('SELECT * FROM medical_records WHERE patient_phone IN (' + ph + ') ORDER BY visit_date DESC').all(...visiblePhones);
+      logAccess(req, 'view', null, null);
+    }
+  } else if(patientPhone){
     rows = db.prepare('SELECT * FROM medical_records WHERE patient_phone = ? ORDER BY visit_date DESC').all(patientPhone);
     logAccess(req, 'view', null, patientPhone);
   } else {
@@ -34,7 +49,15 @@ router.get('/admin/medical-records', authMiddleware, requireModuleAccess('medica
 
 // 患者列表（按手机号去重，带就诊次数和最近一次日期）——电子病历首页的患者列表用
 router.get('/admin/medical-records/patients', authMiddleware, requireModuleAccess('medicalRecords'), (req, res) => {
-  const rows = db.prepare('SELECT patient_phone, patient_name, visit_date FROM medical_records').all();
+  let rows;
+  if(req.admin.role === 'PRACTITIONER'){
+    const visiblePhones = visiblePatientPhonesFor(req.admin.sub, Date.now());
+    if(!visiblePhones.length) return res.json([]);
+    const ph = visiblePhones.map(function(){ return '?'; }).join(',');
+    rows = db.prepare('SELECT patient_phone, patient_name, visit_date FROM medical_records WHERE patient_phone IN (' + ph + ')').all(...visiblePhones);
+  } else {
+    rows = db.prepare('SELECT patient_phone, patient_name, visit_date FROM medical_records').all();
+  }
   const byPhone = {};
   rows.forEach(r => {
     if(!byPhone[r.patient_phone]){

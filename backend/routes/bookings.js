@@ -2,6 +2,7 @@
 const express = require('express');
 const db = require('../db');
 const { authMiddleware, requireRole, logAdminAction } = require('../middleware/auth');
+const { isBookingVisibleNow } = require('./visibility');
 
 const router = express.Router();
 
@@ -90,7 +91,11 @@ router.get('/admin/bookings', authMiddleware, requireRole('SENIOR', 'PRACTITIONE
   if(req.admin.role === 'SENIOR'){
     rows = db.prepare(baseQuery + ' ORDER BY bookings.created_at DESC').all();
   } else {
-    rows = db.prepare(baseQuery + ' WHERE bookings.practitioner_id = ? ORDER BY bookings.created_at DESC').all(req.admin.sub);
+    // 小管理员：只能看到自己名下、且未过期的预约（预约时间段结束 +24h 内）。
+    // 过期的预约从小管理员视图消失，大管理员仍能看到全部。
+    const allMine = db.prepare(baseQuery + ' WHERE bookings.practitioner_id = ? ORDER BY bookings.created_at DESC').all(req.admin.sub);
+    const nowMs = Date.now();
+    rows = allMine.filter(function(b){ return isBookingVisibleNow(b, nowMs); });
   }
   res.json(rows.map(serializeBooking));
 });

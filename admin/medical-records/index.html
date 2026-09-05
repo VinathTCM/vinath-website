@@ -91,6 +91,33 @@ h1{ font-family:var(--font-serif); font-size:22px; margin:0 0 4px; }
 .van-item{ color:rgba(255,255,255,.62); font-size:13px; padding:13px 14px; text-decoration:none; white-space:nowrap; border-bottom:2.5px solid transparent; display:inline-block; }
 .van-item:hover{ color:#fff; }
 .van-item.current{ color:#fff; border-bottom-color:#BC6E4E; font-weight:700; }
+/* ---- 合并后的工具 Tab（病历 / 协定方） ---- */
+.tool-tabs{ display:flex; gap:8px; margin-bottom:18px; }
+.tool-tab{ padding:9px 20px; border:1.5px solid var(--line); border-radius:100px; font-size:13.5px; font-weight:700; color:var(--ink-soft); cursor:pointer; background:#fff; transition:.15s; }
+.tool-tab.on{ border-color:var(--clay); background:var(--clay-soft); color:var(--clay); }
+/* ---- 处方区块（病历表单内嵌 / 独立开方视图共用） ---- */
+.rx-enable-row{ display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:700; color:var(--ink); cursor:pointer; margin-bottom:4px; }
+.rx-enable-row input{ width:17px; height:17px; accent-color:var(--clay); }
+.herb-item-row{ display:grid; grid-template-columns:1.6fr .8fr 1.4fr auto; gap:8px; margin-bottom:8px; align-items:center; }
+@media (max-width:640px){ .herb-item-row{ grid-template-columns:1fr; } }
+.herb-item-row input{ padding:8px 10px; border:1.5px solid var(--line); border-radius:8px; font-family:inherit; font-size:13px; }
+.remove-herb{ background:none; border:none; color:var(--ink-soft); cursor:pointer; font-size:17px; }
+.rx-from-formula{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
+.rx-from-formula select{ padding:8px 10px; border:1.5px solid var(--line); border-radius:8px; font-family:inherit; font-size:13px; flex:1 1 180px; }
+.rx-from-formula .btn-small{ background:var(--clay-soft); color:var(--clay); border:none; border-radius:8px; padding:8px 14px; font-size:12.5px; font-weight:700; cursor:pointer; }
+/* ---- 协定方列表 ---- */
+.formula-row{ border:1.5px solid var(--line); border-radius:12px; padding:14px 16px; margin-bottom:10px; }
+.formula-row-hd{ display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; }
+.formula-row .fname{ font-weight:700; font-size:14.5px; }
+.formula-row .fmeta{ font-size:12px; color:var(--ink-soft); margin-top:3px; }
+.formula-actions{ display:flex; gap:8px; }
+.formula-actions button{ background:none; border:1.5px solid var(--line); color:var(--ink); border-radius:8px; padding:6px 12px; font-size:12.5px; cursor:pointer; }
+.formula-actions button.f-edit{ color:var(--clay); border-color:var(--clay); }
+.formula-actions button.f-del{ color:#B0503A; border-color:rgba(176,80,58,.4); }
+.f-type-badge{ display:inline-block; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:100px; background:var(--amber-soft); color:var(--amber); margin-right:6px; }
+.warn{ color:#B0503A; font-size:12.5px; margin-top:6px; display:none; }
+.warn.show{ display:block; }
+
 </style>
 </head>
 <body>
@@ -231,7 +258,7 @@ window.scrollTo(0,0);
     treatmentMethod: ['针灸','推拿','艾灸','拔罐','刮痧','其他']
   };
 
-  var view = 'list'; // list | form | timeline
+  var view = 'list'; // list | form | timeline | rx | formulas
   var activePatientPhone = null;
   var editingRecord = null;
 
@@ -289,6 +316,8 @@ window.scrollTo(0,0);
     if(view==='list') renderPatientList();
     else if(view==='timeline') renderTimeline();
     else if(view==='form') renderForm();
+    else if(view==='rx') renderRx();
+    else if(view==='formulas') renderFormulas();
   }
 
   async function renderPatientList(){
@@ -312,8 +341,9 @@ window.scrollTo(0,0);
     }).join('');
 
     var html = '<div class="wrap">'
+      + '<div class="tool-tabs"><span class="tool-tab on">病历工具</span><span class="tool-tab" id="gotoFormulasTab">协定方</span></div>'
       + '<h1>电子病历</h1>'
-      + '<div class="sub">按四诊记录病历，标注穴位，管理患处/舌苔照片时间轴。</div>'
+      + '<div class="sub">按四诊记录病历，标注穴位，管理患处/舌苔照片时间轴；填写病历时可直接同时开出处方。</div>'
       + '<div class="top-actions"><div class="patient-search">'
       + '<select id="bookedPatientSelect" style="min-width:200px;"><option value="">— 从已预约客户中选择 —</option>'+bookedPatientOptions+'</select>'
       + '<span style="color:var(--ink-soft);font-size:12.5px;align-self:center;">或</span>'
@@ -348,6 +378,8 @@ window.scrollTo(0,0);
       view = 'form';
       render();
     });
+    var gotoF = document.getElementById('gotoFormulasTab');
+    if(gotoF) gotoF.addEventListener('click', function(){ view='formulas'; render(); });
   }
 
   // 把chip选中的预设值和补充输入框的自由文字合并成一句话展示——两者是"并且"关系
@@ -361,6 +393,10 @@ window.scrollTo(0,0);
   }
 
   var STATUS_LABELS_RX = {awaiting_pharmacy:'待药房接单', brewing:'煎药中', shipping:'配送中', delivered:'已送达'};
+  var FORMULA_TYPE_LABELS = {granule:'颗粒剂', decoction:'饮片', custom:'配方'};
+  var RX_STATUS_LABELS = {awaiting_pharmacy:'待药房接单', brewing:'煎药中', shipping:'配送中', delivered:'已送达'};
+  var editingRx = null;
+  var editingFormula = null;
 
   async function renderTimeline(){
     var records = await fetchRecordsForPatient(activePatientPhone);
@@ -378,7 +414,11 @@ window.scrollTo(0,0);
       if(bookings.length && !patientName) patientName = bookings[0].name;
     } catch(e){}
     var prescriptions = [];
-    try { prescriptions = JSON.parse(localStorage.getItem('vinath_prescriptions')||'[]').filter(function(p){ return p.patientPhone===activePatientPhone; }); } catch(e){}
+    try {
+      var pRes = await fetch(API_BASE + '/admin/prescriptions?patientPhone=' + encodeURIComponent(activePatientPhone), { headers: { 'Authorization': 'Bearer ' + authToken } });
+      var rxRows = pRes.ok ? await pRes.json() : [];
+      prescriptions = rxRows.map(function(p){ return { id:p.id, patientPhone:p.patient_phone, createdAt:p.created_at, status:p.status, items:p.items||[], usageInstructions:p.usage_instructions, practitionerName:p.practitioner_name }; });
+    } catch(e){}
 
     var entries = [];
     records.forEach(function(r){
@@ -425,7 +465,7 @@ window.scrollTo(0,0);
     var html = '<div class="wrap">'
       + '<div class="top-actions"><div><h1>'+patientName+' 的完整病历时间轴</h1><div class="sub">+60'+activePatientPhone+' · 病历 '+records.length+' 次 · 预约 '+bookings.length+' 次 · 处方 '+prescriptions.length+' 次</div></div>'
       + '<div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn-secondary" id="backToListBtn">← 返回患者列表</button>'
-      + '<a href="/admin/prescriptions/?patientPhone='+encodeURIComponent(activePatientPhone)+'&patientName='+encodeURIComponent(patientName)+'" target="_blank" class="btn-secondary" style="text-decoration:none;display:inline-flex;align-items:center;">开具处方 →</a>'
+      + '<button class="btn-secondary" id="openRxBtn">开具处方 →</button>'
       + '<a href="/admin/orders/?openPatient='+encodeURIComponent(activePatientPhone)+'" target="_blank" class="btn-secondary" style="text-decoration:none;display:inline-flex;align-items:center;">查看预约记录 →</a>'
       + '<button class="btn-primary" id="newVisitBtn">+ 新增一次就诊记录</button></div></div>'
       + '<div class="card"><div class="timeline">'
@@ -434,6 +474,11 @@ window.scrollTo(0,0);
     document.getElementById('app').innerHTML = html;
 
     document.getElementById('backToListBtn').addEventListener('click', function(){ view='list'; render(); });
+    document.getElementById('openRxBtn').addEventListener('click', function(){
+      editingRx = { patientPhone: activePatientPhone, patientName: patientName };
+      view = 'rx';
+      render();
+    });
     document.getElementById('newVisitBtn').addEventListener('click', function(){
       editingRecord = { patientPhone: activePatientPhone, patientName: patientName };
       view = 'form';
@@ -528,6 +573,18 @@ window.scrollTo(0,0);
       + '<div class="card"><div class="section-title">照片（患处 / 舌苔）</div>'
       + '<div class="photo-upload-grid" id="photoGrid"></div>'
       + '<input type="file" id="photoFileInput" accept="image/*" style="display:none;">'
+      + '</div>'
+
+      + '<div class="card"><div class="section-title">本次处方（可选）</div>'
+      + '<label class="rx-enable-row"><input type="checkbox" id="rxEnableCheck"> 本次就诊同时开具处方</label>'
+      + '<div id="rxBlock" style="display:none;margin-top:14px;">'
+      + '<div class="field"><label>配方类型</label><select id="rxTypeSelect"><option value="granule">颗粒剂</option><option value="decoction">饮片</option><option value="custom">配方</option></select></div>'
+      + '<div class="rx-from-formula"><select id="rxLoadFormulaSelect"><option value="">从我的协定方载入…</option></select><button type="button" class="btn-small" id="rxLoadFormulaBtn">载入</button></div>'
+      + '<div class="field"><label>药材明细</label><div id="rxHerbList"></div>'
+      + '<button type="button" class="btn-secondary" id="rxAddHerbBtn" style="margin-top:6px;">+ 添加一味药</button>'
+      + '<div style="font-size:12px;color:var(--ink-soft);margin-top:10px;">药材名称、剂量、煎法备注完全由您填写，软件不提供剂量建议。</div></div>'
+      + '<div class="field"><label>服法</label><textarea id="rxUsageInput" placeholder="例如：每日一剂，分三次饭后温服"></textarea></div>'
+      + '</div>'
       + '</div>'
 
       + '<button class="btn-primary" id="saveRecordBtn" style="width:100%;padding:14px;font-size:15px;">保存病历</button>'
@@ -694,6 +751,55 @@ window.scrollTo(0,0);
     });
     renderPhotoGrid();
 
+    // ---- 本次处方区块交互（合并电子处方） ----
+    var rxDraft = { enabled:false, formulaType:'granule', items:[{herbName:'',dosageGrams:'',notes:''}], usageInstructions:'' };
+    var formulaLib = [];
+    function renderRxHerbList(){
+      var el = document.getElementById('rxHerbList');
+      if(!el) return;
+      el.innerHTML = rxDraft.items.map(function(it, i){
+        return '<div class="herb-item-row">'
+          + '<input type="text" placeholder="药材名称" data-rxh-name="'+i+'" value="'+escapeHtml(it.herbName)+'">'
+          + '<input type="text" placeholder="剂量(g)" data-rxh-dose="'+i+'" value="'+it.dosageGrams+'">'
+          + '<input type="text" placeholder="煎法备注（选填）" data-rxh-notes="'+i+'" value="'+it.notes+'">'
+          + '<button type="button" class="remove-herb" data-rxh-rm="'+i+'">×</button>'
+          + '</div>';
+      }).join('');
+      document.querySelectorAll('[data-rxh-name]').forEach(function(inp){ inp.addEventListener('input', function(){ rxDraft.items[Number(this.getAttribute('data-rxh-name'))].herbName = this.value; }); });
+      document.querySelectorAll('[data-rxh-dose]').forEach(function(inp){ inp.addEventListener('input', function(){ rxDraft.items[Number(this.getAttribute('data-rxh-dose'))].dosageGrams = this.value; }); });
+      document.querySelectorAll('[data-rxh-notes]').forEach(function(inp){ inp.addEventListener('input', function(){ rxDraft.items[Number(this.getAttribute('data-rxh-notes'))].notes = this.value; }); });
+      document.querySelectorAll('[data-rxh-rm]').forEach(function(btn){ btn.addEventListener('click', function(){ if(rxDraft.items.length<=1) return; rxDraft.items.splice(Number(this.getAttribute('data-rxh-rm')),1); renderRxHerbList(); }); });
+    }
+    function loadFormulaOptions(){
+      var sel = document.getElementById('rxLoadFormulaSelect');
+      if(!sel) return;
+      fetch(API_BASE + '/admin/personal-formulas', { headers: { 'Authorization': 'Bearer ' + authToken } })
+        .then(function(res){ return res.ok ? res.json() : []; })
+        .then(function(list){ formulaLib = list; sel.innerHTML = '<option value="">从我的协定方载入…</option>' + list.map(function(f){ return '<option value="'+f.id+'">'+f.name+'（'+FORMULA_TYPE_LABELS[(f.formula_type||f.formulaType)]+'）</option>'; }).join(''); })
+        .catch(function(){});
+    }
+    document.getElementById('rxEnableCheck').addEventListener('change', function(){
+      rxDraft.enabled = this.checked;
+      document.getElementById('rxBlock').style.display = this.checked ? '' : 'none';
+      if(this.checked){ loadFormulaOptions(); renderRxHerbList(); }
+    });
+    document.getElementById('rxTypeSelect').addEventListener('change', function(){ rxDraft.formulaType = this.value; });
+    document.getElementById('rxAddHerbBtn').addEventListener('click', function(){ rxDraft.items.push({herbName:'',dosageGrams:'',notes:''}); renderRxHerbList(); });
+    document.getElementById('rxUsageInput').addEventListener('input', function(){ rxDraft.usageInstructions = this.value; });
+    document.getElementById('rxLoadFormulaBtn').addEventListener('click', function(){
+      var sel = document.getElementById('rxLoadFormulaSelect');
+      var f = null;
+      for(var i=0;i<formulaLib.length;i++){ if(formulaLib[i].id===sel.value){ f = formulaLib[i]; break; } }
+      if(!f){ showToast('请先选择一个协定方'); return; }
+      rxDraft.formulaType = (f.formula_type||f.formulaType) || 'granule';
+      rxDraft.items = (f.items && f.items.length) ? f.items.map(function(it){ return {herbName:it.herbName, dosageGrams:it.dosageGrams, notes:it.notes||''}; }) : [{herbName:'',dosageGrams:'',notes:''}];
+      rxDraft.usageInstructions = (f.usage_instructions||f.usageInstructions) || '';
+      document.getElementById('rxTypeSelect').value = rxDraft.formulaType;
+      document.getElementById('rxUsageInput').value = rxDraft.usageInstructions;
+      renderRxHerbList();
+      showToast('已载入协定方「'+f.name+'」，可加减调整');
+    });
+
     document.getElementById('saveRecordBtn').addEventListener('click', async function(){
       r.visitDate = document.getElementById('visitDateInput').value.trim() || new Date().toISOString().slice(0,10);
       r.visitType = document.getElementById('visitTypeInput').value;
@@ -725,7 +831,22 @@ window.scrollTo(0,0);
           body: JSON.stringify({ patientPhone: r.patientPhone, patientName: r.patientName, visitDate: r.visitDate, data: dataPayload })
         });
         if(!res.ok){ showToast('保存失败，请重试'); btn.disabled = false; return; }
-        showToast('病历已保存');
+        var savedRecord = await res.json();
+        var savedMrId = savedRecord && savedRecord.id;
+        if(rxDraft.enabled){
+          var rxItems = rxDraft.items.filter(function(it){ return it.herbName && String(it.herbName).trim() && it.dosageGrams; });
+          if(rxItems.length){
+            var rxPayload = { patientName: r.patientName, patientPhone: r.patientPhone, medicalRecordId: savedMrId || null, bookingId: null, formulaType: rxDraft.formulaType, items: rxItems, usageInstructions: rxDraft.usageInstructions };
+            try {
+              var rxRes = await fetch(API_BASE + '/admin/prescriptions', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body: JSON.stringify(rxPayload) });
+              showToast(rxRes.ok ? '病历与处方已保存' : '病历已保存，但处方提交失败');
+            } catch(e2){ showToast('病历已保存，但处方提交失败'); }
+          } else {
+            showToast('病历已保存（未填写处方药材，未提交处方）');
+          }
+        } else {
+          showToast('病历已保存');
+        }
         activePatientPhone = r.patientPhone;
         view = 'timeline';
         render();
@@ -734,6 +855,237 @@ window.scrollTo(0,0);
         btn.disabled = false;
       }
     });
+  }
+
+  // 独立开方视图（从时间轴"开具处方"进入）：病历与处方合并到一个工具内，不再跳转独立处方页
+  async function renderRx(){
+    var rx = editingRx || {};
+    rx.patientPhone = (rx.patientPhone||'').replace(/[^0-9]/g,'');
+    rx.items = rx.items || [{herbName:'',dosageGrams:'',notes:''}];
+    rx.formulaType = rx.formulaType || 'granule';
+    var html = '<div class="wrap">'
+      + '<div class="tool-tabs"><span class="tool-tab" id="rxBackToTools">病历工具</span><span class="tool-tab" id="rxGoFormulas">协定方</span></div>'
+      + '<div class="top-actions"><h1>开具处方</h1><button class="btn-secondary" id="rxCancelBtn">← 取消</button></div>'
+
+      + '<div class="card"><div class="section-title">患者信息</div>'
+      + '<div class="two-col">'
+      + '<div class="field"><label>患者姓名</label><input type="text" id="rxNameInput" value="'+escapeHtml(rx.patientName||'')+'"></div>'
+      + '<div class="field"><label>患者手机号（不带0）</label><input type="text" id="rxPhoneInput" value="'+escapeHtml(rx.patientPhone)+'"></div>'
+      + '</div>'
+      + '<div class="field"><label>关联病历（可选）</label><select id="rxRecSelect"><option value="">不关联病历</option></select></div>'
+      + '<div class="field"><label>关联预约（可选——关联后处方自动进入该预约的治疗明细，方便开收据）</label><select id="rxBkSelect"><option value="">不关联预约</option></select></div>'
+      + '</div>'
+
+      + '<div class="card"><div class="section-title">配方类型</div>'
+      + '<select id="rxType2Select"><option value="granule">颗粒剂</option><option value="decoction">饮片</option><option value="custom">配方</option></select>'
+      + '</div>'
+
+      + '<div class="card"><div class="section-title">药材明细</div>'
+      + '<div class="rx-from-formula"><select id="rxLoadF2Select"><option value="">从我的协定方载入…</option></select><button type="button" class="btn-small" id="rxLoadF2Btn">载入</button></div>'
+      + '<div id="rxHerbList2"></div>'
+      + '<button type="button" class="btn-secondary" id="rxAdd2Btn" style="margin-top:6px;">+ 添加一味药</button>'
+      + '<div style="font-size:12px;color:var(--ink-soft);margin-top:10px;">药材名称、剂量、煎法备注完全由您填写，软件不提供剂量建议。</div>'
+      + '</div>'
+
+      + '<div class="card"><div class="section-title">服法</div>'
+      + '<textarea id="rxUsage2Input" placeholder="例如：每日一剂，分三次饭后温服">'+escapeHtml(rx.usageInstructions||'')+'</textarea>'
+      + '<div class="warn" id="rxWarn2"></div>'
+      + '</div>'
+
+      + '<button class="btn-primary" id="rxSubmitBtn" style="width:100%;padding:14px;font-size:15px;">提交处方</button>'
+      + '</div>';
+    document.getElementById('app').innerHTML = html;
+
+    document.getElementById('rxCancelBtn').addEventListener('click', function(){ view = activePatientPhone ? 'timeline' : 'list'; render(); });
+    document.getElementById('rxBackToTools').addEventListener('click', function(){ view = activePatientPhone ? 'timeline' : 'list'; render(); });
+    document.getElementById('rxGoFormulas').addEventListener('click', function(){ view='formulas'; render(); });
+    document.getElementById('rxType2Select').value = rx.formulaType;
+
+    async function refreshRxOptions(){
+      var phone = document.getElementById('rxPhoneInput').value.trim().replace(/[^0-9]/g,'');
+      try {
+        var recRes = await fetch(API_BASE + '/admin/medical-records?patientPhone=' + encodeURIComponent(phone), { headers:{'Authorization':'Bearer '+authToken} });
+        var recs = recRes.ok ? await recRes.json() : [];
+        document.getElementById('rxRecSelect').innerHTML = '<option value="">不关联病历</option>' + recs.map(function(r){ return '<option value="'+r.id+'">'+r.visit_date+' · '+(r.data&&r.data.tcmDiagnosis?r.data.tcmDiagnosis:'未填写诊断')+'</option>'; }).join('');
+      } catch(e){}
+      try {
+        var bkRes = await fetch(API_BASE + '/admin/bookings', { headers:{'Authorization':'Bearer '+authToken} });
+        var bks = bkRes.ok ? await bkRes.json() : [];
+        var mine = bks.filter(function(b){ return b.customer_phone===phone && !b.cancelled; });
+        document.getElementById('rxBkSelect').innerHTML = '<option value="">不关联预约</option>' + mine.map(function(b){ return '<option value="'+b.id+'">'+b.appt_date+' '+b.slot+' · '+b.practitioner_name+'</option>'; }).join('');
+      } catch(e){}
+    }
+    document.getElementById('rxPhoneInput').addEventListener('blur', refreshRxOptions);
+    refreshRxOptions();
+
+    var formulaLib2 = [];
+    var formulaSelect2 = document.getElementById('rxLoadF2Select');
+    (async function(){
+      try {
+        var res = await fetch(API_BASE + '/admin/personal-formulas', { headers:{'Authorization':'Bearer '+authToken} });
+        formulaLib2 = res.ok ? await res.json() : [];
+        formulaSelect2.innerHTML = '<option value="">从我的协定方载入…</option>' + formulaLib2.map(function(f){ return '<option value="'+f.id+'">'+f.name+'（'+FORMULA_TYPE_LABELS[(f.formula_type||f.formulaType)]+'）</option>'; }).join('');
+      } catch(e){}
+    })();
+
+    function renderHerb2(){
+      document.getElementById('rxHerbList2').innerHTML = rx.items.map(function(it, i){
+        return '<div class="herb-item-row">'
+          + '<input type="text" placeholder="药材名称" data-rx2n="'+i+'" value="'+escapeHtml(it.herbName)+'">'
+          + '<input type="text" placeholder="剂量(g)" data-rx2d="'+i+'" value="'+it.dosageGrams+'">'
+          + '<input type="text" placeholder="煎法备注（选填）" data-rx2o="'+i+'" value="'+it.notes+'">'
+          + '<button type="button" class="remove-herb" data-rx2r="'+i+'">×</button>'
+          + '</div>';
+      }).join('');
+      document.querySelectorAll('[data-rx2n]').forEach(function(inp){ inp.addEventListener('input', function(){ rx.items[Number(this.getAttribute('data-rx2n'))].herbName = this.value; }); });
+      document.querySelectorAll('[data-rx2d]').forEach(function(inp){ inp.addEventListener('input', function(){ rx.items[Number(this.getAttribute('data-rx2d'))].dosageGrams = this.value; }); });
+      document.querySelectorAll('[data-rx2o]').forEach(function(inp){ inp.addEventListener('input', function(){ rx.items[Number(this.getAttribute('data-rx2o'))].notes = this.value; }); });
+      document.querySelectorAll('[data-rx2r]').forEach(function(btn){ btn.addEventListener('click', function(){ if(rx.items.length<=1) return; rx.items.splice(Number(this.getAttribute('data-rx2r')),1); renderHerb2(); }); });
+    }
+    renderHerb2();
+    document.getElementById('rxAdd2Btn').addEventListener('click', function(){ rx.items.push({herbName:'',dosageGrams:'',notes:''}); renderHerb2(); });
+    document.getElementById('rxLoadF2Btn').addEventListener('click', function(){
+      var f = null;
+      for(var i=0;i<formulaLib2.length;i++){ if(formulaLib2[i].id===formulaSelect2.value){ f = formulaLib2[i]; break; } }
+      if(!f){ showToast('请先选择一个协定方'); return; }
+      rx.formulaType = (f.formula_type||f.formulaType) || 'granule';
+      rx.items = (f.items && f.items.length) ? f.items.map(function(it){ return {herbName:it.herbName, dosageGrams:it.dosageGrams, notes:it.notes||''}; }) : [{herbName:'',dosageGrams:'',notes:''}];
+      rx.usageInstructions = (f.usage_instructions||f.usageInstructions) || '';
+      document.getElementById('rxType2Select').value = rx.formulaType;
+      document.getElementById('rxUsage2Input').value = rx.usageInstructions;
+      renderHerb2();
+      showToast('已载入协定方「'+f.name+'」，可加减调整');
+    });
+
+    document.getElementById('rxSubmitBtn').addEventListener('click', async function(){
+      var name = document.getElementById('rxNameInput').value.trim();
+      var phone = document.getElementById('rxPhoneInput').value.trim().replace(/[^0-9]/g,'');
+      var usage = document.getElementById('rxUsage2Input').value.trim();
+      var validItems = rx.items.filter(function(it){ return it.herbName && String(it.herbName).trim() && it.dosageGrams; });
+      var warnEl = document.getElementById('rxWarn2');
+      if(!name || !phone){ warnEl.textContent='请填写患者姓名和手机号'; warnEl.classList.add('show'); return; }
+      if(!validItems.length){ warnEl.textContent='请至少填写一味药材及剂量'; warnEl.classList.add('show'); return; }
+      if(!usage){ warnEl.textContent='请填写服法'; warnEl.classList.add('show'); return; }
+      warnEl.classList.remove('show');
+      var btn = this; btn.disabled = true;
+      try {
+        var res = await fetch(API_BASE + '/admin/prescriptions', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},
+          body: JSON.stringify({ patientName:name, patientPhone:phone, medicalRecordId:document.getElementById('rxRecSelect').value||null, bookingId:document.getElementById('rxBkSelect').value||null, formulaType:document.getElementById('rxType2Select').value, items:validItems, usageInstructions:usage }) });
+        if(!res.ok){
+          var err = await res.json();
+          warnEl.textContent = err.error || '提交失败，请重试';
+          warnEl.classList.add('show');
+          btn.disabled = false;
+          return;
+        }
+        showToast('处方已提交');
+        view = 'timeline';
+        render();
+      } catch(e){ warnEl.textContent='连不上服务器，请检查网络后重试'; warnEl.classList.add('show'); btn.disabled = false; }
+    });
+  }
+
+  // 协定方管理（每人各自，互不互通）：增删改查；开方时可一键载入基础方再加减
+  async function renderFormulas(){
+    var f = editingFormula;
+    var formulas = [];
+    try {
+      var res = await fetch(API_BASE + '/admin/personal-formulas', { headers:{'Authorization':'Bearer '+authToken} });
+      formulas = res.ok ? await res.json() : [];
+    } catch(e){}
+
+    var html = '<div class="wrap">'
+      + '<div class="tool-tabs"><span class="tool-tab" id="formulasBack">病历工具</span><span class="tool-tab on">协定方</span></div>';
+
+    if(f){
+      f.items = f.items || [{herbName:'',dosageGrams:'',notes:''}];
+      f.formulaType = f.formula_type || f.formulaType || 'granule';
+      html += '<div class="top-actions"><h1>'+(f.id?'编辑协定方':'新增协定方')+'</h1><button class="btn-secondary" id="fCancelBtn">← 取消</button></div>'
+        + '<div class="card"><div class="section-title">协定方信息</div>'
+        + '<div class="field"><label>名称</label><input type="text" id="fNameInput" value="'+escapeHtml(f.name||'')+'" placeholder="例如：四物汤加减"></div>'
+        + '<div class="field"><label>配方类型</label><select id="fTypeInput"><option value="granule">颗粒剂</option><option value="decoction">饮片</option><option value="custom">配方</option></select></div>'
+        + '<div class="field"><label>基础药材</label><div id="fHerbList"></div>'
+        + '<button type="button" class="btn-secondary" id="fAddHerbBtn" style="margin-top:6px;">+ 添加一味药</button>'
+        + '<div style="font-size:12px;color:var(--ink-soft);margin-top:10px;">存下基础方后，以后开处方时点"从协定方载入"即可一键填入，再加减调整。</div></div>'
+        + '<div class="field"><label>默认服法（选填）</label><textarea id="fUsageInput" placeholder="例如：每日一剂，分三次饭后温服">'+escapeHtml(f.usage_instructions||f.usageInstructions||'')+'</textarea></div>'
+        + '<button class="btn-primary" id="fSaveBtn" style="width:100%;padding:13px;font-size:14.5px;">保存协定方</button>'
+        + '</div>';
+    } else {
+      html += '<div class="top-actions"><div><h1>我的协定方</h1><div class="sub">每人各自维护，互不互通。开处方时可一键载入基础方再加减。</div></div>'
+        + '<button class="btn-primary" id="fNewBtn">+ 新增协定方</button></div>'
+        + '<div class="card">'
+        + (formulas.length ? formulas.map(function(x){
+            var herbsText = (x.items||[]).map(function(it){ return escapeHtml(it.herbName)+' '+it.dosageGrams+'g'; }).join('、');
+            return '<div class="formula-row" data-id="'+x.id+'">'
+              + '<div class="formula-row-hd"><div><span class="fname">'+escapeHtml(x.name)+'</span> <span class="f-type-badge">'+FORMULA_TYPE_LABELS[(x.formula_type||x.formulaType)]+'</span></div>'
+              + '<div class="formula-actions"><button class="f-edit" data-fedit="'+x.id+'">编辑</button><button class="f-del" data-fdel="'+x.id+'">删除</button></div></div>'
+              + '<div class="fmeta">'+herbsText+'</div>'
+              + (x.usageInstructions ? '<div class="fmeta">服法：'+escapeHtml(x.usageInstructions)+'</div>' : '')
+              + '</div>';
+          }).join('') : '<div class="empty-state">还没有协定方。点右上角"新增协定方"存下你的常用基础方。</div>')
+        + '</div>';
+    }
+    document.getElementById('app').innerHTML = html;
+
+    document.getElementById('formulasBack').addEventListener('click', function(){ view='list'; editingFormula=null; render(); });
+    if(f){
+      document.getElementById('fCancelBtn').addEventListener('click', function(){ editingFormula=null; renderFormulas(); });
+      document.getElementById('fTypeInput').value = (f.formula_type||f.formulaType) || 'granule';
+      function renderFHerb(){
+        document.getElementById('fHerbList').innerHTML = f.items.map(function(it, i){
+          return '<div class="herb-item-row">'
+            + '<input type="text" placeholder="药材名称" data-fhn="'+i+'" value="'+escapeHtml(it.herbName)+'">'
+            + '<input type="text" placeholder="剂量(g)" data-fhd="'+i+'" value="'+it.dosageGrams+'">'
+            + '<input type="text" placeholder="煎法备注（选填）" data-fho="'+i+'" value="'+it.notes+'">'
+            + '<button type="button" class="remove-herb" data-fhr="'+i+'">×</button>'
+            + '</div>';
+        }).join('');
+        document.querySelectorAll('[data-fhn]').forEach(function(inp){ inp.addEventListener('input', function(){ f.items[Number(this.getAttribute('data-fhn'))].herbName = this.value; }); });
+        document.querySelectorAll('[data-fhd]').forEach(function(inp){ inp.addEventListener('input', function(){ f.items[Number(this.getAttribute('data-fhd'))].dosageGrams = this.value; }); });
+        document.querySelectorAll('[data-fho]').forEach(function(inp){ inp.addEventListener('input', function(){ f.items[Number(this.getAttribute('data-fho'))].notes = this.value; }); });
+        document.querySelectorAll('[data-fhr]').forEach(function(btn){ btn.addEventListener('click', function(){ if(f.items.length<=1) return; f.items.splice(Number(this.getAttribute('data-fhr')),1); renderFHerb(); }); });
+      }
+      renderFHerb();
+      document.getElementById('fAddHerbBtn').addEventListener('click', function(){ f.items.push({herbName:'',dosageGrams:'',notes:''}); renderFHerb(); });
+      document.getElementById('fSaveBtn').addEventListener('click', async function(){
+        var name = document.getElementById('fNameInput').value.trim();
+        var type = document.getElementById('fTypeInput').value;
+        var usage = document.getElementById('fUsageInput').value.trim();
+        var validItems = f.items.filter(function(it){ return it.herbName && String(it.herbName).trim() && it.dosageGrams; });
+        if(!name){ showToast('请填写协定方名称'); return; }
+        if(!validItems.length){ showToast('请至少填写一味药材及剂量'); return; }
+        var btn = this; btn.disabled = true;
+        try {
+          var url = API_BASE + '/admin/personal-formulas' + (f.id ? '/' + f.id : '');
+          var res = await fetch(url, { method: f.id ? 'PUT' : 'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},
+            body: JSON.stringify({ name:name, formulaType:type, items:validItems, usageInstructions:usage }) });
+          if(!res.ok){ showToast('保存失败，请重试'); btn.disabled = false; return; }
+          showToast('协定方已保存');
+          editingFormula = null;
+          renderFormulas();
+        } catch(e){ showToast('连不上服务器，请检查网络后重试'); btn.disabled = false; }
+      });
+    } else {
+      document.getElementById('fNewBtn').addEventListener('click', function(){ editingFormula = {}; renderFormulas(); });
+      document.querySelectorAll('[data-fedit]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var id = this.getAttribute('data-fedit');
+          for(var i=0;i<formulas.length;i++){ if(formulas[i].id===id){ editingFormula = formulas[i]; break; } }
+          renderFormulas();
+        });
+      });
+      document.querySelectorAll('[data-fdel]').forEach(function(btn){
+        btn.addEventListener('click', async function(){
+          var id = this.getAttribute('data-fdel');
+          if(!confirm('确定删除这个协定方？删除后不可恢复。')) return;
+          try {
+            await fetch(API_BASE + '/admin/personal-formulas/' + id, { method:'DELETE', headers:{'Authorization':'Bearer '+authToken} });
+            showToast('已删除');
+            renderFormulas();
+          } catch(e){ showToast('删除失败，请重试'); }
+        });
+      });
+    }
   }
 
   initFromBackend();

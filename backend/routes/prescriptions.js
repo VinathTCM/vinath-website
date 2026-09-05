@@ -2,6 +2,7 @@
 const express = require('express');
 const db = require('../db');
 const { authMiddleware, requireModuleAccess } = require('../middleware/auth');
+const { visiblePatientPhonesFor } = require('./visibility');
 
 const router = express.Router();
 
@@ -14,7 +15,18 @@ function serializePrescription(p){
 router.get('/admin/prescriptions', authMiddleware, requireModuleAccess('prescriptions'), (req, res) => {
   const { patientPhone } = req.query;
   let rows;
-  if(patientPhone){
+  if(req.admin.role === 'PRACTITIONER'){
+    // 小管理员：只能看到自己名下"未过期"预约的病人的处方（可见规则见 visibility.js）
+    const visiblePhones = visiblePatientPhonesFor(req.admin.sub, Date.now());
+    if(patientPhone){
+      if(visiblePhones.indexOf(patientPhone) === -1) return res.json([]);
+      rows = db.prepare('SELECT * FROM prescriptions WHERE patient_phone = ? ORDER BY created_at DESC').all(patientPhone);
+    } else {
+      if(!visiblePhones.length) return res.json([]);
+      const ph = visiblePhones.map(function(){ return '?'; }).join(',');
+      rows = db.prepare('SELECT * FROM prescriptions WHERE patient_phone IN (' + ph + ') ORDER BY created_at DESC').all(...visiblePhones);
+    }
+  } else if(patientPhone){
     rows = db.prepare('SELECT * FROM prescriptions WHERE patient_phone = ? ORDER BY created_at DESC').all(patientPhone);
   } else {
     rows = db.prepare('SELECT * FROM prescriptions ORDER BY created_at DESC').all();
