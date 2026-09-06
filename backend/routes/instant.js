@@ -79,7 +79,7 @@ router.get('/admin/instant-requests', authMiddleware, requireRole('SENIOR', 'PRA
   expireStaleRequests();
   let rows;
   if(req.admin.role === 'SENIOR'){
-    rows = db.prepare(`SELECT * FROM instant_requests WHERE status = 'pending_confirmation' ORDER BY created_at DESC`).all();
+    rows = db.prepare(`SELECT * FROM instant_requests WHERE status IN ('pending_confirmation','unmatched') ORDER BY created_at DESC`).all();
   } else {
     rows = db.prepare(`SELECT * FROM instant_requests WHERE status = 'pending_confirmation' AND matched_practitioner_id = ? ORDER BY created_at DESC`).all(req.admin.sub);
   }

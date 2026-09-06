@@ -22,7 +22,7 @@ router.post('/register', async (req, res) => {
   const hash = await bcrypt.hash(password, 10);
   db.prepare('UPDATE admins SET password_hash = ? WHERE id = ?').run(hash, adminId);
   const token = signToken(admin);
-  res.json({ token, admin: { id: admin.id, name: admin.name, role: admin.role, regions: JSON.parse(admin.regions || '[]') } });
+  res.json({ token, admin: { id: admin.id, name: admin.name, role: admin.role, regions: JSON.parse(admin.regions || '[]'), acceptingOrders: !!admin.accepting_orders, licenseExpiry: admin.license_expiry } });
 });
 
 router.post('/login', async (req, res) => {
@@ -78,11 +78,11 @@ router.get('/admins', authMiddleware, requireRole('SENIOR'), (req, res) => {
 // ---- 公开接口：客户端居家会诊选医师用，不需要登录，只给看得见摸得着的展示字段 ----
 router.get('/practitioners', (req, res) => {
   const rows = db.prepare(`
-    SELECT id, name, role, regions, moh_reg_no, apc_no, avatar, specialty, title, creds, description, tags FROM admins
-    WHERE role IN ('SENIOR','PRACTITIONER') AND (accepting_orders = 1 OR role = 'SENIOR')
+    SELECT id, name, role, regions, accepting_orders, license_expiry, moh_reg_no, apc_no, avatar, specialty, title, creds, description, tags FROM admins
+    WHERE role IN ('SENIOR','PRACTITIONER')
   `).all();
   res.json(rows.map(a => ({
-    id: a.id, name: a.name, regions: JSON.parse(a.regions || '[]'), mohRegNo: a.moh_reg_no, apcNo: a.apc_no,
+    id: a.id, name: a.name, role: a.role, regions: JSON.parse(a.regions || '[]'), acceptingOrders: !!a.accepting_orders, licenseExpiry: a.license_expiry, mohRegNo: a.moh_reg_no, apcNo: a.apc_no,
     avatar: a.avatar, specialty: a.specialty, title: a.title, creds: a.creds, desc: a.description, tags: JSON.parse(a.tags || '[]')
   })));
 });
@@ -118,8 +118,8 @@ router.put('/admin/admins/:id/credentials', authMiddleware, requireRole('SENIOR'
 // ---- 公开接口：登录界面用，列出全部真实存在的账号（不分大小管理员），不需要登录就能看到"有哪些人可以登录"
 // 这是纯展示用途——真正登录还是要走 /login，光知道id和名字登不进去 ----
 router.get('/login-options', (req, res) => {
-  const rows = db.prepare('SELECT id, name, role, regions FROM admins ORDER BY (role=\'SENIOR\') DESC, rowid ASC').all();
-  res.json(rows.map(a => ({ id: a.id, name: a.name, role: a.role, regions: JSON.parse(a.regions || '[]') })));
+  const rows = db.prepare('SELECT id, name, role, regions, accepting_orders, license_expiry FROM admins ORDER BY (role=\'SENIOR\') DESC, rowid ASC').all();
+  res.json(rows.map(a => ({ id: a.id, name: a.name, role: a.role, regions: JSON.parse(a.regions || '[]'), acceptingOrders: !!a.accepting_orders, licenseExpiry: a.license_expiry })));
 });
 
 function genJuniorId(){

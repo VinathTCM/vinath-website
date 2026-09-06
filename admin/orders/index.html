@@ -1142,6 +1142,26 @@ window.escapeHtml = function(s){
     setCurrentAdmin(admin);
     renderLoginOverlay();
     loadOrdersAndBookingsFromBackend();
+    syncJuniorAdminsFromServer();
+    syncServiceAreasFromServer();
+  }
+
+  // 登录后从后端拉取小管理员全量账号（含接单开关/执照/地区），写入本地缓存，
+  // 解决"大管理员在另一台设备建号，小管理员自己浏览器里没有账号数据"的问题
+  async function syncJuniorAdminsFromServer(){
+    try {
+      var res = await fetch(API_BASE + '/auth/login-options');
+      if(!res.ok) return;
+      var accounts = await res.json();
+      var juniors = accounts.filter(function(a){ return a.role!=='SENIOR'; }).map(function(a){
+        return { id:a.id, name:a.name, type:'junior', adminType:a.role.toLowerCase(), regions:a.regions||[], acceptingOrders:!!a.acceptingOrders, licenseExpiry:a.licenseExpiry||null };
+      });
+      saveJuniorAdmins(juniors);
+      var cur = getCurrentAdmin();
+      if(cur && cur.type==='junior' && (cur.adminType||'practitioner')==='practitioner'){
+        if(typeof renderAcceptingToggle==='function') renderAcceptingToggle();
+      }
+    } catch(e){}
   }
 
   function showPasswordStep(type, id, name){
@@ -1450,15 +1470,27 @@ window.escapeHtml = function(s){
       ? '目前开放接单——'+cur.regions.join('、')+' 地区的"立即预约"客户请求会自动匹配给您。'
       : '目前未开放接单——'+cur.regions.join('、')+' 地区的"立即预约"客户请求会派给同地区其他开放接单的I类管理员（都没人开的话，由总部处理）。';
   }
-  document.getElementById('acceptingToggle').addEventListener('click', function(){
+  document.getElementById('acceptingToggle').addEventListener('click', async function(){
     var cur = getCurrentAdmin();
     if(!cur || cur.type!=='junior') return;
     var juniors = getJuniorAdmins();
     var me = juniors.find(function(j){ return j.id===cur.id; });
     if(!me || !isLicenseValid(me)) return; // locked out while license is expired
-    me.acceptingOrders = !me.acceptingOrders;
-    saveJuniorAdmins(juniors);
-    renderAcceptingToggle();
+    var next = !me.acceptingOrders;
+    var btn = this;
+    btn.disabled = true;
+    try {
+      var res = await fetch(API_BASE + '/auth/admin/admins/' + cur.id + '/accepting-orders', {
+        method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify({ accepting: next })
+      });
+      if(!res.ok){ var err = await res.json(); showToast(err.error || '操作失败'); btn.disabled = false; return; }
+      me.acceptingOrders = next;
+      saveJuniorAdmins(juniors);
+      renderAcceptingToggle();
+      showToast(next ? '已开放接单' : '已关闭接单');
+    } catch(e){ showToast('连不上服务器，请检查网络后重试'); }
+    btn.disabled = false;
   });
 
   var toastTimer = null;
@@ -3118,6 +3150,21 @@ window.escapeHtml = function(s){
   }
   function saveServiceAreas(areas){
     try { localStorage.setItem(AREAS_KEY, JSON.stringify(areas)); } catch(e){}
+    // 跨设备同步：把服务地区设置同时写入后端，居家会诊页面在别的设备也能读到最新列表
+    if(authToken && typeof API_BASE === 'string'){
+      fetch(API_BASE + '/admin/site-settings/service_areas', {
+        method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify(areas)
+      }).catch(function(){});
+    }
+  }
+  async function syncServiceAreasFromServer(){
+    try {
+      var res = await fetch(API_BASE + '/site-settings/service_areas');
+      if(!res.ok) return;
+      var areas = await res.json();
+      if(areas && areas.length){ saveServiceAreas(areas); }
+    } catch(e){}
   }
   // [stated] 新增/编辑I类小管理员的地区时，自动把这些地区在"服务地区设置"里打开——这样居家会诊
   // 页面的地区下拉菜单不需要另外手动去"预约设置"里勾一遍，两边不会因为忘记同步一个而对不上。

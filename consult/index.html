@@ -344,9 +344,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   }
   function findJuniorForArea(area, phone){
     try {
-      var raw = localStorage.getItem('vinath_junior_admins');
-      if(!raw) return null;
-      var juniors = JSON.parse(raw);
+      var juniors = getJuniorAdminsLocal();
+      if(!juniors || !juniors.length) return null;
       var todayISO = new Date().toISOString().slice(0,10);
       // only I类·执业中医师 who has explicitly opened up "接单" AND whose license hasn't expired
       // gets auto-matched — checking the license directly here (not just trusting acceptingOrders)
@@ -521,8 +520,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   }
   function juniorNameByIdLocal(id){
     try {
-      var raw = localStorage.getItem('vinath_junior_admins');
-      var juniors = raw ? JSON.parse(raw) : [];
+      var juniors = getJuniorAdminsLocal();
       var j = juniors.find(function(x){ return x.id===id; });
       return j ? j.name : '医师';
     } catch(e){ return '医师'; }
@@ -685,16 +683,46 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   function getPractitionerProfilesLocal(){
     try { var raw = localStorage.getItem('vinath_practitioner_profiles'); return raw ? JSON.parse(raw) : {}; } catch(e){ return {}; }
   }
+  var __apiPractitioners = null;
+  function apiPractitionersAsJuniors(){
+    if(!__apiPractitioners) return null;
+    return __apiPractitioners.filter(function(p){ return p.role==='PRACTITIONER'; }).map(function(p){
+      return { id:p.id, name:p.name, type:'junior', adminType:'practitioner', regions:p.regions||[], acceptingOrders:!!p.acceptingOrders, licenseExpiry:p.licenseExpiry||null };
+    });
+  }
+  async function fetchPractitionersFromApi(){
+    try {
+      var res = await fetch(API_BASE + '/auth/practitioners');
+      if(!res.ok) return null;
+      __apiPractitioners = await res.json();
+      var juniors = apiPractitionersAsJuniors();
+      if(juniors){ try { localStorage.setItem('vinath_junior_admins', JSON.stringify(juniors)); } catch(e){} }
+      return __apiPractitioners;
+    } catch(e){ return null; }
+  }
+  async function fetchServiceAreasFromApi(){
+    try {
+      var res = await fetch(API_BASE + '/site-settings/service_areas');
+      if(!res.ok) return;
+      var areas = await res.json();
+      if(areas && areas.length){ try { localStorage.setItem('vinath_service_areas', JSON.stringify(areas)); } catch(e){} }
+    } catch(e){}
+  }
   function getJuniorAdminsLocal(){
+    var fromApi = apiPractitionersAsJuniors();
+    if(fromApi) return fromApi;
     try { var raw = localStorage.getItem('vinath_junior_admins'); return raw ? JSON.parse(raw) : []; } catch(e){ return []; }
   }
   function getPractitionersForArea(area, phone){
     var profiles = getPractitionerProfilesLocal();
     var results = [];
+    var apiSeniors = {};
+    if(__apiPractitioners){ __apiPractitioners.forEach(function(p){ if(p.role==='SENIOR') apiSeniors[p.id] = p; }); }
     DOCTORS.forEach(function(doc){
       if(phone && isBlacklisted(doc.id, phone)) return;
       var prof = profiles[doc.id] || {};
-      var regions = prof.regions || [];
+      var apiDoc = apiSeniors[doc.id] || {};
+      var regions = (apiDoc.regions && apiDoc.regions.length) ? apiDoc.regions : (prof.regions || []);
       if(!regions.length || regions.indexOf(area)!==-1){
         results.push({ id:doc.id, name:doc.name, video:doc.video,
           specialtyText: prof.specialty || doc.specialties.join('、'), avatar: prof.avatar || '' });
@@ -1090,6 +1118,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     window.location.href = withCart('/checkout/', cartItems);
   });
 
+  fetchPractitionersFromApi();
+  fetchServiceAreasFromApi();
   render();
   renderInstantCta();
 })();
