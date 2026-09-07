@@ -114,6 +114,16 @@ router.put('/admin/bookings/:id/note', authMiddleware, requireRole('SENIOR', 'PR
   res.json({ ok: true });
 });
 
+// 只补写治疗项目（电子病历开具处方/治疗项目后写回预约），不覆盖医师补充病史
+router.put('/admin/bookings/:id/treatments', authMiddleware, requireRole('SENIOR', 'PRACTITIONER'), (req, res) => {
+  const row = db.prepare('SELECT id FROM bookings WHERE id = ?').get(req.params.id);
+  if(!row) return res.status(404).json({ error: '预约不存在' });
+  const { treatments } = req.body;
+  db.prepare('UPDATE bookings SET treatments = ? WHERE id = ?')
+    .run(JSON.stringify(Array.isArray(treatments) ? treatments : []), req.params.id);
+  res.json({ ok: true });
+});
+
 router.put('/admin/bookings/:id/deposit', authMiddleware, requireRole('SENIOR', 'PRACTITIONER'), (req, res) => {
   const { amount, method } = req.body;
   if(!amount || amount <= 0) return res.status(400).json({ error: '请输入有效金额' });

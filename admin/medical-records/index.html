@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VINATH · 电子病历（概念原型）</title>
+<title>VINATH · 电子病历</title>
 <style>
 :root{
   --clay:#BC6E4E; --clay-soft:rgba(188,110,78,.12);
@@ -962,6 +962,15 @@ window.scrollTo(0,0);
               var rxRes = await fetch(API_BASE + '/admin/prescriptions', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body: JSON.stringify(rxPayload) });
               ok = true;
               showToast(rxRes.ok ? '病历与处方已保存' : '病历已保存，但处方提交失败');
+              // 治疗项目写回预约：当日交易报表 / 预约记录 / 病历管理面板都能统计到
+              if(rxRes.ok && rxDraft.bookingId && treatments.length){
+                try {
+                  await fetch(API_BASE + '/admin/bookings/' + encodeURIComponent(rxDraft.bookingId) + '/treatments', {
+                    method:'PUT', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},
+                    body: JSON.stringify({ treatments: treatments })
+                  });
+                } catch(e3){}
+              }
             } catch(e2){ ok = true; showToast('病历已保存，但处方提交失败'); }
           } else {
             ok = true;
