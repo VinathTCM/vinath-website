@@ -106,7 +106,12 @@ router.put('/admin/instant-requests/:id/respond', authMiddleware, requireRole('S
   const { accept } = req.body;
   const row = db.prepare('SELECT * FROM instant_requests WHERE id = ?').get(req.params.id);
   if(!row) return res.status(404).json({ error: '找不到这个请求' });
-  if(row.status !== 'pending_confirmation') return res.status(409).json({ error: '这个请求已经处理过了' });
+  // unmatched = 该地区当时没有开放接单的小管理员，系统留给大管理员兜底接手；
+  // 大管理员可以接 unmatched 请求（转成 accepted 并生成预约），小管理员只能接匹配给自己的
+  const seniorCanAdopt = (req.admin.role === 'SENIOR' && row.status === 'unmatched');
+  if(row.status !== 'pending_confirmation' && !seniorCanAdopt){
+    return res.status(409).json({ error: '这个请求已经处理过了' });
+  }
   // I类医师只能处理系统真正匹配给自己的请求，不能抢别人的单/替别人拒绝——大管理员不受此限制，
   // 保留兜底介入任何请求的权限
   if(req.admin.role === 'PRACTITIONER' && req.admin.sub !== row.matched_practitioner_id){
