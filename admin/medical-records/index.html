@@ -236,11 +236,11 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     if(t.nameEn) return t.nameEn;
     var nm = t.name || '';
     if(TREATMENT_EN[nm]) return TREATMENT_EN[nm];
-    if(nm.indexOf('中药') === 0){
+    if(nm.indexOf('中药') === 0 || nm.indexOf('药材费') === 0){
       var ci = nm.indexOf('：');
       var herbs = ci >= 0 ? herbLineEn(nm.slice(ci + 1)) : '';
-      var kind = nm.indexOf('颗粒') >= 0 ? 'Granules' : (nm.indexOf('代煎') >= 0 ? 'Decoction' : (nm.indexOf('丸') >= 0 ? 'Pills' : 'Herbal Medicine'));
-      return 'Herbal Medicine (' + kind + ')' + (herbs ? ' - ' + herbs.replace(/、/g, ', ') : '');
+      var kind = (nm.indexOf('颗粒') >= 0 || herbs.indexOf('Granules') >= 0) ? 'Granules' : (nm.indexOf('代煎') >= 0 ? 'Decoction' : (nm.indexOf('丸') >= 0 ? 'Pills' : 'Herbal Medicine'));
+      return (kind === 'Herbal Medicine' ? 'Herbal Medicine' : 'Herbal Medicine (' + kind + ')') + (herbs ? ' - ' + herbs.replace(/、/g, ', ') : '');
     }
     if(nm.indexOf('电子处方') === 0) return 'Herbal Prescription';
     return nm;
@@ -1303,7 +1303,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
           showToast('病历已保存');
         }
         activePatientPhone = r.patientPhone;
-        return { ok: ok, savedMrId: savedMrId, rxItems: rxItems, treatments: treatments };
+        return { ok: ok, savedMrId: savedMrId, rxItems: rxItems, treatments: treatments, doses: Number(rxDraft.doses) || 1, dispenseMode: rxDraft.dispenseMode || 'herb_pickup' };
       } catch(e){
         showToast('连不上服务器，请检查网络后重试');
         return { ok:false };
@@ -1438,7 +1438,12 @@ function fillPrintArea(receipt, size){
       (result.treatments || []).forEach(function(t){ if(t && t.name) items.push({ name: printName(t), qty: t.qty || 1, price: t.price || 0 }); });
       if(result.rxItems && result.rxItems.length){
         var herbSummary = result.rxItems.map(function(it){ return it.herbName + ' ' + it.dosageGrams + 'g'; }).join('、');
-        items.push({ name: '药材费（电子处方）：' + herbSummary, qty: 1, price: 0 });
+        var isDecoct = (result.dispenseMode === 'decoct_pickup' || result.dispenseMode === 'decoct_delivery');
+        items.push({ name: '中药费（电子处方' + (isDecoct ? '·代煎' : '') + '）：' + herbSummary, qty: 1, price: 0 });
+        if(isDecoct){
+          var doses = Number(result.doses) || 1;
+          items.push({ name: 'Decoction Fee', qty: doses, price: 8 });
+        }
       }
       if(!items.length){ showToast('本次就诊没有可打印的治疗项目或药材，未生成发票'); return; }
       try {

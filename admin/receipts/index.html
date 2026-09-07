@@ -434,11 +434,11 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     var nm = it.name || '';
     if(it.nameEn) return it.nameEn;
     if(TREATMENT_EN[nm]) return TREATMENT_EN[nm];
-    if(nm.indexOf('中药') === 0){
+    if(nm.indexOf('中药') === 0 || nm.indexOf('药材费') === 0){
       var ci = nm.indexOf('：');
       var herbs = ci >= 0 ? herbLineEn(nm.slice(ci + 1)) : '';
-      var kind = nm.indexOf('颗粒') >= 0 ? 'Granules' : (nm.indexOf('代煎') >= 0 ? 'Decoction' : (nm.indexOf('丸') >= 0 ? 'Pills' : 'Herbal Medicine'));
-      return 'Herbal Medicine (' + kind + ')' + (herbs ? ' - ' + herbs.replace(/、/g, ', ') : '');
+      var kind = (nm.indexOf('颗粒') >= 0 || herbs.indexOf('Granules') >= 0) ? 'Granules' : (nm.indexOf('代煎') >= 0 ? 'Decoction' : (nm.indexOf('丸') >= 0 ? 'Pills' : 'Herbal Medicine'));
+      return (kind === 'Herbal Medicine' ? 'Herbal Medicine' : 'Herbal Medicine (' + kind + ')') + (herbs ? ' - ' + herbs.replace(/、/g, ', ') : '');
     }
     if(nm.indexOf('电子处方') === 0) return 'Herbal Prescription';
     return nm;
