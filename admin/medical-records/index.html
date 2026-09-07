@@ -320,6 +320,9 @@ window.scrollTo(0,0);
       return records.map(function(r){
         var merged = Object.assign({ id:r.id, patientPhone:r.patient_phone, patientName:r.patient_name,
           practitionerId:r.practitioner_id, practitionerName:r.practitioner_name, visitDate:r.visit_date, createdAt:r.created_at }, r.data);
+        // 保留后端附加的处方回填信息（编辑病历/再次开方/报表统计用）
+        if(r.lastRx) merged.lastRx = r.lastRx;
+        if(r.linkedBookingId) merged.linkedBookingId = r.linkedBookingId;
         merged.treatmentPoints = normArrField(merged.treatmentPoints);
         merged.treatments = normArrField(merged.treatments);
         merged.photos = normArrField(merged.photos);
@@ -490,6 +493,10 @@ window.scrollTo(0,0);
         + (pts ? '<div style="font-size:12.5px;color:var(--ink-soft);">穴位/部位：'+pts+'</div>' : '')
         + (r.treatments && r.treatments.length ? '<div style="font-size:12.5px;color:var(--ink-soft);">治疗项目：'+r.treatments.map(function(t){ return escapeHtml(t.name)+' ×'+(Number(t.qty)||1)+'（RM'+((Number(t.price)||0)*(Number(t.qty)||1))+'）'; }).join('、')+'</div>' : '')
         + (r.photos && r.photos.length ? '<div class="timeline-photos">'+r.photos.map(function(p){ return '<img src="'+p.photoUrl+'" title="'+escapeHtml(p.photoType)+'">'; }).join('')+'</div>' : '')
+        + '<div style="margin-top:8px;display:flex;gap:8px;">'
+        + '<button type="button" class="btn-small btn-print-rec" data-print-rec="'+r.id+'">打印收据（A4）</button>'
+        + '<button type="button" class="btn-small btn-print-rec58" data-print-rec58="'+r.id+'">58mm 小票</button>'
+        + '</div>'
         + '</div>' });
     });
     bookings.forEach(function(b){
@@ -530,6 +537,15 @@ window.scrollTo(0,0);
     document.getElementById('backToListBtn').addEventListener('click', function(){ view='list'; render(); });
     document.getElementById('openRxBtn').addEventListener('click', function(){
       editingRx = { patientPhone: activePatientPhone, patientName: patientName };
+      // 回填该患者最近病历关联的处方（药材/服法/配方类型），避免"点了处方却是空白"
+      var lastRec = records[0];
+      if(lastRec && lastRec.lastRx){
+        editingRx.formulaType = lastRec.lastRx.formulaType || 'granule';
+        editingRx.items = (lastRec.lastRx.items && lastRec.lastRx.items.length) ? lastRec.lastRx.items.map(function(it){ return { herbName: it.herbName, dosageGrams: it.dosageGrams, notes: it.notes||'' }; }) : [{herbName:'',dosageGrams:'',notes:''}];
+        editingRx.usageInstructions = lastRec.lastRx.usageInstructions || '';
+        editingRx.bookingId = lastRec.lastRx.bookingId || null;
+        editingRx.medicalRecordId = lastRec.id;
+      }
       view = 'rx';
       render();
     });
@@ -548,6 +564,24 @@ window.scrollTo(0,0);
         render();
       });
     });
+    document.querySelectorAll('[data-print-rec],[data-print-rec58]').forEach(function(btn){
+      btn.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        var id = this.getAttribute('data-print-rec') || this.getAttribute('data-print-rec58');
+        var size = this.hasAttribute('data-print-rec') ? 'a4' : '58';
+        var rec = records.find(function(r){ return r.id===id; });
+        if(rec) printRecordReceipt(rec, size);
+      });
+    });
+    // 历史病历再次打印收据（A4 / 58mm）——病历里保存的治疗项目+关联处方的药材
+    async function printRecordReceipt(rec, size){
+      var d = rec.data || rec; // merged后treatments在病历对象顶层
+      var treatments = (Array.isArray(d.treatments) ? d.treatments : []).map(function(t){ return { name: t.name, qty: Number(t.qty)||1, price: Number(t.price)||0 }; });
+      var rxItems = [];
+      if(rec.lastRx && rec.lastRx.items && rec.lastRx.items.length) rxItems = rec.lastRx.items;
+      if(!treatments.length && !rxItems.length){ showToast('这份病历没有治疗项目或处方药材，无需打印'); return; }
+      await openInvoicePrint({ treatments: treatments, rxItems: rxItems }, patientName || (rec.patientName||''), activePatientPhone, size);
+    }
   }
 
   function toggleChip(arr, val){
@@ -557,6 +591,26 @@ window.scrollTo(0,0);
 
   function renderForm(){
     var r = editingRecord;
+    var rxDraft = rxDraft || {}; // 本次编辑/新建的处方草稿（在下方按病历回填或重置）
+    // 编辑已有病历：回填处方状态（治疗项目+药材+服法+关联预约）；新建：重置
+    if(r.id){
+      var _d0 = r.data || r; // merged后treatments等字段在病历对象顶层
+      rxDraft.treatments = (Array.isArray(_d0.treatments) ? _d0.treatments : []).map(function(t){ return { name: t.name, qty: Number(t.qty)||1, price: Number(t.price)||0 }; });
+      if(r.lastRx){
+        rxDraft.formulaType = r.lastRx.formulaType || 'granule';
+        rxDraft.items = (r.lastRx.items && r.lastRx.items.length) ? r.lastRx.items.map(function(it){ return { herbName: it.herbName, dosageGrams: it.dosageGrams, notes: it.notes||'' }; }) : [{herbName:'',dosageGrams:'',notes:''}];
+        rxDraft.usageInstructions = r.lastRx.usageInstructions || '';
+        rxDraft.bookingId = r.lastRx.bookingId || null;
+      } else {
+        rxDraft.items = [{herbName:'',dosageGrams:'',notes:''}];
+        rxDraft.usageInstructions = '';
+        rxDraft.bookingId = null;
+      }
+      var _hasHerb = rxDraft.items.some(function(it){ return it.herbName && String(it.herbName).trim() && it.dosageGrams; });
+      rxDraft.enabled = rxDraft.treatments.length > 0 || _hasHerb;
+    } else {
+      rxDraft = { enabled:false, formulaType:'granule', items:[{herbName:'',dosageGrams:'',notes:''}], usageInstructions:'', treatments:[], bookingId:null };
+    }
     r.tongueShape = r.tongueShape || [];
     r.pulseType = r.pulseType || [];
     r.treatmentPoints = r.treatmentPoints || [];
@@ -813,7 +867,7 @@ window.scrollTo(0,0);
     renderPhotoGrid();
 
     // ---- 本次处方区块交互（合并电子处方） ----
-    var rxDraft = { enabled:false, formulaType:'granule', items:[{herbName:'',dosageGrams:'',notes:''}], usageInstructions:'', treatments:[], bookingId:null };
+    // rxDraft 已在 renderForm 顶部按编辑/新建初始化，此处不再重置
     function loadPriceList(){
       return fetch(API_BASE + '/site-settings/price_list')
         .then(function(res){ return res.ok ? res.json() : null; })
@@ -863,6 +917,12 @@ window.scrollTo(0,0);
             var label = (b.booking_no||'')+' · '+(b.appt_date||'')+' '+(b.slot||'')+' · '+(b.practitioner_name||'');
             return '<option value="'+b.id+'">'+escapeHtml(label)+'</option>';
           }).join('');
+          // 编辑病历：自动选中该病历关联的预约
+          if(rxDraft.bookingId){
+            for(var _bi=0;_bi<sel.options.length;_bi++){
+              if(sel.options[_bi].value === rxDraft.bookingId){ sel.selectedIndex = _bi; break; }
+            }
+          }
         }).catch(function(){});
     }
     var formulaLib = [];
@@ -890,6 +950,12 @@ window.scrollTo(0,0);
         .then(function(list){ formulaLib = list; sel.innerHTML = '<option value="">从我的协定方载入…</option>' + list.map(function(f){ return '<option value="'+f.id+'">'+f.name+'（'+FORMULA_TYPE_LABELS[(f.formula_type||f.formulaType)]+'）</option>'; }).join(''); })
         .catch(function(){});
     }
+    var rxChk = document.getElementById('rxEnableCheck');
+    rxChk.checked = rxDraft.enabled;
+    document.getElementById('rxBlock').style.display = rxDraft.enabled ? '' : 'none';
+    document.getElementById('rxTypeSelect').value = rxDraft.formulaType;
+    document.getElementById('rxUsageInput').value = rxDraft.usageInstructions;
+    if(rxDraft.enabled){ loadFormulaOptions(); renderRxHerbList(); loadBookingOptions(); loadPriceList(); renderRxTreatList(); }
     document.getElementById('rxEnableCheck').addEventListener('change', function(){
       rxDraft.enabled = this.checked;
       document.getElementById('rxBlock').style.display = this.checked ? '' : 'none';
@@ -995,8 +1061,9 @@ window.scrollTo(0,0);
     document.getElementById('saveAndPrintBtn').addEventListener('click', async function(){
       var result = await saveRecordCore();
       if(!result || !result.ok) return;
-      openInvoicePrint(result);
+      openInvoicePrint(result, r.patientName, r.patientPhone);
     });
+  }
 
     // ============ 发票/收据打印（58mm 小票 + A4） ============
     var __printInited = false;
@@ -1110,7 +1177,7 @@ window.scrollTo(0,0);
       var target = pa.querySelector(size === '58' ? '.sheet-58' : '.sheet-a4');
       if(target) target.style.display = 'block';
     }
-    async function openInvoicePrint(result){
+    async function openInvoicePrint(result, patientName, patientPhone, size){
       var items = [];
       (result.treatments || []).forEach(function(t){ if(t && t.name) items.push({ name: t.name, qty: t.qty || 1, price: t.price || 0 }); });
       if(result.rxItems && result.rxItems.length){
@@ -1124,7 +1191,7 @@ window.scrollTo(0,0);
         var res = await fetch(API_BASE + '/admin/receipts', {
           method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},
           body: JSON.stringify({
-            patientName: r.patientName, patientPhone: r.patientPhone,
+            patientName: patientName, patientPhone: patientPhone,
             practitionerId: (cur && cur.id) || null,
             practitionerNameSnapshot: (cur && cur.name) || 'VINATH TCM',
             items: { consultation: 0, transport: 0, medication: 0, other: treatTotal },
@@ -1134,7 +1201,7 @@ window.scrollTo(0,0);
         });
         if(!res.ok){ var ej = await res.json().catch(function(){ return {}; }); showToast('发票保存失败：' + (ej.error || res.status)); return; }
         var receipt = await res.json();
-        showPrintChooser(receipt);
+        if(size){ doPrintReceipt(receipt, size); } else { showPrintChooser(receipt); }
       } catch(e){ showToast('发票保存失败，请检查网络'); }
     }
     function showPrintChooser(receipt){
@@ -1166,7 +1233,6 @@ window.scrollTo(0,0);
         view = 'timeline'; render();
       }, 250);
     }
-  }
 
   // 独立开方视图（从时间轴"开具处方"进入）：病历与处方合并到一个工具内，不再跳转独立处方页
   async function renderRx(){
@@ -1218,6 +1284,7 @@ window.scrollTo(0,0);
         var recRes = await fetch(API_BASE + '/admin/medical-records?patientPhone=' + encodeURIComponent(phone), { headers:{'Authorization':'Bearer '+authToken} });
         var recs = recRes.ok ? await recRes.json() : [];
         document.getElementById('rxRecSelect').innerHTML = '<option value="">不关联病历</option>' + recs.map(function(r){ return '<option value="'+r.id+'">'+r.visit_date+' · '+(r.data&&r.data.tcmDiagnosis?r.data.tcmDiagnosis:'未填写诊断')+'</option>'; }).join('');
+        if(rx.medicalRecordId){ var _rs = document.getElementById('rxRecSelect'); for(var _i2=0;_i2<_rs.options.length;_i2++){ if(_rs.options[_i2].value===rx.medicalRecordId){ _rs.selectedIndex = _i2; break; } } }
       } catch(e){}
       try {
         var bkRes = await fetch(API_BASE + '/admin/bookings', { headers:{'Authorization':'Bearer '+authToken} });

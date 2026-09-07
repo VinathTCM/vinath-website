@@ -11,11 +11,18 @@ function serializeRecord(r){
   try { data = JSON.parse(r.data || '{}'); } catch(e){ data = {}; }
   // 该病历是否已通过电子处方关联到某笔预约（用于当日交易报表判断"病历治疗项目是否已被预约记录覆盖"）
   let linkedBookingId = null;
+  // 该病历关联的最近一份处方（药材/服法/配方类型）——编辑病历/再次开方时回填，避免处方空白
+  let lastRx = null;
   try {
-    const rx = db.prepare('SELECT booking_id FROM prescriptions WHERE medical_record_id = ? AND booking_id IS NOT NULL LIMIT 1').get(r.id);
-    if(rx) linkedBookingId = rx.booking_id;
+    const rxRow = db.prepare('SELECT * FROM prescriptions WHERE medical_record_id = ? ORDER BY created_at DESC LIMIT 1').get(r.id);
+    if(rxRow){
+      linkedBookingId = rxRow.booking_id || null;
+      let rxItems = [];
+      try { rxItems = JSON.parse(rxRow.items || '[]'); } catch(e){ rxItems = []; }
+      lastRx = { formulaType: rxRow.formula_type || 'granule', items: rxItems, usageInstructions: rxRow.usage_instructions || '', bookingId: rxRow.booking_id || null };
+    }
   } catch(e){}
-  return { ...r, data, linkedBookingId };
+  return { ...r, data, linkedBookingId, lastRx };
 }
 // 病历属于敏感健康数据，每次查看/创建/修改都记一笔——谁、什么时候、看了哪个患者的记录。
 // 这不是完整的PDPA合规方案，但"数据访问可追溯"是其中的基础一环。
