@@ -1366,33 +1366,44 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     }
     function money(n){ return 'RM' + (Number(n)||0).toFixed(2); }
     function sheet58Html(receipt, biz){
-      var rows = receipt.lineItems.map(function(it){
-        var line = '<div style="margin-top:1mm;">' + escapeHtml(rxPrintName(it)) + '</div>';
+      // 58mm 小票统一使用预约管理的同款格式（VINATH™ 抬头 + RECEIPT + 分项 x@MYR + TOTAL + 页脚），全英文
+      var rows = (receipt.lineItems || []).map(function(it){
+        var nm = escapeHtml(rxPrintName(it));
         if(it.price > 0){
-          line += '<div style="display:flex;justify-content:space-between;"><span>&nbsp;&nbsp;&nbsp;x ' + (it.qty||1) + '</span><span>' + money(it.price * (it.qty||1)) + '</span></div>';
-        } else {
-          line += '<div style="text-align:right;color:#555;">(billed separately)</div>';
+          return '<div style="margin-top:1mm;"><div>' + nm + '</div>'
+            + '<div style="display:flex;justify-content:space-between;"><span>x' + (it.qty||1) + ' @ MYR' + (Number(it.price)||0).toFixed(2) + '</span><span>MYR' + (Number(it.price) * (it.qty||1)).toFixed(2) + '</span></div></div>';
         }
-        return line;
+        return '<div style="margin-top:1mm;"><div>' + nm + '</div>'
+          + '<div style="text-align:right;color:#555;">(billed separately)</div></div>';
       }).join('');
-      var treatTotal = receipt.lineItems.filter(function(it){ return it.price > 0; }).reduce(function(sx,it){ return sx + it.price * (it.qty||1); }, 0);
-      var hasHerb = receipt.lineItems.some(function(it){ return it.price === 0; });
-      return '<div class="sheet-58" style="display:none;width:58mm;font-family:\'Courier New\',monospace;font-size:10.5px;padding:3mm;box-sizing:border-box;color:#000;">'
-        + '<div style="text-align:center;font-weight:700;font-size:13.5px;">' + escapeHtml(biz.name) + '</div>'
-        + '<div style="text-align:center;">TCM Clinic · Acupuncture · Tuina · Beauty</div>'
-        + '<div style="text-align:center;margin-bottom:2mm;">WhatsApp: +60 ' + escapeHtml(biz.phone) + '</div>'
-        + '<div style="border-top:1px dashed #000;border-bottom:1px dashed #000;padding:1.5mm 0;">'
-        + '<div>No: <b>' + escapeHtml(receipt.receipt_no) + '</b></div>'
-        + '<div>Date: ' + fmtLocal(receipt.created_at) + '</div>'
-        + '<div>Patient: ' + escapeHtml(receipt.patient_name || '') + '</div>'
-        + '<div>Phone: +60 ' + escapeHtml((receipt.patient_phone||'').replace(/^0/,'')) + '</div>'
-        + '</div>'
-        + rows
-        + '<div style="display:flex;justify-content:space-between;font-weight:700;border-top:1px solid #000;margin-top:1.5mm;padding-top:1mm;">'
-        + '<span>TOTAL</span><span>' + money(treatTotal) + '</span></div>'
-        + (hasHerb ? '<div style="font-size:9.5px;margin-top:1mm;">Herbal fee billed separately</div>' : '')
-        + '<div style="border-top:1px dashed #000;margin-top:1.5mm;padding-top:1.5mm;font-size:9.5px;">'
-        + 'Tax ID: ' + escapeHtml(biz.taxId) + '<br>Thank you! Get well soon.</div>'
+      var treatTotal = (receipt.lineItems || []).filter(function(it){ return it.price > 0; }).reduce(function(sx,it){ return sx + it.price * (it.qty||1); }, 0);
+      var hasHerb = (receipt.lineItems || []).some(function(it){ return it.price === 0; });
+      var doc = receipt.receipt_no || '';
+      var dts = fmtLocal(receipt.created_at) || '';
+      var pname = escapeHtml(receipt.patient_name || '');
+      var pphone = '+60 ' + escapeHtml(String(receipt.patient_phone || '').replace(/^0/,''));
+      var pract = receipt.practitioner_name_snapshot ? escapeHtml(receipt.practitioner_name_snapshot) : '';
+      var dash = '<div style="border-top:1px dashed #000;margin:1.5mm 0;"></div>';
+      return '<div class="sheet-58" style="display:none;width:58mm;box-sizing:border-box;padding:2mm 2.5mm;font-family:\'Courier New\',Consolas,monospace;font-size:9.5px;line-height:1.5;color:#000;">'
+        + '<div style="text-align:center;"><span style="font-weight:700;font-size:13px;">VINATH<sup style="font-size:7px;">TM</sup></span></div>'
+        + '<div style="text-align:center;">Johor, Malaysia</div>'
+        + '<div style="text-align:center;">VINATH TCM HEALTH CARE</div>'
+        + '<div style="text-align:center;">Tax Reg. No. ' + escapeHtml(biz.taxId) + '</div>'
+        + dash
+        + '<div style="text-align:center;font-weight:700;">RECEIPT</div>'
+        + '<div style="display:flex;justify-content:space-between;"><span>No.</span><span>' + doc + '</span></div>'
+        + '<div style="display:flex;justify-content:space-between;"><span>Date</span><span>' + dts + '</span></div>'
+        + dash
+        + '<div style="display:flex;justify-content:space-between;"><span>Patient</span><span>' + pname + '</span></div>'
+        + '<div style="display:flex;justify-content:space-between;"><span>Contact</span><span>' + pphone + '</span></div>'
+        + (pract ? '<div style="display:flex;justify-content:space-between;"><span>Practitioner</span><span>' + pract + '</span></div>' : '')
+        + dash
+        + (rows || '<div style="color:#555;">No service recorded</div>')
+        + dash
+        + '<div style="display:flex;justify-content:space-between;font-weight:700;"><span>TOTAL</span><span>' + money(treatTotal) + '</span></div>'
+        + (hasHerb ? '<div style="font-size:9px;margin-top:1mm;">Herbal fee billed separately</div>' : '')
+        + dash
+        + '<div>Proof of service only. Questions via WhatsApp.<br>Copyright &copy; 2026 VINATH TCM HEALTH CARE.<br>All rights reserved. Malaysia</div>'
         + '</div>';
     }
 function sheetA4Html(receipt, biz){
@@ -1444,6 +1455,7 @@ function fillPrintArea(receipt, size){
       if(target) target.style.display = 'block';
     }
     async function openInvoicePrint(result, patientName, patientPhone, size){
+      var oldOv = document.getElementById('printChooser'); if(oldOv) oldOv.remove();
       var items = [];
       (result.treatments || []).forEach(function(t){ if(t && t.name) items.push({ name: printName(t), qty: t.qty || 1, price: t.price || 0 }); });
       if(result.rxItems && result.rxItems.length){
@@ -1490,6 +1502,7 @@ function fillPrintArea(receipt, size){
         + '<button class="btn-secondary" id="printCloseBtn" style="padding:10px;">暂不打印</button>'
         + '</div></div>';
       document.body.appendChild(ov);
+      ov.addEventListener('click', function(ev){ if(ev.target === ov){ ov.remove(); view = 'timeline'; render(); } });
       ov.querySelector('#print58Btn').addEventListener('click', function(){ doPrintReceipt(receipt, '58'); });
       ov.querySelector('#printA4Btn').addEventListener('click', function(){ doPrintReceipt(receipt, 'a4'); });
       ov.querySelector('#printCloseBtn').addEventListener('click', function(){ ov.remove(); view = 'timeline'; render(); });

@@ -3033,7 +3033,39 @@ window.escapeHtml = function(s){
   var KNOWN_ITEM_EN = {
     '推拿理疗（头面部安神）': 'Tuina Therapy (Head & Face, Calming)',
     '安神茶': 'Anshen Tea', // sold in 订单管理 seed data but not currently in the 122-product catalog
-    '折扣': 'Discount'
+    '折扣': 'Discount',
+    '初诊': 'First Consultation',
+    '复诊': 'Follow-up Consultation',
+    '出诊费 Zone 1（≤5km）': 'Home Visit Zone 1',
+    '出诊费 Zone 2（>5-10km）': 'Home Visit Zone 2',
+    '出诊费 Zone 3（>10-15km）': 'Home Visit Zone 3',
+    '出诊费 Zone 4（>15-20km）': 'Home Visit Zone 4',
+    '出诊费 Zone 5（>20-25km）': 'Home Visit Zone 5',
+    '局部针刺-单区': 'Single Area',
+    '局部针刺-双区': 'Two Areas',
+    '局部针刺-多区': 'Multiple Areas',
+    '中医辨证针刺': 'Pattern-Based Acupuncture',
+    '全身／综合辨证针刺': 'Full Body / Comprehensive',
+    '电针附加': 'Electroacupuncture',
+    '艾灸-单一区域': 'Single Area (Moxa)',
+    '艾灸-两个区域': 'Two Areas (Moxa)',
+    '艾灸-多部位': 'Multiple Areas (Moxa)',
+    '艾灸-综合': 'Comprehensive Moxibustion',
+    '拔罐-单一区域': 'Single Area (Cupping)',
+    '拔罐-两个区域': 'Two Areas (Cupping)',
+    '拔罐-多部位': 'Multiple Areas (Cupping)',
+    '拔罐-全身': 'Full Body (Cupping)',
+    '局部推拿 15分钟': 'Local Tuina 15 min',
+    '局部推拿 30分钟': 'Local Tuina 30 min',
+    '多部位推拿 45分钟': 'Tuina Multiple Areas 45 min',
+    '全身推拿 60分钟': 'Full Body Tuina 60 min',
+    '基础面部美容针': 'Basic Facial Acupuncture',
+    '面部美容／抗衰针灸': 'Facial Rejuvenation Acupuncture',
+    '综合美容针灸': 'Comprehensive Facial Acupuncture',
+    '美容针＋面部刮痧': 'Facial Acupuncture + Gua Sha',
+    '美容针＋辨证体针': 'Facial Acupuncture + Body Acupuncture',
+    '综合美容调理': 'Comprehensive Beauty Treatment',
+    '综合美容调理+面部手法提拉': 'Comprehensive Beauty + Facial Tuina'
   };
   function itemNameEn(chineseName, explicitEn){
     if(explicitEn) return explicitEn;
@@ -4503,10 +4535,10 @@ window.escapeHtml = function(s){
       + '</div>';
     document.getElementById('panelBody').innerHTML = html;
     document.getElementById('panelBody').querySelectorAll('[data-print-a4]').forEach(function(btn){
-      btn.addEventListener('click', function(){ printBookingReceipt(p.visits[Number(this.getAttribute('data-print-a4'))], 'bi'); });
+      btn.addEventListener('click', function(){ printBookingReceipt(p.visits[Number(this.getAttribute('data-print-a4'))], 'en'); });
     });
     document.getElementById('panelBody').querySelectorAll('[data-print-58]').forEach(function(btn){
-      btn.addEventListener('click', function(){ printBookingReceiptThermal(p.visits[Number(this.getAttribute('data-print-58'))], 'bi'); });
+      btn.addEventListener('click', function(){ printBookingReceiptThermal(p.visits[Number(this.getAttribute('data-print-58'))], 'en'); });
     });
     var hint = document.getElementById('patientSaveHint');
     document.getElementById('patientHistoryInput').addEventListener('input', function(){
