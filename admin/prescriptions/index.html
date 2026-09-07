@@ -263,27 +263,31 @@ window.scrollTo(0,0);
 
   // ---- 药材价格库管理（大管理员） ----
   async function openHerbPrices(){
+    var oldOv = document.getElementById('hpOverlay'); if(oldOv) oldOv.remove();
     var rows = [];
     try {
       var res = await fetch(API_BASE + '/admin/herb-prices', { headers:{'Authorization':'Bearer '+authToken} });
       rows = res.ok ? await res.json() : [];
     } catch(e){ showToast('拉取药材价格失败'); return; }
     var ov = document.createElement('div');
+    ov.id = 'hpOverlay';
     ov.innerHTML = '<div style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;display:flex;align-items:center;justify-content:center;">'
       + '<div style="background:#fff;border-radius:14px;max-width:760px;width:94%;max-height:84vh;overflow:auto;padding:20px;box-sizing:border-box;">'
       + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h2 style="margin:0;font-size:17px;">中药价格库（RM/克）</h2><button type="button" class="btn-small" id="hpClose">关闭</button></div>'
-      + '<div style="font-size:12.5px;color:#6b7280;margin-bottom:12px;">在这里保存单味中药每克的价格，开方时会按「价格 × 克数」自动算出药材费。只有大管理员能改。</div>'
+      + '<div style="font-size:12.5px;color:#6b7280;margin-bottom:12px;">在这里保存单味中药每克的价格，开方时会按「价格 × 克数」自动算出药材费。改完所有行后点一次「保存全部修改」，不要一行一行保存。只有大管理员能改。</div>'
       + '<div id="hpList">' + (rows.length ? rows.map(function(r){
           return '<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">'
             + '<input type="text" class="hp-name" value="'+escapeHtml(r.herb_name)+'" style="flex:1 1 140px;min-width:120px;">'
             + '<input type="number" class="hp-price" step="0.01" min="0" value="'+(Number(r.price_per_g)||0).toFixed(2)+'" style="width:90px;">'
             + '<span style="font-size:12px;color:#6b7280;">RM/克</span>'
             + '<input type="text" class="hp-note" placeholder="备注（选填）" value="'+escapeHtml(r.note||'')+'" style="flex:1 1 140px;min-width:120px;">'
-            + '<button type="button" class="btn-small hp-save" data-name="'+escapeHtml(r.herb_name)+'">保存</button>'
             + '<button type="button" class="btn-small hp-del" data-name="'+escapeHtml(r.herb_name)+'" style="color:#c0392b;border-color:#c0392b;">删除</button>'
             + '</div>';
         }).join('') : '<div style="color:#6b7280;text-align:center;padding:16px;">还没有保存任何药材价格</div>') + '</div>'
-      + '<button type="button" class="btn-secondary" id="hpAdd" style="margin-top:10px;">+ 添加一味药材</button>'
+      + '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">'
+      + '<button type="button" class="btn-secondary" id="hpAdd">+ 添加一味药材</button>'
+      + '<button type="button" class="btn-primary" id="hpSaveAll" style="margin-left:auto;">保存全部修改</button>'
+      + '</div>'
       + '</div></div>';
     document.body.appendChild(ov);
     document.getElementById('hpClose').addEventListener('click', function(){ ov.remove(); });
@@ -294,7 +298,6 @@ window.scrollTo(0,0);
         + '<input type="number" class="hp-price" step="0.01" min="0" value="'+(Number(price)||0).toFixed(2)+'" style="width:90px;">'
         + '<span style="font-size:12px;color:#6b7280;">RM/克</span>'
         + '<input type="text" class="hp-note" placeholder="备注（选填）" value="'+escapeHtml(note||'')+'" style="flex:1 1 140px;min-width:120px;">'
-        + '<button type="button" class="btn-small hp-save">保存</button>'
         + '<button type="button" class="btn-small hp-del" style="color:#c0392b;border-color:#c0392b;">删除</button>';
       document.getElementById('hpList').appendChild(el);
     }
@@ -302,26 +305,38 @@ window.scrollTo(0,0);
     ov.addEventListener('click', async function(ev){
       var t = ev.target;
       if(!t || !t.closest) return;
-      var saveBtn = t.closest('.hp-save');
       var delBtn = t.closest('.hp-del');
-      if(!saveBtn && !delBtn) return;
-      var row = (saveBtn || delBtn).closest('div[style*="display:flex"]');
+      if(!delBtn) return;
+      var row = delBtn.closest('div[style*="display:flex"]');
       if(!row) return;
       var nameInp = row.querySelector('.hp-name');
-      if(saveBtn){
-        var nm = (nameInp.value || '').trim();
-        if(!nm){ showToast('请填写药材名称'); return; }
+      if(!confirm('确定删除「'+(nameInp.value||'')+'」的价格？')) return;
+      var res = await fetch(API_BASE + '/admin/herb-prices/' + encodeURIComponent(nameInp.value.trim()), { method:'DELETE', headers:{'Authorization':'Bearer '+authToken} });
+      showToast(res.ok ? '已删除「'+(nameInp.value||'')+'」' : '删除失败');
+      if(res.ok) row.remove();
+    });
+    var saveAllBtn = ov.querySelector('#hpSaveAll');
+    saveAllBtn.addEventListener('click', async function(){
+      var rowsEls = Array.prototype.slice.call(ov.querySelectorAll('#hpList > div'));
+      var ok = 0, fail = 0, firstErr = '';
+      this.disabled = true;
+      this.textContent = '保存中…';
+      for(var i = 0; i < rowsEls.length; i++){
+        var row = rowsEls[i];
+        var nm = (row.querySelector('.hp-name').value || '').trim();
+        if(!nm) continue;
         var pr = Number(row.querySelector('.hp-price').value) || 0;
         var note = row.querySelector('.hp-note').value.trim();
-        var res = await fetch(API_BASE + '/admin/herb-prices', { method:'PUT', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body: JSON.stringify({ herbName: nm, pricePerG: pr, note: note }) });
-        showToast(res.ok ? '已保存「'+nm+'」RM'+Number(pr).toFixed(2)+'/克' : '保存失败');
-        if(res.ok) openHerbPrices();
-      } else if(delBtn){
-        if(!confirm('确定删除「'+(nameInp.value||'')+'」的价格？')) return;
-        var res = await fetch(API_BASE + '/admin/herb-prices/' + encodeURIComponent(nameInp.value.trim()), { method:'DELETE', headers:{'Authorization':'Bearer '+authToken} });
-        showToast(res.ok ? '已删除' : '删除失败');
-        if(res.ok) openHerbPrices();
+        try {
+          var res = await fetch(API_BASE + '/admin/herb-prices', { method:'PUT', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body: JSON.stringify({ herbName: nm, pricePerG: pr, note: note }) });
+          if(res.ok){ ok++; } else { fail++; if(!firstErr) firstErr = 'HTTP ' + res.status; }
+        } catch(e){ fail++; if(!firstErr) firstErr = String(e); }
       }
+      this.disabled = false;
+      this.textContent = '保存全部修改';
+      if(fail){ showToast('已保存 ' + ok + ' 味，' + fail + ' 味失败' + (firstErr ? '：' + firstErr : '')); }
+      else if(ok){ showToast('已保存全部 ' + ok + ' 味药材价格'); ov.remove(); }
+      else { showToast('请先填写至少一味药材名称'); }
     });
   }
 
