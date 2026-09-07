@@ -337,6 +337,24 @@ db.exec(`
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT DEFAULT CURRENT_TIMESTAMP
   );
+
+  CREATE TABLE IF NOT EXISTS receipts (
+    id TEXT PRIMARY KEY,
+    receipt_no TEXT NOT NULL UNIQUE,
+    patient_name TEXT NOT NULL,
+    patient_phone TEXT NOT NULL,
+    practitioner_id TEXT,
+    practitioner_name_snapshot TEXT NOT NULL,
+    practitioner_moh_reg_no TEXT,
+    practitioner_apc_no TEXT,
+    items TEXT NOT NULL DEFAULT '{}',
+    total_amount REAL NOT NULL,
+    tcm_diagnosis_snapshot TEXT,
+    payment_method TEXT,
+    payment_status TEXT,
+    line_items TEXT DEFAULT '[]',
+    issued_at TEXT DEFAULT CURRENT_TIMESTAMP
+  );
 `);
 
 // [stated] SQLite的 CREATE TABLE IF NOT EXISTS 只在表不存在时生效——如果这台机器上已经跑过
@@ -361,6 +379,17 @@ db.exec(`
     ALTER TABLE payment_methods_new RENAME TO payment_methods;
   `);
   console.log('迁移完成，已有的付款方式记录都保留了。');
+})();
+
+// [stated] receipts 表增加 line_items 列（病历页"保存并打印发票"的项目明细）。
+// 已有旧表（无该列）时用 ALTER TABLE 补列；全新数据库直接走上面 CREATE 建好，幂等跳过。
+(function migrateReceiptsLineItems(){
+  const tableSql = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='receipts'").get();
+  if(!tableSql) return; // 全新数据库，上面 CREATE 已建好
+  if(tableSql.sql.includes('line_items')) return; // 已有该列
+  console.log('检测到 receipts 表缺少 line_items 列，正在补列…');
+  db.exec("ALTER TABLE receipts ADD COLUMN line_items TEXT DEFAULT '[]'");
+  console.log('receipts 表 line_items 列已补充。');
 })();
 
 module.exports = db;

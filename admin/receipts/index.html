@@ -64,6 +64,10 @@ h1{ font-family:var(--font-serif); font-size:22px; margin:0 0 4px; }
 @page{ size:A4; margin:12mm; }
 @media print{
   body{ background:#fff; }
+  body.print-58 > :not(#app){ display:none !important; }
+  body.print-58 .no-print{ display:none !important; }
+  body.print-58 .wrap > *:not(.sheet-58){ display:none !important; }
+  body.print-58 .sheet-58{ display:block !important; border:none; box-shadow:none; padding:0; }
   /* 打印时只保留收据文档本身：隐藏导航等非 #app 元素、以及收据外的其他区块，
      避免它们占高度把内容挤出空白第二页。 */
   body > :not(#app){ display:none !important; }
@@ -192,7 +196,7 @@ window.scrollTo(0,0);
           receipts = rows.map(function(r){ return { id:r.id, receiptNo:r.receipt_no, patientName:r.patient_name, patientPhone:r.patient_phone,
             practitionerId:r.practitioner_id, practitionerNameSnapshot:r.practitioner_name_snapshot,
             practitionerMohRegNo:r.practitioner_moh_reg_no, practitionerApcNo:r.practitioner_apc_no,
-            items:r.items, totalAmount:r.total_amount, tcmDiagnosisSnapshot:r.tcm_diagnosis_snapshot,
+            items:r.items, lineItems:r.lineItems || [], totalAmount:r.total_amount, tcmDiagnosisSnapshot:r.tcm_diagnosis_snapshot,
             paymentMethod:r.payment_method, paymentStatus:r.payment_status, issuedAt:r.issued_at }; });
         }
       } catch(e){ console.error('拉取收据列表失败:', e); }
@@ -367,7 +371,7 @@ window.scrollTo(0,0);
         editingReceipt = { id:saved.id, receiptNo:saved.receipt_no, patientName:saved.patient_name, patientPhone:saved.patient_phone,
           practitionerId:saved.practitioner_id, practitionerNameSnapshot:saved.practitioner_name_snapshot,
           practitionerMohRegNo:saved.practitioner_moh_reg_no, practitionerApcNo:saved.practitioner_apc_no,
-          items:saved.items, totalAmount:saved.total_amount, tcmDiagnosisSnapshot:saved.tcm_diagnosis_snapshot,
+          items:saved.items, lineItems:saved.lineItems || [], totalAmount:saved.total_amount, tcmDiagnosisSnapshot:saved.tcm_diagnosis_snapshot,
           paymentMethod:saved.payment_method, paymentStatus:saved.payment_status, issuedAt:saved.issued_at };
         view = 'print';
         render();
@@ -385,13 +389,24 @@ window.scrollTo(0,0);
   async function renderPrintView(){
     var rc = editingReceipt;
     var biz = await getBizInfo();
-    var itemRows = Object.keys(FEE_LABELS).filter(function(k){ return rc.items[k] > 0; }).map(function(k){
+    function setPrintPageSize(size){
+      var pg = document.getElementById('printPageCss');
+      if(!pg){ pg = document.createElement('style'); pg.id = 'printPageCss'; document.head.appendChild(pg); }
+      pg.textContent = (size === '58') ? '@page{size:58mm auto;margin:0;}' : '@page{size:A4;margin:12mm;}';
+    }
+    var hasDetail = rc.lineItems && rc.lineItems.length > 0;
+    var itemRows = hasDetail ? rc.lineItems.map(function(it){
+      var priceTxt = it.price > 0 ? 'RM '+it.price.toFixed(2) : '另计';
+      var amtTxt = it.price > 0 ? 'RM '+(it.price * (it.qty||1)).toFixed(2) : '另计';
+      return '<tr><td>'+escapeHtml(it.name)+(it.qty && it.qty>1 ? ' × '+it.qty : '')+'</td><td class="amt-col">'+priceTxt+' / '+amtTxt+'</td></tr>';
+    }).join('') : Object.keys(FEE_LABELS).filter(function(k){ return rc.items[k] > 0; }).map(function(k){
       return '<tr><td>'+FEE_LABELS[k]+'</td><td class="amt-col">RM '+rc.items[k].toFixed(2)+'</td></tr>';
     }).join('');
 
     var html = '<div class="wrap">'
       + '<div class="top-actions no-print"><button class="btn-secondary" id="backToListBtn">← 返回收据列表</button>'
-      + '<button class="btn-primary" id="printBtn">导出 PDF / 打印</button></div>'
+      + '<button class="btn-secondary" id="print58Btn">打印 58mm 小票</button>'
+      + '<button class="btn-primary" id="printBtn">导出 PDF / 打印(A4)</button></div>'
 
       + '<div class="receipt-doc">'
       + '<div class="receipt-doc-hd"><div class="brand">VINATH<span style="font-size:12px;vertical-align:super;">™</span></div>'
@@ -420,11 +435,41 @@ window.scrollTo(0,0);
 
       + '<div class="receipt-disclaimer">本收据由 VINATH 内部系统生成，用于记录本次居家中医服务的费用明细，可作为向公司或保险公司报销时的费用证明参考。本收据目前未对接马来西亚内陆税收局（LHDN）e-Invoice 官方系统，不具备正式电子发票的法律效力；如贵司/保险公司要求正式电子发票，请与我们联系另行处理。</div>'
 
+      + '</div>'
+      + '<div class="sheet-58" style="display:none;width:58mm;font-family:monospace;font-size:10.5px;padding:3mm;box-sizing:border-box;color:#000;">'
+      + '<div style="text-align:center;font-weight:700;font-size:13.5px;">VINATH TCM</div>'
+      + '<div style="text-align:center;">中医诊所 · 针灸 推拿 美容</div>'
+      + (biz.phone ? '<div style="text-align:center;margin-bottom:2mm;">WhatsApp: +60 '+biz.phone+'</div>' : '')
+      + '<div style="border-top:1px dashed #000;border-bottom:1px dashed #000;padding:1.5mm 0;">'
+      + '<div>No: <b>'+escapeHtml(rc.receiptNo)+'</b></div>'
+      + '<div>日期: '+rc.issuedAt.slice(0,16)+'</div>'
+      + '<div>患者: '+escapeHtml(rc.patientName)+'</div>'
+      + '<div>电话: +60 '+String(rc.patientPhone||'').replace(/^0/,'')+'</div>'
+      + '</div>'
+      + (hasDetail ? rc.lineItems.map(function(it){
+          var line = '<div style="margin-top:1mm;">'+escapeHtml(it.name)+(it.qty && it.qty>1 ? ' ×'+it.qty : '')+'</div>';
+          line += it.price > 0
+            ? '<div style="display:flex;justify-content:space-between;"><span>&nbsp;&nbsp;&nbsp;</span><span>RM '+(it.price*(it.qty||1)).toFixed(2)+'</span></div>'
+            : '<div style="text-align:right;color:#555;">（另计）</div>';
+          return line;
+        }).join('') : Object.keys(FEE_LABELS).filter(function(k){ return rc.items[k] > 0; }).map(function(k){
+          return '<div style="display:flex;justify-content:space-between;margin-top:1mm;"><span>'+FEE_LABELS[k]+'</span><span>RM '+rc.items[k].toFixed(2)+'</span></div>';
+        }).join(''))
+      + '<div style="display:flex;justify-content:space-between;font-weight:700;border-top:1px solid #000;margin-top:1.5mm;padding-top:1mm;"><span>合计</span><span>RM '+rc.totalAmount.toFixed(2)+'</span></div>'
+      + (hasDetail && rc.lineItems.some(function(it){ return it.price === 0; }) ? '<div style="font-size:9.5px;margin-top:1mm;">药材费另计（按实际结算）</div>' : '')
+      + '<div style="border-top:1px dashed #000;margin-top:1.5mm;padding-top:1.5mm;font-size:9.5px;">'
+      + (biz.taxId ? 'Tax ID: '+biz.taxId+'<br>' : '')
+      + '谢谢惠顾，祝您早日康复！</div>'
       + '</div></div>';
     document.getElementById('app').innerHTML = html;
 
     document.getElementById('backToListBtn').addEventListener('click', function(){ view='list'; render(); });
-    document.getElementById('printBtn').addEventListener('click', function(){ window.print(); });
+    document.getElementById('printBtn').addEventListener('click', function(){ setPrintPageSize('a4'); document.body.classList.remove('print-58'); window.print(); });
+    document.getElementById('print58Btn').addEventListener('click', function(){
+      setPrintPageSize('58');
+      document.body.classList.add('print-58');
+      setTimeout(function(){ window.print(); document.body.classList.remove('print-58'); }, 250);
+    });
   }
 
   // 用列表接口本身做一次探测——大管理员永远通过；I类医师则要看大管理员有没有为这个工具打开

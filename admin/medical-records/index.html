@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -629,7 +629,10 @@ window.scrollTo(0,0);
       + '</div>'
       + '</div>'
 
-      + '<button class="btn-primary" id="saveRecordBtn" style="width:100%;padding:14px;font-size:15px;">保存病历</button>'
+      + '<div style="display:flex;gap:10px;">'
+      + '<button class="btn-primary" id="saveRecordBtn" style="flex:1;padding:14px;font-size:15px;">保存病历</button>'
+      + '<button class="btn-primary" id="saveAndPrintBtn" style="flex:1;padding:14px;font-size:15px;background:#3A3F42;">保存并打印发票</button>'
+      + '</div>'
       + '</div>';
 
     document.getElementById('app').innerHTML = html;
@@ -900,7 +903,9 @@ window.scrollTo(0,0);
       showToast('已载入协定方「'+f.name+'」，可加减调整');
     });
 
-    document.getElementById('saveRecordBtn').addEventListener('click', async function(){
+    // 核心保存逻辑：病历 + 处方，返回 {ok, savedMrId, rxItems, treatments}
+    async function saveRecordCore(){
+      var ok = false, savedMrId = null, rxItems = [], treatments = [];
       r.visitDate = document.getElementById('visitDateInput').value.trim() || new Date().toISOString().slice(0,10);
       r.visitType = document.getElementById('visitTypeInput').value;
       r.voiceNotes = document.getElementById('voiceNotesInput').value.trim();
@@ -911,7 +916,7 @@ window.scrollTo(0,0);
       r.tcmDiagnosis = document.getElementById('tcmDiagnosisInput').value.trim();
       r.syndromePattern = document.getElementById('syndromePatternInput').value.trim();
       r.treatmentPlan = document.getElementById('treatmentPlanInput').value.trim();
-      if(!r.chiefComplaint){ showToast('请至少填写"主诉"再保存'); return; }
+      if(!r.chiefComplaint){ showToast('请至少填写"主诉"再保存'); return { ok:false }; }
 
       // data里打包的是除了"患者是谁/哪次就诊/谁看的"这几个用来查询筛选的字段之外的全部具体问诊内容——
       // 这类字段还可能随实际使用继续调整，整体存JSON，不用为每次调整字段都写数据库迁移
@@ -922,8 +927,6 @@ window.scrollTo(0,0);
       ].forEach(function(k){ if(r[k]!==undefined) dataPayload[k] = r[k]; });
       if(rxDraft.treatments && rxDraft.treatments.length) dataPayload.treatments = rxDraft.treatments;
 
-      var btn = this;
-      btn.disabled = true;
       try {
         var url = r.id ? API_BASE + '/admin/medical-records/' + r.id : API_BASE + '/admin/medical-records';
         var res = await fetch(url, {
@@ -931,31 +934,213 @@ window.scrollTo(0,0);
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
           body: JSON.stringify({ patientPhone: r.patientPhone, patientName: r.patientName, visitDate: r.visitDate, data: dataPayload })
         });
-        if(!res.ok){ showToast('保存失败，请重试'); btn.disabled = false; return; }
+        if(!res.ok){ showToast('保存失败，请重试'); return { ok:false }; }
         var savedRecord = await res.json();
-        var savedMrId = savedRecord && savedRecord.id;
+        savedMrId = savedRecord && savedRecord.id;
         if(rxDraft.enabled){
-          var rxItems = rxDraft.items.filter(function(it){ return it.herbName && String(it.herbName).trim() && it.dosageGrams; });
-          if(rxItems.length){
-            var rxPayload = { patientName: r.patientName, patientPhone: r.patientPhone, medicalRecordId: savedMrId || null, bookingId: rxDraft.bookingId || null, formulaType: rxDraft.formulaType, items: rxItems, usageInstructions: rxDraft.usageInstructions, treatments: rxDraft.treatments };
+          rxItems = rxDraft.items.filter(function(it){ return it.herbName && String(it.herbName).trim() && it.dosageGrams; });
+          treatments = rxDraft.treatments || [];
+          if(rxItems.length || treatments.length){
+            var rxPayload = { patientName: r.patientName, patientPhone: r.patientPhone, medicalRecordId: savedMrId || null, bookingId: rxDraft.bookingId || null, formulaType: rxDraft.formulaType, items: rxItems, usageInstructions: rxDraft.usageInstructions || '', treatments: treatments };
             try {
               var rxRes = await fetch(API_BASE + '/admin/prescriptions', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body: JSON.stringify(rxPayload) });
+              ok = true;
               showToast(rxRes.ok ? '病历与处方已保存' : '病历已保存，但处方提交失败');
-            } catch(e2){ showToast('病历已保存，但处方提交失败'); }
+            } catch(e2){ ok = true; showToast('病历已保存，但处方提交失败'); }
           } else {
+            ok = true;
             showToast('病历已保存（未填写处方药材，未提交处方）');
           }
         } else {
+          ok = true;
           showToast('病历已保存');
         }
         activePatientPhone = r.patientPhone;
-        view = 'timeline';
-        render();
+        return { ok: ok, savedMrId: savedMrId, rxItems: rxItems, treatments: treatments };
       } catch(e){
         showToast('连不上服务器，请检查网络后重试');
-        btn.disabled = false;
+        return { ok:false };
       }
+    }
+
+    document.getElementById('saveRecordBtn').addEventListener('click', async function(){
+      var res = await saveRecordCore();
+      if(res && res.ok){ view = 'timeline'; render(); }
     });
+    document.getElementById('saveAndPrintBtn').addEventListener('click', async function(){
+      var result = await saveRecordCore();
+      if(!result || !result.ok) return;
+      openInvoicePrint(result);
+    });
+
+    // ============ 发票/收据打印（58mm 小票 + A4） ============
+    var __printInited = false;
+    function ensurePrintArea(){
+      if(__printInited) return;
+      __printInited = true;
+      var pa = document.createElement('div');
+      pa.id = 'printArea';
+      pa.style.display = 'none';
+      document.body.appendChild(pa);
+      var st = document.createElement('style');
+      st.id = 'printAreaCss';
+      st.textContent = [
+        '@media print{',
+        '  body.print-58 > *:not(#printArea), body.print-a4 > *:not(#printArea){ display:none !important; }',
+        '  body.print-58 #printArea, body.print-a4 #printArea{ display:block !important; }',
+        '  body.print-58 #printArea .sheet-58, body.print-a4 #printArea .sheet-a4{ display:block !important; }',
+        '}'
+      ].join('\n');
+      document.head.appendChild(st);
+    }
+    function setPrintPageSize(size){
+      var pg = document.getElementById('printPageCss');
+      if(!pg){ pg = document.createElement('style'); pg.id = 'printPageCss'; document.head.appendChild(pg); }
+      pg.textContent = (size === '58') ? '@page{size:58mm auto;margin:0;}' : '@page{size:A4;margin:10mm;}';
+    }
+    function fmtLocal(utcStr){
+      if(!utcStr) return '';
+      try {
+        var d = new Date(utcStr.replace(' ','T') + 'Z');
+        d = new Date(d.getTime() + 8 * 3600 * 1000);
+        return d.toISOString().slice(0,16).replace('T',' ');
+      } catch(e){ return utcStr || ''; }
+    }
+    function money(n){ return 'RM' + (Number(n)||0).toFixed(2); }
+    function sheet58Html(receipt, biz){
+      var rows = receipt.lineItems.map(function(it){
+        var line = '<div style="margin-top:1mm;">' + escapeHtml(it.name) + '</div>';
+        if(it.price > 0){
+          line += '<div style="display:flex;justify-content:space-between;"><span>&nbsp;&nbsp;&nbsp;× ' + (it.qty||1) + '</span><span>' + money(it.price * (it.qty||1)) + '</span></div>';
+        } else {
+          line += '<div style="text-align:right;color:#555;">（另计）</div>';
+        }
+        return line;
+      }).join('');
+      var treatTotal = receipt.lineItems.filter(function(it){ return it.price > 0; }).reduce(function(s,it){ return s + it.price * (it.qty||1); }, 0);
+      var hasHerb = receipt.lineItems.some(function(it){ return it.price === 0; });
+      return '<div class="sheet-58" style="display:none;width:58mm;font-family:\'Courier New\',monospace;font-size:10.5px;padding:3mm;box-sizing:border-box;color:#000;">'
+        + '<div style="text-align:center;font-weight:700;font-size:13.5px;">' + escapeHtml(biz.name) + '</div>'
+        + '<div style="text-align:center;">中医诊所 · 针灸 推拿 美容</div>'
+        + '<div style="text-align:center;margin-bottom:2mm;">WhatsApp: +60 ' + escapeHtml(biz.phone) + '</div>'
+        + '<div style="border-top:1px dashed #000;border-bottom:1px dashed #000;padding:1.5mm 0;">'
+        + '<div>No: <b>' + escapeHtml(receipt.receipt_no) + '</b></div>'
+        + '<div>日期: ' + fmtLocal(receipt.created_at) + '</div>'
+        + '<div>患者: ' + escapeHtml(receipt.patient_name || '') + '</div>'
+        + '<div>电话: +60 ' + escapeHtml((receipt.patient_phone||'').replace(/^0/,'')) + '</div>'
+        + '</div>'
+        + rows
+        + '<div style="display:flex;justify-content:space-between;font-weight:700;border-top:1px solid #000;margin-top:1.5mm;padding-top:1mm;">'
+        + '<span>合计</span><span>' + money(treatTotal) + '</span></div>'
+        + (hasHerb ? '<div style="font-size:9.5px;margin-top:1mm;">药材费另计（按实际结算）</div>' : '')
+        + '<div style="border-top:1px dashed #000;margin-top:1.5mm;padding-top:1.5mm;font-size:9.5px;">'
+        + 'Tax ID: ' + escapeHtml(biz.taxId) + '<br>谢谢惠顾，祝您早日康复！</div>'
+        + '</div>';
+    }
+    function sheetA4Html(receipt, biz){
+      var rows = receipt.lineItems.map(function(it){
+        return '<tr style="border-bottom:1px solid #ddd;">'
+          + '<td style="padding:7px 6px;vertical-align:top;">' + escapeHtml(it.name) + '</td>'
+          + '<td style="padding:7px 6px;text-align:center;">' + (it.qty||1) + '</td>'
+          + '<td style="padding:7px 6px;text-align:right;">' + (it.price > 0 ? money(it.price) : '另计') + '</td>'
+          + '<td style="padding:7px 6px;text-align:right;">' + (it.price > 0 ? money(it.price * (it.qty||1)) : '另计') + '</td>'
+          + '</tr>';
+      }).join('');
+      var treatTotal = receipt.lineItems.filter(function(it){ return it.price > 0; }).reduce(function(s,it){ return s + it.price * (it.qty||1); }, 0);
+      var hasHerb = receipt.lineItems.some(function(it){ return it.price === 0; });
+      return '<div class="sheet-a4" style="display:none;font-family:Arial,sans-serif;color:#111;max-width:190mm;margin:0 auto;">'
+        + '<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #333;padding-bottom:12px;">'
+        + '<div><div style="font-size:22px;font-weight:700;">' + escapeHtml(biz.name) + '</div>'
+        + '<div style="font-size:12px;color:#555;">中医诊所 · 针灸 推拿 美容 · 居家会诊</div></div>'
+        + '<div style="text-align:right;"><div style="font-size:16px;font-weight:700;">INVOICE / 收据</div>'
+        + '<div style="font-size:12px;color:#555;">' + escapeHtml(receipt.receipt_no) + '</div></div>'
+        + '</div>'
+        + '<div style="display:flex;justify-content:space-between;margin:14px 0;font-size:13px;">'
+        + '<div><div><b>患者：</b>' + escapeHtml(receipt.patient_name || '') + '</div>'
+        + '<div><b>电话：</b>+60 ' + escapeHtml((receipt.patient_phone||'').replace(/^0/,'')) + '</div></div>'
+        + '<div style="text-align:right;"><div><b>日期：</b>' + fmtLocal(receipt.created_at) + '</div>'
+        + '<div><b>经办：</b>' + escapeHtml(receipt.practitioner_name || '') + '</div></div>'
+        + '</div>'
+        + '<table style="width:100%;border-collapse:collapse;font-size:13px;">'
+        + '<tr style="background:#f2f2f2;"><th style="padding:8px 6px;text-align:left;border-bottom:2px solid #333;">项目</th>'
+        + '<th style="padding:8px 6px;text-align:center;border-bottom:2px solid #333;">数量</th>'
+        + '<th style="padding:8px 6px;text-align:right;border-bottom:2px solid #333;">单价</th>'
+        + '<th style="padding:8px 6px;text-align:right;border-bottom:2px solid #333;">金额</th></tr>'
+        + rows
+        + '<tr><td colspan="3" style="padding:10px 6px;text-align:right;font-weight:700;">合计（治疗项目）</td>'
+        + '<td style="padding:10px 6px;text-align:right;font-weight:700;font-size:15px;">' + money(treatTotal) + '</td></tr>'
+        + '</table>'
+        + (hasHerb ? '<div style="font-size:12px;color:#666;margin-top:8px;">注：药材费另计，按实际结算。</div>' : '')
+        + '<div style="margin-top:26px;font-size:12px;color:#555;border-top:1px solid #ccc;padding-top:10px;">'
+        + 'Tax ID: ' + escapeHtml(biz.taxId) + ' · WhatsApp: +60 ' + escapeHtml(biz.phone) + '<br>'
+        + '谢谢惠顾，祝您早日康复！</div>'
+        + '</div>';
+    }
+    function fillPrintArea(receipt, size){
+      ensurePrintArea();
+      var biz = { name:'VINATH TCM', taxId:'IG55173378000', phone:'601145799499' };
+      var pa = document.getElementById('printArea');
+      pa.innerHTML = sheet58Html(receipt, biz) + sheetA4Html(receipt, biz);
+      pa.querySelectorAll('.sheet-58,.sheet-a4').forEach(function(s){ s.style.display = 'none'; });
+      var target = pa.querySelector(size === '58' ? '.sheet-58' : '.sheet-a4');
+      if(target) target.style.display = 'block';
+    }
+    async function openInvoicePrint(result){
+      var items = [];
+      (result.treatments || []).forEach(function(t){ if(t && t.name) items.push({ name: t.name, qty: t.qty || 1, price: t.price || 0 }); });
+      if(result.rxItems && result.rxItems.length){
+        var herbSummary = result.rxItems.map(function(it){ return it.herbName + ' ' + it.dosageGrams + 'g'; }).join('、');
+        items.push({ name: '药材费（电子处方）：' + herbSummary, qty: 1, price: 0 });
+      }
+      if(!items.length){ showToast('本次就诊没有可打印的治疗项目或药材，未生成发票'); return; }
+      try {
+        var treatTotal = items.filter(function(it){ return it.price > 0; }).reduce(function(s,it){ return s + it.price * (it.qty||1); }, 0);
+        var herbTotal = items.filter(function(it){ return it.price === 0; }).reduce(function(s,it){ return s + it.price * (it.qty||1); }, 0);
+        var res = await fetch(API_BASE + '/admin/receipts', {
+          method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},
+          body: JSON.stringify({
+            patientName: r.patientName, patientPhone: r.patientPhone,
+            practitionerId: (cur && cur.id) || null,
+            practitionerNameSnapshot: (cur && cur.name) || 'VINATH TCM',
+            items: { consultation: 0, transport: 0, medication: 0, other: treatTotal },
+            lineItems: items,
+            paymentMethod: 'cash', paymentStatus: 'paid'
+          })
+        });
+        if(!res.ok){ var ej = await res.json().catch(function(){ return {}; }); showToast('发票保存失败：' + (ej.error || res.status)); return; }
+        var receipt = await res.json();
+        showPrintChooser(receipt);
+      } catch(e){ showToast('发票保存失败，请检查网络'); }
+    }
+    function showPrintChooser(receipt){
+      var ov = document.createElement('div');
+      ov.id = 'printChooser';
+      ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;';
+      ov.innerHTML = '<div style="background:#fff;border-radius:14px;padding:26px 30px;text-align:center;min-width:300px;box-shadow:0 8px 30px rgba(0,0,0,.2);">'
+        + '<div style="font-size:16px;font-weight:700;margin-bottom:4px;">发票已保存</div>'
+        + '<div style="font-size:13px;color:#6B7280;margin-bottom:18px;">' + escapeHtml(receipt.receipt_no) + ' · ' + money(receipt.total_amount) + '</div>'
+        + '<div style="display:flex;flex-direction:column;gap:10px;">'
+        + '<button class="btn-primary" id="print58Btn" style="padding:12px;">打印 58mm 小票</button>'
+        + '<button class="btn-primary" id="printA4Btn" style="padding:12px;background:#3A3F42;">打印 A4 发票</button>'
+        + '<button class="btn-secondary" id="printCloseBtn" style="padding:10px;">暂不打印</button>'
+        + '</div></div>';
+      document.body.appendChild(ov);
+      ov.querySelector('#print58Btn').addEventListener('click', function(){ doPrintReceipt(receipt, '58'); });
+      ov.querySelector('#printA4Btn').addEventListener('click', function(){ doPrintReceipt(receipt, 'a4'); });
+      ov.querySelector('#printCloseBtn').addEventListener('click', function(){ ov.remove(); view = 'timeline'; render(); });
+    }
+    function doPrintReceipt(receipt, size){
+      setPrintPageSize(size);
+      fillPrintArea(receipt, size);
+      document.body.classList.remove('print-58','print-a4');
+      document.body.classList.add(size === '58' ? 'print-58' : 'print-a4');
+      var ov = document.getElementById('printChooser'); if(ov) ov.remove();
+      setTimeout(function(){
+        window.print();
+        document.body.classList.remove('print-58','print-a4');
+        view = 'timeline'; render();
+      }, 250);
+    }
   }
 
   // 独立开方视图（从时间轴"开具处方"进入）：病历与处方合并到一个工具内，不再跳转独立处方页
@@ -1194,3 +1379,4 @@ window.scrollTo(0,0);
 </script>
 </body>
 </html>
+
