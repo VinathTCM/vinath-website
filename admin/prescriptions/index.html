@@ -275,7 +275,7 @@ window.scrollTo(0,0);
       + '<div id="hpList">' + (rows.length ? rows.map(function(r){
           return '<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">'
             + '<input type="text" class="hp-name" value="'+escapeHtml(r.herb_name)+'" style="flex:1 1 140px;min-width:120px;">'
-            + '<input type="number" class="hp-price" step="0.01" min="0" value="'+(Number(r.price_per_g)||0)+'" style="width:90px;">'
+            + '<input type="number" class="hp-price" step="0.01" min="0" value="'+(Number(r.price_per_g)||0).toFixed(2)+'" style="width:90px;">'
             + '<span style="font-size:12px;color:#6b7280;">RM/克</span>'
             + '<input type="text" class="hp-note" placeholder="备注（选填）" value="'+escapeHtml(r.note||'')+'" style="flex:1 1 140px;min-width:120px;">'
             + '<button type="button" class="btn-small hp-save" data-name="'+escapeHtml(r.herb_name)+'">保存</button>'
@@ -290,7 +290,7 @@ window.scrollTo(0,0);
       var el = document.createElement('div');
       el.style.cssText = 'display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;';
       el.innerHTML = '<input type="text" class="hp-name" placeholder="药材名称" value="'+escapeHtml(name||'')+'" style="flex:1 1 140px;min-width:120px;">'
-        + '<input type="number" class="hp-price" step="0.01" min="0" value="'+(price||0)+'" style="width:90px;">'
+        + '<input type="number" class="hp-price" step="0.01" min="0" value="'+(Number(price)||0).toFixed(2)+'" style="width:90px;">'
         + '<span style="font-size:12px;color:#6b7280;">RM/克</span>'
         + '<input type="text" class="hp-note" placeholder="备注（选填）" value="'+escapeHtml(note||'')+'" style="flex:1 1 140px;min-width:120px;">'
         + '<button type="button" class="btn-small hp-save">保存</button>'
@@ -313,7 +313,7 @@ window.scrollTo(0,0);
         var pr = Number(row.querySelector('.hp-price').value) || 0;
         var note = row.querySelector('.hp-note').value.trim();
         var res = await fetch(API_BASE + '/admin/herb-prices', { method:'PUT', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body: JSON.stringify({ herbName: nm, pricePerG: pr, note: note }) });
-        showToast(res.ok ? '已保存「'+nm+'」RM'+pr+'/克' : '保存失败');
+        showToast(res.ok ? '已保存「'+nm+'」RM'+Number(pr).toFixed(2)+'/克' : '保存失败');
         if(res.ok) openHerbPrices();
       } else if(delBtn){
         if(!confirm('确定删除「'+(nameInp.value||'')+'」的价格？')) return;

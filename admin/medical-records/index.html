@@ -1476,6 +1476,8 @@ function fillPrintArea(receipt, size){
       } catch(e){ showToast('发票保存失败，请检查网络'); }
     }
     function showPrintChooser(receipt){
+      // [fixed] 弹窗唯一化：防止重复保存并打印时叠加多个全屏遮罩，画面越来越暗、按钮被盖住
+      var oldOv = document.getElementById('printChooser'); if(oldOv) oldOv.remove();
       var ov = document.createElement('div');
       ov.id = 'printChooser';
       ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;';
