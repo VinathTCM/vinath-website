@@ -118,7 +118,7 @@ window.scrollTo(0,0);
     if(!navEl) return;
     navEl.innerHTML = '<div class="vinath-admin-nav-inner">' + visible.map(function(t){
       return (currentFile === t.file) ? '<span class="van-item current">'+t.label+'</span>' : '<a class="van-item" href="'+t.file+'">'+t.label+'</a>';
-    }).join('') + '</div>';
+    }).join('') + '<a class="van-item van-logout" href="javascript:void(0)" style="margin-left:auto;color:rgba(255,255,255,.9);font-weight:600;">退出登录</a>' + '</div>';
   }
 
   var toastTimer = null;
@@ -149,6 +149,16 @@ window.scrollTo(0,0);
     });
   }
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+  // === 退出登录：点击导航栏"退出登录"清除登录态并回到登录页 ===
+  document.addEventListener('click', function(ev){
+    var t = ev.target;
+    while(t && t !== document && !(t.classList && t.classList.contains('van-logout'))) t = t.parentNode;
+    if(!t || t === document) return;
+    try { sessionStorage.removeItem('vinath_auth_token'); } catch(e){}
+    try { localStorage.removeItem('vinath_current_admin'); } catch(e){}
+    location.href = '/admin/orders/';
+  });
+
   // === 登录过期自动引导：API 返回 401 时清理失效 token 并跳回登录页（避免"保存失败"却不知道为什么） ===
   (function(){
     var __of = window.fetch;

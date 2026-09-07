@@ -1143,6 +1143,16 @@ window.escapeHtml = function(s){
   var pendingLoginType = null, pendingLoginId = null, pendingLoginName = null;
 
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+  // === 退出登录：点击导航栏"退出登录"清除登录态并回到登录页 ===
+  document.addEventListener('click', function(ev){
+    var t = ev.target;
+    while(t && t !== document && !(t.classList && t.classList.contains('van-logout'))) t = t.parentNode;
+    if(!t || t === document) return;
+    try { sessionStorage.removeItem('vinath_auth_token'); } catch(e){}
+    try { localStorage.removeItem('vinath_current_admin'); } catch(e){}
+    location.href = '/admin/orders/';
+  });
+
   // === 登录过期自动引导：API 返回 401 时清理失效 token 并跳回登录页（避免"保存失败"却不知道为什么） ===
   (function(){
     var __of = window.fetch;
@@ -1326,7 +1336,9 @@ window.escapeHtml = function(s){
 
   async function renderLoginOverlay(){
     var cur = getCurrentAdmin();
-    if(cur){ document.getElementById('loginOverlay').classList.add('hide'); applyRoleUI(); return; }
+    var wrapEl = document.querySelector('.wrap');
+    if(cur){ if(wrapEl) wrapEl.style.display = ''; document.getElementById('loginOverlay').classList.add('hide'); applyRoleUI(); return; }
+    if(wrapEl) wrapEl.style.display = 'none';
     document.getElementById('loginOverlay').classList.remove('hide');
     document.getElementById('loginBoxMain').style.display = '';
     document.getElementById('loginBoxPwd').style.display = 'none';
@@ -1400,7 +1412,7 @@ window.escapeHtml = function(s){
     if(!navEl) return;
     navEl.innerHTML = '<div class="vinath-admin-nav-inner">' + visible.map(function(t){
       return (currentFile === t.file) ? '<span class="van-item current">'+t.label+'</span>' : '<a class="van-item" href="'+t.file+'">'+t.label+'</a>';
-    }).join('') + '</div>';
+    }).join('') + '<a class="van-item van-logout" href="javascript:void(0)" style="margin-left:auto;color:rgba(255,255,255,.9);font-weight:600;">退出登录</a>' + '</div>';
   }
 
   function applyRoleUI(){
@@ -1419,8 +1431,14 @@ window.escapeHtml = function(s){
     else if(cur.adminType==='fulfillment') roleLabel = 'II类·出货员';
     else if(cur.adminType==='support') roleLabel = 'III类·客服';
     else roleLabel = 'I类·执业医师 · '+cur.regions.length+' 个地区';
-    document.getElementById('adminCurrent').innerHTML = '当前登录：<b>'+cur.name+'</b>（'+roleLabel+'）<button type="button" class="switch-btn" id="changePwdBtn">修改密码</button><button type="button" class="switch-btn" id="switchAdminBtn">切换管理员</button>';
+    document.getElementById('adminCurrent').innerHTML = '当前登录：<b>'+cur.name+'</b>（'+roleLabel+'）<button type="button" class="switch-btn" id="changePwdBtn">修改密码</button><button type="button" class="switch-btn" id="switchAdminBtn">切换管理员</button><button type="button" class="switch-btn" id="logoutBtn" style="color:#B0503A;font-weight:700;">登出</button>';
     document.getElementById('changePwdBtn').addEventListener('click', openChangePasswordPanel);
+    document.getElementById('logoutBtn').addEventListener('click', function(){
+      setCurrentAdmin(null);
+      authToken = null;
+      try { sessionStorage.removeItem('vinath_auth_token'); } catch(e){}
+      location.href = '/admin/orders/';
+    });
     document.getElementById('switchAdminBtn').addEventListener('click', function(){
       setCurrentAdmin(null);
       authToken = null;
