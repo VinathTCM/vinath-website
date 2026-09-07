@@ -3087,14 +3087,17 @@ window.escapeHtml = function(s){
   function exportHeader(lang, docTypeEn, docTypeCn, docNo, docDate){
     return '<div class="receipt-brandrow"><div><div class="receipt-brand">VINATH<span class="tm">TM</span></div>'
       + '<div class="receipt-brand-sub">健康，本该简单 · Easy Health</div>'
-      + '<div class="receipt-brand-sub" style="margin-top:6px;">'+COMPANY_EN+' &nbsp;·&nbsp; Tax Reg. No. '+COMPANY_TAX_ID+'</div></div>'
+      + '<div class="receipt-brand-sub" style="margin-top:6px;">'+COMPANY_EN+' &nbsp;·&nbsp; Tax Reg. No. '+COMPANY_TAX_ID+'</div>'
+      + '<div class="receipt-brand-sub">'+'WhatsApp +601145799499 &nbsp;·&nbsp; Johor, Malaysia'+'</div></div>'
       + '<div><div class="receipt-doctype">'+docTypeEn+'</div>'
       + '<div class="receipt-no">'+'No.'+' '+docNo+'</div>'
       + '<div class="receipt-no">'+'Date'+' '+ddmmyyyy(TODAY_ISO)+'</div></div></div>';
   }
   function exportFooter(lang, noteEn, noteCn){
     return '<div class="receipt-ftr">'+noteEn+'</div>'
-      + '<div class="receipt-ftr2"><div>Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.</div><div class="my">Malaysia</div></div>';
+      + '<div class="receipt-ftr2"><div>VINATH TCM HEALTH CARE · Tax Reg. No. '+COMPANY_TAX_ID+' · WhatsApp +601145799499</div>'
+      + '<div>Johor, Malaysia</div>'
+      + '<div>Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.</div><div class="my">Malaysia</div></div>';
   }
 
   function printPackingSlip(o, lang){
