@@ -80,6 +80,16 @@ if(window.history.scrollRestoration) window.history.scrollRestoration = "manual"
 window.scrollTo(0,0);
 
 (function(){
+  var MODULE_ACCESS = null;
+  async function loadModuleAccess(){
+    if(MODULE_ACCESS) return MODULE_ACCESS;
+    try {
+      var apiBase = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+      var res = await fetch(apiBase + '/site-settings/module_access');
+      MODULE_ACCESS = res.ok ? (await res.json() || {}) : {};
+    } catch(e){ MODULE_ACCESS = {}; }
+    return MODULE_ACCESS;
+  }
   async function renderVinathAdminNav(navAdmin){
     if(!navAdmin) return;
     var ALL_ADMIN_TOOLS = [
@@ -96,12 +106,8 @@ window.scrollTo(0,0);
     // I类执业医师看到的导航栏，要跟实际的功能开关状态一致——开关没打开的工具，不该在导航栏
     // 里出现让人点了才发现进不去。大管理员不受这个开关影响，不用过滤。
     if(myRole==='practitioner'){
-      try {
-        var apiBase = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-        var res = await fetch(apiBase + '/site-settings/module_access');
-        var access = res.ok ? (await res.json() || {}) : {};
-        visible = visible.filter(function(t){ return !t.gated || access[t.gated]===true; });
-      } catch(e){ console.error('拉取功能开关状态失败:', e); }
+      var access = await loadModuleAccess();
+      visible = visible.filter(function(t){ return !t.gated || access[t.gated]===true; });
     }
     var currentFile = decodeURIComponent(window.location.pathname.split('/').pop());
     var navEl = document.getElementById('vinathAdminNav');
@@ -254,6 +260,7 @@ window.scrollTo(0,0);
   }
 
   async function renderRoute(){
+    if(!MODULE_ACCESS) await loadModuleAccess();
     var todayISO = new Date().toISOString().slice(0,10);
     var allBookings = await getBookings();
     var bookings = allBookings.filter(function(b){
@@ -286,8 +293,8 @@ window.scrollTo(0,0);
                   : '<span class="deposit-status unpaid">未收订金</span> <button type="button" class="btn-secondary request-deposit-btn" data-id="'+b.id+'" style="padding:5px 12px;font-size:12px;">请求订金</button>')
               + '</div>'
               + '<div class="quick-links-row" style="margin-top:8px;display:flex;gap:8px;">'
-              + '<a href="/admin/medical-records/?patientPhone='+encodeURIComponent(b.contact)+'&patientName='+encodeURIComponent(b.name)+'" target="_blank" style="font-size:12px;color:var(--clay);text-decoration:none;font-weight:700;">查看电子病历 →</a>'
-              + '<a href="/admin/prescriptions/" target="_blank" style="font-size:12px;color:var(--clay);text-decoration:none;font-weight:700;">开具处方 →</a>'
+              + (cur.type==='senior' || (MODULE_ACCESS && MODULE_ACCESS.medicalRecords===true) ? '<a href="/admin/medical-records/?patientPhone='+encodeURIComponent(b.contact)+'&patientName='+encodeURIComponent(b.name)+'" target="_blank" style="font-size:12px;color:var(--clay);text-decoration:none;font-weight:700;">查看电子病历 →</a>' : '')
+              + (cur.type==='senior' || (MODULE_ACCESS && MODULE_ACCESS.prescriptions===true) ? '<a href="/admin/prescriptions/" target="_blank" style="font-size:12px;color:var(--clay);text-decoration:none;font-weight:700;">开具处方 →</a>' : '')
               + '</div>'
               + '</div></div>';
           }).join('');

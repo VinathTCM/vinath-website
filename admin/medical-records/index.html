@@ -181,6 +181,7 @@ window.scrollTo(0,0);
   }
   var cur = getCurrentAdmin();
   var isPractitioner = cur && (cur.type==='senior' || (cur.type==='junior' && (cur.adminType||'practitioner')==='practitioner'));
+  var isJuniorPractitioner = cur && cur.type==='junior' && (cur.adminType||'practitioner')==='practitioner';
   var isSenior = cur && cur.type==='senior';
 
   if(!isPractitioner){
@@ -440,6 +441,10 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     try {
       var bres = await fetch(API_BASE + '/admin/bookings', { headers: { 'Authorization': 'Bearer ' + authToken } });
       var bookings = bres.ok ? await bres.json() : [];
+      // 双保险：小管理员前端再过滤一次，只保留预约了自己（或未指定医生）的客户
+      if(isJuniorPractitioner && cur && cur.id){
+        bookings = bookings.filter(function(b){ return !b.practitioner_id || b.practitioner_id === cur.id; });
+      }
       bookings.forEach(function(b){ if(!bookedPatients[b.customer_phone]) bookedPatients[b.customer_phone] = b.customer_name; });
     } catch(e){}
     var bookedPatientOptions = Object.keys(bookedPatients).map(function(phone){
@@ -624,6 +629,9 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     try {
       var bres = await fetch(API_BASE + '/admin/bookings', { headers: { 'Authorization': 'Bearer ' + authToken } });
       var allBookings = bres.ok ? await bres.json() : [];
+      if(isJuniorPractitioner && cur && cur.id){
+        allBookings = allBookings.filter(function(b){ return !b.practitioner_id || b.practitioner_id === cur.id; });
+      }
       bookings = allBookings.filter(function(b){ return b.customer_phone===activePatientPhone; })
         .map(function(b){ return { contact:b.customer_phone, name:b.customer_name, apptDate:b.appt_date, apptDateISO:b.appt_date_iso, slot:b.slot,
           doctor:b.practitioner_name, cancelled:b.cancelled, need:b.need, doctorNote:b.doctor_note, treatments:b.treatments||[] }; });
