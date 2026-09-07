@@ -133,6 +133,27 @@ window.scrollTo(0,0);
   }
   var isPractitioner = cur.type==='senior' || (cur.type==='junior' && (cur.adminType||'practitioner')==='practitioner');
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+  // === 登录过期自动引导：API 返回 401 时清理失效 token 并跳回登录页（避免"保存失败"却不知道为什么） ===
+  (function(){
+    var __of = window.fetch;
+    window.fetch = function(){
+      var args = arguments;
+      var url = (typeof args[0] === 'string') ? args[0] : (args[0] && args[0].url) || '';
+      return __of.apply(this, args).then(function(res){
+        if(res.status === 401 && url.indexOf('/auth/login') === -1 && !window.__authJumping){
+          window.__authJumping = true;
+          try { sessionStorage.removeItem('vinath_auth_token'); } catch(e){}
+          try { localStorage.removeItem('vinath_current_admin'); } catch(e){}
+          try {
+            if(typeof showToast === 'function'){ showToast('登录已过期，请重新登录'); }
+          } catch(e){}
+          setTimeout(function(){ location.href = '/admin/orders/'; }, 900);
+        }
+        return res;
+      });
+    };
+  })();
+
   var authToken = null;
   try { authToken = sessionStorage.getItem('vinath_auth_token'); } catch(e){}
 

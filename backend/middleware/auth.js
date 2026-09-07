@@ -79,7 +79,7 @@ function signToken(admin){
   return jwt.sign(
     { sub: admin.id, name: admin.name, role: admin.role },
     JWT_SECRET,
-    { expiresIn: '12h' }
+    { expiresIn: '30d' }
   );
 }
 
