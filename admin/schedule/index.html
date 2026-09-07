@@ -176,7 +176,6 @@ window.scrollTo(0,0);
     var avail = await getMyAvailability();
     var html = '<div class="wrap"><h1>智能排班</h1><div class="sub">设置每日上门服务时间段与服务区域半径。</div>'
       + renderTabs()
-      + '<div class="proto-banner"><b>"服务区域半径"这里先做成一个数字设置项，还没有接入真实地图。</b>真正按半径圈定范围、判断某个预约地址在不在范围内，需要真实的地理编码服务（把地址转成经纬度）才能做到，这个需要 Google Maps 一类的 API Key，属于需要单独申请、单独付费的第三方服务。</div>'
       + '<div class="card"><div class="section-title">服务区域半径</div>'
       + '<div class="field" style="max-width:220px;"><label>公里数</label><input type="number" id="radiusInput" value="'+avail.radiusKm+'"></div>'
       + '</div>'

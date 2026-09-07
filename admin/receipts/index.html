@@ -56,10 +56,6 @@ h1{ font-family:var(--font-serif); font-size:22px; margin:0 0 4px; }
 .receipt-table .amt-col{ text-align:right; }
 .receipt-total-row td{ font-weight:700; font-size:15px; border-bottom:none; border-top:2px solid var(--ink); }
 .receipt-footer{ display:flex; justify-content:space-between; align-items:flex-end; margin-top:26px; }
-.qr-placeholder{ width:96px; height:96px; border:1.5px dashed var(--line); border-radius:8px; display:grid; grid-template-columns:repeat(5,1fr); grid-template-rows:repeat(5,1fr); padding:8px; gap:2px; }
-.qr-placeholder div{ background:var(--ink); opacity:.08; border-radius:1px; }
-.qr-placeholder div:nth-child(3n){ opacity:.2; }
-.qr-caption{ font-size:10.5px; color:var(--ink-soft); text-align:center; margin-top:6px; max-width:110px; }
 .receipt-disclaimer{ font-size:11px; color:var(--ink-soft); margin-top:24px; line-height:1.6; border-top:1px solid var(--line); padding-top:14px; }
 @page{ size:A4; margin:12mm; }
 @media print{
@@ -205,7 +201,6 @@ window.scrollTo(0,0);
     var html = '<div class="wrap">'
       + '<div class="top-actions"><div><h1>电子收据</h1><div class="sub">开具收据、导出PDF，方便患者报销。</div></div>'
       + '<button class="btn-primary" id="newReceiptBtn">+ 开具新收据</button></div>'
-      + '<div class="proto-banner"><b>收据数据已存进真实后端数据库，但这还不是符合LHDN e-Invoice标准的正式电子发票系统。</b>真正的e-Invoice合规需要对接大马税收局MyInvois系统的官方接口，这里生成的PDF字段格式是参照标准准备的，但二维码位置目前只是占位——没有真正提交给LHDN，不能作为正式报税凭证使用，仅供内部记录和向患者提供费用明细参考。</div>'
       + '<div class="card">'
       + (receipts.length ? receipts.map(function(rc){
           return '<div class="receipt-row" data-id="'+rc.id+'"><div><div class="rno">'+rc.receiptNo+' · '+escapeHtml(rc.patientName)+'</div><div class="rmeta">'+rc.issuedAt.slice(0,10)+' · '+escapeHtml(rc.practitionerNameSnapshot)+'</div></div><span class="ramt">RM '+rc.totalAmount.toFixed(2)+'</span></div>';
@@ -430,7 +425,6 @@ window.scrollTo(0,0);
 
       + '<div class="receipt-footer">'
       + '<div style="font-size:12px;color:var(--ink-soft);">感谢您选择 VINATH 居家中医服务。<br>如需咨询本次收据内容，请通过网站「相约」联系我们。</div>'
-      + '<div style="text-align:center;"><div class="qr-placeholder">'+'<div></div>'.repeat(25)+'</div><div class="qr-caption">二维码位置（对接LHDN e-Invoice后，由官方系统生成真实验证码）</div></div>'
       + '</div>'
 
       + '<div class="receipt-disclaimer">本收据由 VINATH 内部系统生成，用于记录本次居家中医服务的费用明细，可作为向公司或保险公司报销时的费用证明参考。本收据目前未对接马来西亚内陆税收局（LHDN）e-Invoice 官方系统，不具备正式电子发票的法律效力；如贵司/保险公司要求正式电子发票，请与我们联系另行处理。</div>'
