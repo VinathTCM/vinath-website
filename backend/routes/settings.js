@@ -7,7 +7,7 @@ const { authMiddleware, requireRole } = require('../middleware/auth');
 const router = express.Router();
 
 // 白名单——不是任意key都能存，避免这个通用接口被当成不受限的任意键值存储用
-const ALLOWED_KEYS = ['business_info', 'announcements', 'policy_pages', 'health_journeys', 'module_access', 'service_areas'];
+const ALLOWED_KEYS = ['business_info', 'announcements', 'policy_pages', 'health_journeys', 'module_access', 'service_areas', 'price_list'];
 
 router.get('/site-settings/:key', (req, res) => {
   if(!ALLOWED_KEYS.includes(req.params.key)) return res.status(404).json({ error: '不存在这个设置项' });

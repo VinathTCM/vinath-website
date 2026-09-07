@@ -35,8 +35,9 @@ router.get('/admin/prescriptions', authMiddleware, requireModuleAccess('prescrip
 });
 
 router.post('/admin/prescriptions', authMiddleware, requireModuleAccess('prescriptions'), (req, res) => {
-  const { patientName, patientPhone, medicalRecordId, bookingId, formulaType, items, usageInstructions } = req.body;
+  const { patientName, patientPhone, medicalRecordId, bookingId, formulaType, items, usageInstructions, treatments } = req.body;
   const validItems = (items||[]).filter(it => it.herbName && it.herbName.trim() && it.dosageGrams);
+  const validTreatments = (treatments||[]).filter(t => t && t.name && String(t.name).trim()).map(t => ({ name: String(t.name).trim(), qty: Number(t.qty) || 1, price: Number(t.price) || 0 }));
   if(!patientName || !patientPhone) return res.status(400).json({ error: '请填写患者姓名和手机号' });
   if(!validItems.length) return res.status(400).json({ error: '请至少填写一味药材及剂量' });
   if(!usageInstructions) return res.status(400).json({ error: '请填写服法' });
@@ -56,10 +57,12 @@ router.post('/admin/prescriptions', authMiddleware, requireModuleAccess('prescri
     if(bookingId){
       const booking = db.prepare('SELECT * FROM bookings WHERE id = ?').get(bookingId);
       if(booking){
-        const treatments = JSON.parse(booking.treatments || '[]');
+        const bookingTreatments = JSON.parse(booking.treatments || '[]');
         const herbSummary = validItems.map(it => it.herbName + ' ' + it.dosageGrams + 'g').join('、');
-        treatments.push({ name: '电子处方（' + (FORMULA_TYPE_LABELS[formulaType]||formulaType) + '）：' + herbSummary, qty: 1, price: 0 });
-        db.prepare('UPDATE bookings SET treatments = ? WHERE id = ?').run(JSON.stringify(treatments), bookingId);
+        bookingTreatments.push({ name: '电子处方（' + (FORMULA_TYPE_LABELS[formulaType]||formulaType) + '）：' + herbSummary, qty: 1, price: 0 });
+        // 病历里勾选的价目表治疗项目也一并写入预约治疗明细（带价格，收据打印直接可见）
+        validTreatments.forEach(t => bookingTreatments.push({ name: t.name, qty: t.qty, price: t.price }));
+        db.prepare('UPDATE bookings SET treatments = ? WHERE id = ?').run(JSON.stringify(bookingTreatments), bookingId);
       }
     }
     return db.prepare('SELECT * FROM prescriptions WHERE id = ?').get(id);

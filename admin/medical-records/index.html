@@ -398,6 +398,43 @@ window.scrollTo(0,0);
   var editingRx = null;
   var editingFormula = null;
 
+  // ---- 价目表（针灸/推拿/美容/出诊费等）：优先从后端拉，拉不到用内置兜底 ----
+  var PRICE_LIST_FALLBACK = [
+    { cat:'诊疗 Consultation', name:'初诊', nameEn:'First Consultation', price:50, note:'首次建立病历、完整问诊辨证及制定方案' },
+    { cat:'诊疗 Consultation', name:'复诊', nameEn:'Follow-up Consultation', price:30, note:'已有病历，复评疗效、调整辨证/处方' },
+    { cat:'针刺 Acupuncture', name:'局部针刺-单区', nameEn:'Single Area', price:50 },
+    { cat:'针刺 Acupuncture', name:'局部针刺-双区', nameEn:'Two Areas', price:65 },
+    { cat:'针刺 Acupuncture', name:'局部针刺-多区', nameEn:'Multiple Areas', price:80 },
+    { cat:'针刺 Acupuncture', name:'中医辨证针刺', nameEn:'Pattern-Based Acupuncture', price:80 },
+    { cat:'针刺 Acupuncture', name:'全身／综合辨证针刺', nameEn:'Full Body / Comprehensive', price:90 },
+    { cat:'针刺 Acupuncture', name:'电针附加', nameEn:'Electroacupuncture', price:15, note:'在原项目上加收' },
+    { cat:'艾灸 Moxibustion', name:'艾灸-单一区域', nameEn:'Single Area', price:35 },
+    { cat:'艾灸 Moxibustion', name:'艾灸-两个区域', nameEn:'Two Areas', price:50 },
+    { cat:'艾灸 Moxibustion', name:'艾灸-多部位', nameEn:'Multiple Areas', price:65 },
+    { cat:'艾灸 Moxibustion', name:'艾灸-综合', nameEn:'Comprehensive', price:75 },
+    { cat:'拔罐 Cupping', name:'拔罐-单一区域', nameEn:'Single Area', price:30 },
+    { cat:'拔罐 Cupping', name:'拔罐-两个区域', nameEn:'Two Areas', price:40 },
+    { cat:'拔罐 Cupping', name:'拔罐-多部位', nameEn:'Multiple Areas', price:50 },
+    { cat:'拔罐 Cupping', name:'拔罐-全身', nameEn:'Full Body', price:60 },
+    { cat:'推拿 Tuina', name:'局部推拿 15分钟', nameEn:'Local 15 min', price:40 },
+    { cat:'推拿 Tuina', name:'局部推拿 30分钟', nameEn:'Local 30 min', price:65 },
+    { cat:'推拿 Tuina', name:'多部位推拿 45分钟', nameEn:'Multiple Areas 45 min', price:90 },
+    { cat:'推拿 Tuina', name:'全身推拿 60分钟', nameEn:'Full Body 60 min', price:120 },
+    { cat:'美容针灸 Cosmetic Acupuncture', name:'基础面部美容针', nameEn:'Basic Facial Acupuncture', price:120, note:'基础13针' },
+    { cat:'美容针灸 Cosmetic Acupuncture', name:'面部美容／抗衰针灸', nameEn:'Facial Rejuvenation Acupuncture', price:160, note:'针对性' },
+    { cat:'美容针灸 Cosmetic Acupuncture', name:'综合美容针灸', nameEn:'Comprehensive Facial Acupuncture', price:200, note:'美容针+辨证艾灸' },
+    { cat:'美容针灸 Cosmetic Acupuncture', name:'美容针＋面部刮痧', nameEn:'Facial Acupuncture + Gua Sha', price:220 },
+    { cat:'美容针灸 Cosmetic Acupuncture', name:'美容针＋辨证体针', nameEn:'Facial Acupuncture + Body Acupuncture', price:220 },
+    { cat:'美容针灸 Cosmetic Acupuncture', name:'综合美容调理', nameEn:'Comprehensive Beauty Treatment', price:250, note:'美容针+面部刮痧+体针+艾灸' },
+    { cat:'美容针灸 Cosmetic Acupuncture', name:'综合美容调理+面部手法提拉', nameEn:'Comprehensive Beauty Treatment+Facial Tuina', price:399 },
+    { cat:'居家出诊费 Home Visit', name:'出诊费 Zone 1（≤5km）', nameEn:'Zone 1', price:30, note:'核心服务圈，从 Taman Kota Masai 出发' },
+    { cat:'居家出诊费 Home Visit', name:'出诊费 Zone 2（>5-10km）', nameEn:'Zone 2', price:35 },
+    { cat:'居家出诊费 Home Visit', name:'出诊费 Zone 3（>10-15km）', nameEn:'Zone 3', price:45 },
+    { cat:'居家出诊费 Home Visit', name:'出诊费 Zone 4（>15-20km）', nameEn:'Zone 4', price:55 },
+    { cat:'居家出诊费 Home Visit', name:'出诊费 Zone 5（>20-25km）', nameEn:'Zone 5', price:65 }
+  ];
+  var PRICE_LIST = null;
+
   async function renderTimeline(){
     var records = await fetchRecordsForPatient(activePatientPhone);
     var patientName = records.length ? records[0].patientName : '';
@@ -435,6 +472,7 @@ window.scrollTo(0,0);
         + (combineDisplay(r,'pulseType') ? '<div style="font-size:12.5px;color:var(--ink-soft);">脉象：'+escapeHtml(combineDisplay(r,'pulseType'))+'</div>' : '')
         + (combineDisplay(r,'constitutionType') ? '<div style="font-size:12.5px;color:var(--ink-soft);">体质：'+escapeHtml(combineDisplay(r,'constitutionType'))+'</div>' : '')
         + (pts ? '<div style="font-size:12.5px;color:var(--ink-soft);">穴位/部位：'+pts+'</div>' : '')
+        + (r.treatments && r.treatments.length ? '<div style="font-size:12.5px;color:var(--ink-soft);">治疗项目：'+r.treatments.map(function(t){ return escapeHtml(t.name)+' ×'+(Number(t.qty)||1)+'（RM'+((Number(t.price)||0)*(Number(t.qty)||1))+'）'; }).join('、')+'</div>' : '')
         + (r.photos && r.photos.length ? '<div class="timeline-photos">'+r.photos.map(function(p){ return '<img src="'+p.photoUrl+'" title="'+escapeHtml(p.photoType)+'">'; }).join('')+'</div>' : '')
         + '</div>' });
     });
@@ -578,12 +616,16 @@ window.scrollTo(0,0);
       + '<div class="card"><div class="section-title">本次处方（可选）</div>'
       + '<label class="rx-enable-row"><input type="checkbox" id="rxEnableCheck"> 本次就诊同时开具处方</label>'
       + '<div id="rxBlock" style="display:none;margin-top:14px;">'
+      + '<div class="field"><label>关联预约（可选——治疗项目会写入该预约的收据明细，打印单子更快）</label><select id="rxBkSelectMR"><option value="">不关联预约</option></select></div>'
       + '<div class="field"><label>配方类型</label><select id="rxTypeSelect"><option value="granule">颗粒剂</option><option value="decoction">饮片</option><option value="custom">配方</option></select></div>'
       + '<div class="rx-from-formula"><select id="rxLoadFormulaSelect"><option value="">从我的协定方载入…</option></select><button type="button" class="btn-small" id="rxLoadFormulaBtn">载入</button></div>'
       + '<div class="field"><label>药材明细</label><div id="rxHerbList"></div>'
       + '<button type="button" class="btn-secondary" id="rxAddHerbBtn" style="margin-top:6px;">+ 添加一味药</button>'
       + '<div style="font-size:12px;color:var(--ink-soft);margin-top:10px;">药材名称、剂量、煎法备注完全由您填写，软件不提供剂量建议。</div></div>'
       + '<div class="field"><label>服法</label><textarea id="rxUsageInput" placeholder="例如：每日一剂，分三次饭后温服"></textarea></div>'
+      + '<div class="field"><label>治疗项目（选填——从价目表选，自动带出价格）</label>'
+      + '<div class="rx-from-formula"><select id="rxTreatSel"><option value="">从价目表选择…</option></select><button type="button" class="btn-small" id="rxAddTreatBtn">+ 添加</button></div>'
+      + '<div id="rxTreatList" style="margin-top:8px;"></div></div>'
       + '</div>'
       + '</div>'
 
@@ -752,7 +794,58 @@ window.scrollTo(0,0);
     renderPhotoGrid();
 
     // ---- 本次处方区块交互（合并电子处方） ----
-    var rxDraft = { enabled:false, formulaType:'granule', items:[{herbName:'',dosageGrams:'',notes:''}], usageInstructions:'' };
+    var rxDraft = { enabled:false, formulaType:'granule', items:[{herbName:'',dosageGrams:'',notes:''}], usageInstructions:'', treatments:[], bookingId:null };
+    function loadPriceList(){
+      return fetch(API_BASE + '/site-settings/price_list')
+        .then(function(res){ return res.ok ? res.json() : null; })
+        .then(function(v){ PRICE_LIST = (v && v.list && v.list.length) ? v.list : PRICE_LIST_FALLBACK; renderRxTreatSelect(); return PRICE_LIST; })
+        .catch(function(){ PRICE_LIST = PRICE_LIST_FALLBACK; renderRxTreatSelect(); return PRICE_LIST; });
+    }
+    function renderRxTreatSelect(){
+      var sel = document.getElementById('rxTreatSel');
+      if(!sel) return;
+      var groups = {};
+      (PRICE_LIST||PRICE_LIST_FALLBACK).forEach(function(p){ (groups[p.cat] = groups[p.cat]||[]).push(p); });
+      var html = '<option value="">从价目表选择…</option>';
+      Object.keys(groups).forEach(function(cat){
+        html += '<optgroup label="'+escapeHtml(cat)+'">' + groups[cat].map(function(p){
+          return '<option value="'+escapeHtml(p.name)+'" data-price="'+(Number(p.price)||0)+'">'+escapeHtml(p.name)+' — RM'+(Number(p.price)||0)+'</option>';
+        }).join('') + '</optgroup>';
+      });
+      sel.innerHTML = html;
+    }
+    function renderRxTreatList(){
+      var el = document.getElementById('rxTreatList');
+      if(!el) return;
+      el.innerHTML = rxDraft.treatments.length ? rxDraft.treatments.map(function(t,i){
+        var subtotal = (Number(t.price)||0) * (Number(t.qty)||1);
+        return '<div class="herb-item-row">'
+          + '<span style="min-width:150px;font-size:13px;font-weight:600;">'+escapeHtml(t.name)+'</span>'
+          + '<input type="number" min="1" style="width:60px;" data-trt-qty="'+i+'" value="'+(Number(t.qty)||1)+'">'
+          + '<span style="font-size:13px;color:var(--ink-soft);white-space:nowrap;">× RM'+(Number(t.price)||0)+' = RM'+subtotal+'</span>'
+          + '<button type="button" class="remove-herb" data-trt-rm="'+i+'">×</button>'
+          + '</div>';
+      }).join('') : '<div style="font-size:12.5px;color:var(--ink-soft);">还没有添加治疗项目——从上方价目表选择后点"添加"</div>';
+      document.querySelectorAll('[data-trt-qty]').forEach(function(inp){
+        inp.addEventListener('input', function(){ rxDraft.treatments[Number(this.getAttribute('data-trt-qty'))].qty = Number(this.value)||1; renderRxTreatList(); });
+      });
+      document.querySelectorAll('[data-trt-rm]').forEach(function(btn){
+        btn.addEventListener('click', function(){ rxDraft.treatments.splice(Number(this.getAttribute('data-trt-rm')),1); renderRxTreatList(); });
+      });
+    }
+    function loadBookingOptions(){
+      var sel = document.getElementById('rxBkSelectMR');
+      if(!sel || !r.patientPhone) return;
+      fetch(API_BASE + '/admin/bookings', { headers: { 'Authorization': 'Bearer ' + authToken } })
+        .then(function(res){ return res.ok ? res.json() : []; })
+        .then(function(list){
+          var mine = list.filter(function(b){ return b.customer_phone===r.patientPhone && !b.cancelled; });
+          sel.innerHTML = '<option value="">不关联预约（治疗项目只保存在病历里）</option>' + mine.map(function(b){
+            var label = (b.booking_no||'')+' · '+(b.appt_date||'')+' '+(b.slot||'')+' · '+(b.practitioner_name||'');
+            return '<option value="'+b.id+'">'+escapeHtml(label)+'</option>';
+          }).join('');
+        }).catch(function(){});
+    }
     var formulaLib = [];
     function renderRxHerbList(){
       var el = document.getElementById('rxHerbList');
@@ -781,10 +874,17 @@ window.scrollTo(0,0);
     document.getElementById('rxEnableCheck').addEventListener('change', function(){
       rxDraft.enabled = this.checked;
       document.getElementById('rxBlock').style.display = this.checked ? '' : 'none';
-      if(this.checked){ loadFormulaOptions(); renderRxHerbList(); }
+      if(this.checked){ loadFormulaOptions(); renderRxHerbList(); loadBookingOptions(); loadPriceList(); renderRxTreatList(); }
     });
     document.getElementById('rxTypeSelect').addEventListener('change', function(){ rxDraft.formulaType = this.value; });
     document.getElementById('rxAddHerbBtn').addEventListener('click', function(){ rxDraft.items.push({herbName:'',dosageGrams:'',notes:''}); renderRxHerbList(); });
+    document.getElementById('rxBkSelectMR').addEventListener('change', function(){ rxDraft.bookingId = this.value || null; });
+    document.getElementById('rxAddTreatBtn').addEventListener('click', function(){
+      var sel = document.getElementById('rxTreatSel');
+      if(!sel.value){ showToast('请先选择一个价目表项目'); return; }
+      rxDraft.treatments.push({ name: sel.value, qty: 1, price: Number(sel.options[sel.selectedIndex].getAttribute('data-price')) || 0 });
+      renderRxTreatList();
+    });
     document.getElementById('rxUsageInput').addEventListener('input', function(){ rxDraft.usageInstructions = this.value; });
     document.getElementById('rxLoadFormulaBtn').addEventListener('click', function(){
       var sel = document.getElementById('rxLoadFormulaSelect');
@@ -820,6 +920,7 @@ window.scrollTo(0,0);
        'tongueBodyColor','tongueBodyColorCustom','tongueCoating','tongueCoatingCustom','tongueShape','tongueShapeCustom',
        'constitutionType','constitutionTypeCustom','tcmDiagnosis','syndromePattern','treatmentPlan','treatmentPoints','photos'
       ].forEach(function(k){ if(r[k]!==undefined) dataPayload[k] = r[k]; });
+      if(rxDraft.treatments && rxDraft.treatments.length) dataPayload.treatments = rxDraft.treatments;
 
       var btn = this;
       btn.disabled = true;
@@ -836,7 +937,7 @@ window.scrollTo(0,0);
         if(rxDraft.enabled){
           var rxItems = rxDraft.items.filter(function(it){ return it.herbName && String(it.herbName).trim() && it.dosageGrams; });
           if(rxItems.length){
-            var rxPayload = { patientName: r.patientName, patientPhone: r.patientPhone, medicalRecordId: savedMrId || null, bookingId: null, formulaType: rxDraft.formulaType, items: rxItems, usageInstructions: rxDraft.usageInstructions };
+            var rxPayload = { patientName: r.patientName, patientPhone: r.patientPhone, medicalRecordId: savedMrId || null, bookingId: rxDraft.bookingId || null, formulaType: rxDraft.formulaType, items: rxItems, usageInstructions: rxDraft.usageInstructions, treatments: rxDraft.treatments };
             try {
               var rxRes = await fetch(API_BASE + '/admin/prescriptions', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body: JSON.stringify(rxPayload) });
               showToast(rxRes.ok ? '病历与处方已保存' : '病历已保存，但处方提交失败');
