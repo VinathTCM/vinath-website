@@ -177,6 +177,7 @@ window.scrollTo(0,0);
   }
   var cur = getCurrentAdmin();
   var isPractitioner = cur && (cur.type==='senior' || (cur.type==='junior' && (cur.adminType||'practitioner')==='practitioner'));
+  var isSenior = cur && cur.type==='senior';
 
   if(!isPractitioner){
     document.getElementById('app').innerHTML =
@@ -193,6 +194,10 @@ window.scrollTo(0,0);
   function treatName(t){
     if(!t) return '';
     return t.nameEn ? t.name + ' (' + t.nameEn + ')' : t.name;
+  }
+  function printName(t){
+    if(!t) return '';
+    return t.nameEn ? t.nameEn : t.name;
   }
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
   // === 退出登录：点击导航栏"退出登录"清除登录态并回到登录页 ===
@@ -402,10 +407,14 @@ window.scrollTo(0,0);
       + '<select id="bookedPatientSelect" style="min-width:200px;"><option value="">— 从已预约客户中选择 —</option>'+bookedPatientOptions+'</select>'
       + '<span style="color:var(--ink-soft);font-size:12.5px;align-self:center;">或</span>'
       + '<input type="text" id="newPhoneInput" placeholder="手机号（不带0）"><input type="text" id="newNameInput" placeholder="姓名"></div>'
-      + '<button class="btn-primary" id="newRecordBtn">+ 新建病历</button></div>'
+      + '<button class="btn-primary" id="newRecordBtn">+ 新建病历</button>'
+      + (isSenior ? '<button class="btn-primary" id="trashBtn" style="margin-left:8px;background:var(--ink-soft,#999);border-color:transparent;">回收箱</button>' : '')
+      + '</div>'
       + '<div class="card"><div class="section-title">患者列表</div>'
       + (list.length ? list.map(function(p){
-          return '<div class="patient-row" data-phone="'+escapeHtml(p.phone)+'" data-name="'+escapeHtml(p.name)+'"><div><div class="pname">'+escapeHtml(p.name)+'</div><div class="pmeta">+60'+escapeHtml(p.phone)+' · 共 '+p.count+' 次就诊记录 · 最近：'+p.lastVisit+'</div></div><span style="color:var(--ink-soft);">查看时间轴 →</span></div>';
+          return '<div class="patient-row" data-phone="'+escapeHtml(p.phone)+'" data-name="'+escapeHtml(p.name)+'"><div><div class="pname">'+escapeHtml(p.name)+'</div><div class="pmeta">+60'+escapeHtml(p.phone)+' · 共 '+p.count+' 次就诊记录 · 最近：'+p.lastVisit
+            + (isSenior ? ' · <a href="javascript:void(0)" class="del-patient-link" data-del-patient="'+escapeHtml(p.phone)+'" data-name="'+escapeHtml(p.name)+'" style="color:#c0392b;">删除患者全部病历</a>' : '')
+            + '</div></div><span style="color:var(--ink-soft);">查看时间轴 →</span></div>';
         }).join('') : '<div class="empty-state">还没有任何病历记录，点右上角"新建病历"开始</div>')
       + '</div></div>';
     document.getElementById('app').innerHTML = html;
@@ -435,6 +444,75 @@ window.scrollTo(0,0);
     var gotoF = document.getElementById('gotoFormulasTab');
     if(gotoF) gotoF.addEventListener('click', function(){ view='formulas'; render(); });
   }
+
+  function refreshCurrentView(){ if(view==='form') view='timeline'; render(); }
+  async function deleteRecord(id){
+    if(!confirm('确定删除这条病历？删除后可在回收箱恢复。')) return;
+    var res = await fetch(API_BASE + '/admin/medical-records/' + id, { method:'DELETE', headers:{'Authorization':'Bearer '+authToken} });
+    showToast(res.ok ? '已删除，可在回收箱恢复' : '删除失败');
+    if(res.ok) refreshCurrentView();
+  }
+  async function deletePatient(phone, name){
+    if(!confirm('确定删除患者 ' + (name||'') + ' 的全部病历？删除后可在回收箱恢复。')) return;
+    var res = await fetch(API_BASE + '/admin/medical-records/patient/' + encodeURIComponent(phone), { method:'DELETE', headers:{'Authorization':'Bearer '+authToken} });
+    showToast(res.ok ? '已删除该患者全部病历，可在回收箱恢复' : '删除失败');
+    if(res.ok) refreshCurrentView();
+  }
+  async function restoreRecord(id, ov){
+    var res = await fetch(API_BASE + '/admin/medical-records/' + id + '/restore', { method:'POST', headers:{'Authorization':'Bearer '+authToken} });
+    showToast(res.ok ? '已恢复' : '恢复失败');
+    if(res.ok){ ov.remove(); refreshCurrentView(); }
+  }
+  async function purgeRecord(id, ov){
+    if(!confirm('永久删除后不可恢复（关联处方也会删除），确定吗？')) return;
+    var res = await fetch(API_BASE + '/admin/medical-records/' + id + '/permanent', { method:'DELETE', headers:{'Authorization':'Bearer '+authToken} });
+    showToast(res.ok ? '已永久删除' : '删除失败');
+    if(res.ok){ ov.remove(); openTrashModal(); refreshCurrentView(); }
+  }
+  async function openTrashModal(){
+    try {
+      var res = await fetch(API_BASE + '/admin/medical-records/trash', { headers:{'Authorization':'Bearer '+authToken} });
+      var rows = res.ok ? await res.json() : [];
+      var html = '<div id="trashOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;display:flex;align-items:center;justify-content:center;">'
+        + '<div style="background:#fff;border-radius:14px;max-width:780px;width:92%;max-height:82vh;overflow:auto;padding:20px;box-sizing:border-box;">'
+        + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h2 style="margin:0;font-size:17px;">病历回收箱</h2><button type="button" class="btn-small" id="trashClose">关闭</button></div>'
+        + '<div style="font-size:12.5px;color:#6b7280;margin-bottom:12px;">共 ' + rows.length + ' 条已删除病历。恢复后回到病历管理；永久删除不可恢复（连同关联处方）。</div>'
+        + (rows.length ? rows.map(function(r){
+            var d = r.data || {};
+            var del = d._deleted || {};
+            var tr = (Array.isArray(d.treatments) ? d.treatments.length : 0);
+            var delAt = del.at ? new Date(del.at) : null;
+            var delAtTxt = delAt && !isNaN(delAt.getTime()) ? delAt.toLocaleString() : (del.at || '');
+            return '<div style="border:1px solid #e4e3dd;border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">'
+              + '<div><div style="font-weight:700;">' + escapeHtml(r.patient_name) + ' <span style="color:#6b7280;font-weight:400;font-size:12.5px;">+60' + escapeHtml(r.patient_phone) + ' · ' + (r.visit_date||'') + '</span></div>'
+              + '<div style="font-size:12px;color:#c0392b;margin-top:3px;">已删除：' + delAtTxt + ' · 删除人：' + (del.by?escapeHtml(del.by):'') + (tr ? ' · 治疗项目 ' + tr + ' 项' : '') + '</div></div>'
+              + '<div style="display:flex;gap:6px;"><button type="button" class="btn-small" data-trash-restore="' + r.id + '">恢复</button>'
+              + '<button type="button" class="btn-small" data-trash-purge="' + r.id + '" style="color:#c0392b;border-color:#c0392b;">永久删除</button></div>'
+              + '</div>';
+          }).join('') : '<div style="color:#6b7280;text-align:center;padding:24px;">回收箱是空的</div>')
+        + '</div></div>';
+      var ov = document.createElement('div');
+      ov.innerHTML = html;
+      document.body.appendChild(ov);
+      document.getElementById('trashClose').addEventListener('click', function(){ ov.remove(); });
+      ov.addEventListener('click', function(ev){
+        var rg = ev.target.closest ? ev.target.closest('[data-trash-restore]') : null;
+        var pg = ev.target.closest ? ev.target.closest('[data-trash-purge]') : null;
+        if(rg){ ev.stopPropagation(); restoreRecord(rg.getAttribute('data-trash-restore'), ov); }
+        else if(pg){ ev.stopPropagation(); purgeRecord(pg.getAttribute('data-trash-purge'), ov); }
+      });
+    } catch(e){ showToast('拉取回收箱失败'); }
+  }
+  document.addEventListener('click', function(ev){
+    var t = ev.target;
+    if(!t || !t.closest) return;
+    var dr = t.closest('[data-del-rec]');
+    var dp = t.closest('[data-del-patient]');
+    var tb = t.closest('#trashBtn');
+    if(dr){ ev.preventDefault(); ev.stopPropagation(); deleteRecord(dr.getAttribute('data-del-rec')); }
+    else if(dp){ ev.preventDefault(); ev.stopPropagation(); deletePatient(dp.getAttribute('data-del-patient'), dp.getAttribute('data-name')); }
+    else if(tb){ ev.preventDefault(); openTrashModal(); }
+  });
 
   // 把chip选中的预设值和补充输入框的自由文字合并成一句话展示——两者是"并且"关系
   function combineDisplay(record, field){
@@ -528,9 +606,10 @@ window.scrollTo(0,0);
         + (pts ? '<div style="font-size:12.5px;color:var(--ink-soft);">穴位/部位：'+pts+'</div>' : '')
         + (r.treatments && r.treatments.length ? '<div style="font-size:12.5px;color:var(--ink-soft);">治疗项目：'+r.treatments.map(function(t){ return escapeHtml(treatName(t))+' ×'+(Number(t.qty)||1)+'（RM'+((Number(t.price)||0)*(Number(t.qty)||1))+'）'; }).join('、')+'</div>' : '')
         + (r.photos && r.photos.length ? '<div class="timeline-photos">'+r.photos.map(function(p){ return '<img src="'+p.photoUrl+'" title="'+escapeHtml(p.photoType)+'">'; }).join('')+'</div>' : '')
-        + '<div style="margin-top:8px;display:flex;gap:8px;">'
+        + '<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">'
         + '<button type="button" class="btn-small btn-print-rec" data-print-rec="'+r.id+'">打印收据（A4）</button>'
         + '<button type="button" class="btn-small btn-print-rec58" data-print-rec58="'+r.id+'">58mm 小票</button>'
+        + (isSenior ? '<button type="button" class="btn-small btn-del-rec" data-del-rec="'+r.id+'" style="color:#c0392b;border-color:#c0392b;">删除</button>' : '')
         + '</div>'
         + '</div>' });
     });
@@ -563,7 +642,9 @@ window.scrollTo(0,0);
       + '<div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="btn-secondary" id="backToListBtn">← 返回患者列表</button>'
       + '<button class="btn-secondary" id="openRxBtn">开具处方 →</button>'
       + '<a href="/admin/orders/?openPatient='+encodeURIComponent(activePatientPhone)+'" target="_blank" class="btn-secondary" style="text-decoration:none;display:inline-flex;align-items:center;">查看预约记录 →</a>'
-      + '<button class="btn-primary" id="newVisitBtn">+ 新增一次就诊记录</button></div></div>'
+      + '<button class="btn-primary" id="newVisitBtn">+ 新增一次就诊记录</button>'
+      + (isSenior ? '<button class="btn-primary" id="trashBtn" style="background:var(--ink-soft,#999);border-color:transparent;">回收箱</button>' : '')
+      + '</div></div>'
       + '<div class="card"><div class="timeline">'
       + (entries.length ? entries.map(function(e){ return e.html; }).join('') : '<div class="empty-state">这个患者还没有任何记录</div>')
       + '</div></div></div>';
@@ -1215,7 +1296,7 @@ window.scrollTo(0,0);
     }
     async function openInvoicePrint(result, patientName, patientPhone, size){
       var items = [];
-      (result.treatments || []).forEach(function(t){ if(t && t.name) items.push({ name: treatName(t), qty: t.qty || 1, price: t.price || 0 }); });
+      (result.treatments || []).forEach(function(t){ if(t && t.name) items.push({ name: printName(t), qty: t.qty || 1, price: t.price || 0 }); });
       if(result.rxItems && result.rxItems.length){
         var herbSummary = result.rxItems.map(function(it){ return it.herbName + ' ' + it.dosageGrams + 'g'; }).join('、');
         items.push({ name: '药材费（电子处方）：' + herbSummary, qty: 1, price: 0 });

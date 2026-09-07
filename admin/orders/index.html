@@ -3049,8 +3049,7 @@ window.escapeHtml = function(s){
   // to close that gap for anything new going forward.
   function blItem(chineseName, lang, explicitEn){
     var en = itemNameEn(chineseName, explicitEn);
-    if(!en) return chineseName;
-    return lang==='en' ? en : (en+' / '+chineseName);
+    return en || chineseName;
   }
   function exportHeader(lang, docTypeEn, docTypeCn, docNo, docDate){
     return '<div class="receipt-brandrow"><div><div class="receipt-brand">VINATH<span class="tm">TM</span></div>'

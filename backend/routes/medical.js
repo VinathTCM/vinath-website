@@ -44,19 +44,19 @@ router.get('/admin/medical-records', authMiddleware, requireModuleAccess('medica
     const visiblePhones = visiblePatientPhonesFor(req.admin.sub, Date.now());
     if(patientPhone){
       if(visiblePhones.indexOf(patientPhone) === -1) return res.json([]);
-      rows = db.prepare('SELECT * FROM medical_records WHERE patient_phone = ? ORDER BY visit_date DESC').all(patientPhone);
+      rows = db.prepare("SELECT * FROM medical_records WHERE patient_phone = ? AND data NOT LIKE '%\"_deleted\":%' ORDER BY visit_date DESC").all(patientPhone);
       logAccess(req, 'view', null, patientPhone);
     } else {
       if(!visiblePhones.length) return res.json([]);
       const ph = visiblePhones.map(function(){ return '?'; }).join(',');
-      rows = db.prepare('SELECT * FROM medical_records WHERE patient_phone IN (' + ph + ') ORDER BY visit_date DESC').all(...visiblePhones);
+      rows = db.prepare("SELECT * FROM medical_records WHERE patient_phone IN (" + ph + ") AND data NOT LIKE '%\"_deleted\":%' ORDER BY visit_date DESC").all(...visiblePhones);
       logAccess(req, 'view', null, null);
     }
   } else if(patientPhone){
-    rows = db.prepare('SELECT * FROM medical_records WHERE patient_phone = ? ORDER BY visit_date DESC').all(patientPhone);
+    rows = db.prepare("SELECT * FROM medical_records WHERE patient_phone = ? AND data NOT LIKE '%\"_deleted\":%' ORDER BY visit_date DESC").all(patientPhone);
     logAccess(req, 'view', null, patientPhone);
   } else {
-    rows = db.prepare('SELECT * FROM medical_records ORDER BY visit_date DESC').all();
+    rows = db.prepare("SELECT * FROM medical_records WHERE data NOT LIKE '%\"_deleted\":%' ORDER BY visit_date DESC").all();
     logAccess(req, 'view', null, null); // 没传手机号=查看全部病历列表，这种更该记
   }
   res.json(rows.map(serializeRecord));
@@ -69,9 +69,9 @@ router.get('/admin/medical-records/patients', authMiddleware, requireModuleAcces
     const visiblePhones = visiblePatientPhonesFor(req.admin.sub, Date.now());
     if(!visiblePhones.length) return res.json([]);
     const ph = visiblePhones.map(function(){ return '?'; }).join(',');
-    rows = db.prepare('SELECT patient_phone, patient_name, visit_date FROM medical_records WHERE patient_phone IN (' + ph + ')').all(...visiblePhones);
+    rows = db.prepare("SELECT patient_phone, patient_name, visit_date FROM medical_records WHERE patient_phone IN (" + ph + ") AND data NOT LIKE '%\"_deleted\":%'").all(...visiblePhones);
   } else {
-    rows = db.prepare('SELECT patient_phone, patient_name, visit_date FROM medical_records').all();
+    rows = db.prepare("SELECT patient_phone, patient_name, visit_date FROM medical_records WHERE data NOT LIKE '%\"_deleted\":%'").all();
   }
   const byPhone = {};
   rows.forEach(r => {
@@ -112,6 +112,61 @@ router.put('/admin/medical-records/:id', authMiddleware, requireModuleAccess('me
   const row = db.prepare('SELECT * FROM medical_records WHERE id = ?').get(req.params.id);
   logAccess(req, 'update', req.params.id, existing.patient_phone);
   res.json(serializeRecord(row));
+});
+
+// 软删除单条病历（进回收箱）：只有大管理员能删。记录谁删的、什么时候删的
+router.delete('/admin/medical-records/:id', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const row = db.prepare('SELECT * FROM medical_records WHERE id = ?').get(req.params.id);
+  if(!row) return res.status(404).json({ error: '病历不存在' });
+  let data = {};
+  try { data = JSON.parse(row.data || '{}'); } catch(e){ data = {}; }
+  data._deleted = { by: req.admin.name, byId: req.admin.sub, at: new Date().toISOString() };
+  db.prepare('UPDATE medical_records SET data = ? WHERE id = ?').run(JSON.stringify(data), req.params.id);
+  logAccess(req, 'delete', req.params.id, row.patient_phone);
+  res.json({ ok: true });
+});
+
+// 批量软删除某患者全部病历（进回收箱）：病历管理"删除患者"用
+router.delete('/admin/medical-records/patient/:phone', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const rows = db.prepare("SELECT * FROM medical_records WHERE patient_phone = ? AND data NOT LIKE '%\"_deleted\":%'").all(req.params.phone);
+  const mark = { by: req.admin.name, byId: req.admin.sub, at: new Date().toISOString() };
+  const upd = db.prepare('UPDATE medical_records SET data = ? WHERE id = ?');
+  rows.forEach(r => {
+    let data = {};
+    try { data = JSON.parse(r.data || '{}'); } catch(e){ data = {}; }
+    data._deleted = mark;
+    upd.run(JSON.stringify(data), r.id);
+    logAccess(req, 'delete', r.id, r.patient_phone);
+  });
+  res.json({ ok: true, count: rows.length });
+});
+
+// 回收箱列表：已删除的病历（含删除人/删除时间）
+router.get('/admin/medical-records/trash', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const rows = db.prepare("SELECT * FROM medical_records WHERE data LIKE '%\"_deleted\":%' ORDER BY visit_date DESC").all();
+  res.json(rows.map(serializeRecord));
+});
+
+// 恢复病历（从回收箱）
+router.post('/admin/medical-records/:id/restore', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const row = db.prepare('SELECT * FROM medical_records WHERE id = ?').get(req.params.id);
+  if(!row) return res.status(404).json({ error: '病历不存在' });
+  let data = {};
+  try { data = JSON.parse(row.data || '{}'); } catch(e){ data = {}; }
+  if(data._deleted) delete data._deleted;
+  db.prepare('UPDATE medical_records SET data = ? WHERE id = ?').run(JSON.stringify(data), req.params.id);
+  logAccess(req, 'restore', req.params.id, row.patient_phone);
+  res.json({ ok: true });
+});
+
+// 永久删除（回收箱里彻底删除，同时删掉关联处方）
+router.delete('/admin/medical-records/:id/permanent', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const row = db.prepare('SELECT * FROM medical_records WHERE id = ?').get(req.params.id);
+  if(!row) return res.status(404).json({ error: '病历不存在' });
+  try { db.prepare('DELETE FROM prescriptions WHERE medical_record_id = ?').run(req.params.id); } catch(e){}
+  db.prepare('DELETE FROM medical_records WHERE id = ?').run(req.params.id);
+  logAccess(req, 'purge', req.params.id, row.patient_phone);
+  res.json({ ok: true });
 });
 
 // 访问日志查询——只有大管理员能看"谁在什么时候看过哪个患者的病历"，这本身也是敏感信息，
