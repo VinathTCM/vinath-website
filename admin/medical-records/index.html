@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -300,6 +300,16 @@ window.scrollTo(0,0);
     } catch(e){ return false; } // 网络错误等其它情况不拦，交给后面各自的请求自己处理
   }
 
+  // 历史数据里 treatmentPoints/treatments/photos 可能存成 JSON 字符串或对象，统一规范成数组，
+  // 避免时间轴/表单渲染时 .map 崩溃导致整页空白
+  function normArrField(v){
+    if(Array.isArray(v)) return v;
+    if(typeof v === 'string'){
+      try { var parsed = JSON.parse(v); return Array.isArray(parsed) ? parsed : []; } catch(e){ return []; }
+    }
+    return [];
+  }
+
   async function fetchRecordsForPatient(phone){
     if(!authToken) return [];
     try {
@@ -307,8 +317,14 @@ window.scrollTo(0,0);
       if(!res.ok) return [];
       var records = await res.json();
       // data字段(JSON blob)展开合并到病历对象本身,让下面几百行原有的字段读写方式(r.chiefComplaint等)不用大改
-      return records.map(function(r){ return Object.assign({ id:r.id, patientPhone:r.patient_phone, patientName:r.patient_name,
-        practitionerId:r.practitioner_id, practitionerName:r.practitioner_name, visitDate:r.visit_date, createdAt:r.created_at }, r.data); });
+      return records.map(function(r){
+        var merged = Object.assign({ id:r.id, patientPhone:r.patient_phone, patientName:r.patient_name,
+          practitionerId:r.practitioner_id, practitionerName:r.practitioner_name, visitDate:r.visit_date, createdAt:r.created_at }, r.data);
+        merged.treatmentPoints = normArrField(merged.treatmentPoints);
+        merged.treatments = normArrField(merged.treatments);
+        merged.photos = normArrField(merged.photos);
+        return merged;
+      });
     } catch(e){ console.error('拉取病历失败:', e); return []; }
   }
 

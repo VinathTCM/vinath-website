@@ -1011,6 +1011,15 @@ window.escapeHtml = function(s){
   var orderSearchQ = '', bookingSearchQ = '';
   var cachedCouponOwners = [];
 
+  // 历史数据里 treatments 可能存成 JSON 字符串或对象，统一规范成数组，避免 .map/.reduce 崩溃
+  function normArrField(v){
+    if(Array.isArray(v)) return v;
+    if(typeof v === 'string'){
+      try { var parsed = JSON.parse(v); return Array.isArray(parsed) ? parsed : []; } catch(e){ return []; }
+    }
+    return [];
+  }
+
   async function loadOrdersAndBookingsFromBackend(silent){
     if(!authToken) return;
     try {
@@ -1041,7 +1050,7 @@ window.escapeHtml = function(s){
           BOOKINGS.push({ id:b.booking_no, date:(b.created_at||'').slice(0,10), name:b.customer_name, contact:b.customer_phone,
             method:'whatsapp', doctor:b.practitioner_name, apptDate:b.appt_date, apptDateISO:b.appt_date_iso,
             slot:b.slot, area:b.area, addressDetail:b.address_detail, need:b.need, status:b.status,
-            cancelled:b.cancelled, doctorNote:b.doctor_note, treatments:b.treatments,
+            cancelled:b.cancelled, doctorNote:b.doctor_note, treatments:normArrField(b.treatments),
             practitionerId:b.practitioner_id, _backendId:b.id
           });
         });
@@ -2731,14 +2740,17 @@ window.escapeHtml = function(s){
       records.push({typeKey:'order', ref:o.id, name:o.name, note:itemsSummary, items:o.items, slot:'—', amount:orderTotal(o), sortKey:'0'});
     });
     BOOKINGS.forEach(function(b){
-      if(b.cancelled || b.apptDateISO !== dateISO || !b.treatments.length) return;
-      var itemsSummary = b.treatments.map(function(t){ return t.name+(t.price<0?'':' ×'+t.qty); }).join('，');
+      if(b.cancelled || b.apptDateISO !== dateISO) return;
+      var itemsSummary = b.treatments.length
+        ? b.treatments.map(function(t){ return t.name+(t.price<0?'':' ×'+t.qty); }).join('，')
+        : '（未填写治疗项目）';
       records.push({typeKey:'booking', ref:b.id, name:b.name, note:itemsSummary, items:b.treatments, slot:b.slot, amount:treatTotal(b), sortKey:b.slot});
     });
     records.sort(function(a,c){ return a.sortKey < c.sortKey ? -1 : 1; });
     return records;
   }
-  function renderDailyTransactions(){
+  async function renderDailyTransactions(){
+    if(authToken){ try { await loadOrdersAndBookingsFromBackend(true); } catch(e){} }
     var records = dailyRecords(selectedDailyDate);
     var orderRevenue = records.filter(function(r){ return r.typeKey==='order'; }).reduce(function(s,r){ return s+r.amount; },0);
     var bookingRevenue = records.filter(function(r){ return r.typeKey==='booking'; }).reduce(function(s,r){ return s+r.amount; },0);
@@ -2746,10 +2758,13 @@ window.escapeHtml = function(s){
     var isToday = selectedDailyDate === TODAY_ISO;
     var dayLbl = isToday ? '今日' : selectedDailyDate;
     document.getElementById('dailyDateLbl').textContent = isToday ? '当前查看：今天 '+TODAY_ISO : '当前查看：'+selectedDailyDate;
+    var orderCount = records.filter(function(r){ return r.typeKey==='order'; }).length;
+    var bookingCount = records.filter(function(r){ return r.typeKey==='booking'; }).length;
     document.getElementById('dailyCards').innerHTML = ''
-      + '<div class="summary-card"><div class="summary-num">MYR '+orderRevenue.toFixed(2)+'</div><div class="summary-lbl">'+dayLbl+'商城订单</div></div>'
-      + '<div class="summary-card"><div class="summary-num">MYR '+bookingRevenue.toFixed(2)+'</div><div class="summary-lbl">'+dayLbl+'居家会诊</div></div>'
+      + '<div class="summary-card"><div class="summary-num">MYR '+orderRevenue.toFixed(2)+'</div><div class="summary-lbl">'+dayLbl+'商城订单（'+orderCount+' 笔）</div></div>'
+      + '<div class="summary-card"><div class="summary-num">MYR '+bookingRevenue.toFixed(2)+'</div><div class="summary-lbl">'+dayLbl+'相约金额（'+bookingCount+' 次）</div></div>'
       + '<div class="summary-card"><div class="summary-num hi">'+fmtMYR(total)+'</div><div class="summary-lbl">'+dayLbl+'合计</div></div>'
+      + '<div class="summary-card"><div class="summary-num">'+bookingCount+'</div><div class="summary-lbl">相约次数</div></div>'
       + '<div class="summary-card"><div class="summary-num">'+records.length+'</div><div class="summary-lbl">交易笔数</div></div>';
     document.getElementById('dailyTbody').innerHTML = records.length ? records.map(function(r){
       return '<tr><td>'+DAILY_TYPE_CN[r.typeKey]+'</td><td class="pname">'+r.ref+'</td><td>'+escapeHtml(r.name)+'</td><td style="max-width:260px;">'+r.note+'</td><td>'+r.slot+'</td><td class="price-cell">'+fmtMYR(r.amount)+'</td></tr>';
@@ -2770,10 +2785,12 @@ window.escapeHtml = function(s){
     if(record.typeKey==='order'){
       return record.items.map(function(i){ return blItem(i.name,lang)+' ×'+i.qty; }).join(lang?', ':'，');
     }
+    if(!record.items.length) return lang ? 'No treatment items yet' : '（未填写治疗项目）';
     return record.items.map(function(t){ return blItem(t.name,lang,t.nameEn)+(t.price<0?'':' ×'+t.qty); }).join(lang?', ':'，');
   }
-  function printDailyReport(lang){
+  async function printDailyReport(lang){
     preparePrint('normal');
+    if(authToken){ try { await loadOrdersAndBookingsFromBackend(true); } catch(e){} }
     var records = dailyRecords(selectedDailyDate);
     var orderRevenue = records.filter(function(r){ return r.typeKey==='order'; }).reduce(function(s,r){ return s+r.amount; },0);
     var bookingRevenue = records.filter(function(r){ return r.typeKey==='booking'; }).reduce(function(s,r){ return s+r.amount; },0);
@@ -2788,7 +2805,7 @@ window.escapeHtml = function(s){
       + '<div><div class="receipt-meta-lbl">'+'Report Date'+'</div><div class="receipt-meta-val">'+ddmmyyyy(selectedDailyDate)+'</div></div>'
       + '<div><div class="receipt-meta-lbl">'+'Online Store Revenue'+'</div><div class="receipt-meta-val">MYR '+orderRevenue.toFixed(2)+'</div></div>'
       + '<div><div class="receipt-meta-lbl">'+'Home-Visit Service Revenue'+'</div><div class="receipt-meta-val">MYR '+bookingRevenue.toFixed(2)+'</div></div>'
-      + '<div><div class="receipt-meta-lbl">'+'Total Transactions'+'</div><div class="receipt-meta-val">'+records.length+'</div></div>'
+      + '<div><div class="receipt-meta-lbl">'+'Orders / Home Visits'+'</div><div class="receipt-meta-val">'+records.filter(function(r){ return r.typeKey==='order'; }).length+' / '+records.filter(function(r){ return r.typeKey==='booking'; }).length+'</div></div>'
       + '</div>'
       + '<table class="receipt-table"><thead><tr><th>'+'Type'+'</th><th>'+'Reference No.'+'</th><th>'+'Customer'+'</th><th>'+'Service / Product'+'</th><th class="num">'+'Time Slot'+'</th><th class="num">'+'Amount'+'</th></tr></thead><tbody>'
       + (rowsHtml || '<tr><td colspan="6" style="color:#999;">'+'No transactions on this date'+'</td></tr>')
@@ -4272,7 +4289,9 @@ window.escapeHtml = function(s){
     recordSearchQ = this.value.trim().toLowerCase(); renderRecords();
   });
 
-  function openPatientPanel(contact){
+  var panelOpenSeq = 0;
+  async function openPatientPanel(contact){
+    var seq = ++panelOpenSeq;
     var p = getPatients().find(function(x){ return x.contact === contact; });
     if(!p) return;
     document.getElementById('panelTitle').textContent = '客户档案';
@@ -4296,12 +4315,21 @@ window.escapeHtml = function(s){
     }).join('');
     var mrList = [];
     try {
-      var allMr = JSON.parse(localStorage.getItem('vinath_medical_records')||'[]');
-      mrList = allMr.filter(function(r){ return r.patientPhone===contact; }).sort(function(a,b){ return b.visitDate.localeCompare(a.visitDate); });
+      if(authToken){
+        var mrRes = await fetch(API_BASE + '/admin/medical-records?patientPhone=' + encodeURIComponent(contact), { headers: { 'Authorization': 'Bearer ' + authToken } });
+        if(mrRes.ok){
+          var mrRows = await mrRes.json();
+          mrList = mrRows.map(function(r){
+            var d = r.data || {};
+            return { visitDate: (r.visit_date || '').slice(0,10), tcmDiagnosis: d.tcmDiagnosis || '未填写诊断' };
+          }).sort(function(a,b){ return b.visitDate.localeCompare(a.visitDate); });
+        }
+      }
     } catch(e){}
+    if(seq !== panelOpenSeq) return;
     var mrSummaryHtml = mrList.length ? mrList.map(function(r){
-      return '<div class="visit-row" style="background:var(--clay-soft);border:none;"><div class="visit-row-hd"><span>'+r.visitDate+'</span><span class="vdoc">'+(r.tcmDiagnosis||'未填写诊断')+'</span></div></div>';
-    }).join('') : '<div class="visit-empty">还没有结构化电子病历记录</div>';
+      return '<div class="visit-row" style="background:var(--clay-soft);border:none;"><div class="visit-row-hd"><span>'+r.visitDate+'</span><span class="vdoc">'+escapeHtml(r.tcmDiagnosis)+'</span></div></div>';
+    }).join('') : '<div class="visit-empty">暂无后端病历记录</div>';
 
     var html = ''
       + '<div class="detail-section"><div class="detail-section-title">客户信息</div>'
