@@ -122,7 +122,7 @@ h1{ font-family:var(--font-serif); font-size:22px; margin:0 0 4px; }
 .warn.show{ display:block; }
 
 </style>
-  <link rel="icon" type="image/webp" href="favicon.webp">
+  <link rel="icon" type="image/webp" href="../favicon.webp">
 </head>
 <body>
 
@@ -1455,14 +1455,33 @@ function fillPrintArea(receipt, size){
       var target = pa.querySelector(size === '58' ? '.sheet-58' : '.sheet-a4');
       if(target) target.style.display = 'block';
     }
+    var HERB_PRICE_MAP = null;
+    async function ensureHerbPrices(){
+      if(HERB_PRICE_MAP) return HERB_PRICE_MAP;
+      try {
+        var res = await fetch(API_BASE + '/admin/herb-prices', { headers:{'Authorization':'Bearer '+authToken} });
+        if(res.ok){
+          var list = await res.json();
+          var m = {};
+          (Array.isArray(list) ? list : []).forEach(function(h){ if(h && h.herb_name) m[h.herb_name] = Number(h.price_per_g) || 0; });
+          HERB_PRICE_MAP = m;
+        }
+      } catch(e){}
+      HERB_PRICE_MAP = HERB_PRICE_MAP || {};
+      return HERB_PRICE_MAP;
+    }
     async function openInvoicePrint(result, patientName, patientPhone, size){
       var oldOv = document.getElementById('printChooser'); if(oldOv) oldOv.remove();
+      var hpm = await ensureHerbPrices();
       var items = [];
       (result.treatments || []).forEach(function(t){ if(t && t.name) items.push({ name: printName(t), qty: t.qty || 1, price: t.price || 0 }); });
       if(result.rxItems && result.rxItems.length){
         var herbSummary = result.rxItems.map(function(it){ return it.herbName + ' ' + it.dosageGrams + 'g'; }).join('、');
         var isDecoct = (result.dispenseMode === 'decoct_pickup' || result.dispenseMode === 'decoct_delivery');
-        items.push({ name: '中药费（电子处方' + (isDecoct ? '·代煎' : '') + '）：' + herbSummary, qty: 1, price: 0 });
+        var herbAmount = 0;
+        (result.rxItems || []).forEach(function(it){ var ppg = hpm[it.herbName] || 0; if(ppg > 0) herbAmount += ppg * (Number(it.dosageGrams) || 0); });
+        herbAmount = Math.round(herbAmount * 100) / 100;
+        items.push({ name: '中药费（电子处方' + (isDecoct ? '·代煎' : '') + '）：' + herbSummary, qty: 1, price: herbAmount });
         if(isDecoct){
           var doses = Number(result.doses) || 1;
           items.push({ name: 'Decoction Fee', qty: doses, price: 8 });
