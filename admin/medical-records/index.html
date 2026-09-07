@@ -66,6 +66,9 @@ h1{ font-family:var(--font-serif); font-size:22px; margin:0 0 4px; }
 .photo-box img{ width:100%; height:100%; object-fit:cover; }
 .photo-box .del-photo{ position:absolute; top:3px; right:3px; background:rgba(0,0,0,.55); color:#fff; border:none; border-radius:50%; width:18px; height:18px; font-size:11px; cursor:pointer; }
 .photo-box span{ font-size:11px; color:var(--ink-soft); text-align:center; padding:0 6px; }
+.photo-box img.zoomable, .timeline-photos img.zoomable{ cursor:zoom-in; }
+#photoLightbox{ position:fixed; inset:0; background:rgba(0,0,0,.78); display:none; align-items:center; justify-content:center; z-index:999; cursor:zoom-out; }
+#photoLightbox img{ max-width:92vw; max-height:90vh; border-radius:10px; box-shadow:0 8px 40px rgba(0,0,0,.5); }
 .timeline{ position:relative; padding-left:22px; }
 .timeline::before{ content:''; position:absolute; left:6px; top:6px; bottom:6px; width:2px; background:var(--line); }
 .timeline-item{ position:relative; margin-bottom:22px; }
@@ -648,7 +651,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
         + (combineDisplay(r,'constitutionType') ? '<div style="font-size:12.5px;color:var(--ink-soft);">体质：'+escapeHtml(combineDisplay(r,'constitutionType'))+'</div>' : '')
         + (pts ? '<div style="font-size:12.5px;color:var(--ink-soft);">穴位/部位：'+pts+'</div>' : '')
         + (r.treatments && r.treatments.length ? '<div style="font-size:12.5px;color:var(--ink-soft);">治疗项目：'+r.treatments.map(function(t){ return escapeHtml(treatName(t))+' ×'+(Number(t.qty)||1)+'（RM'+((Number(t.price)||0)*(Number(t.qty)||1))+'）'; }).join('、')+'</div>' : '')
-        + (r.photos && r.photos.length ? '<div class="timeline-photos">'+r.photos.map(function(p){ return '<img src="'+p.photoUrl+'" title="'+escapeHtml(p.photoType)+'">'; }).join('')+'</div>' : '')
+        + (r.photos && r.photos.length ? '<div class="timeline-photos">'+r.photos.map(function(p, pi){ return '<img src="'+(p.photoThumb||p.photoUrl)+'" class="zoomable" data-photo-rec="'+r.id+'" data-photo-idx="'+pi+'" title="'+escapeHtml(p.photoType)+'">'; }).join('')+'</div>' : '')
         + '<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">'
         + '<button type="button" class="btn-small btn-print-rec" data-print-rec="'+r.id+'">打印收据（A4）</button>'
         + '<button type="button" class="btn-small btn-print-rec58" data-print-rec58="'+r.id+'">58mm 小票</button>'
@@ -994,7 +997,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     var pendingPhotoType = null;
     function renderPhotoGrid(){
       var html = r.photos.map(function(p, i){
-        return '<div class="photo-box"><img src="'+p.photoUrl+'"><button class="del-photo" data-rm-photo="'+i+'">×</button></div>';
+        return '<div class="photo-box" data-photo-idx="'+i+'"><img src="'+(p.photoThumb||p.photoUrl)+'" class="zoomable" alt="病历照片"><button class="del-photo" data-rm-photo="'+i+'">×</button></div>';
       }).join('');
       html += '<div class="photo-box" id="addTongueBox"><span>+ 舌苔照片</span></div>';
       html += '<div class="photo-box" id="addAreaBox"><span>+ 患处照片</span></div>';
@@ -1009,25 +1012,59 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       document.getElementById('addTongueBox').addEventListener('click', function(){ pendingPhotoType='tongue'; document.getElementById('photoFileInput').click(); });
       document.getElementById('addAreaBox').addEventListener('click', function(){ pendingPhotoType='affected_area'; document.getElementById('photoFileInput').click(); });
     }
+    function openPhotoLightbox(url){
+      if(!url) return;
+      var el = document.getElementById('photoLightbox');
+      if(!el){
+        el = document.createElement('div');
+        el.id = 'photoLightbox';
+        el.innerHTML = '<img alt="照片查看">';
+        el.addEventListener('click', function(){ el.style.display = 'none'; });
+        document.body.appendChild(el);
+      }
+      el.querySelector('img').src = url;
+      el.style.display = 'flex';
+    }
+    document.addEventListener('click', function(ev){
+      var t = ev.target;
+      while(t && t !== document){
+        if(t.getAttribute && t.hasAttribute('data-photo-idx')){
+          var pi = Number(t.getAttribute('data-photo-idx'));
+          if(r.photos[pi]){ openPhotoLightbox(r.photos[pi].photoUrl); ev.stopPropagation(); return; }
+        }
+        if(t.getAttribute && t.hasAttribute('data-photo-rec')){
+          var rid = t.getAttribute('data-photo-rec');
+          var pj = Number(t.getAttribute('data-photo-idx'));
+          var rec = records.find(function(x){ return x.id === rid; });
+          if(rec && rec.photos && rec.photos[pj]){ openPhotoLightbox(rec.photos[pj].photoUrl); ev.stopPropagation(); return; }
+        }
+        t = t.parentNode;
+      }
+    });
     function compressPhoto(file, maxDim, quality, cb){
+      // 输出 WebP 质量85 全图（最长边1280px）+ 200px 缩略图；不支持 WebP 时回退 JPEG
       var reader = new FileReader();
       reader.onload = function(ev){
         var img = new Image();
         img.onload = function(){
           try {
-            var scale = Math.min(1, maxDim / Math.max(img.width, img.height));
-            var cw = Math.max(1, Math.round(img.width * scale));
-            var ch = Math.max(1, Math.round(img.height * scale));
-            var canvas = document.createElement('canvas');
-            canvas.width = cw; canvas.height = ch;
-            var ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, cw, ch);
-            ctx.drawImage(img, 0, 0, cw, ch);
-            cb(canvas.toDataURL('image/jpeg', quality));
-          } catch(err) { cb(ev.target.result); }
+            function drawTo(maxEdge, q){
+              var sc = Math.min(1, maxEdge / Math.max(img.width, img.height));
+              var w = Math.max(1, Math.round(img.width * sc));
+              var h = Math.max(1, Math.round(img.height * sc));
+              var cv = document.createElement('canvas');
+              cv.width = w; cv.height = h;
+              var c = cv.getContext('2d');
+              c.fillStyle = '#ffffff'; c.fillRect(0, 0, w, h);
+              c.drawImage(img, 0, 0, w, h);
+              var out = cv.toDataURL('image/webp', q);
+              if(out.indexOf('data:image/webp') !== 0){ out = cv.toDataURL('image/jpeg', q); }
+              return out;
+            }
+            cb({ full: drawTo(maxDim, quality), thumb: drawTo(200, 0.7) });
+          } catch(err) { cb(null); }
         };
-        img.onerror = function(){ cb(ev.target.result); };
+        img.onerror = function(){ cb(null); };
         img.src = ev.target.result;
       };
       reader.readAsDataURL(file);
@@ -1037,8 +1074,9 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     document.getElementById('photoFileInput').addEventListener('change', function(e){
       var f = e.target.files && e.target.files[0];
       if(!f) return;
-      compressPhoto(f, 1280, 0.72, function(dataUrl){
-        r.photos.push({photoType:pendingPhotoType, photoUrl:dataUrl, uploadedBy:'practitioner', takenAt:new Date().toISOString()});
+      compressPhoto(f, 1280, 0.85, function(res){
+        if(!res){ showToast('照片压缩失败，请重试或换一张'); return; }
+        r.photos.push({photoType:pendingPhotoType, photoUrl:res.full, photoThumb:res.thumb, uploadedBy:'practitioner', takenAt:new Date().toISOString()});
         renderPhotoGrid();
       });
       this.value = '';
