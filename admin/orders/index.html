@@ -2503,6 +2503,16 @@ window.escapeHtml = function(s){
     renderRegionReport();
   });
 
+  function mrInRange(m){
+    if(!(Array.isArray(m.treatments) && m.treatments.length)) return false;
+    if(!inReportsRange(m.visitDate)) return false;
+    if(!m.linkedBookingId) return true;
+    var bk = BOOKINGS.find(function(b){ return (b._backendId || b.id) === m.linkedBookingId; });
+    return !(bk && Array.isArray(bk.treatments) && bk.treatments.length);
+  }
+  function mrTotal(m){
+    return m.treatments.reduce(function(s,t){ return s + (Number(t.qty)||1)*(Number(t.price)||0); }, 0);
+  }
   function financeRecords(){
     var records = [];
     ORDERS.forEach(function(o){
@@ -2515,10 +2525,15 @@ window.escapeHtml = function(s){
         records.push({date:b.date, typeKey:'booking', ref:b.id, name:b.name, note:'居家会诊服务', noteEn:'Home-visit service', amount:treatTotal(b)});
       }
     });
+    MR_RECORDS.forEach(function(m){
+      if(!mrInRange(m)) return;
+      records.push({date:m.visitDate, typeKey:'mr', ref:'病历·'+m.patientName, name:m.patientName, note:'居家会诊·病历', noteEn:'Home-visit (record)', amount:mrTotal(m)});
+    });
     records.sort(function(a,c){ return a.date < c.date ? -1 : 1; });
     return records;
   }
-  var FINANCE_TYPE_CN = {order:'订单', booking:'预约'};
+  var FINANCE_TYPE_CN = {order:'订单', booking:'预约', mr:'病历治疗'};
+  var FINANCE_TYPE_EN = {order:'Order', booking:'Booking', mr:'Record Treatment'};
 
   var couponStatsPeriod = 'week';
   function getAllCouponOwners(){
@@ -2698,18 +2713,22 @@ window.escapeHtml = function(s){
     });
   });
 
-  function renderFinanceReport(){
+  async function renderFinanceReport(){
+    await refreshDailyData();
     var records = financeRecords();
     var periodOrders = ORDERS.filter(function(o){ return inReportsRange(o.date); });
     var periodBookings = BOOKINGS.filter(function(b){ return inReportsRange(b.date); });
+    var periodMRs = MR_RECORDS.filter(mrInRange);
     var orderRevenue = periodOrders.reduce(function(s,o){ return s+orderTotal(o); }, 0);
     var bookingRevenue = periodBookings.reduce(function(s,b){ return s+treatTotal(b); }, 0);
-    var total = orderRevenue + bookingRevenue;
+    var mrRevenue = periodMRs.reduce(function(s,m){ return s+mrTotal(m); }, 0);
+    var total = orderRevenue + bookingRevenue + mrRevenue;
 
     document.getElementById('financePeriodLbl').textContent = reportsRangeLabel();
     document.getElementById('financeCards').innerHTML = ''
       + '<div class="summary-card"><div class="summary-num">MYR '+orderRevenue.toFixed(2)+'</div><div class="summary-lbl">商城订单收入</div></div>'
       + '<div class="summary-card"><div class="summary-num">MYR '+bookingRevenue.toFixed(2)+'</div><div class="summary-lbl">居家会诊服务收入</div></div>'
+      + '<div class="summary-card"><div class="summary-num">MYR '+mrRevenue.toFixed(2)+'</div><div class="summary-lbl">病历治疗收入</div></div>'
       + '<div class="summary-card"><div class="summary-num hi">'+fmtMYR(total)+'</div><div class="summary-lbl">合计总收入</div></div>'
       + '<div class="summary-card"><div class="summary-num">'+records.length+'</div><div class="summary-lbl">收入记录笔数</div></div>';
 
@@ -2718,15 +2737,16 @@ window.escapeHtml = function(s){
     }).join('') : '<tr><td colspan="6"><div class="empty-state">该周期内暂无收入记录</div></td></tr>';
   }
 
-  var FINANCE_TYPE_EN = {order:'Order', booking:'Booking'};
   function printFinanceReport(lang){
     preparePrint('normal');
     var records = financeRecords();
     var periodOrders = ORDERS.filter(function(o){ return inReportsRange(o.date); });
     var periodBookings = BOOKINGS.filter(function(b){ return inReportsRange(b.date); });
+    var periodMRs = MR_RECORDS.filter(mrInRange);
     var orderRevenue = periodOrders.reduce(function(s,o){ return s+orderTotal(o); }, 0);
     var bookingRevenue = periodBookings.reduce(function(s,b){ return s+treatTotal(b); }, 0);
-    var total = orderRevenue + bookingRevenue;
+    var mrRevenue = periodMRs.reduce(function(s,m){ return s+mrTotal(m); }, 0);
+    var total = orderRevenue + bookingRevenue + mrRevenue;
     var rowsHtml = records.map(function(r){
       return '<tr><td>'+ddmmyyyy(r.date)+'</td><td>'+FINANCE_TYPE_EN[r.typeKey]+' '+r.ref+'</td><td>'+escapeHtml(r.name)+'</td><td class="num">'+fmtMYR(r.amount)+'</td></tr>';
     }).join('');
@@ -2737,6 +2757,7 @@ window.escapeHtml = function(s){
       + '<div><div class="receipt-meta-lbl">'+'Reporting Period'+'</div><div class="receipt-meta-val">'+reportsRangeLabel('en')+'</div></div>'
       + '<div><div class="receipt-meta-lbl">'+'Online Store Revenue'+'</div><div class="receipt-meta-val">MYR '+orderRevenue.toFixed(2)+'</div></div>'
       + '<div><div class="receipt-meta-lbl">'+'Home-Visit Service Revenue'+'</div><div class="receipt-meta-val">MYR '+bookingRevenue.toFixed(2)+'</div></div>'
+      + '<div><div class="receipt-meta-lbl">'+'Record Treatment Revenue'+'</div><div class="receipt-meta-val">MYR '+mrRevenue.toFixed(2)+'</div></div>'
       + '</div>'
       + '<table class="receipt-table"><thead><tr><th>'+'Date'+'</th><th>'+'Reference No.'+'</th><th>'+'Name'+'</th><th class="num">'+'Amount'+'</th></tr></thead><tbody>'
       + rowsHtml
