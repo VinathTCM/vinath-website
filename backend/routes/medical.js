@@ -7,7 +7,15 @@ const { visiblePatientPhonesFor } = require('./visibility');
 const router = express.Router();
 
 function serializeRecord(r){
-  return { ...r, data: JSON.parse(r.data || '{}') };
+  let data = {};
+  try { data = JSON.parse(r.data || '{}'); } catch(e){ data = {}; }
+  // 该病历是否已通过电子处方关联到某笔预约（用于当日交易报表判断"病历治疗项目是否已被预约记录覆盖"）
+  let linkedBookingId = null;
+  try {
+    const rx = db.prepare('SELECT booking_id FROM prescriptions WHERE medical_record_id = ? AND booking_id IS NOT NULL LIMIT 1').get(r.id);
+    if(rx) linkedBookingId = rx.booking_id;
+  } catch(e){}
+  return { ...r, data, linkedBookingId };
 }
 // 病历属于敏感健康数据，每次查看/创建/修改都记一笔——谁、什么时候、看了哪个患者的记录。
 // 这不是完整的PDPA合规方案，但"数据访问可追溯"是其中的基础一环。

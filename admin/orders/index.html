@@ -2730,7 +2730,7 @@ window.escapeHtml = function(s){
 
   // ---- 当日交易: a chosen day's actual transactions (order placed that day / booking serviced that day with items charged) ----
   var selectedDailyDate = TODAY_ISO;
-  var DAILY_TYPE_CN = {order:'商城订单', booking:'居家会诊'};
+  var DAILY_TYPE_CN = {order:'商城订单', booking:'居家会诊', mr:'居家会诊·病历'};
   var DAILY_TYPE_EN = {order:'Online Order', booking:'Home Visit'};
   function dailyRecords(dateISO){
     var records = [];
@@ -2746,23 +2746,58 @@ window.escapeHtml = function(s){
         : '（未填写治疗项目）';
       records.push({typeKey:'booking', ref:b.id, name:b.name, note:itemsSummary, items:b.treatments, slot:b.slot, amount:treatTotal(b), sortKey:b.slot});
     });
+    MR_RECORDS.forEach(function(m){
+      if(m.visitDate !== dateISO) return;
+      var itemsSummary = m.treatments.map(function(t){ return t.name+(t.price<0?'':' ×'+t.qty); }).join('，');
+      var amt = m.treatments.reduce(function(s,t){ return s + (Number(t.qty)||1)*(Number(t.price)||0); }, 0);
+      records.push({typeKey:'mr', ref:'病历·'+m.patientName, name:m.patientName, note:itemsSummary, items:m.treatments, slot:'—', amount:amt, sortKey:'m'});
+    });
     records.sort(function(a,c){ return a.sortKey < c.sortKey ? -1 : 1; });
     return records;
   }
+  var MR_RECORDS = []; // 当天病历里"未关联预约"的治疗项目（关联了预约的由预约行承担，避免重复）
+  async function refreshDailyData(){
+    if(!authToken) return;
+    try { await loadOrdersAndBookingsFromBackend(true); } catch(e){}
+    MR_RECORDS = [];
+    try {
+      var mrRes = await fetch(API_BASE + '/admin/medical-records', { headers: { 'Authorization': 'Bearer ' + authToken } });
+      if(mrRes.ok){
+        var mrs = await mrRes.json();
+        MR_RECORDS = mrs.map(function(r){
+          var d = r.data || {};
+          return {
+            visitDate: (r.visit_date || '').slice(0,10),
+            patientName: r.patient_name || '',
+            treatments: normArrField(d.treatments),
+            linkedBookingId: r.linkedBookingId || null
+          };
+        }).filter(function(m){
+          if(!(Array.isArray(m.treatments) && m.treatments.length)) return false;
+          if(!m.linkedBookingId) return true;
+          // 关联了预约但该预约没写回治疗项目时，病历补上（防止漏计）
+          var bk = BOOKINGS.find(function(b){ return (b._backendId || b.id) === m.linkedBookingId; });
+          return !(bk && Array.isArray(bk.treatments) && bk.treatments.length);
+        });
+      }
+    } catch(e){}
+  }
+
   async function renderDailyTransactions(){
-    if(authToken){ try { await loadOrdersAndBookingsFromBackend(true); } catch(e){} }
+    await refreshDailyData();
     var records = dailyRecords(selectedDailyDate);
     var orderRevenue = records.filter(function(r){ return r.typeKey==='order'; }).reduce(function(s,r){ return s+r.amount; },0);
-    var bookingRevenue = records.filter(function(r){ return r.typeKey==='booking'; }).reduce(function(s,r){ return s+r.amount; },0);
+    var bookingRevenue = records.filter(function(r){ return r.typeKey==='booking' || r.typeKey==='mr'; }).reduce(function(s,r){ return s+r.amount; },0);
     var total = orderRevenue + bookingRevenue;
     var isToday = selectedDailyDate === TODAY_ISO;
     var dayLbl = isToday ? '今日' : selectedDailyDate;
     document.getElementById('dailyDateLbl').textContent = isToday ? '当前查看：今天 '+TODAY_ISO : '当前查看：'+selectedDailyDate;
     var orderCount = records.filter(function(r){ return r.typeKey==='order'; }).length;
     var bookingCount = records.filter(function(r){ return r.typeKey==='booking'; }).length;
+    var mrCount = records.filter(function(r){ return r.typeKey==='mr'; }).length;
     document.getElementById('dailyCards').innerHTML = ''
       + '<div class="summary-card"><div class="summary-num">MYR '+orderRevenue.toFixed(2)+'</div><div class="summary-lbl">'+dayLbl+'商城订单（'+orderCount+' 笔）</div></div>'
-      + '<div class="summary-card"><div class="summary-num">MYR '+bookingRevenue.toFixed(2)+'</div><div class="summary-lbl">'+dayLbl+'相约金额（'+bookingCount+' 次）</div></div>'
+      + '<div class="summary-card"><div class="summary-num">MYR '+bookingRevenue.toFixed(2)+'</div><div class="summary-lbl">'+dayLbl+'相约金额（'+(bookingCount+mrCount)+' 次）</div></div>'
       + '<div class="summary-card"><div class="summary-num hi">'+fmtMYR(total)+'</div><div class="summary-lbl">'+dayLbl+'合计</div></div>'
       + '<div class="summary-card"><div class="summary-num">'+bookingCount+'</div><div class="summary-lbl">相约次数</div></div>'
       + '<div class="summary-card"><div class="summary-num">'+records.length+'</div><div class="summary-lbl">交易笔数</div></div>';
@@ -2790,10 +2825,10 @@ window.escapeHtml = function(s){
   }
   async function printDailyReport(lang){
     preparePrint('normal');
-    if(authToken){ try { await loadOrdersAndBookingsFromBackend(true); } catch(e){} }
+    await refreshDailyData();
     var records = dailyRecords(selectedDailyDate);
     var orderRevenue = records.filter(function(r){ return r.typeKey==='order'; }).reduce(function(s,r){ return s+r.amount; },0);
-    var bookingRevenue = records.filter(function(r){ return r.typeKey==='booking'; }).reduce(function(s,r){ return s+r.amount; },0);
+    var bookingRevenue = records.filter(function(r){ return r.typeKey==='booking' || r.typeKey==='mr'; }).reduce(function(s,r){ return s+r.amount; },0);
     var total = orderRevenue + bookingRevenue;
     var rowsHtml = records.map(function(r){
       return '<tr><td>'+DAILY_TYPE_EN[r.typeKey]+'</td><td>'+r.ref+'</td><td>'+r.name+'</td><td>'+itemsSummaryLang(r,lang)+'</td><td class="num">'+r.slot+'</td><td class="num">'+fmtMYR(r.amount)+'</td></tr>';
