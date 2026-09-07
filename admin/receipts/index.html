@@ -409,8 +409,21 @@ window.scrollTo(0,0);
     });
   }
 
-  var PAYMENT_METHOD_LABELS = {cash:'现金', whatsapp_transfer:'转账', fpx:'FPX', tng:'Touch \'n Go', card:'信用卡'};
-  var FEE_LABELS = {consultation:'诊费', transport:'车马费', medication:'药费', other:'其他'};
+  var PAYMENT_METHOD_LABELS = {cash:'Cash', whatsapp_transfer:'Bank Transfer', fpx:'FPX', tng:"Touch 'n Go", card:'Credit Card'};
+  var FEE_LABELS = {consultation:'Consultation Fee', transport:'Transport Fee', medication:'Medication Fee', other:'Other'};
+  // 打印项目名：优先英文；中药行给英文类型标签+保留中文药材名（系统暂无药材英文库）
+  function itName(it){
+    var nm = it.name || '';
+    if(it.nameEn) return it.nameEn;
+    if(nm.indexOf('中药') === 0){
+      var m = nm.match(/：（(.+)$/);
+      var herbs = m ? m[1] : '';
+      var kind = nm.indexOf('颗粒') >= 0 ? 'Granules' : (nm.indexOf('代煎') >= 0 ? 'Decoction' : (nm.indexOf('丸') >= 0 ? 'Pills' : 'Herbal Medicine'));
+      return 'Herbal Medicine (' + kind + ')' + (herbs ? ' - ' + herbs : '');
+    }
+    if(nm.indexOf('电子处方') === 0) return 'Herbal Prescription';
+    return nm;
+  }
 
   async function renderPrintView(){
     var rc = editingReceipt;
@@ -424,7 +437,7 @@ window.scrollTo(0,0);
     var itemRows = hasDetail ? rc.lineItems.map(function(it){
       var priceTxt = it.price > 0 ? 'RM '+it.price.toFixed(2) : '另计';
       var amtTxt = it.price > 0 ? 'RM '+(it.price * (it.qty||1)).toFixed(2) : '另计';
-      return '<tr><td>'+escapeHtml(it.name)+(it.qty && it.qty>1 ? ' × '+it.qty : '')+'</td><td class="amt-col">'+priceTxt+' / '+amtTxt+'</td></tr>';
+      return '<tr><td>'+escapeHtml(itName(it))+(it.qty && it.qty>1 ? ' x '+it.qty : '')+'</td><td class="amt-col">'+priceTxt+' / '+amtTxt+'</td></tr>';
     }).join('') : Object.keys(FEE_LABELS).filter(function(k){ return rc.items[k] > 0; }).map(function(k){
       return '<tr><td>'+FEE_LABELS[k]+'</td><td class="amt-col">RM '+rc.items[k].toFixed(2)+'</td></tr>';
     }).join('');
@@ -436,55 +449,55 @@ window.scrollTo(0,0);
 
       + '<div class="receipt-doc">'
       + '<div class="receipt-doc-hd"><div class="brand">VINATH<span style="font-size:12px;vertical-align:super;">™</span></div>'
-      + '<div class="doctype"><div class="big">收据 / RECEIPT</div><div class="small">收据编号：'+rc.receiptNo+(biz.taxId?'<br>税号 Tax ID：'+biz.taxId:'')+'</div></div></div>'
+      + '<div class="doctype"><div class="big">RECEIPT</div><div class="small">Receipt No.: '+rc.receiptNo+(biz.taxId?'<br>Tax ID: '+biz.taxId:'')+'</div></div></div>'
 
       + '<div class="receipt-meta-grid">'
-      + '<div><span class="rlabel">开票日期：</span>'+rc.issuedAt.slice(0,10)+'</div>'
-      + '<div><span class="rlabel">付款状态：</span>'+(rc.paymentStatus==='paid'?'已付款':'待付款')+'</div>'
-      + '<div><span class="rlabel">患者姓名：</span>'+escapeHtml(rc.patientName)+'</div>'
-      + '<div><span class="rlabel">付款方式：</span>'+PAYMENT_METHOD_LABELS[rc.paymentMethod]+'</div>'
-      + '<div><span class="rlabel">接诊医师：</span>'+escapeHtml(rc.practitionerNameSnapshot)+'</div>'
-      + '<div><span class="rlabel">中医诊断：</span>'+escapeHtml(rc.tcmDiagnosisSnapshot||'—')+'</div>'
-      + (rc.practitionerMohRegNo ? '<div><span class="rlabel">MOH T&CM 注册编号：</span>'+escapeHtml(rc.practitionerMohRegNo)+'</div>' : '')
-      + (rc.practitionerApcNo ? '<div><span class="rlabel">APC 执业证号：</span>'+escapeHtml(rc.practitionerApcNo)+'</div>' : '')
+      + '<div><span class="rlabel">Date: </span>'+rc.issuedAt.slice(0,10)+'</div>'
+      + '<div><span class="rlabel">Payment Status: </span>'+(rc.paymentStatus==='paid'?'Paid':'Pending')+'</div>'
+      + '<div><span class="rlabel">Patient: </span>'+escapeHtml(rc.patientName)+'</div>'
+      + '<div><span class="rlabel">Payment Method: </span>'+PAYMENT_METHOD_LABELS[rc.paymentMethod]+'</div>'
+      + '<div><span class="rlabel">Practitioner: </span>'+escapeHtml(rc.practitionerNameSnapshot)+'</div>'
+      + '<div><span class="rlabel">TCM Diagnosis: </span>'+escapeHtml(rc.tcmDiagnosisSnapshot||'—')+'</div>'
+      + (rc.practitionerMohRegNo ? '<div><span class="rlabel">MOH T&CM Reg. No.: </span>'+escapeHtml(rc.practitionerMohRegNo)+'</div>' : '')
+      + (rc.practitionerApcNo ? '<div><span class="rlabel">APC No.: </span>'+escapeHtml(rc.practitionerApcNo)+'</div>' : '')
       + '</div>'
 
-      + '<table class="receipt-table"><thead><tr><th>项目</th><th class="amt-col">金额</th></tr></thead><tbody>'
+      + '<table class="receipt-table"><thead><tr><th>Item</th><th class="amt-col">Amount</th></tr></thead><tbody>'
       + itemRows
-      + '<tr class="receipt-total-row"><td>合计</td><td class="amt-col">RM '+rc.totalAmount.toFixed(2)+'</td></tr>'
+      + '<tr class="receipt-total-row"><td>Total</td><td class="amt-col">RM '+rc.totalAmount.toFixed(2)+'</td></tr>'
       + '</tbody></table>'
 
       + '<div class="receipt-footer">'
-      + '<div style="font-size:12px;color:var(--ink-soft);">感谢您选择 VINATH 居家中医服务。<br>如需咨询本次收据内容，请通过网站「相约」联系我们。</div>'
+      + '<div style="font-size:12px;color:var(--ink-soft);">Thank you for choosing VINATH home-visit TCM services.<br>For any billing questions, please contact us via the website booking page.</div>'
       + '</div>'
 
-      + '<div class="receipt-disclaimer">本收据由 VINATH 内部系统生成，用于记录本次居家中医服务的费用明细，可作为向公司或保险公司报销时的费用证明参考。本收据目前未对接马来西亚内陆税收局（LHDN）e-Invoice 官方系统，不具备正式电子发票的法律效力；如贵司/保险公司要求正式电子发票，请与我们联系另行处理。</div>'
+      + '<div class="receipt-disclaimer">This receipt is generated by the VINATH internal system to record the charges for your home-visit TCM service and may be used as proof of payment for company or insurance reimbursement. This receipt is not yet connected to the LHDN e-Invoice system and does not carry the legal effect of a formal electronic invoice. If an official e-Invoice is required, please contact us separately.</div>'
 
       + '</div>'
       + '<div class="sheet-58" style="display:none;width:58mm;font-family:monospace;font-size:10.5px;padding:3mm;box-sizing:border-box;color:#000;">'
       + '<div style="text-align:center;font-weight:700;font-size:13.5px;">VINATH TCM</div>'
-      + '<div style="text-align:center;">中医诊所 · 针灸 推拿 美容</div>'
+      + '<div style="text-align:center;">TCM Clinic · Acupuncture · Tuina · Beauty</div>'
       + (biz.phone ? '<div style="text-align:center;margin-bottom:2mm;">WhatsApp: +60 '+biz.phone+'</div>' : '')
       + '<div style="border-top:1px dashed #000;border-bottom:1px dashed #000;padding:1.5mm 0;">'
       + '<div>No: <b>'+escapeHtml(rc.receiptNo)+'</b></div>'
-      + '<div>日期: '+rc.issuedAt.slice(0,16)+'</div>'
-      + '<div>患者: '+escapeHtml(rc.patientName)+'</div>'
-      + '<div>电话: +60 '+String(rc.patientPhone||'').replace(/^0/,'')+'</div>'
+      + '<div>Date: '+rc.issuedAt.slice(0,16)+'</div>'
+      + '<div>Patient: '+escapeHtml(rc.patientName)+'</div>'
+      + '<div>Phone: +60 '+String(rc.patientPhone||'').replace(/^0/,'')+'</div>'
       + '</div>'
       + (hasDetail ? rc.lineItems.map(function(it){
-          var line = '<div style="margin-top:1mm;">'+escapeHtml(it.name)+(it.qty && it.qty>1 ? ' ×'+it.qty : '')+'</div>';
+          var line = '<div style="margin-top:1mm;">'+escapeHtml(itName(it))+(it.qty && it.qty>1 ? ' x'+it.qty : '')+'</div>';
           line += it.price > 0
             ? '<div style="display:flex;justify-content:space-between;"><span>&nbsp;&nbsp;&nbsp;</span><span>RM '+(it.price*(it.qty||1)).toFixed(2)+'</span></div>'
-            : '<div style="text-align:right;color:#555;">（另计）</div>';
+            : '<div style="text-align:right;color:#555;">(billed separately)</div>';
           return line;
         }).join('') : Object.keys(FEE_LABELS).filter(function(k){ return rc.items[k] > 0; }).map(function(k){
           return '<div style="display:flex;justify-content:space-between;margin-top:1mm;"><span>'+FEE_LABELS[k]+'</span><span>RM '+rc.items[k].toFixed(2)+'</span></div>';
         }).join(''))
-      + '<div style="display:flex;justify-content:space-between;font-weight:700;border-top:1px solid #000;margin-top:1.5mm;padding-top:1mm;"><span>合计</span><span>RM '+rc.totalAmount.toFixed(2)+'</span></div>'
-      + (hasDetail && rc.lineItems.some(function(it){ return it.price === 0; }) ? '<div style="font-size:9.5px;margin-top:1mm;">药材费另计（按实际结算）</div>' : '')
+      + '<div style="display:flex;justify-content:space-between;font-weight:700;border-top:1px solid #000;margin-top:1.5mm;padding-top:1mm;"><span>TOTAL</span><span>RM '+rc.totalAmount.toFixed(2)+'</span></div>'
+      + (hasDetail && rc.lineItems.some(function(it){ return it.price === 0; }) ? '<div style="font-size:9.5px;margin-top:1mm;">Herbal fee billed separately</div>' : '')
       + '<div style="border-top:1px dashed #000;margin-top:1.5mm;padding-top:1.5mm;font-size:9.5px;">'
       + (biz.taxId ? 'Tax ID: '+biz.taxId+'<br>' : '')
-      + '谢谢惠顾，祝您早日康复！</div>'
+      + 'Thank you! Get well soon.</div>'
       + '</div></div>';
     document.getElementById('app').innerHTML = html;
 
