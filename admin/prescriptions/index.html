@@ -170,6 +170,8 @@ window.scrollTo(0,0);
   var FORMULA_TYPE_LABELS = {granule:'颗粒剂', decoction:'饮片', custom:'配方'};
   var STATUS_LABELS = {awaiting_pharmacy:'待药房接单', brewing:'煎药中', shipping:'配送中', delivered:'已送达'};
   var STATUS_ORDER = ['awaiting_pharmacy','brewing','shipping','delivered'];
+  var isSenior = cur && cur.type==='senior';
+  var rxFilter = { status: '', sort: 'date_desc' };
   var LOGISTICS_LABELS = {grab_express:'GrabExpress', lalamove:'Lalamove', post:'邮寄（Pos Laju等）', self:'医师本人配送'};
 
   async function fetchMedicalRecordsForPatient(phone){
@@ -220,14 +222,23 @@ window.scrollTo(0,0);
           list = rows.map(function(p){ return { id:p.id, patientName:p.patient_name, patientPhone:p.patient_phone,
             medicalRecordId:p.medical_record_id, bookingId:p.booking_id, practitionerName:p.practitioner_name,
             formulaType:p.formula_type, items:p.items, usageInstructions:p.usage_instructions, status:p.status,
-            logisticsProvider:p.logistics_provider, trackingId:p.tracking_id, createdAt:p.created_at }; });
+            logisticsProvider:p.logistics_provider, trackingId:p.tracking_id, createdAt:p.created_at,
+            doses:p.doses, dispenseMode:p.dispense_mode, herbTotal:p.herb_total, decoctFee:p.decoct_fee }; });
         }
       } catch(e){ console.error('拉取处方列表失败:', e); }
     }
-    list.sort(function(a,b){ return b.createdAt.localeCompare(a.createdAt); });
+    if(rxFilter.status) list = list.filter(function(x){ return x.status === rxFilter.status; });
+    if(rxFilter.sort === 'date_asc') list.sort(function(a,b){ return a.createdAt.localeCompare(b.createdAt); });
+    else if(rxFilter.sort === 'status') list.sort(function(a,b){ return STATUS_ORDER.indexOf(a.status)-STATUS_ORDER.indexOf(b.status) || b.createdAt.localeCompare(a.createdAt); });
+    else list.sort(function(a,b){ return b.createdAt.localeCompare(a.createdAt); });
     var html = '<div class="wrap">'
       + '<div class="top-actions"><div><h1>电子处方</h1><div class="sub">开具处方、跟踪药房制备与配送状态。</div></div>'
       + (isPractitioner ? '<button class="btn-primary" id="newRxBtn">+ 开具新处方</button>' : '')
+      + (isSenior ? '<button class="btn-secondary" id="herbPricesBtn" style="margin-left:8px;">药材价格</button>' : '')
+      + '</div>'
+      + '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center;">'
+      + '<select id="rxSortSel"><option value="date_desc"'+(rxFilter.sort==='date_desc'?' selected':'')+'>日期：最新在前</option><option value="date_asc"'+(rxFilter.sort==='date_asc'?' selected':'')+'>日期：最早在前</option><option value="status"'+(rxFilter.sort==='status'?' selected':'')+'>按进度排序</option></select>'
+      + '<select id="rxStatusFilter"><option value="">全部进度</option>'+STATUS_ORDER.map(function(st){ return '<option value="'+st+'"'+(rxFilter.status===st?' selected':'')+'>'+STATUS_LABELS[st]+'</option>'; }).join('')+'</select>'
       + '</div>'
       + '<div class="proto-banner"><b>数据已经存进真实后端数据库。</b>药材名称与剂量完全由医师自己填写决定，软件只负责准确记录和流转，不提供任何剂量建议——这个边界是刻意的，避免出现执业范围之外的用药指导。物流状态目前是人工手动推进的，GrabExpress/Lalamove/邮寄这些只是预留的选项位，还没有对接真实的第三方物流API，需要真实的商户账号才能往下接。</div>'
       + '<div class="card">'
@@ -242,7 +253,75 @@ window.scrollTo(0,0);
         render();
       });
     }
+    document.getElementById('rxSortSel').addEventListener('change', function(){ rxFilter.sort = this.value; render(); });
+    document.getElementById('rxStatusFilter').addEventListener('change', function(){ rxFilter.status = this.value; render(); });
+    var hpBtn = document.getElementById('herbPricesBtn');
+    if(hpBtn) hpBtn.addEventListener('click', openHerbPrices);
     wireRxRowEvents();
+  }
+
+  // ---- 药材价格库管理（大管理员） ----
+  async function openHerbPrices(){
+    var rows = [];
+    try {
+      var res = await fetch(API_BASE + '/admin/herb-prices', { headers:{'Authorization':'Bearer '+authToken} });
+      rows = res.ok ? await res.json() : [];
+    } catch(e){ showToast('拉取药材价格失败'); return; }
+    var ov = document.createElement('div');
+    ov.innerHTML = '<div style="position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;display:flex;align-items:center;justify-content:center;">'
+      + '<div style="background:#fff;border-radius:14px;max-width:760px;width:94%;max-height:84vh;overflow:auto;padding:20px;box-sizing:border-box;">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h2 style="margin:0;font-size:17px;">中药价格库（RM/克）</h2><button type="button" class="btn-small" id="hpClose">关闭</button></div>'
+      + '<div style="font-size:12.5px;color:#6b7280;margin-bottom:12px;">在这里保存单味中药每克的价格，开方时会按「价格 × 克数」自动算出药材费。只有大管理员能改。</div>'
+      + '<div id="hpList">' + (rows.length ? rows.map(function(r){
+          return '<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">'
+            + '<input type="text" class="hp-name" value="'+escapeHtml(r.herb_name)+'" style="flex:1 1 140px;min-width:120px;">'
+            + '<input type="number" class="hp-price" step="0.01" min="0" value="'+(Number(r.price_per_g)||0)+'" style="width:90px;">'
+            + '<span style="font-size:12px;color:#6b7280;">RM/克</span>'
+            + '<input type="text" class="hp-note" placeholder="备注（选填）" value="'+escapeHtml(r.note||'')+'" style="flex:1 1 140px;min-width:120px;">'
+            + '<button type="button" class="btn-small hp-save" data-name="'+escapeHtml(r.herb_name)+'">保存</button>'
+            + '<button type="button" class="btn-small hp-del" data-name="'+escapeHtml(r.herb_name)+'" style="color:#c0392b;border-color:#c0392b;">删除</button>'
+            + '</div>';
+        }).join('') : '<div style="color:#6b7280;text-align:center;padding:16px;">还没有保存任何药材价格</div>') + '</div>'
+      + '<button type="button" class="btn-secondary" id="hpAdd" style="margin-top:10px;">+ 添加一味药材</button>'
+      + '</div></div>';
+    document.body.appendChild(ov);
+    document.getElementById('hpClose').addEventListener('click', function(){ ov.remove(); });
+    function addRow(name, price, note){
+      var el = document.createElement('div');
+      el.style.cssText = 'display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;';
+      el.innerHTML = '<input type="text" class="hp-name" placeholder="药材名称" value="'+escapeHtml(name||'')+'" style="flex:1 1 140px;min-width:120px;">'
+        + '<input type="number" class="hp-price" step="0.01" min="0" value="'+(price||0)+'" style="width:90px;">'
+        + '<span style="font-size:12px;color:#6b7280;">RM/克</span>'
+        + '<input type="text" class="hp-note" placeholder="备注（选填）" value="'+escapeHtml(note||'')+'" style="flex:1 1 140px;min-width:120px;">'
+        + '<button type="button" class="btn-small hp-save">保存</button>'
+        + '<button type="button" class="btn-small hp-del" style="color:#c0392b;border-color:#c0392b;">删除</button>';
+      document.getElementById('hpList').appendChild(el);
+    }
+    document.getElementById('hpAdd').addEventListener('click', function(){ addRow('', '', ''); });
+    ov.addEventListener('click', async function(ev){
+      var t = ev.target;
+      if(!t || !t.closest) return;
+      var saveBtn = t.closest('.hp-save');
+      var delBtn = t.closest('.hp-del');
+      if(!saveBtn && !delBtn) return;
+      var row = (saveBtn || delBtn).closest('div[style*="display:flex"]');
+      if(!row) return;
+      var nameInp = row.querySelector('.hp-name');
+      if(saveBtn){
+        var nm = (nameInp.value || '').trim();
+        if(!nm){ showToast('请填写药材名称'); return; }
+        var pr = Number(row.querySelector('.hp-price').value) || 0;
+        var note = row.querySelector('.hp-note').value.trim();
+        var res = await fetch(API_BASE + '/admin/herb-prices', { method:'PUT', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body: JSON.stringify({ herbName: nm, pricePerG: pr, note: note }) });
+        showToast(res.ok ? '已保存「'+nm+'」RM'+pr+'/克' : '保存失败');
+        if(res.ok) openHerbPrices();
+      } else if(delBtn){
+        if(!confirm('确定删除「'+(nameInp.value||'')+'」的价格？')) return;
+        var res = await fetch(API_BASE + '/admin/herb-prices/' + encodeURIComponent(nameInp.value.trim()), { method:'DELETE', headers:{'Authorization':'Bearer '+authToken} });
+        showToast(res.ok ? '已删除' : '删除失败');
+        if(res.ok) openHerbPrices();
+      }
+    });
   }
 
   function renderRxRow(rx){
@@ -252,42 +331,53 @@ window.scrollTo(0,0);
         + (i<STATUS_ORDER.length-1 ? '<span class="sf-arrow">→</span>' : '');
     }).join('');
     var herbsText = rx.items.map(function(it){ return escapeHtml(it.herbName)+' '+it.dosageGrams+'g'; }).join('、');
-    var nextStatus = STATUS_ORDER[stepIdx+1];
+    var DISPENSE_LABELS = { decoct_pickup:'代煎自取', decoct_delivery:'代煎代送', herb_delivery:'中药配送', herb_pickup:'中药自取' };
+    var feeLine = (Number(rx.herbTotal) || 0) ? '中药费 RM'+(Number(rx.herbTotal)+Number(rx.decoctFee||0)).toFixed(2)+(rx.decoctFee?'（含代煎费 RM'+Number(rx.decoctFee).toFixed(2)+'）':'')+' · '+(rx.doses||1)+' 剂 · '+(DISPENSE_LABELS[rx.dispenseMode]||rx.dispenseMode||'') : '';
 
     return '<div class="rx-row" data-id="'+rx.id+'">'
       + '<div class="rx-row-hd"><div><span class="rxname">'+escapeHtml(rx.patientName)+'</span> <span class="status-badge status-'+rx.status+'">'+STATUS_LABELS[rx.status]+'</span></div>'
       + '<div class="rxmeta">'+rx.createdAt.slice(0,10)+'</div></div>'
       + '<div class="rxmeta">'+FORMULA_TYPE_LABELS[rx.formulaType]+' · '+herbsText+'</div>'
       + '<div class="rxmeta">开方医师：'+escapeHtml(rx.practitionerName)+' · 服法：'+escapeHtml(rx.usageInstructions)+'</div>'
+      + (feeLine ? '<div class="rxmeta" style="font-weight:600;color:var(--sage);">'+feeLine+'</div>' : '')
       + (rx.logisticsProvider ? '<div class="rxmeta">配送方式：'+escapeHtml(rx.logisticsProvider)+(rx.trackingId?' · 运单号：'+escapeHtml(rx.trackingId):'')+'</div>' : '')
       + '<div class="status-flow">'+flowHtml+'</div>'
-      + (nextStatus ? '<div class="logistics-row">'
-          + (nextStatus==='shipping' ? (function(){
-              var presetMatch = rx.logisticsProvider && LOGISTICS_LABELS[rx.logisticsProvider];
-              var isCustom = rx.logisticsProvider && !presetMatch;
-              return '<select class="logistics-provider-select" data-id="'+rx.id+'"><option value="">选择配送方式</option>'
-                + Object.keys(LOGISTICS_LABELS).map(function(k){ return '<option value="'+k+'"'+(rx.logisticsProvider===k?' selected':'')+'>'+LOGISTICS_LABELS[k]+'</option>'; }).join('')
-                + '<option value="__other__"'+(isCustom?' selected':'')+'>其他（手动填写）</option>'
-                + '</select>'
-                + '<input type="text" class="logistics-other-input" data-id="'+rx.id+'" placeholder="物流商名称" value="'+escapeHtml(isCustom?rx.logisticsProvider:'')+'" style="'+(isCustom?'':'display:none;')+'">'
-                + '<input type="text" class="tracking-input" data-id="'+rx.id+'" placeholder="运单号（选填）" value="'+escapeHtml(rx.trackingId||'')+'">';
-            })() : '')
-          + '<button class="btn-small advance-status-btn" data-id="'+rx.id+'" data-next="'+nextStatus+'">推进到"'+STATUS_LABELS[nextStatus]+'"</button>'
-        + '</div>' : '')
+      + '<div class="logistics-row">'
+        + '<span style="font-size:12px;color:var(--ink-soft);">修改进度：</span>'
+        + '<select class="rx-status-select" data-id="'+rx.id+'">'+STATUS_ORDER.map(function(st){ return '<option value="'+st+'"'+(st===rx.status?' selected':'')+'>'+STATUS_LABELS[st]+'</option>'; }).join('')+'</select>'
+        + '<select class="logistics-provider-select" data-id="'+rx.id+'" style="'+(rx.status==='shipping'?'':'display:none;')+'"><option value="">选择配送方式</option>'
+          + Object.keys(LOGISTICS_LABELS).map(function(k){ return '<option value="'+k+'"'+(rx.logisticsProvider===k?' selected':'')+'>'+LOGISTICS_LABELS[k]+'</option>'; }).join('')
+          + '<option value="__other__"'+(rx.logisticsProvider && !LOGISTICS_LABELS[rx.logisticsProvider]?' selected':'')+'>其他（手动填写）</option>'
+          + '</select>'
+        + '<input type="text" class="logistics-other-input" data-id="'+rx.id+'" placeholder="物流商名称" value="'+escapeHtml(rx.logisticsProvider && !LOGISTICS_LABELS[rx.logisticsProvider]?rx.logisticsProvider:'')+'" style="display:none;">'
+        + '<input type="text" class="tracking-input" data-id="'+rx.id+'" placeholder="运单号（选填）" value="'+escapeHtml(rx.trackingId||'')+'" style="'+(rx.status==='shipping'?'':'display:none;')+'">'
+        + '<button class="btn-small rx-status-save" data-id="'+rx.id+'">保存进度</button>'
+      + '</div>'
       + '</div>';
   }
 
   function wireRxRowEvents(){
+    document.querySelectorAll('.rx-status-select').forEach(function(sel){
+      sel.addEventListener('change', function(){
+        var id = this.getAttribute('data-id');
+        var isShip = this.value === 'shipping';
+        var provSel = document.querySelector('.logistics-provider-select[data-id="'+id+'"]');
+        var trackInp = document.querySelector('.tracking-input[data-id="'+id+'"]');
+        if(provSel) provSel.style.display = isShip ? '' : 'none';
+        if(trackInp) trackInp.style.display = isShip ? '' : 'none';
+      });
+    });
     document.querySelectorAll('.logistics-provider-select').forEach(function(sel){
       sel.addEventListener('change', function(){
         var otherInput = document.querySelector('.logistics-other-input[data-id="'+this.getAttribute('data-id')+'"]');
         if(otherInput) otherInput.style.display = this.value==='__other__' ? '' : 'none';
       });
     });
-    document.querySelectorAll('.advance-status-btn').forEach(function(btn){
+    document.querySelectorAll('.rx-status-save').forEach(function(btn){
       btn.addEventListener('click', async function(){
         var id = this.getAttribute('data-id');
-        var next = this.getAttribute('data-next');
+        var statusSel = document.querySelector('.rx-status-select[data-id="'+id+'"]');
+        var next = statusSel ? statusSel.value : '';
         var payload = { status: next };
         if(next==='shipping'){
           var provSel = document.querySelector('.logistics-provider-select[data-id="'+id+'"]');
@@ -306,7 +396,7 @@ window.scrollTo(0,0);
             method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
             body: JSON.stringify(payload)
           });
-          showToast('状态已更新为「'+STATUS_LABELS[next]+'」');
+          showToast('进度已更新为「'+STATUS_LABELS[next]+'」（可随时回退修改）');
           render();
         } catch(e){ showToast('更新失败，请检查网络后重试'); btn.disabled = false; }
       });
@@ -333,6 +423,14 @@ window.scrollTo(0,0);
       + '<select id="rxFormulaTypeInput"><option value="granule">颗粒剂</option><option value="decoction">饮片</option><option value="custom">配方</option></select>'
       + '</div>'
 
+      + '<div class="card"><div class="section-title">剂数与取药方式</div>'
+      + '<div class="two-col">'
+      + '<div class="field"><label>剂数（几剂）</label><input type="number" id="rxDosesInput" min="1" value="'+(Number(rx.doses)||1)+'"></div>'
+      + '<div class="field"><label>取药/加工方式</label><select id="rxDispenseInput"></select></div>'
+      + '</div>'
+      + '<div id="decoctHint" style="font-size:12.5px;color:var(--ink-soft);"></div>'
+      + '</div>'
+
       + '<div class="card"><div class="section-title">药材明细</div>'
       + '<div class="rx-from-formula"><select id="loadFormulaSelect"><option value="">从我的协定方载入…</option></select><button type="button" class="btn-small" id="loadFormulaBtn">载入</button></div>'
       + '<div id="herbItemsList"></div>'
@@ -351,6 +449,39 @@ window.scrollTo(0,0);
 
     document.getElementById('rxFormulaTypeInput').value = rx.formulaType || 'granule';
     document.getElementById('cancelRxFormBtn').addEventListener('click', function(){ view='list'; render(); });
+
+    // 剂型决定取药方式选项（只有饮片能代煎；颗粒/丸散/配方只送或自取）
+    function renderDispenseOptions(){
+      var ft = document.getElementById('rxFormulaTypeInput').value;
+      var sel = document.getElementById('rxDispenseInput');
+      var opts = (ft === 'decoction')
+        ? [{v:'decoct_pickup',l:'代煎自取'},{v:'decoct_delivery',l:'代煎代送'},{v:'herb_pickup',l:'中药自取'},{v:'herb_delivery',l:'中药配送'}]
+        : [{v:'herb_pickup',l:'中药自取'},{v:'herb_delivery',l:'中药配送'}];
+      var prev = rx.dispenseMode;
+      sel.innerHTML = opts.map(function(o){ return '<option value="'+o.v+'"'+(o.v===prev?' selected':'')+'>'+o.l+'</option>'; }).join('');
+      if(!prev || !opts.some(function(o){ return o.v===prev; })) sel.selectedIndex = 0;
+      rx.dispenseMode = sel.value;
+      updateDecoctHint();
+    }
+    function updateDecoctHint(){
+      var ft = document.getElementById('rxFormulaTypeInput').value;
+      var mode = document.getElementById('rxDispenseInput').value;
+      var doses = Number(document.getElementById('rxDosesInput').value) || 1;
+      var hint = document.getElementById('decoctHint');
+      if(!hint) return;
+      if(ft === 'decoction' && (mode === 'decoct_pickup' || mode === 'decoct_delivery')){
+        hint.textContent = '饮片代煎费 RM8/剂 × ' + doses + ' 剂 = RM' + (8*doses).toFixed(2) + '（随处方自动计入中药费）';
+      } else if(ft !== 'decoction'){
+        hint.textContent = '当前剂型（'+(document.getElementById('rxFormulaTypeInput').selectedOptions[0]||{}).text+'）无需煎煮，直接配药取/送。';
+      } else {
+        hint.textContent = '选择"中药自取/中药配送"则不开代煎，按生药直接交付。';
+      }
+    }
+    renderDispenseOptions();
+    document.getElementById('rxFormulaTypeInput').addEventListener('change', function(){ rx.formulaType = this.value; renderDispenseOptions(); });
+    document.getElementById('rxDispenseInput').addEventListener('change', function(){ rx.dispenseMode = this.value; updateDecoctHint(); });
+    document.getElementById('rxDosesInput').addEventListener('input', updateDecoctHint);
+    document.getElementById('rxDosesInput').addEventListener('change', function(){ rx.doses = Number(this.value) || 1; });
 
     async function refreshRecordOptions(){
       var phone = document.getElementById('rxPatientPhoneInput').value.trim().replace(/[^0-9]/g,'');
@@ -444,7 +575,9 @@ window.scrollTo(0,0);
         bookingId: document.getElementById('rxBookingSelect').value || null,
         formulaType: document.getElementById('rxFormulaTypeInput').value,
         items: validItems,
-        usageInstructions: usage
+        usageInstructions: usage,
+        doses: Number(document.getElementById('rxDosesInput').value) || 1,
+        dispenseMode: document.getElementById('rxDispenseInput').value
       };
       var btn = this;
       btn.disabled = true;
@@ -460,7 +593,16 @@ window.scrollTo(0,0);
           btn.disabled = false;
           return;
         }
-        showToast(payload.bookingId ? '处方已提交，并已加入对应预约的治疗/商品明细' : '处方已提交，等待药房接单');
+        var j = null;
+        try { j = await res.json(); } catch(e){}
+        var feeTxt = '';
+        if(j && (Number(j.herbTotal) > 0 || Number(j.decoctFee) > 0)){
+          feeTxt = '｜中药费 RM' + (Number(j.herbTotal) + Number(j.decoctFee)).toFixed(2) + (Number(j.decoctFee) ? '（含代煎费 RM' + Number(j.decoctFee).toFixed(2) + '）' : '');
+          if(j.pricedMissing && j.pricedMissing.length) feeTxt += '；未定价药材：' + j.pricedMissing.join('、');
+        } else if(j && j.pricedMissing && j.pricedMissing.length){
+          feeTxt = '｜这些药材还没有定价：' + j.pricedMissing.join('、') + '（可到"药材价格"里补充）';
+        }
+        showToast((payload.bookingId ? '处方已提交，并已加入对应预约的治疗/商品明细' : '处方已提交，等待药房接单') + feeTxt);
         view = 'list';
         render();
       } catch(e){

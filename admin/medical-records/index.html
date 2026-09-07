@@ -195,6 +195,16 @@ window.scrollTo(0,0);
     if(!t) return '';
     return t.nameEn ? t.name + ' (' + t.nameEn + ')' : t.name;
   }
+  function calcAge(dob){
+    if(!dob) return '';
+    var d = new Date(dob);
+    if(isNaN(d.getTime())) return '';
+    var now = new Date();
+    var age = now.getFullYear() - d.getFullYear();
+    var m = now.getMonth() - d.getMonth();
+    if(m < 0 || (m === 0 && now.getDate() < d.getDate())) age--;
+    return (age >= 0) ? age : '';
+  }
   function printName(t){
     if(!t) return '';
     return t.nameEn ? t.nameEn : t.name;
@@ -412,7 +422,7 @@ window.scrollTo(0,0);
       + '</div>'
       + '<div class="card"><div class="section-title">患者列表</div>'
       + (list.length ? list.map(function(p){
-          return '<div class="patient-row" data-phone="'+escapeHtml(p.phone)+'" data-name="'+escapeHtml(p.name)+'"><div><div class="pname">'+escapeHtml(p.name)+'</div><div class="pmeta">+60'+escapeHtml(p.phone)+' · 共 '+p.count+' 次就诊记录 · 最近：'+p.lastVisit
+          return '<div class="patient-row" data-phone="'+escapeHtml(p.phone)+'" data-name="'+escapeHtml(p.name)+'"><div><div class="pname">'+escapeHtml(p.name)+(p.gender?' <span style="color:var(--ink-soft);font-weight:400;font-size:12px;">'+escapeHtml(p.gender)+(p.age!=null&&p.age!==''?' · '+p.age+'岁':'')+'</span>':'')+'</div><div class="pmeta">+60'+escapeHtml(p.phone)+' · 共 '+p.count+' 次就诊记录 · 最近：'+p.lastVisit
             + (isSenior ? ' · <a href="javascript:void(0)" class="del-patient-link" data-del-patient="'+escapeHtml(p.phone)+'" data-name="'+escapeHtml(p.name)+'" style="color:#c0392b;">删除患者全部病历</a>' : '')
             + '</div></div><span style="color:var(--ink-soft);">查看时间轴 →</span></div>';
         }).join('') : '<div class="empty-state">还没有任何病历记录，点右上角"新建病历"开始</div>')
@@ -717,15 +727,19 @@ window.scrollTo(0,0);
         rxDraft.items = (r.lastRx.items && r.lastRx.items.length) ? r.lastRx.items.map(function(it){ return { herbName: it.herbName, dosageGrams: it.dosageGrams, notes: it.notes||'' }; }) : [{herbName:'',dosageGrams:'',notes:''}];
         rxDraft.usageInstructions = r.lastRx.usageInstructions || '';
         rxDraft.bookingId = r.lastRx.bookingId || null;
+        rxDraft.doses = r.lastRx.doses || 1;
+        rxDraft.dispenseMode = r.lastRx.dispenseMode || 'herb_pickup';
       } else {
         rxDraft.items = [{herbName:'',dosageGrams:'',notes:''}];
         rxDraft.usageInstructions = '';
         rxDraft.bookingId = null;
+        rxDraft.doses = 1;
+        rxDraft.dispenseMode = 'herb_pickup';
       }
       var _hasHerb = rxDraft.items.some(function(it){ return it.herbName && String(it.herbName).trim() && it.dosageGrams; });
       rxDraft.enabled = rxDraft.treatments.length > 0 || _hasHerb;
     } else {
-      rxDraft = { enabled:false, formulaType:'granule', items:[{herbName:'',dosageGrams:'',notes:''}], usageInstructions:'', treatments:[], bookingId:null };
+      rxDraft = { enabled:false, formulaType:'granule', items:[{herbName:'',dosageGrams:'',notes:''}], usageInstructions:'', treatments:[], bookingId:null, doses:1, dispenseMode:'herb_pickup' };
     }
     r.tongueShape = r.tongueShape || [];
     r.pulseType = r.pulseType || [];
@@ -750,7 +764,13 @@ window.scrollTo(0,0);
       + '<div class="two-col">'
       + '<div class="field"><label>就诊日期</label><input type="text" id="visitDateInput" value="'+(r.visitDate||new Date().toISOString().slice(0,10))+'"></div>'
       + '<div class="field"><label>就诊方式</label><select id="visitTypeInput"><option value="home_visit">居家会诊</option><option value="clinic">门诊</option><option value="follow_up">复诊</option></select></div>'
-      + '</div></div>'
+      + '</div>'
+      + '<div class="two-col">'
+      + '<div class="field"><label>患者性别</label><select id="patientGenderInput"><option value="">未填</option><option value="男"'+((r.gender||'')==='男'?' selected':'')+'>男</option><option value="女"'+((r.gender||'')==='女'?' selected':'')+'>女</option></select></div>'
+      + '<div class="field"><label>出生日期</label><input type="date" id="patientDobInput" value="'+(r.dateOfBirth||'')+'"></div>'
+      + '</div>'
+      + '<div class="field"><label>年龄</label><input type="text" id="patientAgeInput" readonly placeholder="根据出生日期自动计算" value="'+((r.age!=null&&r.age!=='')?r.age:(r.dateOfBirth?calcAge(r.dateOfBirth):''))+'"></div>'
+      + '</div>'
 
       + '<div class="card"><div class="section-title"><span class="zh-tag">问</span>主诉与病史</div>'
       + '<div class="field"><label>主诉</label><textarea id="chiefComplaintInput">'+(r.chiefComplaint||'')+'</textarea></div>'
@@ -804,6 +824,11 @@ window.scrollTo(0,0);
       + '<div id="rxBlock" style="display:none;margin-top:14px;">'
       + '<div class="field"><label>关联预约（可选——治疗项目会写入该预约的收据明细，打印单子更快）</label><select id="rxBkSelectMR"><option value="">不关联预约</option></select></div>'
       + '<div class="field"><label>配方类型</label><select id="rxTypeSelect"><option value="granule">颗粒剂</option><option value="decoction">饮片</option><option value="custom">配方</option></select></div>'
+      + '<div class="two-col">'
+      + '<div class="field"><label>剂数（几剂）</label><input type="number" id="rxDosesMRInput" min="1" value="'+(Number(rxDraft.doses)||1)+'"></div>'
+      + '<div class="field"><label>取药/加工方式</label><select id="rxDispenseMRInput"></select></div>'
+      + '</div>'
+      + '<div id="decoctHintMR" style="font-size:12.5px;color:var(--ink-soft);"></div>'
       + '<div class="rx-from-formula"><select id="rxLoadFormulaSelect"><option value="">从我的协定方载入…</option></select><button type="button" class="btn-small" id="rxLoadFormulaBtn">载入</button></div>'
       + '<div class="field"><label>药材明细</label><div id="rxHerbList"></div>'
       + '<button type="button" class="btn-secondary" id="rxAddHerbBtn" style="margin-top:6px;">+ 添加一味药</button>'
@@ -825,6 +850,11 @@ window.scrollTo(0,0);
 
     document.getElementById('cancelFormBtn').addEventListener('click', function(){ view = activePatientPhone ? 'timeline' : 'list'; render(); });
     document.getElementById('visitTypeInput').value = r.visitType || 'home_visit';
+    var dobInp = document.getElementById('patientDobInput');
+    var ageInp = document.getElementById('patientAgeInput');
+    if(dobInp && ageInp){
+      dobInp.addEventListener('change', function(){ ageInp.value = calcAge(this.value); });
+    }
 
     // chip交互——单选类字段点了就切换值，多选类字段(舌形/脉象)是数组、可以多个同时选中
     document.querySelectorAll('.chip-row').forEach(function(row){
@@ -1077,7 +1107,41 @@ window.scrollTo(0,0);
       document.getElementById('rxBlock').style.display = this.checked ? '' : 'none';
       if(this.checked){ loadFormulaOptions(); renderRxHerbList(); loadBookingOptions(); loadPriceList(); renderRxTreatList(); }
     });
-    document.getElementById('rxTypeSelect').addEventListener('change', function(){ rxDraft.formulaType = this.value; });
+    document.getElementById('rxTypeSelect').addEventListener('change', function(){ rxDraft.formulaType = this.value; renderRxDispenseMR(); });
+    function renderRxDispenseMR(){
+      var sel = document.getElementById('rxDispenseMRInput');
+      if(!sel) return;
+      var ft = document.getElementById('rxTypeSelect').value;
+      var opts = (ft === 'decoction')
+        ? [{v:'decoct_pickup',l:'代煎自取'},{v:'decoct_delivery',l:'代煎代送'},{v:'herb_pickup',l:'中药自取'},{v:'herb_delivery',l:'中药配送'}]
+        : [{v:'herb_pickup',l:'中药自取'},{v:'herb_delivery',l:'中药配送'}];
+      var prev = rxDraft.dispenseMode;
+      sel.innerHTML = opts.map(function(o){ return '<option value="'+o.v+'"'+(o.v===prev?' selected':'')+'>'+o.l+'</option>'; }).join('');
+      if(!prev || !opts.some(function(o){ return o.v===prev; })) sel.selectedIndex = 0;
+      rxDraft.dispenseMode = sel.value;
+      updateDecoctHintMR();
+    }
+    function updateDecoctHintMR(){
+      var hint = document.getElementById('decoctHintMR');
+      if(!hint) return;
+      var ft = document.getElementById('rxTypeSelect').value;
+      var mode = document.getElementById('rxDispenseMRInput').value;
+      var doses = Number(document.getElementById('rxDosesMRInput').value) || 1;
+      if(ft === 'decoction' && (mode === 'decoct_pickup' || mode === 'decoct_delivery')){
+        hint.textContent = '饮片代煎费 RM8/剂 × ' + doses + ' 剂 = RM' + (8*doses).toFixed(2) + '（随处方自动计入中药费）';
+      } else if(ft !== 'decoction'){
+        hint.textContent = '当前剂型无需煎煮，直接配药取/送。';
+      } else {
+        hint.textContent = '选择"中药自取/中药配送"则不开代煎，按生药直接交付。';
+      }
+    }
+    var dmSel = document.getElementById('rxDispenseMRInput');
+    if(dmSel){
+      renderRxDispenseMR();
+      dmSel.addEventListener('change', function(){ rxDraft.dispenseMode = this.value; updateDecoctHintMR(); });
+      document.getElementById('rxDosesMRInput').addEventListener('input', updateDecoctHintMR);
+      document.getElementById('rxDosesMRInput').addEventListener('change', function(){ rxDraft.doses = Number(this.value) || 1; });
+    }
     document.getElementById('rxAddHerbBtn').addEventListener('click', function(){ rxDraft.items.push({herbName:'',dosageGrams:'',notes:''}); renderRxHerbList(); });
     document.getElementById('rxBkSelectMR').addEventListener('change', function(){ rxDraft.bookingId = this.value || null; });
     document.getElementById('rxAddTreatBtn').addEventListener('click', function(){
@@ -1107,6 +1171,9 @@ window.scrollTo(0,0);
       var ok = false, savedMrId = null, rxItems = [], treatments = [];
       r.visitDate = document.getElementById('visitDateInput').value.trim() || new Date().toISOString().slice(0,10);
       r.visitType = document.getElementById('visitTypeInput').value;
+      r.gender = document.getElementById('patientGenderInput') ? document.getElementById('patientGenderInput').value : '';
+      r.dateOfBirth = document.getElementById('patientDobInput') ? document.getElementById('patientDobInput').value : '';
+      r.age = r.dateOfBirth ? calcAge(r.dateOfBirth) : '';
       r.voiceNotes = document.getElementById('voiceNotesInput').value.trim();
       r.chiefComplaint = document.getElementById('chiefComplaintInput').value.trim();
       r.presentIllness = document.getElementById('presentIllnessInput').value.trim();
@@ -1122,7 +1189,8 @@ window.scrollTo(0,0);
       var dataPayload = {};
       ['visitType','voiceNotes','chiefComplaint','presentIllness','medicalHistory','pulseNotes','pulseType',
        'tongueBodyColor','tongueBodyColorCustom','tongueCoating','tongueCoatingCustom','tongueShape','tongueShapeCustom',
-       'constitutionType','constitutionTypeCustom','tcmDiagnosis','syndromePattern','treatmentPlan','treatmentPoints','photos'
+       'constitutionType','constitutionTypeCustom','tcmDiagnosis','syndromePattern','treatmentPlan','treatmentPoints','photos',
+       'gender','dateOfBirth','age'
       ].forEach(function(k){ if(r[k]!==undefined) dataPayload[k] = r[k]; });
       if(rxDraft.treatments && rxDraft.treatments.length) dataPayload.treatments = rxDraft.treatments;
 
@@ -1140,7 +1208,7 @@ window.scrollTo(0,0);
           rxItems = rxDraft.items.filter(function(it){ return it.herbName && String(it.herbName).trim() && it.dosageGrams; });
           treatments = rxDraft.treatments || [];
           if(rxItems.length || treatments.length){
-            var rxPayload = { patientName: r.patientName, patientPhone: r.patientPhone, medicalRecordId: savedMrId || null, bookingId: rxDraft.bookingId || null, formulaType: rxDraft.formulaType, items: rxItems, usageInstructions: rxDraft.usageInstructions || '', treatments: treatments };
+            var rxPayload = { patientName: r.patientName, patientPhone: r.patientPhone, medicalRecordId: savedMrId || null, bookingId: rxDraft.bookingId || null, formulaType: rxDraft.formulaType, items: rxItems, usageInstructions: rxDraft.usageInstructions || '', treatments: treatments, doses: Number(rxDraft.doses) || 1, dispenseMode: rxDraft.dispenseMode || 'herb_pickup' };
             try {
               var rxRes = await fetch(API_BASE + '/admin/prescriptions', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body: JSON.stringify(rxPayload) });
               ok = true;
@@ -1374,6 +1442,14 @@ window.scrollTo(0,0);
       + '<select id="rxType2Select"><option value="granule">颗粒剂</option><option value="decoction">饮片</option><option value="custom">配方</option></select>'
       + '</div>'
 
+      + '<div class="card"><div class="section-title">剂数与取药方式</div>'
+      + '<div class="two-col">'
+      + '<div class="field"><label>剂数（几剂）</label><input type="number" id="rxDoses2Input" min="1" value="'+(Number(rx.doses)||1)+'"></div>'
+      + '<div class="field"><label>取药/加工方式</label><select id="rxDispense2Input"></select></div>'
+      + '</div>'
+      + '<div id="decoctHint2" style="font-size:12.5px;color:var(--ink-soft);"></div>'
+      + '</div>'
+
       + '<div class="card"><div class="section-title">药材明细</div>'
       + '<div class="rx-from-formula"><select id="rxLoadF2Select"><option value="">从我的协定方载入…</option></select><button type="button" class="btn-small" id="rxLoadF2Btn">载入</button></div>'
       + '<div id="rxHerbList2"></div>'
@@ -1394,6 +1470,38 @@ window.scrollTo(0,0);
     document.getElementById('rxBackToTools').addEventListener('click', function(){ view = activePatientPhone ? 'timeline' : 'list'; render(); });
     document.getElementById('rxGoFormulas').addEventListener('click', function(){ view='formulas'; render(); });
     document.getElementById('rxType2Select').value = rx.formulaType;
+
+    function renderDispense2(){
+      var ft = document.getElementById('rxType2Select').value;
+      var sel = document.getElementById('rxDispense2Input');
+      var opts = (ft === 'decoction')
+        ? [{v:'decoct_pickup',l:'代煎自取'},{v:'decoct_delivery',l:'代煎代送'},{v:'herb_pickup',l:'中药自取'},{v:'herb_delivery',l:'中药配送'}]
+        : [{v:'herb_pickup',l:'中药自取'},{v:'herb_delivery',l:'中药配送'}];
+      var prev = rx.dispenseMode;
+      sel.innerHTML = opts.map(function(o){ return '<option value="'+o.v+'"'+(o.v===prev?' selected':'')+'>'+o.l+'</option>'; }).join('');
+      if(!prev || !opts.some(function(o){ return o.v===prev; })) sel.selectedIndex = 0;
+      rx.dispenseMode = sel.value;
+      updateDecoctHint2();
+    }
+    function updateDecoctHint2(){
+      var hint = document.getElementById('decoctHint2');
+      if(!hint) return;
+      var ft = document.getElementById('rxType2Select').value;
+      var mode = document.getElementById('rxDispense2Input').value;
+      var doses = Number(document.getElementById('rxDoses2Input').value) || 1;
+      if(ft === 'decoction' && (mode === 'decoct_pickup' || mode === 'decoct_delivery')){
+        hint.textContent = '饮片代煎费 RM8/剂 × ' + doses + ' 剂 = RM' + (8*doses).toFixed(2) + '（随处方自动计入中药费）';
+      } else if(ft !== 'decoction'){
+        hint.textContent = '当前剂型无需煎煮，直接配药取/送。';
+      } else {
+        hint.textContent = '选择"中药自取/中药配送"则不开代煎，按生药直接交付。';
+      }
+    }
+    renderDispense2();
+    document.getElementById('rxType2Select').addEventListener('change', function(){ rx.formulaType = this.value; renderDispense2(); });
+    document.getElementById('rxDispense2Input').addEventListener('change', function(){ rx.dispenseMode = this.value; updateDecoctHint2(); });
+    document.getElementById('rxDoses2Input').addEventListener('input', updateDecoctHint2);
+    document.getElementById('rxDoses2Input').addEventListener('change', function(){ rx.doses = Number(this.value) || 1; });
 
     async function refreshRxOptions(){
       var phone = document.getElementById('rxPhoneInput').value.trim().replace(/[^0-9]/g,'');
@@ -1446,8 +1554,12 @@ window.scrollTo(0,0);
       rx.formulaType = (f.formula_type||f.formulaType) || 'granule';
       rx.items = (f.items && f.items.length) ? f.items.map(function(it){ return {herbName:it.herbName, dosageGrams:it.dosageGrams, notes:it.notes||''}; }) : [{herbName:'',dosageGrams:'',notes:''}];
       rx.usageInstructions = (f.usage_instructions||f.usageInstructions) || '';
+      rx.doses = f.doses || 1;
+      rx.dispenseMode = f.dispenseMode || 'herb_pickup';
       document.getElementById('rxType2Select').value = rx.formulaType;
       document.getElementById('rxUsage2Input').value = rx.usageInstructions;
+      document.getElementById('rxDoses2Input').value = rx.doses;
+      renderDispense2();
       renderHerb2();
       showToast('已载入协定方「'+f.name+'」，可加减调整');
     });
@@ -1465,7 +1577,7 @@ window.scrollTo(0,0);
       var btn = this; btn.disabled = true;
       try {
         var res = await fetch(API_BASE + '/admin/prescriptions', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},
-          body: JSON.stringify({ patientName:name, patientPhone:phone, medicalRecordId:document.getElementById('rxRecSelect').value||null, bookingId:document.getElementById('rxBkSelect').value||null, formulaType:document.getElementById('rxType2Select').value, items:validItems, usageInstructions:usage }) });
+          body: JSON.stringify({ patientName:name, patientPhone:phone, medicalRecordId:document.getElementById('rxRecSelect').value||null, bookingId:document.getElementById('rxBkSelect').value||null, formulaType:document.getElementById('rxType2Select').value, items:validItems, usageInstructions:usage, doses:Number(document.getElementById('rxDoses2Input').value)||1, dispenseMode:document.getElementById('rxDispense2Input').value }) });
         if(!res.ok){
           var err = await res.json();
           warnEl.textContent = err.error || '提交失败，请重试';

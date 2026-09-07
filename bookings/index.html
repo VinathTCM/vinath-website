@@ -205,7 +205,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     if(!res.ok) return null;
     var b = await res.json();
     return { bookingNo:b.booking_no, contact:contact, status:b.status, date:(b.created_at||'').slice(0,10),
-      doctor:b.practitioner_name, apptDate:b.appt_date, slot:b.slot, area:b.area, method:'whatsapp', cancelled:b.cancelled };
+      doctor:b.practitioner_name, apptDate:b.appt_date, slot:b.slot, area:b.area, method:'whatsapp', cancelled:b.cancelled, prescription:b.prescription || null };
   }
 
   var currentContact = '';
@@ -287,6 +287,34 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     });
   }
 
+  var RX_STATUS_LABELS = { awaiting_pharmacy:'待药房接单', brewing:'煎药中', shipping:'配送中', delivered:'已送达' };
+  var RX_FLOW = ['awaiting_pharmacy','brewing','shipping','delivered'];
+  var DISPENSE_LABELS = { decoct_pickup:'代煎自取', decoct_delivery:'代煎代送', herb_delivery:'中药配送', herb_pickup:'中药自取' };
+
+  // 中药进度卡：同步药房制备/配送进度 + 运单号；无处方时不渲染
+  function renderHerbProgress(rx){
+    var label = (DISPENSE_LABELS[rx.dispenseMode] || rx.dispenseMode || '中药');
+    var idx = RX_FLOW.indexOf(rx.status || 'awaiting_pharmacy');
+    if(idx < 0) idx = 0;
+    var html = '<div class="oq-items-card herb-progress" style="margin-top:12px;">'
+      + '<div class="oq-item" style="font-weight:600;"><span>中药进度</span><span>'+label+' · '+(rx.doses||1)+' 剂</span></div>';
+    html += '<div class="stepper-wrap" style="margin-top:10px;">';
+    RX_FLOW.forEach(function(st, i){
+      var cls = i < idx ? 'done' : i === idx ? 'current' : '';
+      html += '<div class="step '+cls+'"><div class="step-line"></div><div class="step-dot">'+(i<idx?'✓':(i+1))+'</div><div class="step-label">'+RX_STATUS_LABELS[st]+'</div></div>';
+    });
+    html += '</div>';
+    if(rx.status === 'shipping' && (rx.logisticsProvider || rx.trackingId)){
+      html += '<div class="oq-item" style="margin-top:10px;"><span>配送方式</span><span>'+(rx.logisticsProvider||'')+(rx.trackingId?' · 运单号：'+rx.trackingId:'')+'</span></div>';
+    }
+    if(rx.items && rx.items.length){
+      var herbs = rx.items.filter(function(it){ return it.herbName; }).map(function(it){ return it.herbName+(it.dosageGrams?' '+it.dosageGrams+'g':''); }).join('、');
+      if(herbs) html += '<div class="oq-item"><span>药材</span><span>'+herbs+'</span></div>';
+    }
+    html += '</div>';
+    return html;
+  }
+
   function renderResult(booking){
     var html = '<div class="oq-result">'
       + '<div class="oq-result-hd"><div class="oq-order-no">预约编号 '+booking.bookingNo+'</div><div class="oq-order-date">提交日期 '+booking.date+'</div></div>';
@@ -308,6 +336,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="oq-item"><span>服务区域</span><span>'+booking.area+'</span></div>'
       + '<div class="oq-item"><span>联系方式</span><span>'+(booking.method==='call'?'电话':'WhatsApp')+'</span></div>'
       + '</div>';
+
+    if(!booking.cancelled && booking.prescription){
+      html += renderHerbProgress(booking.prescription);
+    }
 
     if(!booking.cancelled && booking.status < 2){
       html += '<div id="cancelArea"><button class="oq-cancel-btn" id="cancelBtn">取消此预约</button>'

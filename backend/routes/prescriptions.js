@@ -35,8 +35,20 @@ router.get('/admin/prescriptions', authMiddleware, requireModuleAccess('prescrip
 });
 
 router.post('/admin/prescriptions', authMiddleware, requireModuleAccess('prescriptions'), (req, res) => {
-  const { patientName, patientPhone, medicalRecordId, bookingId, formulaType, items, usageInstructions, treatments } = req.body;
+  const { patientName, patientPhone, medicalRecordId, bookingId, formulaType, items, usageInstructions, treatments, doses, dispenseMode } = req.body;
   const validItems = (items||[]).filter(it => it.herbName && it.herbName.trim() && it.dosageGrams);
+  const rxDoses = Math.max(1, Number(doses) || 1);
+  const rxDispense = dispenseMode || 'herb_pickup';
+  // 中药计价：单味药按价格库（RM/克 × 克数）；未定价的药材不计算并提示
+  const herbTotal = validItems.reduce(function(sum, it){
+    const row = db.prepare('SELECT price_per_g FROM herb_prices WHERE herb_name = ?').get(String(it.herbName).trim());
+    if(row){ it.pricePerG = row.price_per_g; return sum + (row.price_per_g || 0) * (Number(it.dosageGrams) || 0); }
+    it.pricePerG = null; return sum;
+  }, 0);
+  const pricedMissing = validItems.filter(function(it){ return it.pricePerG === null; }).map(function(it){ return it.herbName; });
+  // 代煎费 RM8/剂：只有饮片(decoction)且选了代煎（自取或代送）才收
+  const needsDecoct = formulaType === 'decoction' && (rxDispense === 'decoct_pickup' || rxDispense === 'decoct_delivery');
+  const decoctFee = needsDecoct ? 8 * rxDoses : 0;
   const validTreatments = (treatments||[]).filter(t => t && t.name && String(t.name).trim()).map(t => ({ name: String(t.name).trim(), nameEn: t.nameEn ? String(t.nameEn).trim() : '', qty: Number(t.qty) || 1, price: Number(t.price) || 0 }));
   if(!patientName || !patientPhone) return res.status(400).json({ error: '请填写患者姓名和手机号' });
   // [fixed] 只开治疗项目（价目表）不开药材也允许保存；服法改为选填
@@ -46,10 +58,12 @@ router.post('/admin/prescriptions', authMiddleware, requireModuleAccess('prescri
     const id = 'rx_' + Date.now();
     db.prepare(`
       INSERT INTO prescriptions (id, patient_name, patient_phone, medical_record_id, booking_id,
-        practitioner_id, practitioner_name, formula_type, items, usage_instructions)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        practitioner_id, practitioner_name, formula_type, items, usage_instructions,
+        doses, dispense_mode, herb_total, decoct_fee)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(id, patientName, patientPhone, medicalRecordId||null, bookingId||null,
-      req.admin.sub, req.admin.name, formulaType, JSON.stringify(validItems), usageInstructions);
+      req.admin.sub, req.admin.name, formulaType, JSON.stringify(validItems), usageInstructions,
+      rxDoses, rxDispense, Number(herbTotal.toFixed(2)), Number(decoctFee.toFixed(2)));
 
     // [stated] 关联了预约的话，把这份处方自动加进那条预约的"治疗/商品"明细——这样订单预约管理
     // 那边现有的收据打印、当日交易统计才能看到这笔。金额留0，因为具体怎么收费是医师/管理员的
@@ -59,7 +73,10 @@ router.post('/admin/prescriptions', authMiddleware, requireModuleAccess('prescri
       if(booking){
         const bookingTreatments = JSON.parse(booking.treatments || '[]');
         const herbSummary = validItems.map(it => it.herbName + ' ' + it.dosageGrams + 'g').join('、');
-        bookingTreatments.push({ name: '电子处方（' + (FORMULA_TYPE_LABELS[formulaType]||formulaType) + '）：' + herbSummary, qty: 1, price: 0 });
+        // 中药费 = 药材费 + 代煎费（写回预约明细带价格，收据/报表直接可见）
+        const herbCharge = Number((herbTotal + decoctFee).toFixed(2));
+        const dispenseText = { decoct_pickup:'代煎自取', decoct_delivery:'代煎代送', herb_delivery:'中药配送', herb_pickup:'中药自取' }[rxDispense] || rxDispense;
+        bookingTreatments.push({ name: '中药（' + (FORMULA_TYPE_LABELS[formulaType]||formulaType) + '·' + dispenseText + '）：' + herbSummary, qty: 1, price: herbCharge });
         // 病历里勾选的价目表治疗项目也一并写入预约治疗明细（带价格，收据打印直接可见）
         validTreatments.forEach(t => bookingTreatments.push({ name: t.name, qty: t.qty, price: t.price }));
         db.prepare('UPDATE bookings SET treatments = ? WHERE id = ?').run(JSON.stringify(bookingTreatments), bookingId);
@@ -70,7 +87,13 @@ router.post('/admin/prescriptions', authMiddleware, requireModuleAccess('prescri
 
   try {
     const rx = createRx();
-    res.status(201).json(serializePrescription(rx));
+    const result = serializePrescription(rx);
+    result.herbTotal = Number(herbTotal.toFixed(2));
+    result.decoctFee = decoctFee;
+    result.doses = rxDoses;
+    result.dispenseMode = rxDispense;
+    result.pricedMissing = pricedMissing;
+    res.status(201).json(result);
   } catch(e){
     console.error(e);
     res.status(500).json({ error: '提交失败，请稍后重试' });

@@ -19,7 +19,7 @@ function serializeRecord(r){
       linkedBookingId = rxRow.booking_id || null;
       let rxItems = [];
       try { rxItems = JSON.parse(rxRow.items || '[]'); } catch(e){ rxItems = []; }
-      lastRx = { formulaType: rxRow.formula_type || 'granule', items: rxItems, usageInstructions: rxRow.usage_instructions || '', bookingId: rxRow.booking_id || null };
+      lastRx = { formulaType: rxRow.formula_type || 'granule', items: rxItems, usageInstructions: rxRow.usage_instructions || '', bookingId: rxRow.booking_id || null, doses: rxRow.doses || 1, dispenseMode: rxRow.dispense_mode || 'herb_pickup', herbTotal: rxRow.herb_total || 0, decoctFee: rxRow.decoct_fee || 0 };
     }
   } catch(e){}
   return { ...r, data, linkedBookingId, lastRx };
@@ -69,19 +69,34 @@ router.get('/admin/medical-records/patients', authMiddleware, requireModuleAcces
     const visiblePhones = visiblePatientPhonesFor(req.admin.sub, Date.now());
     if(!visiblePhones.length) return res.json([]);
     const ph = visiblePhones.map(function(){ return '?'; }).join(',');
-    rows = db.prepare("SELECT patient_phone, patient_name, visit_date FROM medical_records WHERE patient_phone IN (" + ph + ") AND data NOT LIKE '%\"_deleted\":%'").all(...visiblePhones);
+    rows = db.prepare("SELECT patient_phone, patient_name, visit_date, data FROM medical_records WHERE patient_phone IN (" + ph + ") AND data NOT LIKE '%\"_deleted\":%'").all(...visiblePhones);
   } else {
-    rows = db.prepare("SELECT patient_phone, patient_name, visit_date FROM medical_records WHERE data NOT LIKE '%\"_deleted\":%'").all();
+    rows = db.prepare("SELECT patient_phone, patient_name, visit_date, data FROM medical_records WHERE data NOT LIKE '%\"_deleted\":%'").all();
+  }
+  function ageFromDob(dob){
+    if(!dob) return null;
+    const d = new Date(dob);
+    if(isNaN(d.getTime())) return null;
+    const now = new Date();
+    let age = now.getFullYear() - d.getFullYear();
+    const m = now.getMonth() - d.getMonth();
+    if(m < 0 || (m === 0 && now.getDate() < d.getDate())) age--;
+    return age >= 0 ? age : null;
   }
   const byPhone = {};
   rows.forEach(r => {
+    let d = {};
+    try { d = JSON.parse(r.data || '{}'); } catch(e){ d = {}; }
     if(!byPhone[r.patient_phone]){
-      byPhone[r.patient_phone] = { phone: r.patient_phone, name: r.patient_name, count: 0, lastVisit: r.visit_date };
+      byPhone[r.patient_phone] = { phone: r.patient_phone, name: r.patient_name, count: 0, lastVisit: r.visit_date, gender: null, dob: null, age: null };
     }
     byPhone[r.patient_phone].count++;
-    if(r.visit_date > byPhone[r.patient_phone].lastVisit){
+    if(r.visit_date >= byPhone[r.patient_phone].lastVisit){
       byPhone[r.patient_phone].lastVisit = r.visit_date;
       byPhone[r.patient_phone].name = r.patient_name;
+      byPhone[r.patient_phone].gender = d.gender || null;
+      byPhone[r.patient_phone].dob = d.dateOfBirth || null;
+      byPhone[r.patient_phone].age = ageFromDob(d.dateOfBirth);
     }
   });
   const list = Object.values(byPhone).sort((a,b) => b.lastVisit.localeCompare(a.lastVisit));

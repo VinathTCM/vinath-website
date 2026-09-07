@@ -65,7 +65,22 @@ router.get('/bookings/lookup', (req, res) => {
   if(!bookingNo || !phone) return res.status(400).json({ error: '请提供预约编号和手机号' });
   const booking = db.prepare('SELECT * FROM bookings WHERE booking_no = ? AND (SELECT phone FROM customers WHERE id = customer_id) = ?').get(bookingNo, phone);
   if(!booking) return res.status(404).json({ error: '找不到匹配的预约，请确认预约编号和手机号是否正确' });
-  res.json(serializeBooking(booking));
+  const result = serializeBooking(booking);
+  // 该预约关联的中药处方（病人端显示煎药/配送进度）
+  try {
+    const rx = db.prepare('SELECT * FROM prescriptions WHERE booking_id = ? ORDER BY created_at DESC LIMIT 1').get(booking.id);
+    if(rx){
+      let rxItems = [];
+      try { rxItems = JSON.parse(rx.items || '[]'); } catch(e){ rxItems = []; }
+      result.prescription = {
+        status: rx.status, formulaType: rx.formula_type, items: rxItems,
+        doses: rx.doses || 1, dispenseMode: rx.dispense_mode || '',
+        logisticsProvider: rx.logistics_provider || '', trackingId: rx.tracking_id || '',
+        herbTotal: rx.herb_total || 0, decoctFee: rx.decoct_fee || 0
+      };
+    }
+  } catch(e){}
+  res.json(result);
 });
 
 // [stated] 客户自己取消预约——跟客户查询走一样的身份验证方式(预约号+手机号对上才行)，

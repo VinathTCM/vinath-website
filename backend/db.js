@@ -357,6 +357,25 @@ db.exec(`
   );
 `);
 
+// 处方扩展字段 + 协定方价格 + 药材价格表 的幂等迁移：旧库缺列就补，新库直接跳过
+(function migratePrescriptionExt(){
+  const pcols = db.prepare('PRAGMA table_info(prescriptions)').all().map(c => c.name);
+  const padd = (col, ddl) => { if(!pcols.includes(col)) db.exec('ALTER TABLE prescriptions ADD COLUMN ' + ddl); };
+  padd('doses', "doses INTEGER DEFAULT 1");
+  padd('dispense_mode', "dispense_mode TEXT DEFAULT 'herb_pickup'");
+  padd('herb_total', "herb_total REAL DEFAULT 0");
+  padd('decoct_fee', "decoct_fee REAL DEFAULT 0");
+  const fcols = db.prepare('PRAGMA table_info(personal_formulas)').all().map(c => c.name);
+  if(!fcols.includes('price')) db.exec('ALTER TABLE personal_formulas ADD COLUMN price REAL DEFAULT 0');
+  db.exec(`CREATE TABLE IF NOT EXISTS herb_prices (
+    id TEXT PRIMARY KEY,
+    herb_name TEXT NOT NULL UNIQUE,
+    price_per_g REAL NOT NULL DEFAULT 0,
+    note TEXT,
+    updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+  )`);
+})();
+
 // [stated] SQLite的 CREATE TABLE IF NOT EXISTS 只在表不存在时生效——如果这台机器上已经跑过
 // 旧版本、payment_methods 表已经建好了，上面新加的 CHECK 约束（允许 'other' 类型）不会自动
 // 应用到这张已存在的旧表。SQLite 本身不支持直接修改一个已有列的 CHECK 约束，标准做法是：
