@@ -1013,7 +1013,7 @@ window.escapeHtml = function(s){
   var orderSearchQ = '', bookingSearchQ = '';
   var cachedCouponOwners = [];
 
-  async function loadOrdersAndBookingsFromBackend(){
+  async function loadOrdersAndBookingsFromBackend(silent){
     if(!authToken) return;
     try {
       var [ordersRes, bookingsRes, couponRes] = await Promise.all([
@@ -1050,7 +1050,7 @@ window.escapeHtml = function(s){
       }
     } catch(e){
       console.error('拉取订单/预约数据失败:', e);
-      showToast('暂时无法连接服务器，订单和预约数据可能不是最新的');
+      if(!silent) showToast('暂时无法连接服务器，订单和预约数据可能不是最新的');
     }
     await refreshWholesaleOrdersCache();
     buildOrderFilters(); renderOrders();
@@ -1144,6 +1144,7 @@ window.escapeHtml = function(s){
     loadOrdersAndBookingsFromBackend();
     syncJuniorAdminsFromServer();
     syncServiceAreasFromServer();
+    startAutoRefresh();
   }
 
   // 登录后从后端拉取小管理员全量账号（含接单开关/执照/地区），写入本地缓存，
@@ -4064,6 +4065,89 @@ window.escapeHtml = function(s){
     });
   }
 
+  // ---- 自动刷新（5秒静默轮询）----
+  // 让"即时预约新请求、接单状态、新预约生成"在管理员端自动出现，不用手动刷新页面。
+  // 只在自己操作后的界面之外发生数据变化时才重绘 + 弹出提示，避免打扰正在进行的操作。
+  var autoRefreshTimer = null;
+  var lastInstantSig = '';
+  var lastBookingsSig = '';
+  var lastOrdersSig = '';
+
+  function bookingStatusText(b){
+    if(b.cancelled) return '已取消';
+    if(b.status === 0) return '待确认';
+    if(b.status === 1) return '已确认';
+    if(b.status === 2) return '已完成';
+    return '状态' + b.status;
+  }
+
+  async function silentRefresh(){
+    if(!authToken) return;
+    // 1) 即时预约请求（新请求、被接单/过期 → 卡片与徽标自动更新）
+    try {
+      var irRes = await fetch(API_BASE + '/admin/instant-requests', { headers: { 'Authorization': 'Bearer ' + authToken } });
+      if(irRes.ok){
+        var irList = await irRes.json();
+        var irSig = irList.map(function(r){ return r.id + ':' + r.status + ':' + (r.matched_practitioner_id || ''); }).join('|');
+        if(irSig !== lastInstantSig){
+          var hadPrev = lastInstantSig !== '';
+          var prevCount = hadPrev ? lastInstantSig.split('|').filter(function(x){ return x; }).length : 0;
+          lastInstantSig = irSig;
+          renderInstantRequests();
+          if(hadPrev && irList.length > prevCount){
+            showToast('📩 有新的即时预约请求，请及时处理');
+            if(typeof Notification !== 'undefined' && Notification.permission === 'granted'){
+              try { new Notification('VINATH 即时预约', { body: '有新的即时预约请求，请及时处理' }); } catch(e){}
+            }
+          }
+        }
+      }
+    } catch(e){}
+    // 2) 预约 + 商品订单（接单生成新预约、状态变更、新订单 → 自动刷新）
+    try {
+      var brRes = await fetch(API_BASE + '/admin/bookings', { headers: { 'Authorization': 'Bearer ' + authToken } });
+      var orRes = await fetch(API_BASE + '/admin/orders', { headers: { 'Authorization': 'Bearer ' + authToken } });
+      var bsig = '', osig = '', bks = [], ods = [];
+      if(brRes.ok){
+        bks = await brRes.json();
+        bsig = bks.map(function(b){ return b.id + ':' + (b.status === undefined ? '' : b.status) + ':' + (b.cancelled ? 1 : 0); }).join('|');
+      }
+      if(orRes.ok){
+        ods = await orRes.json();
+        osig = ods.map(function(o){ return o.id + ':' + (o.status === undefined ? '' : o.status); }).join('|');
+      }
+      var bChanged = bsig !== lastBookingsSig;
+      var oChanged = osig !== lastOrdersSig;
+      var bHadPrev = lastBookingsSig !== '';
+      if(bChanged || oChanged){
+        if(bChanged && bHadPrev){
+          var oldCount = lastBookingsSig.split('|').filter(function(x){ return x; }).length;
+          if(bks.length > oldCount){
+            // 找出新增的预约
+            var newOnes = bks.filter(function(b){
+              return lastBookingsSig.indexOf(b.id + ':') === -1;
+            });
+            var newName = newOnes.length ? newOnes[0].customer_name : '';
+            showToast('📋 有新的预约记录' + (newName ? '（' + newName + '）' : '') + '，请查看预约管理');
+            if(typeof Notification !== 'undefined' && Notification.permission === 'granted'){
+              try { new Notification('VINATH 新预约', { body: '有新的预约记录' + (newName ? '（' + newName + '）' : '') }); } catch(e){}
+            }
+          } else {
+            showToast('📋 预约状态有更新，请查看预约管理');
+          }
+        }
+        lastBookingsSig = bsig;
+        lastOrdersSig = osig;
+        loadOrdersAndBookingsFromBackend(true);
+      }
+    } catch(e){}
+  }
+
+  function startAutoRefresh(){
+    if(autoRefreshTimer) return;
+    autoRefreshTimer = setInterval(silentRefresh, 5000);
+  }
+
   // ---- 病历管理: patient-level health record, separate from any single booking's 医师补充病史 ----
   var PATIENT_RECORDS_KEY = 'vinath_patient_records';
   function getPatientRecords(){
@@ -4396,6 +4480,7 @@ window.escapeHtml = function(s){
     if(savedToken && getCurrentAdmin()){
       authToken = savedToken;
       loadOrdersAndBookingsFromBackend();
+      startAutoRefresh();
     }
   } catch(e){}
 
