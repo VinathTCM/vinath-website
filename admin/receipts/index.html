@@ -78,6 +78,7 @@ h1{ font-family:var(--font-serif); font-size:22px; margin:0 0 4px; }
 .van-item:hover{ color:#fff; }
 .van-item.current{ color:#fff; border-bottom-color:#BC6E4E; font-weight:700; }
 </style>
+  <link rel="icon" type="image/webp" href="favicon.webp">
 </head>
 <body>
 
@@ -522,7 +523,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       + '<div style="display:flex;justify-content:space-between;font-weight:700;"><span>TOTAL</span><span>RM '+Number(rc.totalAmount).toFixed(2)+'</span></div>'
       + (hasDetail && rc.lineItems.some(function(it){ return it.price === 0; }) ? '<div style="font-size:9px;margin-top:1mm;">Herbal fee billed separately</div>' : '')
       + '<div style="border-top:1px dashed #000;margin:1.5mm 0;"></div>'
-      + '<div>Proof of service only. Questions via WhatsApp.<br>Copyright &copy; 2026 VINATH TCM HEALTH CARE.<br>All rights reserved. Malaysia</div>'
+      + '<div>Proof of service only. Questions via WhatsApp: +601145799499.<br>Copyright &copy; 2026 VINATH TCM HEALTH CARE.<br>All rights reserved. Malaysia</div>'
       + '</div></div>';
     document.getElementById('app').innerHTML = html;
 
