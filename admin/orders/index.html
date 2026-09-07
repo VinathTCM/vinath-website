@@ -2176,6 +2176,10 @@ window.escapeHtml = function(s){
   }
 
   function treatTotal(b){ return b.treatments.reduce(function(s,t){ return s+t.qty*t.price; },0); }
+  function treatName(t){
+    if(!t) return '';
+    return t.nameEn ? t.name + ' (' + t.nameEn + ')' : t.name;
+  }
 
   function renderTreatList(b){
     var list = document.getElementById('treatList');
@@ -2846,13 +2850,13 @@ window.escapeHtml = function(s){
     BOOKINGS.forEach(function(b){
       if(b.cancelled || b.apptDateISO !== dateISO) return;
       var itemsSummary = b.treatments.length
-        ? b.treatments.map(function(t){ return t.name+(t.price<0?'':' ×'+t.qty); }).join('，')
+        ? b.treatments.map(function(t){ return treatName(t)+(t.price<0?'':' ×'+t.qty); }).join('，')
         : '（未填写治疗项目）';
       records.push({typeKey:'booking', ref:b.id, name:b.name, note:itemsSummary, items:b.treatments, slot:b.slot, amount:treatTotal(b), sortKey:b.slot});
     });
     MR_RECORDS.forEach(function(m){
       if(m.visitDate !== dateISO) return;
-      var itemsSummary = m.treatments.map(function(t){ return t.name+(t.price<0?'':' ×'+t.qty); }).join('，');
+      var itemsSummary = m.treatments.map(function(t){ return treatName(t)+(t.price<0?'':' ×'+t.qty); }).join('，');
       var amt = m.treatments.reduce(function(s,t){ return s + (Number(t.qty)||1)*(Number(t.price)||0); }, 0);
       records.push({typeKey:'mr', ref:'病历·'+m.patientName, name:m.patientName, note:itemsSummary, items:m.treatments, slot:'—', amount:amt, sortKey:'m'});
     });
@@ -4441,7 +4445,7 @@ window.escapeHtml = function(s){
         var vTotal = b.treatments.reduce(function(s,t){ return s+t.qty*t.price; },0);
         treatHtml = '<div class="visit-row-treat"><div class="vrt-lbl">治疗 / 处方 / 商品</div>'
           + b.treatments.map(function(t){
-              return '<div class="vrt-item"><span>'+t.name+(t.price<0?'':' ×'+t.qty)+'</span><span>'+fmtMYR(t.qty*t.price)+'</span></div>';
+              return '<div class="vrt-item"><span>'+treatName(t)+(t.price<0?'':' ×'+t.qty)+'</span><span>'+fmtMYR(t.qty*t.price)+'</span></div>';
             }).join('')
           + '<div class="vrt-item total"><span>小计</span><span>'+fmtMYR(vTotal)+'</span></div></div>';
       }
@@ -4475,7 +4479,7 @@ window.escapeHtml = function(s){
     if(seq !== panelOpenSeq) return;
     var mrSummaryHtml = mrList.length ? mrList.map(function(r){
       var trtSummary = (Array.isArray(r.treatments) && r.treatments.length)
-        ? '<div style="font-size:12.5px;color:var(--ink-soft);margin-top:3px;">治疗项目：' + r.treatments.map(function(t){ return escapeHtml(t.name) + ' ×' + (t.qty||1); }).join('、')
+        ? '<div style="font-size:12.5px;color:var(--ink-soft);margin-top:3px;">治疗项目：' + r.treatments.map(function(t){ return escapeHtml(treatName(t)) + ' ×' + (t.qty||1); }).join('、')
           + '（' + fmtMYR(r.treatTotal) + '）</div>'
         : '';
       return '<div class="visit-row" style="background:var(--clay-soft);border:none;"><div class="visit-row-hd"><span>'+r.visitDate+'</span><span class="vdoc">'+escapeHtml(r.tcmDiagnosis)+'</span></div>'

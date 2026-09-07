@@ -37,7 +37,7 @@ router.get('/admin/prescriptions', authMiddleware, requireModuleAccess('prescrip
 router.post('/admin/prescriptions', authMiddleware, requireModuleAccess('prescriptions'), (req, res) => {
   const { patientName, patientPhone, medicalRecordId, bookingId, formulaType, items, usageInstructions, treatments } = req.body;
   const validItems = (items||[]).filter(it => it.herbName && it.herbName.trim() && it.dosageGrams);
-  const validTreatments = (treatments||[]).filter(t => t && t.name && String(t.name).trim()).map(t => ({ name: String(t.name).trim(), qty: Number(t.qty) || 1, price: Number(t.price) || 0 }));
+  const validTreatments = (treatments||[]).filter(t => t && t.name && String(t.name).trim()).map(t => ({ name: String(t.name).trim(), nameEn: t.nameEn ? String(t.nameEn).trim() : '', qty: Number(t.qty) || 1, price: Number(t.price) || 0 }));
   if(!patientName || !patientPhone) return res.status(400).json({ error: '请填写患者姓名和手机号' });
   // [fixed] 只开治疗项目（价目表）不开药材也允许保存；服法改为选填
   if(!validItems.length && !validTreatments.length) return res.status(400).json({ error: '请至少填写一味药材或一个治疗项目' });

@@ -190,6 +190,10 @@ window.scrollTo(0,0);
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
     });
   }
+  function treatName(t){
+    if(!t) return '';
+    return t.nameEn ? t.name + ' (' + t.nameEn + ')' : t.name;
+  }
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
   // === 退出登录：点击导航栏"退出登录"清除登录态并回到登录页 ===
   document.addEventListener('click', function(ev){
@@ -522,7 +526,7 @@ window.scrollTo(0,0);
         + (combineDisplay(r,'pulseType') ? '<div style="font-size:12.5px;color:var(--ink-soft);">脉象：'+escapeHtml(combineDisplay(r,'pulseType'))+'</div>' : '')
         + (combineDisplay(r,'constitutionType') ? '<div style="font-size:12.5px;color:var(--ink-soft);">体质：'+escapeHtml(combineDisplay(r,'constitutionType'))+'</div>' : '')
         + (pts ? '<div style="font-size:12.5px;color:var(--ink-soft);">穴位/部位：'+pts+'</div>' : '')
-        + (r.treatments && r.treatments.length ? '<div style="font-size:12.5px;color:var(--ink-soft);">治疗项目：'+r.treatments.map(function(t){ return escapeHtml(t.name)+' ×'+(Number(t.qty)||1)+'（RM'+((Number(t.price)||0)*(Number(t.qty)||1))+'）'; }).join('、')+'</div>' : '')
+        + (r.treatments && r.treatments.length ? '<div style="font-size:12.5px;color:var(--ink-soft);">治疗项目：'+r.treatments.map(function(t){ return escapeHtml(treatName(t))+' ×'+(Number(t.qty)||1)+'（RM'+((Number(t.price)||0)*(Number(t.qty)||1))+'）'; }).join('、')+'</div>' : '')
         + (r.photos && r.photos.length ? '<div class="timeline-photos">'+r.photos.map(function(p){ return '<img src="'+p.photoUrl+'" title="'+escapeHtml(p.photoType)+'">'; }).join('')+'</div>' : '')
         + '<div style="margin-top:8px;display:flex;gap:8px;">'
         + '<button type="button" class="btn-small btn-print-rec" data-print-rec="'+r.id+'">打印收据（A4）</button>'
@@ -538,7 +542,7 @@ window.scrollTo(0,0);
         + '<div style="font-weight:700;margin-bottom:4px;">医师：'+escapeHtml(b.doctor||'—')+'</div>'
         + (b.need ? '<div style="font-size:13px;color:var(--ink-soft);">需求：'+escapeHtml(b.need)+'</div>' : '')
         + (b.doctorNote ? '<div style="font-size:12.5px;color:var(--ink-soft);">医师记录：'+escapeHtml(b.doctorNote)+'</div>' : '')
-        + (b.treatments && b.treatments.length ? '<div style="font-size:12.5px;color:var(--ink-soft);">治疗/商品：'+b.treatments.map(function(t){ return escapeHtml(t.name); }).join('、')+'</div>' : '')
+        + (b.treatments && b.treatments.length ? '<div style="font-size:12.5px;color:var(--ink-soft);">治疗/商品：'+b.treatments.map(function(t){ return escapeHtml(treatName(t)); }).join('、')+'</div>' : '')
         + '</div>' });
     });
     prescriptions.forEach(function(rx){
@@ -607,7 +611,7 @@ window.scrollTo(0,0);
     // 历史病历再次打印收据（A4 / 58mm）——病历里保存的治疗项目+关联处方的药材
     async function printRecordReceipt(rec, size){
       var d = rec.data || rec; // merged后treatments在病历对象顶层
-      var treatments = (Array.isArray(d.treatments) ? d.treatments : []).map(function(t){ return { name: t.name, qty: Number(t.qty)||1, price: Number(t.price)||0 }; });
+      var treatments = (Array.isArray(d.treatments) ? d.treatments : []).map(function(t){ return { name: t.name, nameEn: t.nameEn||'', qty: Number(t.qty)||1, price: Number(t.price)||0 }; });
       var rxItems = [];
       if(rec.lastRx && rec.lastRx.items && rec.lastRx.items.length) rxItems = rec.lastRx.items;
       if(!treatments.length && !rxItems.length){ showToast('这份病历没有治疗项目或处方药材，无需打印'); return; }
@@ -626,7 +630,7 @@ window.scrollTo(0,0);
     // 编辑已有病历：回填处方状态（治疗项目+药材+服法+关联预约）；新建：重置
     if(r.id){
       var _d0 = r.data || r; // merged后treatments等字段在病历对象顶层
-      rxDraft.treatments = (Array.isArray(_d0.treatments) ? _d0.treatments : []).map(function(t){ return { name: t.name, qty: Number(t.qty)||1, price: Number(t.price)||0 }; });
+      rxDraft.treatments = (Array.isArray(_d0.treatments) ? _d0.treatments : []).map(function(t){ return { name: t.name, nameEn: t.nameEn||'', qty: Number(t.qty)||1, price: Number(t.price)||0 }; });
       if(r.lastRx){
         rxDraft.formulaType = r.lastRx.formulaType || 'granule';
         rxDraft.items = (r.lastRx.items && r.lastRx.items.length) ? r.lastRx.items.map(function(it){ return { herbName: it.herbName, dosageGrams: it.dosageGrams, notes: it.notes||'' }; }) : [{herbName:'',dosageGrams:'',notes:''}];
@@ -913,7 +917,7 @@ window.scrollTo(0,0);
       var html = '<option value="">从价目表选择…</option>';
       Object.keys(groups).forEach(function(cat){
         html += '<optgroup label="'+escapeHtml(cat)+'">' + groups[cat].map(function(p){
-          return '<option value="'+escapeHtml(p.name)+'" data-price="'+(Number(p.price)||0)+'">'+escapeHtml(p.name)+' — RM'+(Number(p.price)||0)+'</option>';
+          return '<option value="'+escapeHtml(p.name)+'" data-price="'+(Number(p.price)||0)+'">'+escapeHtml(p.name+(p.nameEn?' ('+p.nameEn+')':''))+' — RM'+(Number(p.price)||0)+'</option>';
         }).join('') + '</optgroup>';
       });
       sel.innerHTML = html;
@@ -924,7 +928,7 @@ window.scrollTo(0,0);
       el.innerHTML = rxDraft.treatments.length ? rxDraft.treatments.map(function(t,i){
         var subtotal = (Number(t.price)||0) * (Number(t.qty)||1);
         return '<div class="herb-item-row">'
-          + '<span style="min-width:150px;font-size:13px;font-weight:600;">'+escapeHtml(t.name)+'</span>'
+          + '<span style="min-width:150px;font-size:13px;font-weight:600;">'+escapeHtml(treatName(t))+'</span>'
           + '<input type="number" min="1" style="width:60px;" data-trt-qty="'+i+'" value="'+(Number(t.qty)||1)+'">'
           + '<span style="font-size:13px;color:var(--ink-soft);white-space:nowrap;">× RM'+(Number(t.price)||0)+' = RM'+subtotal+'</span>'
           + '<button type="button" class="remove-herb" data-trt-rm="'+i+'">×</button>'
@@ -998,7 +1002,8 @@ window.scrollTo(0,0);
     document.getElementById('rxAddTreatBtn').addEventListener('click', function(){
       var sel = document.getElementById('rxTreatSel');
       if(!sel.value){ showToast('请先选择一个价目表项目'); return; }
-      rxDraft.treatments.push({ name: sel.value, qty: 1, price: Number(sel.options[sel.selectedIndex].getAttribute('data-price')) || 0 });
+      var _pt = (PRICE_LIST||PRICE_LIST_FALLBACK).find(function(x){ return x.name===sel.value; });
+      rxDraft.treatments.push({ name: sel.value, nameEn: _pt ? (_pt.nameEn||'') : '', qty: 1, price: Number(sel.options[sel.selectedIndex].getAttribute('data-price')) || 0 });
       renderRxTreatList();
     });
     document.getElementById('rxUsageInput').addEventListener('input', function(){ rxDraft.usageInstructions = this.value; });
@@ -1210,7 +1215,7 @@ window.scrollTo(0,0);
     }
     async function openInvoicePrint(result, patientName, patientPhone, size){
       var items = [];
-      (result.treatments || []).forEach(function(t){ if(t && t.name) items.push({ name: t.name, qty: t.qty || 1, price: t.price || 0 }); });
+      (result.treatments || []).forEach(function(t){ if(t && t.name) items.push({ name: treatName(t), qty: t.qty || 1, price: t.price || 0 }); });
       if(result.rxItems && result.rxItems.length){
         var herbSummary = result.rxItems.map(function(it){ return it.herbName + ' ' + it.dosageGrams + 'g'; }).join('、');
         items.push({ name: '药材费（电子处方）：' + herbSummary, qty: 1, price: 0 });
