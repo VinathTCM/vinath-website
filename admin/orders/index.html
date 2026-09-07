@@ -712,6 +712,11 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
 
   <div id="tab-reports" style="display:none;">
     <div class="sales-toolbar">
+      <div style="font-size:13px;color:var(--ink-soft);font-weight:700;">报表范围</div>
+      <select id="reportScopeSelect" style="padding:8px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:inherit;font-size:13px;background:#fff;max-width:280px;"></select>
+      <div style="font-size:12px;color:var(--ink-soft);" id="reportScopeHint">「全部」含商城订单+居家会诊+病历治疗；选个人只统计该医师的会诊与病历治疗收入（商城订单不归属具体医师）</div>
+    </div>
+    <div class="sales-toolbar">
       <div style="font-size:13px;color:var(--ink-soft);">选择统计周期，财务报表与地区分布会一起按此范围计算</div>
       <div class="seg-toggle" id="reportPeriodToggle">
         <div class="seg-toggle-btn" data-p="7">周度</div>
@@ -2477,6 +2482,10 @@ window.escapeHtml = function(s){
   // ---- reports ----
   var reportsPeriod = 30;
   var reportsCustomRange = null; // {start,end} ISO strings when set, overrides reportsPeriod
+  var reportScopeId = null; // null = 全部；管理员id = 只看该医师的个人报表
+  var reportScopeName = '全部';
+  function bookingInScope(b){ return !reportScopeId || (b.practitionerId || null) === reportScopeId; }
+  function scopeOrders(){ return reportScopeId ? [] : ORDERS; }
   var PERIOD_LABELS = {7:'近7天', 30:'近30天', 90:'近3个月'};
   var PERIOD_LABELS_EN = {7:'Last 7 Days', 30:'Last 30 Days', 90:'Last 3 Months'};
   function inReportsRange(dateStr){
@@ -2521,9 +2530,42 @@ window.escapeHtml = function(s){
     renderRegionReport();
   });
 
+  var __reportScopeLoaded = false;
+  async function ensureReportScopeOptions(){
+    var sel = document.getElementById('reportScopeSelect');
+    if(!sel) return;
+    if(__reportScopeLoaded) return;
+    __reportScopeLoaded = true;
+    var accounts = [];
+    try {
+      var res = await fetch(API_BASE + '/auth/login-options');
+      if(res.ok) accounts = await res.json();
+    } catch(e){}
+    var opts = '<option value="">全部（所有管理员）</option>';
+    accounts.forEach(function(a){
+      var roleUp = (a.role||'').toUpperCase();
+      var roleTxt = roleUp==='SENIOR' ? '大管理员' : (roleUp==='PRACTITIONER' ? 'I类医师' : (roleUp==='FULFILLMENT' ? 'II类出货员' : 'III类客服'));
+      opts += '<option value="'+a.id+'">'+a.name+'（'+roleTxt+'）</option>';
+    });
+    sel.innerHTML = opts;
+    sel.addEventListener('change', function(){
+      if(this.value){
+        reportScopeId = this.value;
+        var opt = this.options[this.selectedIndex];
+        reportScopeName = opt ? opt.text : this.value;
+      } else {
+        reportScopeId = null;
+        reportScopeName = '全部';
+      }
+      renderFinanceReport();
+      renderRegionReport();
+    });
+  }
+
   function mrInRange(m){
     if(!(Array.isArray(m.treatments) && m.treatments.length)) return false;
     if(!inReportsRange(m.visitDate)) return false;
+    if(reportScopeId && (m.practitionerId || null) !== reportScopeId) return false;
     if(!m.linkedBookingId) return true;
     var bk = BOOKINGS.find(function(b){ return (b._backendId || b.id) === m.linkedBookingId; });
     return !(bk && Array.isArray(bk.treatments) && bk.treatments.length);
@@ -2533,12 +2575,13 @@ window.escapeHtml = function(s){
   }
   function financeRecords(){
     var records = [];
-    ORDERS.forEach(function(o){
+    scopeOrders().forEach(function(o){
       if(!inReportsRange(o.date)) return;
       records.push({date:o.date, typeKey:'order', ref:o.id, name:o.name, note:o.items.length+'件商品', noteEn:o.items.length+' item(s)', amount:orderTotal(o)});
     });
     BOOKINGS.forEach(function(b){
       if(!inReportsRange(b.date)) return;
+      if(!bookingInScope(b)) return;
       if(b.treatments.length){
         records.push({date:b.date, typeKey:'booking', ref:b.id, name:b.name, note:'居家会诊服务', noteEn:'Home-visit service', amount:treatTotal(b)});
       }
@@ -2732,17 +2775,18 @@ window.escapeHtml = function(s){
   });
 
   async function renderFinanceReport(){
+    ensureReportScopeOptions();
     await refreshDailyData();
     var records = financeRecords();
-    var periodOrders = ORDERS.filter(function(o){ return inReportsRange(o.date); });
-    var periodBookings = BOOKINGS.filter(function(b){ return inReportsRange(b.date); });
+    var periodOrders = scopeOrders().filter(function(o){ return inReportsRange(o.date); });
+    var periodBookings = BOOKINGS.filter(function(b){ return inReportsRange(b.date) && bookingInScope(b); });
     var periodMRs = MR_RECORDS.filter(mrInRange);
     var orderRevenue = periodOrders.reduce(function(s,o){ return s+orderTotal(o); }, 0);
     var bookingRevenue = periodBookings.reduce(function(s,b){ return s+treatTotal(b); }, 0);
     var mrRevenue = periodMRs.reduce(function(s,m){ return s+mrTotal(m); }, 0);
     var total = orderRevenue + bookingRevenue + mrRevenue;
 
-    document.getElementById('financePeriodLbl').textContent = reportsRangeLabel();
+    document.getElementById('financePeriodLbl').textContent = reportsRangeLabel()+' · '+reportScopeName;
     document.getElementById('financeCards').innerHTML = ''
       + '<div class="summary-card"><div class="summary-num">MYR '+orderRevenue.toFixed(2)+'</div><div class="summary-lbl">商城订单收入</div></div>'
       + '<div class="summary-card"><div class="summary-num">MYR '+bookingRevenue.toFixed(2)+'</div><div class="summary-lbl">居家会诊服务收入</div></div>'
@@ -2758,8 +2802,8 @@ window.escapeHtml = function(s){
   function printFinanceReport(lang){
     preparePrint('normal');
     var records = financeRecords();
-    var periodOrders = ORDERS.filter(function(o){ return inReportsRange(o.date); });
-    var periodBookings = BOOKINGS.filter(function(b){ return inReportsRange(b.date); });
+    var periodOrders = scopeOrders().filter(function(o){ return inReportsRange(o.date); });
+    var periodBookings = BOOKINGS.filter(function(b){ return inReportsRange(b.date) && bookingInScope(b); });
     var periodMRs = MR_RECORDS.filter(mrInRange);
     var orderRevenue = periodOrders.reduce(function(s,o){ return s+orderTotal(o); }, 0);
     var bookingRevenue = periodBookings.reduce(function(s,b){ return s+treatTotal(b); }, 0);
@@ -2772,7 +2816,7 @@ window.escapeHtml = function(s){
     var html = ''
       + exportHeader(lang, 'Financial Report', '财务报表', docNo, TODAY_ISO)
       + '<div class="receipt-meta-grid">'
-      + '<div><div class="receipt-meta-lbl">'+'Reporting Period'+'</div><div class="receipt-meta-val">'+reportsRangeLabel('en')+'</div></div>'
+      + '<div><div class="receipt-meta-lbl">'+'Reporting Period'+'</div><div class="receipt-meta-val">'+reportsRangeLabel('en')+' · '+reportScopeName+'</div></div>'
       + '<div><div class="receipt-meta-lbl">'+'Online Store Revenue'+'</div><div class="receipt-meta-val">MYR '+orderRevenue.toFixed(2)+'</div></div>'
       + '<div><div class="receipt-meta-lbl">'+'Home-Visit Service Revenue'+'</div><div class="receipt-meta-val">MYR '+bookingRevenue.toFixed(2)+'</div></div>'
       + '<div><div class="receipt-meta-lbl">'+'Record Treatment Revenue'+'</div><div class="receipt-meta-val">MYR '+mrRevenue.toFixed(2)+'</div></div>'
@@ -2830,7 +2874,8 @@ window.escapeHtml = function(s){
             visitDate: (r.visit_date || '').slice(0,10),
             patientName: r.patient_name || '',
             treatments: normArrField(d.treatments),
-            linkedBookingId: r.linkedBookingId || null
+            linkedBookingId: r.linkedBookingId || null,
+            practitionerId: r.practitioner_id || null
           };
         }).filter(function(m){
           if(!(Array.isArray(m.treatments) && m.treatments.length)) return false;
@@ -2915,12 +2960,12 @@ window.escapeHtml = function(s){
 
   function renderRegionReport(){
     var regionCounts = {};
-    ORDERS.filter(function(o){ return inReportsRange(o.date); }).forEach(function(o){
+    scopeOrders().filter(function(o){ return inReportsRange(o.date); }).forEach(function(o){
       var key = o.city;
       if(!regionCounts[key]) regionCounts[key] = {orders:0, bookings:0};
       regionCounts[key].orders++;
     });
-    BOOKINGS.filter(function(b){ return inReportsRange(b.date); }).forEach(function(b){
+    BOOKINGS.filter(function(b){ return inReportsRange(b.date) && bookingInScope(b); }).forEach(function(b){
       if(b.cancelled) return;
       var key = b.area;
       if(!regionCounts[key]) regionCounts[key] = {orders:0, bookings:0};
