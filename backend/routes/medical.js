@@ -19,7 +19,7 @@ function serializeRecord(r){
       linkedBookingId = rxRow.booking_id || null;
       let rxItems = [];
       try { rxItems = JSON.parse(rxRow.items || '[]'); } catch(e){ rxItems = []; }
-      lastRx = { formulaType: rxRow.formula_type || 'granule', items: rxItems, usageInstructions: rxRow.usage_instructions || '', bookingId: rxRow.booking_id || null, doses: rxRow.doses || 1, dispenseMode: rxRow.dispense_mode || 'herb_pickup', herbTotal: rxRow.herb_total || 0, decoctFee: rxRow.decoct_fee || 0 };
+      lastRx = { id: rxRow.id, formulaType: rxRow.formula_type || 'granule', items: rxItems, usageInstructions: rxRow.usage_instructions || '', bookingId: rxRow.booking_id || null, doses: rxRow.doses || 1, dispenseMode: rxRow.dispense_mode || 'herb_pickup', herbTotal: rxRow.herb_total || 0, decoctFee: rxRow.decoct_fee || 0 };
     }
   } catch(e){}
   return { ...r, data, linkedBookingId, lastRx };

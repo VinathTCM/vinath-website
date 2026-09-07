@@ -450,4 +450,12 @@ db.exec(`
   if(added) console.log('药材零售价初始导入完成：新增 ' + added + ' 条（已存在的价格保持不变）。');
 })();
 
+
+// [stated] 药材最低零售价 RM0.10/g：把已导入价格里低于 0.10 的（含 46 味初始导入中的低价项）
+// 统一调整为 0.10。幂等：执行一次后没有 <0.10 的记录，后续部署自动跳过；不影响用户后续手动调价。
+(function migrateHerbMinPrice(){
+  const info = db.prepare("UPDATE herb_prices SET price_per_g = 0.10 WHERE price_per_g < 0.10").run();
+  if(info.changes) console.log('已将 ' + info.changes + ' 味低于 RM0.10 的药材价格统一调整为 RM0.10/g。');
+})();
+
 module.exports = db;

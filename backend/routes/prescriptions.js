@@ -100,6 +100,36 @@ router.post('/admin/prescriptions', authMiddleware, requireModuleAccess('prescri
   }
 });
 
+router.put('/admin/prescriptions/:id', authMiddleware, requireModuleAccess('prescriptions'), (req, res) => {
+  const existing = db.prepare('SELECT * FROM prescriptions WHERE id = ?').get(req.params.id);
+  if(!existing) return res.status(404).json({ error: '处方不存在' });
+  const { formulaType, items, usageInstructions, treatments, doses, dispenseMode, medicalRecordId, bookingId } = req.body;
+  const validItems = (items||[]).filter(it => it.herbName && it.herbName.trim() && it.dosageGrams);
+  const rxDoses = Math.max(1, Number(doses) || 1);
+  const rxDispense = dispenseMode || existing.dispense_mode || 'herb_pickup';
+  // 中药计价：单味药按价格库（RM/克 × 克数）；未定价的药材不计算并提示
+  const herbTotal = validItems.reduce(function(sum, it){
+    const row = db.prepare('SELECT price_per_g FROM herb_prices WHERE herb_name = ?').get(String(it.herbName).trim());
+    if(row){ it.pricePerG = row.price_per_g; return sum + (row.price_per_g || 0) * (Number(it.dosageGrams) || 0); }
+    it.pricePerG = null; return sum;
+  }, 0);
+  const pricedMissing = validItems.filter(function(it){ return it.pricePerG === null; }).map(function(it){ return it.herbName; });
+  const needsDecoct = formulaType === 'decoction' && (rxDispense === 'decoct_pickup' || rxDispense === 'decoct_delivery');
+  const decoctFee = needsDecoct ? 8 * rxDoses : 0;
+  const validTreatments = (treatments||[]).filter(t => t && t.name && String(t.name).trim()).map(t => ({ name: String(t.name).trim(), nameEn: t.nameEn ? String(t.nameEn).trim() : '', qty: Number(t.qty) || 1, price: Number(t.price) || 0 }));
+  db.prepare('UPDATE prescriptions SET formula_type = ?, items = ?, usage_instructions = ?, doses = ?, dispense_mode = ?, herb_total = ?, decoct_fee = ?, medical_record_id = ?, booking_id = ? WHERE id = ?')
+    .run(formulaType || existing.formula_type, JSON.stringify(validItems), usageInstructions ?? existing.usage_instructions,
+      rxDoses, rxDispense, Number(herbTotal.toFixed(2)), Number(decoctFee.toFixed(2)), medicalRecordId || null, bookingId || null, req.params.id);
+  const rx = db.prepare('SELECT * FROM prescriptions WHERE id = ?').get(req.params.id);
+  const result = serializePrescription(rx);
+  result.herbTotal = Number(herbTotal.toFixed(2));
+  result.decoctFee = decoctFee;
+  result.doses = rxDoses;
+  result.dispenseMode = rxDispense;
+  result.pricedMissing = pricedMissing;
+  res.json(result);
+});
+
 router.put('/admin/prescriptions/:id/status', authMiddleware, requireModuleAccess('prescriptions'), (req, res) => {
   const { status, logisticsProvider, trackingId } = req.body;
   const existing = db.prepare('SELECT * FROM prescriptions WHERE id = ?').get(req.params.id);

@@ -1281,7 +1281,9 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
           if(rxItems.length || treatments.length){
             var rxPayload = { patientName: r.patientName, patientPhone: r.patientPhone, medicalRecordId: savedMrId || null, bookingId: rxDraft.bookingId || null, formulaType: rxDraft.formulaType, items: rxItems, usageInstructions: rxDraft.usageInstructions || '', treatments: treatments, doses: Number(rxDraft.doses) || 1, dispenseMode: rxDraft.dispenseMode || 'herb_pickup' };
             try {
-              var rxRes = await fetch(API_BASE + '/admin/prescriptions', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body: JSON.stringify(rxPayload) });
+              // [fixed] 编辑已有病历且已有处方时更新原处方，避免每次编辑保存都新建一条重复处方
+              var editRx = !!(r.id && r.lastRx && r.lastRx.id);
+              var rxRes = await fetch(editRx ? (API_BASE + '/admin/prescriptions/' + encodeURIComponent(r.lastRx.id)) : (API_BASE + '/admin/prescriptions'), { method: editRx ? 'PUT' : 'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body: JSON.stringify(rxPayload) });
               ok = true;
               showToast(rxRes.ok ? '病历与处方已保存' : '病历已保存，但处方提交失败');
               // 治疗项目写回预约：当日交易报表 / 预约记录 / 病历管理面板都能统计到
@@ -1310,12 +1312,20 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       }
     }
 
+    // [fixed] 防连点：保存进行中禁用按钮，避免用户重复点击产生重复处方/重复收据
+    var savingNow = false;
     document.getElementById('saveRecordBtn').addEventListener('click', async function(){
+      if(savingNow) return; savingNow = true;
+      var btn = this; btn.disabled = true;
       var res = await saveRecordCore();
+      savingNow = false; btn.disabled = false;
       if(res && res.ok){ view = 'timeline'; render(); }
     });
     document.getElementById('saveAndPrintBtn').addEventListener('click', async function(){
+      if(savingNow) return; savingNow = true;
+      var btn = this; btn.disabled = true;
       var result = await saveRecordCore();
+      savingNow = false; btn.disabled = false;
       if(!result || !result.ok) return;
       openInvoicePrint(result, r.patientName, r.patientPhone);
     });
