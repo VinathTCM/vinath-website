@@ -7,6 +7,33 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' })); // 付款截图是base64图片，默认1mb限制不够用
 
+// 启动时一次性数据修复：把 instant_requests 中客户最新填写的名字同步到 customers 表。
+// 解决同一手机号之前填"测试"、后来填真名，预约管理仍显示旧名字的问题。幂等，可安全重复执行。
+(function syncCustomerNames(){
+  try {
+    const db = require('./db');
+    const rows = db.prepare(`
+      SELECT ir.customer_contact AS phone, ir.customer_name AS name
+      FROM instant_requests ir
+      INNER JOIN (
+        SELECT customer_contact, MAX(created_at) AS max_created
+        FROM instant_requests
+        WHERE customer_contact IS NOT NULL AND customer_name IS NOT NULL AND TRIM(customer_name) != ''
+        GROUP BY customer_contact
+      ) latest ON ir.customer_contact = latest.customer_contact AND ir.created_at = latest.max_created
+    `).all();
+    const update = db.prepare('UPDATE customers SET name = ? WHERE phone = ? AND name != ?');
+    let fixed = 0;
+    rows.forEach(function(r){
+      const info = update.run(r.name, r.phone, r.name);
+      if(info.changes > 0) fixed++;
+    });
+    if(fixed > 0) console.log('[数据修复] 已同步 ' + fixed + ' 个客户的名字（以最新即时预约填写为准）');
+  } catch(e){
+    console.error('[数据修复] 客户名字同步失败:', e.message);
+  }
+})();
+
 // 全局限流——防止整体滥用/爬虫，留足余量不误伤正常使用（聊天轮询每4秒一次算下来15分钟约225次，
 // 一个人同时开着好几个页面、来回切换也很正常，所以给到一个明显宽松于正常用量的上限）
 app.use('/api', rateLimit({

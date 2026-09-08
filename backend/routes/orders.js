@@ -13,6 +13,7 @@ function findOrCreateCustomer(phone, name){
     customer = db.prepare('SELECT * FROM customers WHERE id = ?').get(id);
   } else if(name && customer.name !== name){
     db.prepare('UPDATE customers SET name = ? WHERE id = ?').run(name, customer.id);
+    customer.name = name;
   }
   return customer;
 }
