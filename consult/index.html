@@ -758,7 +758,12 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       if(phone && isBlacklisted(doc.id, phone)) return;
       var prof = profiles[doc.id] || {};
       var apiDoc = apiSeniors[doc.id] || {};
-      var regions = (apiDoc.regions && apiDoc.regions.length) ? apiDoc.regions : (prof.regions || []);
+      var regions;
+      if(apiDoc.regions !== undefined && apiDoc.regions !== null){
+        regions = apiDoc.regions;
+      } else {
+        regions = prof.regions || [];
+      }
       if(!regions.length || regions.indexOf(area)!==-1){
         results.push({ id:doc.id, name:doc.name, video:doc.video,
           specialtyText: prof.specialty || doc.specialties.join('、'), avatar: prof.avatar || '' });
@@ -778,6 +783,13 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   }
 
   function renderStage2(){
+    if(!__apiPractitioners){
+      var html = '<div class="hc-stage-title">选择您想预约的医师</div>'
+        + '<div class="hc-matching"><div class="hc-matching-spin"></div><div style="font-size:14.5px;">正在加载医师信息…</div></div>';
+      document.getElementById('stageArea').innerHTML = html;
+      fetchPractitionersFromApi().then(function(){ renderStage2(); });
+      return;
+    }
     var practitioners = getPractitionersForArea(form.area, form.phone);
     var html = '<div class="hc-stage-title">选择您想预约的医师</div>'
       + '<div class="hc-stage-hint">以下是「'+form.area+'」可预约的执业中医师。</div>';

@@ -1534,7 +1534,10 @@ window.escapeHtml = function(s){
     if(!isSenior && cur.type!=='junior') return;
     var juniors = getJuniorAdmins();
     var me = juniors.find(function(j){ return j.id===cur.id; });
-    if(!isSenior && (!me || !isLicenseValid(me))) return; // locked out while license is expired
+    if(!isSenior && (!me || !isLicenseValid(me))){
+      showToast(!me ? '找不到您的执业信息，请联系大管理员确认' : '执照已过期，暂时无法接单，请联系总部更新执照');
+      return;
+    }
     var next = isSenior ? !cur.acceptingOrders : !me.acceptingOrders;
     var btn = this;
     btn.disabled = true;
