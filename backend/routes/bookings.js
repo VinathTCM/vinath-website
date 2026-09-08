@@ -12,6 +12,10 @@ function findOrCreateCustomer(phone, name){
     const id = 'cust_' + Date.now();
     db.prepare('INSERT INTO customers (id, phone, name) VALUES (?, ?, ?)').run(id, phone, name);
     customer = db.prepare('SELECT * FROM customers WHERE id = ?').get(id);
+  } else if(name && customer.name !== name){
+    // 同一手机号再次预约时名字可能更新（如之前填测试、这次填真名），以最新填写为准
+    db.prepare('UPDATE customers SET name = ? WHERE id = ?').run(name, customer.id);
+    customer.name = name;
   }
   return customer;
 }
