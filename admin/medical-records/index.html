@@ -123,7 +123,7 @@ h1{ font-family:var(--font-serif); font-size:22px; margin:0 0 4px; }
 
 </style>
   <link rel="icon" type="image/webp" href="../favicon.webp">
-</head>
+<script src="/_local_api.js"></script></head>
 <body>
 
 <div class="vinath-admin-nav" id="vinathAdminNav"></div>
@@ -751,7 +751,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       var rxItems = [];
       if(rec.lastRx && rec.lastRx.items && rec.lastRx.items.length) rxItems = rec.lastRx.items;
       if(!treatments.length && !rxItems.length){ showToast('这份病历没有治疗项目或处方药材，无需打印'); return; }
-      await openInvoicePrint({ treatments: treatments, rxItems: rxItems }, patientName || (rec.patientName||''), activePatientPhone, size);
+      await openInvoicePrint({ treatments: treatments, rxItems: rxItems, doses: (rec.lastRx && rec.lastRx.doses) || 1, dispenseMode: (rec.lastRx && rec.lastRx.dispenseMode) || 'herb_pickup' }, patientName || (rec.patientName||''), activePatientPhone, size);
     }
   }
 
@@ -1151,19 +1151,68 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
           }
         }).catch(function(){});
     }
+    var HERB_PY_LIST = [{n:"三七",py:"sanqi",ini:"sq"},{n:"丙草",py:"bingcao",ini:"bc"},{n:"丹参",py:"danshen",ini:"ds"},{n:"五灵脂",py:"wulingzhi",ini:"wlz"},{n:"党参",py:"dangshen",ini:"ds"},{n:"半夏",py:"banxia",ini:"bx"},{n:"南沙参",py:"nanshashen",ini:"nss"},{n:"吴茱萸",py:"wuzhuyu",ini:"wzy"},{n:"姜半夏",py:"jiangbanxia",ini:"jbx"},{n:"山栀子",py:"shanzhizi",ini:"szz"},{n:"山茱萸",py:"shanzhuyu",ini:"szy"},{n:"山药",py:"shanyao",ini:"sy"},{n:"山萸肉",py:"shanyurou",ini:"syr"},{n:"川断",py:"chuanduan",ini:"cd"},{n:"川木通",py:"chuanmutong",ini:"cmt"},{n:"川芎",py:"chuanqiong",ini:"cq"},{n:"当归",py:"danggui",ini:"dg"},{n:"木通",py:"mutong",ini:"mt"},{n:"木香",py:"muxiang",ini:"mx"},{n:"杜仲",py:"duzhong",ini:"dz"},{n:"杞子",py:"qizi",ini:"qz"},{n:"枸杞子",py:"gouqizi",ini:"gqz"},{n:"柴胡",py:"chaihu",ini:"ch"},{n:"栀子",py:"zhizi",ini:"zz"},{n:"桂枝",py:"guizhi",ini:"gz"},{n:"桃仁",py:"taoren",ini:"tr"},{n:"桔梗",py:"jiegeng",ini:"jg"},{n:"法半夏",py:"fabanxia",ini:"fbx"},{n:"泽泻",py:"zexie",ini:"zx"},{n:"浮小麦",py:"fuxiaomai",ini:"fxm"},{n:"淮小麦",py:"huaixiaomai",ini:"hxm"},{n:"淮牛七",py:"huainiuqi",ini:"hnq"},{n:"炒白术",py:"chaobaizhu",ini:"cbz"},{n:"炒苍术",py:"chaocangzhu",ini:"ccz"},{n:"炙甘草",py:"zhigancao",ini:"zgc"},{n:"炮姜",py:"paojiang",ini:"pj"},{n:"熟地",py:"shudi",ini:"sd"},{n:"熟地黄",py:"shudihuang",ini:"sdh"},{n:"牛膝",py:"niuxi",ini:"nx"},{n:"牡丹皮",py:"mudanpi",ini:"mdp"},{n:"珍珠母",py:"zhenzhumu",ini:"zzm"},{n:"生地",py:"shengdi",ini:"sd"},{n:"生地黄",py:"shengdihuang",ini:"sdh"},{n:"生甘草",py:"shenggancao",ini:"sgc"},{n:"生白芍",py:"shengbaishao",ini:"sbs"},{n:"生蒲黄",py:"shengpuhuang",ini:"sph"},{n:"生黄芪",py:"shenghuangqi",ini:"shq"},{n:"田七",py:"tianqi",ini:"tq"},{n:"白术",py:"baizhu",ini:"bz"},{n:"白芍",py:"baishao",ini:"bs"},{n:"续断",py:"xuduan",ini:"xd"},{n:"芡实",py:"qianshi",ini:"qs"},{n:"苍术",py:"cangzhu",ini:"cz"},{n:"茨实",py:"cishi",ini:"cs"},{n:"茯苓",py:"fuling",ini:"fl"},{n:"莲子",py:"lianzi",ini:"lz"},{n:"薄荷",py:"bohe",ini:"bh"},{n:"车前子",py:"cheqianzi",ini:"cqz"},{n:"远志",py:"yuanzhi",ini:"yz"},{n:"酸枣仁",py:"suanzaoren",ini:"szr"},{n:"陈皮",py:"chenpi",ini:"cp"},{n:"麦冬",py:"maidong",ini:"md"},{n:"黄芩",py:"huangqin",ini:"hq"},{n:"黄芪",py:"huangqi",ini:"hq"},{n:"黑姜炭",py:"heijiangtan",ini:"hjt"}];
+    var HERB_PY_MAP = {};
+    HERB_PY_LIST.forEach(function(e){ HERB_PY_MAP[e.n] = { py:e.py, ini:e.ini }; });
+    var herbNamesCache = null;
+    async function ensureHerbNames(){
+      if(herbNamesCache) return herbNamesCache;
+      await ensureHerbPrices();
+      herbNamesCache = Object.keys(HERB_PRICE_MAP);
+      return herbNamesCache;
+    }
+    function renderRhxSuggest(inp, sug, q){
+      q = (q||'').trim().toLowerCase();
+      if(!q){ sug.style.display='none'; return; }
+      var names = Object.keys(HERB_PRICE_MAP || {});
+      if(!names.length){ sug.style.display='none'; return; }
+      var hits = [];
+      for(var i=0;i<names.length && hits.length<10;i++){
+        var n = names[i];
+        if(n.toLowerCase().indexOf(q) >= 0){ hits.push(n); continue; }
+        var py = HERB_PY_MAP[n];
+        if(py && (py.py.indexOf(q) >= 0 || py.ini.indexOf(q) >= 0)){ hits.push(n); }
+      }
+      if(!hits.length){ sug.style.display='none'; return; }
+      sug.innerHTML = hits.map(function(h){ return '<div data-rhs-pick="'+h.replace(/"/g,'&quot;')+'" style="padding:7px 10px;cursor:pointer;font-size:13px;border-bottom:1px solid #f0f0f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+h+'</div>'; }).join('');
+      sug.style.display='block';
+      sug.querySelectorAll('[data-rhs-pick]').forEach(function(opt){
+        opt.addEventListener('mousedown', function(ev){ ev.preventDefault(); var v=this.getAttribute('data-rhs-pick'); inp.value=v; rxDraft.items[Number(inp.getAttribute('data-rxh-name'))].herbName=v; sug.style.display='none'; });
+      });
+    }
+    function wireRxHerbAutocomplete(){
+      document.querySelectorAll('[data-rxh-name]').forEach(function(inp){
+        var sug = inp.parentNode.querySelector('.rhx-s');
+        if(!sug) return;
+        inp.addEventListener('input', async function(){
+          rxDraft.items[Number(this.getAttribute('data-rxh-name'))].herbName = this.value;
+          await ensureHerbNames();
+          renderRhxSuggest(this, sug, this.value);
+        });
+        inp.addEventListener('focus', async function(){
+          await ensureHerbNames();
+          renderRhxSuggest(this, sug, this.value);
+        });
+        inp.addEventListener('blur', function(){ setTimeout(function(){ sug.style.display='none'; }, 160); });
+      });
+    }
     var formulaLib = [];
     function renderRxHerbList(){
       var el = document.getElementById('rxHerbList');
       if(!el) return;
       el.innerHTML = rxDraft.items.map(function(it, i){
         return '<div class="herb-item-row">'
-          + '<input type="text" placeholder="药材名称" data-rxh-name="'+i+'" value="'+escapeHtml(it.herbName)+'">'
+          + '<div style="position:relative;min-width:0;">'
+          + '<input type="text" placeholder="药材名称（支持拼音/单字联想）" data-rxh-name="'+i+'" value="'+escapeHtml(it.herbName)+'" style="width:100%;box-sizing:border-box;">'
+          + '<div class="rhx-s" data-rhs="'+i+'" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #ddd;border-radius:8px;max-height:180px;overflow:auto;z-index:60;box-shadow:0 6px 18px rgba(0,0,0,.12);"></div>'
+          + '</div>'
           + '<input type="text" placeholder="剂量(g)" data-rxh-dose="'+i+'" value="'+it.dosageGrams+'">'
           + '<input type="text" placeholder="煎法备注（选填）" data-rxh-notes="'+i+'" value="'+it.notes+'">'
           + '<button type="button" class="remove-herb" data-rxh-rm="'+i+'">×</button>'
           + '</div>';
       }).join('');
       document.querySelectorAll('[data-rxh-name]').forEach(function(inp){ inp.addEventListener('input', function(){ rxDraft.items[Number(this.getAttribute('data-rxh-name'))].herbName = this.value; }); });
+      wireRxHerbAutocomplete();
       document.querySelectorAll('[data-rxh-dose]').forEach(function(inp){ inp.addEventListener('input', function(){ rxDraft.items[Number(this.getAttribute('data-rxh-dose'))].dosageGrams = this.value; }); });
       document.querySelectorAll('[data-rxh-notes]').forEach(function(inp){ inp.addEventListener('input', function(){ rxDraft.items[Number(this.getAttribute('data-rxh-notes'))].notes = this.value; }); });
       document.querySelectorAll('[data-rxh-rm]').forEach(function(btn){ btn.addEventListener('click', function(){ if(rxDraft.items.length<=1) return; rxDraft.items.splice(Number(this.getAttribute('data-rxh-rm')),1); renderRxHerbList(); }); });
@@ -1489,9 +1538,11 @@ function fillPrintArea(receipt, size){
         var herbSummary = result.rxItems.map(function(it){ return it.herbName + ' ' + it.dosageGrams + 'g'; }).join('、');
         var isDecoct = (result.dispenseMode === 'decoct_pickup' || result.dispenseMode === 'decoct_delivery');
         var herbAmount = 0;
-        (result.rxItems || []).forEach(function(it){ var ppg = hpm[it.herbName] || 0; if(ppg > 0) herbAmount += ppg * (Number(it.dosageGrams) || 0); });
+        var herbDoses = Number(result.doses) || 1;
+        (result.rxItems || []).forEach(function(it){ var ppg = hpm[it.herbName] || 0; if(ppg > 0) herbAmount += ppg * (Number(it.dosageGrams) || 0) * herbDoses; });
         herbAmount = Math.round(herbAmount * 100) / 100;
-        items.push({ name: '中药费（电子处方' + (isDecoct ? '·代煎' : '') + '）：' + herbSummary, qty: 1, price: herbAmount });
+        var herbPerDose = Math.round((herbAmount / herbDoses) * 100) / 100;
+        items.push({ name: '中药费（电子处方' + (isDecoct ? '·代煎' : '') + '）：' + herbSummary, qty: herbDoses, price: herbPerDose });
         if(isDecoct){
           var doses = Number(result.doses) || 1;
           items.push({ name: 'Decoction Fee', qty: doses, price: 8 });
