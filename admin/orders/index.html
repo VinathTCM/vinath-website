@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
+<head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VINATH · 订单与预约管理</title>
 <style>
@@ -1498,14 +1497,15 @@ window.escapeHtml = function(s){
   function renderAcceptingToggle(){
     var cur = getCurrentAdmin();
     var card = document.getElementById('acceptingToggleCard');
-    if(!cur || cur.type!=='junior' || cur.adminType!=='practitioner'){
+    var isSenior = !!(cur && cur.type==='senior');
+    if(!cur || (!isSenior && (cur.type!=='junior' || cur.adminType!=='practitioner'))){
       card.style.display = 'none';
       return;
     }
     card.style.display = 'flex';
     var juniors = getJuniorAdmins();
     var me = juniors.find(function(j){ return j.id===cur.id; });
-    var licenseOk = me && isLicenseValid(me);
+    var licenseOk = isSenior || (me && isLicenseValid(me));
     var toggleEl = document.getElementById('acceptingToggle');
     if(!licenseOk){
       if(me && me.acceptingOrders){ me.acceptingOrders = false; saveJuniorAdmins(juniors); } // force off, persist it
@@ -1517,19 +1517,25 @@ window.escapeHtml = function(s){
       return;
     }
     toggleEl.classList.remove('locked');
-    var on = !!(me && me.acceptingOrders);
+    var on = isSenior ? !!(cur.acceptingOrders) : !!(me && me.acceptingOrders);
     toggleEl.classList.toggle('on', on);
-    document.getElementById('acceptingToggleHint').textContent = on
-      ? '目前开放接单——'+cur.regions.join('、')+' 地区的"立即预约"客户请求会自动匹配给您。'
-      : '目前未开放接单——'+cur.regions.join('、')+' 地区的"立即预约"客户请求会派给同地区其他开放接单的I类管理员（都没人开的话，由总部处理）。';
+    document.getElementById('acceptingToggleHint').textContent = isSenior
+      ? (on
+          ? '目前开放接单——您负责的 '+((cur.regions||[]).join('、')||'服务')+' 地区的"立即预约"客户请求会自动匹配给您。'
+          : '目前未开放接单——"立即预约"客户请求会派给该地区开放接单的执业医师；都没人开的话，由您（大管理员）在后台兜底尽快联系顾客。')
+      : (on
+          ? '目前开放接单——'+cur.regions.join('、')+' 地区的"立即预约"客户请求会自动匹配给您。'
+          : '目前未开放接单——'+cur.regions.join('、')+' 地区的"立即预约"客户请求会派给同地区其他开放接单的I类管理员（都没人开的话，由总部处理）。');
   }
   document.getElementById('acceptingToggle').addEventListener('click', async function(){
     var cur = getCurrentAdmin();
-    if(!cur || cur.type!=='junior') return;
+    if(!cur) return;
+    var isSenior = cur.type==='senior';
+    if(!isSenior && cur.type!=='junior') return;
     var juniors = getJuniorAdmins();
     var me = juniors.find(function(j){ return j.id===cur.id; });
-    if(!me || !isLicenseValid(me)) return; // locked out while license is expired
-    var next = !me.acceptingOrders;
+    if(!isSenior && (!me || !isLicenseValid(me))) return; // locked out while license is expired
+    var next = isSenior ? !cur.acceptingOrders : !me.acceptingOrders;
     var btn = this;
     btn.disabled = true;
     try {
@@ -1538,8 +1544,8 @@ window.escapeHtml = function(s){
         body: JSON.stringify({ accepting: next })
       });
       if(!res.ok){ var err = await res.json(); showToast(err.error || '操作失败'); btn.disabled = false; return; }
-      me.acceptingOrders = next;
-      saveJuniorAdmins(juniors);
+      if(isSenior){ cur.acceptingOrders = next; setCurrentAdmin(cur); }
+      else { me.acceptingOrders = next; saveJuniorAdmins(juniors); }
       renderAcceptingToggle();
       showToast(next ? '已开放接单' : '已关闭接单');
     } catch(e){ showToast('连不上服务器，请检查网络后重试'); }
@@ -4223,8 +4229,12 @@ window.escapeHtml = function(s){
     document.getElementById('instantReqList').innerHTML = pending.map(function(r){
       var remainMin = Math.max(0, Math.ceil(r.remainMs/60000));
       return '<div class="instant-req-row"><div class="instant-req-info"><b>'+escapeHtml(r.customer_name)+'</b> · '+r.area
-        + '<div class="meta">'+(r.need||'')+' · '+(r.created_at||'').slice(11,16)+(r.matched_practitioner_id?' · 已自动匹配':' · 该地区暂无对应小管理员，由大管理员处理')
-        + ' · <span style="color:#B0503A;font-weight:600;">剩余 '+remainMin+' 分钟需回应</span></div></div>'
+        + '<div class="meta">'+(r.need||'')+' · '+(r.created_at||'').slice(11,16)
+        + (r.status==='unmatched' ? ' · 未匹配成功，由大管理员尽快联系顾客'
+           : r.status==='expired' ? ' · 医师未及时回应，由大管理员跟进'
+           : r.status==='declined' ? ' · 医师暂无法接单，由大管理员跟进'
+           : ' · 已自动匹配')
+        + (r.status==='pending_confirmation' ? ' · <span style="color:#B0503A;font-weight:600;">剩余 '+remainMin+' 分钟需回应</span>' : '') + '</div></div>'
         + '<div style="display:flex;gap:8px;flex:none;">'
         + '<button type="button" class="instant-req-decline" data-rid="'+r.id+'">不接单</button>'
         + '<button type="button" class="instant-req-accept" data-rid="'+r.id+'">接单</button>'
@@ -4689,18 +4699,24 @@ window.escapeHtml = function(s){
     t.addEventListener('click', function(){ switchTab(this.getAttribute('data-tab')); });
   });
 
+  // 刷新页面时，vinath_current_admin 还在（所以界面看起来"已登录"），但 authToken 只是个
+  // 内存变量，刷新就没了——先从 sessionStorage 里恢复，再执行下面的渲染，避免带空 token
+  // 调接口触发 401 而误跳回登录页（原来在渲染之后恢复，刷新后台会闪"登录已过期"）
+  try {
+    var savedToken = sessionStorage.getItem('vinath_auth_token');
+    if(savedToken && getCurrentAdmin()){
+      authToken = savedToken;
+    }
+  } catch(e){}
+
   renderTodayTasks();
   renderSummary();
   buildOrderFilters(); renderOrders();
   buildBookingFilters(); renderBookings();
   renderLoginOverlay();
 
-  // 刷新页面时，vinath_current_admin 还在（所以界面看起来"已登录"），但 authToken 只是个
-  // 内存变量，刷新就没了——从 sessionStorage 里恢复，不然界面显示登录了、实际调接口全部失败
   try {
-    var savedToken = sessionStorage.getItem('vinath_auth_token');
-    if(savedToken && getCurrentAdmin()){
-      authToken = savedToken;
+    if(authToken && getCurrentAdmin()){
       loadOrdersAndBookingsFromBackend();
       startAutoRefresh();
     }

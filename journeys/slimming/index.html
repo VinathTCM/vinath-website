@@ -640,6 +640,27 @@ body{
     return '60138092888'; // fallback if 内容管理's 基本信息 tab has never been opened yet
   }
   var WHATSAPP_NUMBER = getWhatsappNumber();
+  // [fix] journeys 页面原来只从 localStorage 读 WhatsApp，读不到就回退旧号 60138092888；
+  // 这里从后端 /site-settings/business_info 拉取后台内容管理里设置的正确号码，
+  // 同时更新 localStorage 缓存和页面上已生成的 wa.me 链接，后续动态生成的链接也用新号码。
+  (function(){
+    var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+    fetch(API_BASE + '/site-settings/business_info').then(function(res){ return res.ok ? res.json() : null; }).then(function(info){
+      if(info && info.whatsapp){
+        WHATSAPP_NUMBER = info.whatsapp;
+        try {
+          var raw = localStorage.getItem('vinath_business_info');
+          var obj = raw ? JSON.parse(raw) : {};
+          obj.whatsapp = info.whatsapp;
+          localStorage.setItem('vinath_business_info', JSON.stringify(obj));
+        } catch(e){}
+        document.querySelectorAll('a[href*="wa.me/"]').forEach(function(a){
+          a.href = a.href.replace(/wa\.me\/\d+/, 'wa.me/' + info.whatsapp);
+        });
+      }
+    }).catch(function(){});
+  })();
+
   function updateWaLink(condIdx){
     var link = document.getElementById('waLink-'+condIdx);
     if(!link) return;

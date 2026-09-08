@@ -23,7 +23,7 @@ function isBlacklisted(practitionerId, phone){
 function findPractitionerForArea(area, phone){
   var todayISO = new Date().toISOString().slice(0,10);
   var rows = db.prepare(`
-    SELECT * FROM admins WHERE role = 'PRACTITIONER' AND accepting_orders = 1
+    SELECT * FROM admins WHERE role IN ('SENIOR','PRACTITIONER') AND accepting_orders = 1
       AND (license_expiry IS NULL OR license_expiry >= ?)
   `).all(todayISO);
   var candidate = rows.find(function(a){
@@ -95,7 +95,7 @@ router.get('/admin/instant-requests', authMiddleware, requireRole('SENIOR', 'PRA
   expireStaleRequests();
   let rows;
   if(req.admin.role === 'SENIOR'){
-    rows = db.prepare(`SELECT * FROM instant_requests WHERE status IN ('pending_confirmation','unmatched') ORDER BY created_at DESC`).all();
+    rows = db.prepare(`SELECT * FROM instant_requests WHERE status IN ('pending_confirmation','unmatched','expired','declined') ORDER BY created_at DESC`).all();
   } else {
     rows = db.prepare(`SELECT * FROM instant_requests WHERE status = 'pending_confirmation' AND matched_practitioner_id = ? ORDER BY created_at DESC`).all(req.admin.sub);
   }
@@ -108,7 +108,7 @@ router.put('/admin/instant-requests/:id/respond', authMiddleware, requireRole('S
   if(!row) return res.status(404).json({ error: '找不到这个请求' });
   // unmatched = 该地区当时没有开放接单的小管理员，系统留给大管理员兜底接手；
   // 大管理员可以接 unmatched 请求（转成 accepted 并生成预约），小管理员只能接匹配给自己的
-  const seniorCanAdopt = (req.admin.role === 'SENIOR' && row.status === 'unmatched');
+  const seniorCanAdopt = (req.admin.role === 'SENIOR' && ['unmatched','expired','declined'].indexOf(row.status) !== -1);
   if(row.status !== 'pending_confirmation' && !seniorCanAdopt){
     return res.status(409).json({ error: '这个请求已经处理过了' });
   }
@@ -126,7 +126,8 @@ router.put('/admin/instant-requests/:id/respond', authMiddleware, requireRole('S
   let bookingId = null;
   if(accept){
     const customer = findOrCreateCustomer(row.customer_contact, row.customer_name);
-    const p = row.matched_practitioner_id
+    const assignId = seniorCanAdopt ? req.admin.sub : (row.matched_practitioner_id || req.admin.sub);
+    const p = (!seniorCanAdopt && row.matched_practitioner_id)
       ? db.prepare('SELECT name FROM admins WHERE id = ?').get(row.matched_practitioner_id)
       : null;
     // 即时预约=尽快服务，默认落到当天（马来西亚 UTC+8），这样小管理员在 24h 可见窗口内
@@ -139,7 +140,7 @@ router.put('/admin/instant-requests/:id/respond', authMiddleware, requireRole('S
         appt_date, appt_date_iso, slot, need, consent_given_at, status)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
     `).run(bookingId, genBookingNo(), customer.id,
-      row.matched_practitioner_id || req.admin.sub,
+      assignId,
       (p && p.name) || req.admin.name,
       row.area,
       row.area + '（即时预约，地址待确认）',
