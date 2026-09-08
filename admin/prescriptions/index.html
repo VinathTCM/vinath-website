@@ -275,6 +275,7 @@ window.scrollTo(0,0);
       + '<div style="background:#fff;border-radius:14px;max-width:760px;width:94%;max-height:84vh;overflow:auto;padding:20px;box-sizing:border-box;">'
       + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h2 style="margin:0;font-size:17px;">中药价格库（RM/克）</h2><button type="button" class="btn-small" id="hpClose">关闭</button></div>'
       + '<div style="font-size:12.5px;color:#6b7280;margin-bottom:12px;">在这里保存单味中药每克的价格，开方时会按「价格 × 克数」自动算出药材费。改完所有行后点一次「保存全部修改」，不要一行一行保存。只有大管理员能改。</div>'
+      + '<input type="text" id="hpSearch" placeholder="搜索药材名称…" style="width:100%;padding:8px 10px;border:1.5px solid #ddd;border-radius:8px;margin-bottom:10px;font-size:13px;box-sizing:border-box;">'
       + '<div id="hpList">' + (rows.length ? rows.map(function(r){
           return '<div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">'
             + '<input type="text" class="hp-name" value="'+escapeHtml(r.herb_name)+'" style="flex:1 1 140px;min-width:120px;">'
@@ -291,6 +292,15 @@ window.scrollTo(0,0);
       + '</div></div>';
     document.body.appendChild(ov);
     document.getElementById('hpClose').addEventListener('click', function(){ ov.remove(); });
+    function filterHpRows(){
+      var q = (ov.querySelector('#hpSearch').value || '').trim().toLowerCase();
+      var rowsEls = ov.querySelectorAll('#hpList > div');
+      rowsEls.forEach(function(row){
+        var nm = (row.querySelector('.hp-name').value || '').toLowerCase();
+        row.style.display = (!q || nm.indexOf(q) >= 0) ? '' : 'none';
+      });
+    }
+    ov.querySelector('#hpSearch').addEventListener('input', filterHpRows);
     function addRow(name, price, note){
       var el = document.createElement('div');
       el.style.cssText = 'display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;';
@@ -301,7 +311,14 @@ window.scrollTo(0,0);
         + '<button type="button" class="btn-small hp-del" style="color:#c0392b;border-color:#c0392b;">删除</button>';
       document.getElementById('hpList').appendChild(el);
     }
-    document.getElementById('hpAdd').addEventListener('click', function(){ addRow('', '', ''); });
+    document.getElementById('hpAdd').addEventListener('click', function(){
+      var sq = ov.querySelector('#hpSearch');
+      if(sq) sq.value = '';
+      filterHpRows();
+      addRow('', '', '');
+      var list = ov.querySelector('#hpList');
+      if(list && list.lastElementChild) list.lastElementChild.scrollIntoView({ block: 'nearest' });
+    });
     ov.addEventListener('click', async function(ev){
       var t = ev.target;
       if(!t || !t.closest) return;
