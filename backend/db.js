@@ -365,6 +365,7 @@ db.exec(`
   padd('dispense_mode', "dispense_mode TEXT DEFAULT 'herb_pickup'");
   padd('herb_total', "herb_total REAL DEFAULT 0");
   padd('decoct_fee', "decoct_fee REAL DEFAULT 0");
+  padd('decoct_doses', "decoct_doses INTEGER DEFAULT 0");
   const fcols = db.prepare('PRAGMA table_info(personal_formulas)').all().map(c => c.name);
   if(!fcols.includes('price')) db.exec('ALTER TABLE personal_formulas ADD COLUMN price REAL DEFAULT 0');
   db.exec(`CREATE TABLE IF NOT EXISTS herb_prices (

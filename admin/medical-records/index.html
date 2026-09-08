@@ -716,6 +716,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
         editingRx.usageInstructions = lastRec.lastRx.usageInstructions || '';
         editingRx.bookingId = lastRec.lastRx.bookingId || null;
         editingRx.medicalRecordId = lastRec.id;
+        editingRx.decoctDoses = lastRec.lastRx.decoctDoses || lastRec.lastRx.doses || 1;
       }
       view = 'rx';
       render();
@@ -751,7 +752,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       var rxItems = [];
       if(rec.lastRx && rec.lastRx.items && rec.lastRx.items.length) rxItems = rec.lastRx.items;
       if(!treatments.length && !rxItems.length){ showToast('这份病历没有治疗项目或处方药材，无需打印'); return; }
-      await openInvoicePrint({ treatments: treatments, rxItems: rxItems, doses: (rec.lastRx && rec.lastRx.doses) || 1, dispenseMode: (rec.lastRx && rec.lastRx.dispenseMode) || 'herb_pickup' }, patientName || (rec.patientName||''), activePatientPhone, size);
+      await openInvoicePrint({ treatments: treatments, rxItems: rxItems, doses: (rec.lastRx && rec.lastRx.doses) || 1, decoctDoses: (rec.lastRx && rec.lastRx.decoctDoses) || (rec.lastRx && rec.lastRx.doses) || 1, dispenseMode: (rec.lastRx && rec.lastRx.dispenseMode) || 'herb_pickup' }, patientName || (rec.patientName||''), activePatientPhone, size);
     }
   }
 
@@ -774,17 +775,21 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
         rxDraft.bookingId = r.lastRx.bookingId || null;
         rxDraft.doses = r.lastRx.doses || 1;
         rxDraft.dispenseMode = r.lastRx.dispenseMode || 'herb_pickup';
+        rxDraft.decoctDoses = r.lastRx.decoctDoses || r.lastRx.doses || 1;
+        rxDraft._decoctFollow = !(r.lastRx.decoctDoses > 0);
       } else {
         rxDraft.items = [{herbName:'',dosageGrams:'',notes:''}];
         rxDraft.usageInstructions = '';
         rxDraft.bookingId = null;
         rxDraft.doses = 1;
         rxDraft.dispenseMode = 'herb_pickup';
+        rxDraft.decoctDoses = 1;
+        rxDraft._decoctFollow = true;
       }
       var _hasHerb = rxDraft.items.some(function(it){ return it.herbName && String(it.herbName).trim() && it.dosageGrams; });
       rxDraft.enabled = rxDraft.treatments.length > 0 || _hasHerb;
     } else {
-      rxDraft = { enabled:false, formulaType:'granule', items:[{herbName:'',dosageGrams:'',notes:''}], usageInstructions:'', treatments:[], bookingId:null, doses:1, dispenseMode:'herb_pickup' };
+      rxDraft = { enabled:false, formulaType:'granule', items:[{herbName:'',dosageGrams:'',notes:''}], usageInstructions:'', treatments:[], bookingId:null, doses:1, dispenseMode:'herb_pickup', decoctDoses:1, _decoctFollow:true };
     }
     r.tongueShape = r.tongueShape || [];
     r.pulseType = r.pulseType || [];
@@ -870,9 +875,10 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       + '<div class="field"><label>关联预约（可选——治疗项目会写入该预约的收据明细，打印单子更快）</label><select id="rxBkSelectMR"><option value="">不关联预约</option></select></div>'
       + '<div class="field"><label>配方类型</label><select id="rxTypeSelect"><option value="granule">颗粒剂</option><option value="decoction">饮片</option><option value="custom">配方</option></select></div>'
       + '<div class="two-col">'
-      + '<div class="field"><label>剂数（几剂）</label><input type="number" id="rxDosesMRInput" min="1" value="'+(Number(rxDraft.doses)||1)+'"></div>'
+      + '<div class="field"><label>中药剂数（总剂数）</label><input type="number" id="rxDosesMRInput" min="1" value="'+(Number(rxDraft.doses)||1)+'"></div>'
       + '<div class="field"><label>取药/加工方式</label><select id="rxDispenseMRInput"></select></div>'
       + '</div>'
+      + '<div class="field" id="decoctDosesField" style="display:none;"><label>代煎剂数（默认同总剂数，只需代煎部分时可改小；不需要代煎请选「中药自取/中药配送」）</label><input type="number" id="rxDecoctDosesMRInput" min="0" value="'+(Number(rxDraft.decoctDoses)||Number(rxDraft.doses)||1)+'"></div>'
       + '<div id="decoctHintMR" style="font-size:12.5px;color:var(--ink-soft);"></div>'
       + '<div class="rx-from-formula"><select id="rxLoadFormulaSelect"><option value="">从我的协定方载入…</option></select><button type="button" class="btn-small" id="rxLoadFormulaBtn">载入</button></div>'
       + '<div class="field"><label>药材明细</label><div id="rxHerbList"></div>'
@@ -1256,8 +1262,19 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       var ft = document.getElementById('rxTypeSelect').value;
       var mode = document.getElementById('rxDispenseMRInput').value;
       var doses = Number(document.getElementById('rxDosesMRInput').value) || 1;
-      if(ft === 'decoction' && (mode === 'decoct_pickup' || mode === 'decoct_delivery')){
-        hint.textContent = '饮片代煎费 RM8/剂 × ' + doses + ' 剂 = RM' + (8*doses).toFixed(2) + '（随处方自动计入中药费）';
+      var ddInp = document.getElementById('rxDecoctDosesMRInput');
+      var ddField = document.getElementById('decoctDosesField');
+      var isDecoct = ft === 'decoction' && (mode === 'decoct_pickup' || mode === 'decoct_delivery');
+      if(ddField){
+        ddField.style.display = isDecoct ? '' : 'none';
+        if(isDecoct && ddInp && rxDraft._decoctFollow && String(Number(ddInp.value)||1) !== String(doses)){
+          ddInp.value = doses; rxDraft.decoctDoses = doses;
+        }
+      }
+      if(isDecoct){
+        var dd = ddInp ? Number(ddInp.value) || doses : doses;
+        var fee = 8 * dd;
+        hint.textContent = '饮片代煎费 RM8/剂 × ' + dd + ' 剂 = RM' + fee.toFixed(2) + (dd !== doses ? '（中药费仍按总剂数 ' + doses + ' 剂计算）' : '（随处方自动计入中药费）');
       } else if(ft !== 'decoction'){
         hint.textContent = '当前剂型无需煎煮，直接配药取/送。';
       } else {
@@ -1268,8 +1285,13 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     if(dmSel){
       renderRxDispenseMR();
       dmSel.addEventListener('change', function(){ rxDraft.dispenseMode = this.value; updateDecoctHintMR(); });
-      document.getElementById('rxDosesMRInput').addEventListener('input', function(){ rxDraft.doses = Number(this.value) || 1; updateDecoctHintMR(); });
-      document.getElementById('rxDosesMRInput').addEventListener('change', function(){ rxDraft.doses = Number(this.value) || 1; updateDecoctHintMR(); });
+      document.getElementById('rxDosesMRInput').addEventListener('input', function(){ rxDraft.doses = Number(this.value) || 1; if(rxDraft._decoctFollow) rxDraft.decoctDoses = rxDraft.doses; updateDecoctHintMR(); });
+      document.getElementById('rxDosesMRInput').addEventListener('change', function(){ rxDraft.doses = Number(this.value) || 1; if(rxDraft._decoctFollow) rxDraft.decoctDoses = rxDraft.doses; updateDecoctHintMR(); });
+      var ddInp = document.getElementById('rxDecoctDosesMRInput');
+      if(ddInp){
+        ddInp.addEventListener('input', function(){ rxDraft.decoctDoses = Number(this.value) || 0; rxDraft._decoctFollow = false; updateDecoctHintMR(); });
+        ddInp.addEventListener('change', function(){ rxDraft.decoctDoses = Number(this.value) || 0; rxDraft._decoctFollow = false; updateDecoctHintMR(); });
+      }
     }
     document.getElementById('rxAddHerbBtn').addEventListener('click', function(){ rxDraft.items.push({herbName:'',dosageGrams:'',notes:''}); renderRxHerbList(); });
     document.getElementById('rxBkSelectMR').addEventListener('change', function(){ rxDraft.bookingId = this.value || null; });
@@ -1337,7 +1359,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
           rxItems = rxDraft.items.filter(function(it){ return it.herbName && String(it.herbName).trim() && it.dosageGrams; });
           treatments = rxDraft.treatments || [];
           if(rxItems.length || treatments.length){
-            var rxPayload = { patientName: r.patientName, patientPhone: r.patientPhone, medicalRecordId: savedMrId || null, bookingId: rxDraft.bookingId || null, formulaType: rxDraft.formulaType, items: rxItems, usageInstructions: rxDraft.usageInstructions || '', treatments: treatments, doses: Number(rxDraft.doses) || 1, dispenseMode: rxDraft.dispenseMode || 'herb_pickup' };
+            var rxPayload = { patientName: r.patientName, patientPhone: r.patientPhone, medicalRecordId: savedMrId || null, bookingId: rxDraft.bookingId || null, formulaType: rxDraft.formulaType, items: rxItems, usageInstructions: rxDraft.usageInstructions || '', treatments: treatments, doses: Number(rxDraft.doses) || 1, decoctDoses: Number(rxDraft.decoctDoses) || 0, dispenseMode: rxDraft.dispenseMode || 'herb_pickup' };
             try {
               // [fixed] 编辑已有病历且已有处方时更新原处方，避免每次编辑保存都新建一条重复处方
               var editRx = !!(r.id && r.lastRx && r.lastRx.id);
@@ -1363,7 +1385,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
           showToast('病历已保存');
         }
         activePatientPhone = r.patientPhone;
-        return { ok: ok, savedMrId: savedMrId, rxItems: rxItems, treatments: treatments, doses: Number(rxDraft.doses) || 1, dispenseMode: rxDraft.dispenseMode || 'herb_pickup' };
+        return { ok: ok, savedMrId: savedMrId, rxItems: rxItems, treatments: treatments, doses: Number(rxDraft.doses) || 1, decoctDoses: Number(rxDraft.decoctDoses) || 0, dispenseMode: rxDraft.dispenseMode || 'herb_pickup' };
       } catch(e){
         showToast('连不上服务器，请检查网络后重试');
         return { ok:false };
@@ -1549,7 +1571,8 @@ function fillPrintArea(receipt, size){
         }
         if(isDecoct){
           var doses = Number(result.doses) || 1;
-          items.push({ name: 'Decoction Fee', qty: doses, price: 8 });
+          var dd = Number(result.decoctDoses) || doses;
+          if(dd > 0) items.push({ name: 'Decoction Fee', qty: dd, price: 8 });
         }
       }
       if(!items.length){ showToast('本次就诊没有可打印的治疗项目或药材，未生成发票'); return; }
