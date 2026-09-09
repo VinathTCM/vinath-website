@@ -258,7 +258,7 @@ body{
     var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
     fetch(API_BASE + '/analytics/pageview', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ page: 'Journeys详情页' })
+      body: JSON.stringify({ page: 'Journey Details Page' })
     }).catch(function(){});
   })();
 
@@ -311,59 +311,59 @@ body{
       conditions:[
         {icon:'droplet', name:'Menstrual Concerns', scope:'Menstrual pain, irregular menstruation, abnormal flow and other cycle concerns', tcm:'Starting from qi, blood, and organ syndrome differentiation, helping the cycle return to regularity'},
         {icon:'ripple', name:'Abnormal Discharge', scope:'Abnormal discharge volume, color, texture, recurring discomfort', tcm:'Strengthening the spleen and removing dampness, helping restore natural balance'},
-        {icon:'sprout', name:'TCM Pre-pregnancy Care', scope:'Not only needed when having difficulty conceiving, daily constitution调理 is equally important', tcm:'Regulating qi and blood, improving constitution, laying a good foundation for healthy pregnancy'},
-        {icon:'shield', name:'Gynecological Lumps', scope:'Common masses in the uterus and ovarian area (benign growths)', tcm:'As daily auxiliary调理 beyond medical follow-up, recommended to配合 regular check-ups'},
+        {icon:'sprout', name:'TCM Pre-pregnancy Care', scope:'not only for difficulty conceiving — daily constitution care is equally important', tcm:'Regulating qi and blood, improving constitution, laying a good foundation for healthy pregnancy'},
+        {icon:'shield', name:'Gynecological Lumps', scope:'Common masses in the uterus and ovarian area (benign growths)', tcm:'As daily auxiliary wellness care beyond medical follow-up, recommended alongside regular check-ups'},
         {icon:'hourglass', name:'Menopause', scope:'Hot flashes, night sweats, insomnia, mood swings and other common changes', tcm:'Nourishing yin and harmonizing, helping smoothly pass through this stage'}
       ]
     },
     {
       full:true, art:ART_SCULPT, title:'Body Shaping', en:'BODY SCULPTING',
-      intro:'Changes in weight and body shape are often closely related to constitution and metabolism. TCM, through调理 the spleen and stomach, lifestyle habits, diet structure, exercise routine, and疏通 meridians, helps the body regain a light state.',
+      intro:'Changes in weight and body shape are often closely related to constitution and metabolism. Through regulating the spleen and stomach, lifestyle habits, diet structure, exercise routine, and疏通 meridians, helps the body regain a light state.',
       conditions:[
-        {icon:'bowl', name:'Dietary Regulation', scope:"Want to lose fat but don't know how to搭配 diet, no direction for daily eating", tcm:'Customized diet advice by constitution, helping the body become light starting from eating right'},
-        {icon:'motion', name:'Exercise Guidance', scope:'Wrong exercise method, hard to坚持, results always discounted', tcm:'结合constitution给出运动建议，让调养和运动相辅相成'},
-        {icon:'nest', name:'Postpartum Body Sculpting', scope:'产后qi and blood亏虚、身形Sagging的恢复期调理', tcm:'温和调补qi and blood，陪伴身体慢慢恢复'},
-        {icon:'flame', name:'Slow Metabolism', scope:'Cold Sensitivity、Fatigue-prone等Slow Metabolism的constitution表现', tcm:'温阳健脾，帮助提升身体代谢活力'}
+        {icon:'bowl', name:'Dietary Regulation', scope:"Want to lose fat but don'not sure how to balance the diet, no direction for daily eating", tcm:'Customized diet advice by constitution, helping the body become light starting from eating right'},
+        {icon:'motion', name:'Exercise Guidance', scope:'wrong exercise method, hard to stay consistent, results always discounted', tcm:'provides exercise advice based on constitution so care and exercise complement each other'},
+        {icon:'nest', name:'Postpartum Body Sculpting', scope:'postpartum recovery care for qi-blood deficiency and loss of body tone', tcm:'gently tonifies qi and blood, supporting gradual recovery'},
+        {icon:'flame', name:'Slow Metabolism', scope:'cold sensitivity, fatigue-proneness and other constitution signs of slow metabolism', tcm:'warms yang and strengthens the spleen to boost metabolic vitality'}
       ]
     },
     {
       full:true, art:ART_BEAUTY, title:'Beauty & Skincare', en:'BEAUTY & RADIANCE',
       intro:'Skin condition reflects the body from within. TCM harmonizes qi and blood to nurture at the root, helping skin maintain its natural radiance.',
       conditions:[
-        {icon:'sparkle', name:'Dull Complexion', scope:'Qi and Blood Deficiency导致的dull complexion lacking radiance', tcm:'补气养血，由内而外提亮肤色'},
-        {icon:'lift', name:'Skin Sagging', scope:'胶原流失、皮肤Loss of Elasticity的初老表现', tcm:'美容针灸配合面部Tui Na，刺激qi and bloodcirculation，帮助提升肌肤firmness'},
-        {icon:'spots', name:'Recurrent Breakouts', scope:'内热、湿气导致的Recurrent Breakouts、Enlarged Pores', tcm:'清热祛湿，帮助恢复肌肤平衡'},
-        {icon:'face', name:'Facial Contour', scope:'Facial Puffiness、轮廓不清晰等困扰', tcm:'通过穴位按摩与经络疏通，帮助修饰面部线条'}
+        {icon:'sparkle', name:'Dull Complexion', scope:'dull complexion lacking radiance caused by qi and blood deficiency', tcm:'tonifies qi and nourishes blood to brighten complexion from within'},
+        {icon:'lift', name:'Skin Sagging', scope:'early ageing signs of collagen loss and loss of skin elasticity', tcm:'cosmetic acupuncture combined with facial Tui Na stimulates qi and blood circulation to improve skin firmness'},
+        {icon:'spots', name:'Recurrent Breakouts', scope:'recurrent breakouts and enlarged pores caused by internal heat and dampness', tcm:'clears heat and dispels dampness to restore skin balance'},
+        {icon:'face', name:'Facial Contour', scope:'facial puffiness and blurred facial contour', tcm:'acupoint massage and meridian work help refine facial contours'}
       ]
     },
     {
       full:true, art:ART_WELLNESS, title:'Daily Wellness', en:'DAILY WELLNESS',
       intro:'Wellness is not something to begin only after falling ill, but a habit woven into daily life. TCM helps you find the care approach suited to your own constitution.',
       conditions:[
-        {icon:'battery', name:'Suboptimal Health', scope:'Easily Fatigued、Low Energy等说不清的不适', tcm:'辨识constitution，从根本调理身体状态'},
-        {icon:'climate', name:'Seasonal Wellness', scope:'Damp-Heat气候、旱雨交替，身体容易感到闷重不适', tcm:'顺应当地气候变化，调整Daily Wellness方式'},
-        {icon:'stomach', name:'Digestive Wellness', scope:'Poor Appetite、消化不畅、constipation等日常肠胃困扰', tcm:'健脾和胃、润肠通便，帮助恢复正常运化'},
-        {icon:'heart', name:'Emotional Relief', scope:'High Stress、Tense Mood时的身心调适', tcm:'疏肝理气，帮助放松身心'}
+        {icon:'battery', name:'Suboptimal Health', scope:'easily fatigued, low energy and other hard-to-describe discomfort', tcm:'identifies constitution to regulate the body at the root'},
+        {icon:'climate', name:'Seasonal Wellness', scope:'in damp-heat climates and alternating dry/rainy weather, the body easily feels heavy and uncomfortable', tcm:'adjusts daily wellness approaches to local climate changes'},
+        {icon:'stomach', name:'Digestive Wellness', scope:'poor appetite, sluggish digestion, constipation and other daily digestive concerns', tcm:'strengthens the spleen, harmonizes the stomach and moistens the intestines to restore normal function'},
+        {icon:'heart', name:'Emotional Relief', scope:'mind-body adjustment during high stress and tense mood', tcm:'soothes the liver and regulates qi to relax body and mind'}
       ]
     },
     {
       full:true, art:ART_PAIN, title:'Pain Soothing', en:'PAIN SOOTHING',
       intro:'Body aches and tension are often signs of obstructed qi and blood. Through Tui Na, acupuncture and more, TCM helps unblock the meridians and ease discomfort.',
       conditions:[
-        {icon:'muscle', name:'Neck, Shoulders & Lower Back', scope:'久坐、姿势不良带来的Neck, Shoulders & Lower Back紧绷', tcm:'Tui Na理筋，帮助疏通qi and blood、放松肌肉'},
-        {icon:'joint', name:'Joint Discomfort', scope:'关节部位的酸胀、活动不利', tcm:'温经通络，帮助缓解Joint Discomfort'},
-        {icon:'layers', name:'Sports Injury', scope:'运动或劳损后的Muscle Soreness', tcm:'活血化瘀，帮助加速恢复'},
-        {icon:'fatigue', name:'Fatigue-related Aches', scope:'长期疲劳积累引起的generalized body aches', tcm:'调理qi and blood，从根本改善疲劳状态'}
+        {icon:'muscle', name:'Neck, Shoulders & Lower Back', scope:'neck, shoulder and lower-back tension from prolonged sitting and poor posture', tcm:'Tui Na tendon work helps unblock qi and blood and relax the muscles'},
+        {icon:'joint', name:'Joint Discomfort', scope:'aching, heavy joints and restricted movement', tcm:'warms the meridians and unblocks the collaterals to ease joint discomfort'},
+        {icon:'layers', name:'Sports Injury', scope:'muscle soreness after exercise or strain', tcm:'invigorates blood and resolves stasis to speed recovery'},
+        {icon:'fatigue', name:'Fatigue-related Aches', scope:'generalized body aches from accumulated long-term fatigue', tcm:'regulates qi and blood to address fatigue at the root'}
       ]
     },
     {
       full:true, art:ART_SLEEP, title:'Quality Sleep', en:'QUALITY SLEEP',
       intro:'Poor sleep often affects daytime energy and mood. Starting from harmonizing the organs and calming the spirit, TCM helps you reclaim restful sleep.',
       conditions:[
-        {icon:'moon', name:'Difficulty Falling Asleep', scope:'躺下后难以入睡、思绪难停', tcm:'安神定志，帮助放松身心、更快入睡'},
-        {icon:'clock', name:'Light Sleep, Easily Woken', scope:'夜间容易醒、睡眠质量不高', tcm:'调和脏腑，帮助延长深睡时间'},
-        {icon:'dream', name:'Frequent Dreams', scope:'整夜Frequent Dreams、醒来仍感疲惫', tcm:'养心安神，帮助改善睡眠质量'},
-        {icon:'sunrise', name:'Morning Fatigue', scope:'睡了很久却依然Low Energy', tcm:'调理qi and blood运行，帮助恢复清醒活力'}
+        {icon:'moon', name:'Difficulty Falling Asleep', scope:'difficulty falling asleep with racing thoughts after lying down', tcm:'calms the spirit to relax body and mind for faster sleep onset'},
+        {icon:'clock', name:'Light Sleep, Easily Woken', scope:'waking easily at night and poor sleep quality', tcm:'harmonizes the organs to help extend deep sleep'},
+        {icon:'dream', name:'Frequent Dreams', scope:'frequent dreams all night, still feeling tired on waking', tcm:'nourishes the heart and calms the spirit to improve sleep quality'},
+        {icon:'sunrise', name:'Morning Fatigue', scope:'still low energy despite sleeping for a long time', tcm:'regulates qi and blood flow to restore alertness and vitality'}
       ]
     }
   ];
@@ -396,7 +396,7 @@ body{
         var ob = (kb && journeysData[kb] && typeof journeysData[kb].order==='number') ? journeysData[kb].order : 999;
         return oa - ob;
       });
-    } catch(e){ console.error('拉取Wellness Journeys失败:', e); }
+    } catch(e){ console.error('Failed to load wellness journeys: ', e); }
   })();
 
   var N = JOURNEYS.length, idx = 0;
@@ -446,7 +446,7 @@ body{
       return '<div class="j-inner ph-state">'
         + '<div class="j-title">Coming Soon</div>'
         + '<div class="j-en">COMING SOON</div>'
-        + '<p class="j-intro ph-msg">这pcsJourneys正在筹备中，稍后为你呈现。</p>'
+        + '<p class="j-intro ph-msg">This journey is being prepared and will be presented to you shortly.</p>'
         + '</div>';
     }
     var out = '<div class="j-inner">';
@@ -458,11 +458,11 @@ body{
     out += '</div>';
     out += '<div class="act-row">'
       + '<div class="act-card" id="yueBtn"><span class="aico">'+ICON.cal+'</span><span class="albl">Meet Now</span><span class="achev">'+ICON.chev+'</span></div>'
-      + '<div class="act-card" id="shopBtn"><span class="aico">'+ICON.bag+'</span><span class="albl">商店</span></div>'
+      + '<div class="act-card" id="shopBtn"><span class="aico">'+ICON.bag+'</span><span class="albl">Shop</span></div>'
       + '</div>';
     out += '<div class="act-expand" id="yueExpand">'
       + '<a class="act-expand-item" id="waLinkOv" data-lbl="Personalized" rel="noopener"><span class="eico">'+ICON.tune+'</span>Personalized</a>'
-      + '<div class="act-expand-item" data-lbl="居家会诊"><span class="eico">'+ICON.home+'</span>居家会诊</div>'
+      + '<div class="act-expand-item" data-lbl="Home Consultation"><span class="eico">'+ICON.home+'</span>Home Consultation</div>'
       + '</div>';
     out += '</div>';
     return out;
@@ -494,11 +494,11 @@ body{
       subs[i].addEventListener('click', function(){
         var lbl = this.getAttribute('data-lbl');
         if(lbl === 'Personalized') return; // native <a href> handles navigation now
-        if(lbl === '居家会诊'){
+        if(lbl === 'Home Consultation'){
           window.location.href = withCart('/consult/?journey=' + encodeURIComponent(JOURNEYS[idx].title), cartItems);
           return;
         }
-        showToast('跳转至「'+lbl+'」页面');
+        showToast('Go to "'+lbl+'" page');
       });
     }
     updateWaLinkOv();
@@ -506,7 +506,7 @@ body{
   function updateWaLinkOv(){
     var link = document.getElementById('waLinkOv');
     if(!link) return;
-    var msg = '您好，我想咨询「'+JOURNEYS[idx].title+'」相关的Wellness Plan。';
+    var msg = 'Hello, I would like to enquire about "'+JOURNEYS[idx].title+'" related wellness plan.';
     link.setAttribute('href', 'https://wa.me/'+WHATSAPP_NUMBER+'?text='+encodeURIComponent(msg));
   }
 

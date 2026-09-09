@@ -212,7 +212,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   })();
 
 (function(){
-  var STATUS_LABELS = ['订单已Submit','备货中','Shipped','Delivered'];
+  var STATUS_LABELS = ['Order Submitted','Preparing Stock','Shipped','Delivered'];
 
   var PRODUCTS = [
     {id:1, name:'Yue Shu Patch', type:'plaster', journeys:["Women's Health"], tags:['Menstrual Pain'], price:9, trial:4, desc:'Apply during menstrual period for cold pain in waist and abdomen, the warmth slowly spreads.', active:true, inStock:true, featured:false, imgs:[]},
@@ -353,7 +353,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   function renderResult(order){
     var html = '<div class="oq-result">'
-      + '<div class="oq-result-hd"><div class="oq-order-no">Order Number '+order.orderNo+'</div><div class="oq-order-date">下单日期 '+order.date+'</div></div>';
+      + '<div class="oq-result-hd"><div class="oq-order-no">Order Number '+order.orderNo+'</div><div class="oq-order-date">Order Date '+order.date+'</div></div>';
 
     html += '<div class="stepper-wrap">';
     STATUS_LABELS.forEach(function(label, i){
@@ -376,7 +376,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   function renderNotFound(){
     document.getElementById('resultArea').innerHTML =
       '<div class="not-found-box"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>'
-      + '<p>没有找到匹配的订单，请ConfirmOrder Number和Contact Information。</p></div>';
+      + '<p>No matching order found. Please confirm your Order Number and contact information.</p></div>';
   }
 
   var orderInput = document.getElementById('orderInput');
@@ -387,7 +387,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var orderNo = orderInput.value.trim();
     var contact = contactInput.value.trim();
     if(!orderNo || !contact){
-      errorEl.textContent = '请填写Order Number和Contact Information。';
+      errorEl.textContent = 'Please fill in your Order Number and contact information.';
       errorEl.classList.add('show');
       document.getElementById('resultArea').innerHTML = '';
       return;
@@ -405,7 +405,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         document.getElementById('resultArea').innerHTML = '';
       }
     } catch(e){
-      errorEl.textContent = '暂时无法连接服务器，请稍后Retry。';
+      errorEl.textContent = 'Unable to connect to the server. Please retry later.';
       errorEl.classList.add('show');
     }
     btn.disabled = false;
@@ -456,7 +456,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     vhAcctMenu.classList.toggle('open');
   });
   document.getElementById('vhamOrder').addEventListener('click', function(){
-    showToast('当前就在Order Tracking页');
+    showToast('Currently on the Order Tracking page');
     vhAcctMenu.classList.remove('open');
   });
   document.getElementById('vhamBooking').addEventListener('click', function(){

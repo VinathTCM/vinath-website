@@ -328,13 +328,13 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     });
   }
 
-  var RX_STATUS_LABELS = { awaiting_pharmacy:'待药房接单', brewing:'煎药中', shipping:'配送中', delivered:'Delivered' };
+  var RX_STATUS_LABELS = { awaiting_pharmacy:'Awaiting Pharmacy Acceptance', brewing:'Decocting', shipping:'Out for Delivery', delivered:'Delivered' };
   var RX_FLOW = ['awaiting_pharmacy','brewing','shipping','delivered'];
   var DISPENSE_LABELS = { decoct_pickup:'Decocted & Self-Pickup', decoct_delivery:'Decocted & Delivered', herb_delivery:'Herbal Medicine Delivery', herb_pickup:'Herbal Medicine Self-Pickup' };
 
   // Herbal Medicine Progress卡：同步药房制备/配送进度 + 运单号；无处方时不渲染
   function renderHerbProgress(rx){
-    var label = (DISPENSE_LABELS[rx.dispenseMode] || rx.dispenseMode || '中药');
+    var label = (DISPENSE_LABELS[rx.dispenseMode] || rx.dispenseMode || 'Herbal Medicine');
     var idx = RX_FLOW.indexOf(rx.status || 'awaiting_pharmacy');
     if(idx < 0) idx = 0;
     var html = '<div class="oq-items-card herb-progress" style="margin-top:12px;">'
@@ -361,7 +361,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="oq-result-hd"><div class="oq-order-no">Booking ID '+booking.bookingNo+'</div><div class="oq-order-date">Submission Date '+booking.date+'</div></div>';
 
     if(booking.cancelled){
-      html += '<div class="oq-cancelled-banner"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>该预约Cancelled</div>';
+      html += '<div class="oq-cancelled-banner"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>This booking has been cancelled</div>';
     } else {
       html += '<div class="stepper-wrap">';
       STATUS_LABELS.forEach(function(label, i){
@@ -429,7 +429,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
             booking.cancelled = true;
             renderResult(booking);
           } catch(e){
-            area.innerHTML = '<div class="oq-cancel-blocked">暂时无法连接服务器，Please Try Again Later。</div>';
+            area.innerHTML = '<div class="oq-cancel-blocked">Unable to connect to the server. Please try again later.</div>';
           }
         });
       });
@@ -439,7 +439,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   function renderNotFound(){
     document.getElementById('resultArea').innerHTML =
       '<div class="not-found-box"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>'
-      + '<p>No matching booking found，请ConfirmBooking ID和Contact Information。</p></div>';
+      + '<p>No matching booking found，Please confirm your Booking ID and contact information.</p></div>';
   }
 
   var orderInput = document.getElementById('orderInput');
@@ -450,7 +450,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var bookingNo = orderInput.value.trim();
     var contact = contactInput.value.trim();
     if(!bookingNo || !contact){
-      errorEl.textContent = '请填写Booking ID和Contact Information。';
+      errorEl.textContent = 'Please fill in your Booking ID and contact information.';
       errorEl.classList.add('show');
       document.getElementById('resultArea').innerHTML = '';
       return;
@@ -469,7 +469,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         document.getElementById('resultArea').innerHTML = '';
       }
     } catch(e){
-      errorEl.textContent = '暂时无法连接服务器，Please Try Again Later。';
+      errorEl.textContent = 'Unable to connect to the server. Please try again later.';
       errorEl.classList.add('show');
     }
     btn.disabled = false;
@@ -522,7 +522,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     window.location.href = withCart('/orders/', cartItems);
   });
   document.getElementById('vhamBooking').addEventListener('click', function(){
-    showToast('当前就在Booking Tracking页');
+    showToast('Currently on the Booking Tracking page');
     vhAcctMenu.classList.remove('open');
   });
   document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });

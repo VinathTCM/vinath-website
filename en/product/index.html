@@ -304,7 +304,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     {id:27, name:'Lanxin Tea', type:'tea', journeys:["Women's Health"], tags:['mood swings'], price:45, trial:16, desc:'When moods swing up and down, a cup helps you settle.', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Blighted Wheat', amt:'20g'},{herb:'Red Date', amt:'6pcs'},{herb:'Licorice Root', amt:'5g'},{herb:'Albizia Bark', amt:'8g'},{herb:'Curcuma Root', amt:'6g'}], usage:'轻煎15-20分钟，mood swings期1 dose daily。'},
     {id:28, name:'Jinglan Tea', type:'tea', journeys:["Women's Health"], tags:['Palpitations'], price:45, trial:16, desc:'For an unsettled, racing heart, this clears the heart and calms palpitations to gradually settle.', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Salvia Root', amt:'10g'},{herb:'Poria with Pine', amt:'12g'},{herb:'Arborvitae Seed', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'焖泡或轻煎，Palpitations明显时1 dose daily，连饮1-2周。'},
     {id:29, name:'Suyue Patch', type:'plaster', journeys:["Women's Health"], tags:['insomnia','Palpitations'], price:9, trial:4, desc:'For poor sleep with palpitations, apply before bed for dual calming.', active:true, inStock:true, featured:false, imgs:[], form:'patch, apply to Yongquan acupoint (topical use)', herbs:[{herb:'Sour Jujube Seed', amt:'10g'},{herb:'Fleeceflower Vine', amt:'10g'},{herb:'Polygala Root', amt:'6g'},{herb:'Salvia Root', amt:'8g'},{herb:'Evodia Fruit', amt:'5g'}], usage:'研末醋调糊，睡前敷涌泉穴，次晨取下，连用1-2周。'},
-    {id:30, name:'Jinghao Tea', type:'tea', journeys:["Women's Health"], tags:['insomnia','Palpitations','mood swings','Hot Flashes & Night Sweats'], price:49, trial:18, desc:'When menopause brings multiple discomforts at once, a cup of tea carries you steadily through.', active:true, inStock:true, featured:true, imgs:[], form:'茶', herbs:[{herb:'Ligustrum Fruit', amt:'12g'},{herb:'Sour Jujube Seed', amt:'15g'},{herb:'Blighted Wheat', amt:'20g'},{herb:'Ophiopogon', amt:'10g'},{herb:'Salvia Root', amt:'10g'},{herb:'Schisandra Fruit', amt:'5g'}], usage:'焖泡或轻煎，午后至睡前饮用，连饮2-4周，症状明显时可每日一剂半。'},
+    {id:30, name:'Jinghao Tea', type:'tea', journeys:["Women's Health"], tags:['insomnia','Palpitations','mood swings','Hot Flashes & Night Sweats'], price:49, trial:18, desc:'When menopause brings multiple discomforts at once, a cup of tea carries you steadily through.', active:true, inStock:true, featured:true, imgs:[], form:'茶', herbs:[{herb:'Ligustrum Fruit', amt:'12g'},{herb:'Sour Jujube Seed', amt:'15g'},{herb:'Blighted Wheat', amt:'20g'},{herb:'Ophiopogon', amt:'10g'},{herb:'Salvia Root', amt:'10g'},{herb:'Schisandra Fruit', amt:'5g'}], usage:'焖泡或轻煎，午后至睡前饮用，连饮2-4周，Symptoms明显时可每日一剂半。'},
     {id:31, name:'Chengu Tea', type:'tea', journeys:['Body Sculpting'], tags:['Irregular Meals'], price:45, trial:16, desc:'For irregular meals, this strengthens the spleen and harmonizes the stomach to restore eating rhythm.', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Atractylodes Rhizome', amt:'10g'},{herb:'Tangerine Peel', amt:'6g'},{herb:'Hawthorn', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'轻煎，早餐后饮用，连续2周。'},
     {id:32, name:'Lanyin Tea', type:'tea', journeys:['Body Sculpting'], tags:['cravings for sweets and oily food'], price:45, trial:16, desc:"For sweet and oily food cravings, this resolves phlegm and dampness to lighten the body's load.", active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Tangerine Peel', amt:'8g'},{herb:'Poria', amt:'10g'},{herb:'Lotus Leaf', amt:'6g'},{herb:'Hawthorn', amt:'8g'}], usage:'焖泡，餐后饮用，1 dose daily。'},
     {id:33, name:'Jiashan Tea', type:'tea', journeys:['Body Sculpting'], tags:['frequent eating out'], price:45, trial:16, desc:'After eating out too much, this clears and nourishes the spleen and stomach for a fresh feeling.', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Coix Seed', amt:'15g'},{herb:'绿豆衣', amt:'8g'},{herb:'Malt', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'轻煎，外食较多的日子饮用。'},
@@ -399,7 +399,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     {id:122, name:'Xiaoxia Mask', type:'mask', journeys:[], tags:[], price:39, trial:15, desc:'Not for a specific symptom — a daily brightening ritual and a weekend treat for yourself.', active:true, inStock:true, featured:true, imgs:[], form:'Topical Use面膜', herbs:[{herb:'Angelica Dahurica', amt:'8g'},{herb:'Bletilla', amt:'6g'},{herb:'绿豆粉', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'研极细粉，加蜂蜜或温水调成糊状，敷面15-20分钟后温水洗净，每周2-3次。'},
   ];
 
-  // [stated bug fix] same gap as 商店 had — this page ran off its own frozen product copy with
+  // [stated bug fix] same gap as Shop had — this page ran off its own frozen product copy with
   // zero connection to 商品管理. Now overlays the shared catalog onto this page's own copy before
   // building the id-index below, so edits made in the admin tool (price/stock/desc/etc.) show up
   // here too.
@@ -548,7 +548,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   var pdImgs = [];
 
   function renderNotFound(){
-    document.getElementById('breadcrumb').innerHTML = '<span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-link" id="bcShop">商店</span><span class="sep">›</span><span class="bc-current">商品未找到</span>';
+    document.getElementById('breadcrumb').innerHTML = '<span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-link" id="bcShop">Shop</span><span class="sep">›</span><span class="bc-current">商品未找到</span>';
     document.getElementById('mainContent').innerHTML = '<div class="not-found">没有找到这pcs商品，可能已下架或链接有误。</div>';
     bindHeaderNav();
   }
@@ -594,7 +594,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     if(product.type === 'plaster'){
       items.push('首次Apply建议先小面积试敷，观察是否有皮肤sensitivity反应；皮肤破损或有炎症的部位禁用。');
     } else if(product.type === 'tea'){
-      items.push('本品为药食同源材料的日常wellness配伍，并非诊断治疗用药；症状持续或加重，建议及时咨询专业医师。');
+      items.push('本品为药食同源材料的日常wellness配伍，并非诊断治疗用药；Symptoms持续或加重，建议及时咨询专业医师。');
     } else if(product.type === 'soak'){
       items.push('Topical Use煎汤，menstrual period或阴道出血期间请暂停Apply。');
     } else if(product.type === 'mask'){
@@ -624,7 +624,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   }
 
   function render(){
-    document.getElementById('breadcrumb').innerHTML = '<span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-link" id="bcShop">商店</span><span class="sep">›</span><span class="bc-current">'+product.name+'</span>';
+    document.getElementById('breadcrumb').innerHTML = '<span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-link" id="bcShop">Shop</span><span class="sep">›</span><span class="bc-current">'+product.name+'</span>';
 
     var html = buildHero();
     html += '<div class="pd-type">'+TYPE_LABEL[product.type]+'</div>';
