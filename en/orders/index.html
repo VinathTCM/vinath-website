@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -97,7 +97,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   border-radius:20px; opacity:0; transition:opacity .25s, transform .25s; pointer-events:none; z-index:70; max-width:88vw; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .vh-toast.show{ opacity:1; transform:translate(-50%,0); }
 </style>
-  <link rel="icon" type="image/webp" href="/en/favicon.webp">
+  <link rel="icon" type="image/webp" href="/favicon.webp">
 
 <script>
   window.VINATH_PAGE_LANG = 'en';
@@ -105,7 +105,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
 
 <style>
-  /* 英文版标题使用 Poppins Black */
+  /* 鑻辨枃鐗堟爣棰樹娇鐢?Poppins Black */
   h1, h2, h3, h4, h5, h6,
   .hero-title, .section-title, .page-title,
   .eyebrow, .cta-title,
@@ -114,23 +114,23 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
   }
   
-  /* 大标题使用 Black 900 */
+  /* 澶ф爣棰樹娇鐢?Black 900 */
   h1, .hero-title, .section-title, .page-title {
     font-weight: 900 !important;
     letter-spacing: -0.02em;
   }
   
-  /* 二级标题使用 ExtraBold 800 */
+  /* 浜岀骇鏍囬浣跨敤 ExtraBold 800 */
   h2, .process-step-title, .journey-card-title, .footer-title {
     font-weight: 800 !important;
   }
   
-  /* 三级标题使用 Bold 700 */
+  /* 涓夌骇鏍囬浣跨敤 Bold 700 */
   h3, h4 {
     font-weight: 700 !important;
   }
   
-  /* 小标签使用 SemiBold 600 */
+  /* 灏忔爣绛句娇鐢?SemiBold 600 */
   .eyebrow, .cta-title {
     font-weight: 600 !important;
     letter-spacing: 0.05em;
@@ -144,7 +144,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 <div class="page">
   <div class="vh-header">
     <div class="side">
-      <div class="vh-brand" id="brandBtn">VINATH<span class="vh-tm">™</span></div>
+      <div class="vh-brand" id="brandBtn">VINATH<span class="vh-tm">鈩?/span></div>
     </div>
     <div class="vh-icons">
       <div class="vh-ibtn" id="searchBtn" aria-label="Search">
@@ -166,7 +166,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     </div>
   </div>
 
-  <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-current">Order Tracking</span></div>
+  <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">鈥?/span><span class="bc-current">Order Tracking</span></div>
 
   <div class="content">
     <h1 class="oq-title">Order Tracking</h1>
@@ -192,7 +192,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
 <div class="vh-footer">
   <div class="vh-footer-top">
-    <div class="vh-footer-brand">VINATH<span class="vh-tm">™</span></div>
+    <div class="vh-footer-brand">VINATH<span class="vh-tm">鈩?/span></div>
   </div>
   <div class="vh-footer-bottom">
     <span>Copyright &copy; 2026 VINATH TCM HEALTH CARE. All rights reserved.</span>
@@ -212,131 +212,131 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   })();
 
 (function(){
-  var STATUS_LABELS = ['订单已Submit','备货中','Shipped','已送达'];
+  var STATUS_LABELS = ['璁㈠崟宸睸ubmit','澶囪揣涓?,'Shipped','宸查€佽揪'];
 
   var PRODUCTS = [
-    {id:1, name:'月舒贴', type:'plaster', journeys:['Women's Health'], tags:['痛经'], price:9, trial:4, desc:'Apply during menstrual period for cold pain in waist and abdomen, the warmth slowly spreads.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:2, name:'迟汐茶', type:'tea', journeys:['Women's Health'], tags:['月经过长'], price:45, trial:16, desc:'When menstruation lasts too long or is spotty, drink it to help the body regulate its rhythm.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:3, name:'满汐茶', type:'tea', journeys:['Women's Health'], tags:['menstrual flow过多'], price:45, trial:16, desc:'On days with heavier flow, drink a cup for peace of mind.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:4, name:'浅汐茶', type:'tea', journeys:['Women's Health'], tags:['menstrual flow过少'], price:45, trial:16, desc:'Light and scanty periods, nourish qi and blood daily.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:5, name:'弦月茶', type:'tea', journeys:['Women's Health'], tags:['cycle紊乱'], price:45, trial:16, desc:'Irregular cycles, help the body find its own rhythm.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:6, name:'月隙茶', type:'tea', journeys:['Women's Health'], tags:['经间点滴'], price:45, trial:16, desc:'Occasional spotting between periods, nourish yin and cool blood, gentlewellness.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:7, name:'望汐茶', type:'tea', journeys:['Women's Health'], tags:['月经过长','menstrual flow过多'], price:45, trial:16, desc:'On days with long and heavy periods, a cup of tea helps stabilize.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:8, name:'盈月茶', type:'tea', journeys:['Women's Health'], tags:['cycle紊乱','menstrual flow过少'], price:45, trial:16, desc:'Scanty and irregular cycles, slowly nourish and replenish.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:9, name:'云净茶', type:'tea', journeys:['Women's Health'], tags:['量多'], price:45, trial:16, desc:'Excessive leucorrhea, strengthen spleen and remove dampness, feel fresh and clean.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:10, name:'素雅茶', type:'tea', journeys:['Women's Health'], tags:['颜色异常'], price:45, trial:16, desc:'Abnormal color but not severe, daily gentle cleansing.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:11, name:'芷兰茶', type:'tea', journeys:['Women's Health'], tags:['伴有异味'], price:45, trial:16, desc:'With odor, clear heat and remove dampness, regain freshness.', active:true, inStock:false, featured:false, imgs:[]},
-    {id:12, name:'兰汤Sitz Bath Pack', type:'soak', journeys:['Women's Health'], tags:['反复瘙痒'], price:25, trial:10, desc:'Recurring itching and discomfort, boil and take a reassuring hot bath.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:13, name:'澄澈茶', type:'tea', journeys:['Women's Health'], tags:['伴有异味','颜色异常'], price:45, trial:16, desc:'颜色和异味同时出现，双管齐下清一清。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:14, name:'芷澄茶', type:'tea', journeys:['Women's Health'], tags:['伴有异味','量多','颜色异常'], price:45, trial:16, desc:'量多、颜色、异味都有的日子，全面清养。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:15, name:'月序茶', type:'tea', journeys:['Women's Health'], tags:['cycle不稳定'], price:45, trial:16, desc:'备孕期间cycle总不稳，疏肝理气帮忙调顺。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:16, name:'煦暖贴', type:'plaster', journeys:['Women's Health'], tags:['constitution偏寒'], price:9, trial:4, desc:'constitution偏寒手脚凉，敷一敷，暖到心里。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:17, name:'绿萼茶', type:'tea', journeys:['Women's Health'], tags:['moodstress'], price:45, trial:16, desc:'备孕路上stress大，喝一杯，松一口气。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:18, name:'兰馨茶', type:'tea', journeys:['Women's Health'], tags:['备孕wellness'], price:45, trial:16, desc:'日常备孕constitution调养，平补liver and kidney打基础。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:19, name:'梅悦茶', type:'tea', journeys:['Women's Health'], tags:['cycle不稳定','moodstress'], price:45, trial:16, desc:'cycle不稳又心情烦躁，疏肝nourish blood一起来。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:20, name:'兰序茶', type:'tea', journeys:['Women's Health'], tags:['cycle不稳定','备孕wellness','moodstress'], price:45, trial:16, desc:'备孕期间cycle、mood都需要照顾时的全面wellness茶。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:21, name:'静玉贴', type:'plaster', journeys:['Women's Health'], tags:['体检提示增生'], price:9, trial:4, desc:'体检提示有增生，日常辅助wellness，请配合定期复查。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:22, name:'和风茶', type:'tea', journeys:['Women's Health'], tags:['小腹坠胀'], price:45, trial:16, desc:'小腹总是坠胀，理气化开那股闷闷的感觉。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:23, name:'绛华茶', type:'tea', journeys:['Women's Health'], tags:['menstrual period不适加重'], price:45, trial:16, desc:'menstrual period这几天特别不舒服，activate blood化开那股滞涩。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:24, name:'暖溪茶', type:'tea', journeys:['Women's Health'], tags:['小腹坠胀','menstrual period不适加重'], price:45, trial:16, desc:'坠胀加上menstrual period加重，一起温柔化开。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:25, name:'清露茶', type:'tea', journeys:['Women's Health'], tags:['潮热盗汗'], price:45, trial:16, desc:'潮热盗汗睡不安稳，nourish yin敛汗清清爽爽。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:26, name:'月枕贴', type:'plaster', journeys:['Women's Health'], tags:['insomnia'], price:9, trial:4, desc:'翻来覆去睡不着，睡前敷一敷涌泉穴。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:27, name:'兰心茶', type:'tea', journeys:['Women's Health'], tags:['mood波动'], price:45, trial:16, desc:'mood忽上忽下，喝一杯，静下来。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:28, name:'静澜茶', type:'tea', journeys:['Women's Health'], tags:['心悸'], price:45, trial:16, desc:'心跳总不安稳，清心宁悸，慢慢平复。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:29, name:'素月贴', type:'plaster', journeys:['Women's Health'], tags:['insomnia','心悸'], price:9, trial:4, desc:'又睡不好又心悸，睡前敷一敷，双重安顿。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:30, name:'静好茶', type:'tea', journeys:['Women's Health'], tags:['insomnia','心悸','mood波动','潮热盗汗'], price:49, trial:18, desc:'更年期诸多不适一起来，一杯茶陪你稳稳走过。', active:true, inStock:true, featured:true, imgs:[]},
-    {id:31, name:'晨谷茶', type:'tea', journeys:['Body Sculpting'], tags:['进食不规律'], price:45, trial:16, desc:'三餐没规律，strengthen the spleen和胃，找回吃饭的节奏。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:32, name:'岚隐茶', type:'tea', journeys:['Body Sculpting'], tags:['嗜甜嗜油'], price:45, trial:16, desc:'爱吃甜爱吃油，化痰remove dampness，给身体减减负。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:33, name:'家膳茶', type:'tea', journeys:['Body Sculpting'], tags:['外食频繁'], price:45, trial:16, desc:'外食吃多了，清养spleen and stomach，清清爽爽。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:34, name:'晨序茶', type:'tea', journeys:['Body Sculpting'], tags:['饮食无规划'], price:45, trial:16, desc:'饮食毫无规划，strengthen the spleen益气，打好基础再谈其他。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:35, name:'云隐茶', type:'tea', journeys:['Body Sculpting'], tags:['嗜甜嗜油','饮食无规划'], price:45, trial:16, desc:'嗜甜嗜油又没规划，双重化浊，轻装上阵。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:36, name:'晴川茶', type:'tea', journeys:['Body Sculpting'], tags:['久坐少动'], price:45, trial:16, desc:'久坐不动，理气activate blood，让qi and blood重新流动起来。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:37, name:'鹤姿茶', type:'tea', journeys:['Body Sculpting'], tags:['运动方式不当'], price:45, trial:16, desc:'运动方式不太对，nourish blood舒筋，动作更从容。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:38, name:'恒晨茶', type:'tea', journeys:['Body Sculpting'], tags:['难以坚持'], price:45, trial:16, desc:'三天打鱼两天晒网，益气strengthen the spleen，慢慢养出坚持的底气。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:39, name:'暮川茶', type:'tea', journeys:['Body Sculpting'], tags:['运动后恢复慢'], price:45, trial:16, desc:'运动完总是很难恢复，益气nourish blood，加速回血。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:40, name:'鹤川茶', type:'tea', journeys:['Body Sculpting'], tags:['久坐少动','运动方式不当'], price:45, trial:16, desc:'久坐又运动姿势不对，一起舒Expand来。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:41, name:'恒川茶', type:'tea', journeys:['Body Sculpting'], tags:['运动后恢复慢','难以坚持'], price:45, trial:16, desc:'难坚持又恢复慢，qi and blood双补撑住状态。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:42, name:'初曦贴', type:'plaster', journeys:['Body Sculpting'], tags:['产后qi and blood虚'], price:9, trial:4, desc:'产后qi and blood两虚，温和敷一敷，慢慢补回来。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:43, name:'晓月贴', type:'plaster', journeys:['Body Sculpting'], tags:['腹部sagging'], price:9, trial:4, desc:'腹部sagging没力气，敷一敷帮忙提一提。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:44, name:'暮归茶', type:'tea', journeys:['Body Sculpting'], tags:['体力恢复慢'], price:45, trial:16, desc:'产后体力恢复得慢，qi and blood双补陪你慢慢来。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:45, name:'甘露茶', type:'tea', journeys:['Body Sculpting'], tags:['哺乳期wellness'], price:45, trial:16, desc:'哺乳期需要Moreqi and blood支持，温和滋养。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:46, name:'产后元气贴', type:'plaster', journeys:['Body Sculpting'], tags:['产后qi and blood虚','体力恢复慢'], price:9, trial:4, desc:'产后qi and blood虚又恢复慢，加强版一起养回来。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:47, name:'暖阳贴', type:'plaster', journeys:['Body Sculpting'], tags:['怕冷'], price:9, trial:4, desc:'手脚怕冷，温阳dispel cold，敷一敷暖起来。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:48, name:'晴曦茶', type:'tea', journeys:['Body Sculpting'], tags:['易fatigue'], price:45, trial:16, desc:'总是提不起劲，益气strengthen the spleen，找回精神。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:49, name:'云澈茶', type:'tea', journeys:['Body Sculpting'], tags:['水肿'], price:45, trial:16, desc:'身体水肿沉重，strengthen the spleen利水，轻盈一点。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:50, name:'轻盈茶', type:'tea', journeys:['Body Sculpting'], tags:['体重难下降'], price:45, trial:16, desc:'体重总卡关，化湿strengthen the spleen，帮忙松动一下metabolism。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:51, name:'暖身茶', type:'tea', journeys:['Body Sculpting'], tags:['怕冷','易fatigue'], price:45, trial:16, desc:'又怕冷又fatigue，温阳益气一起来。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:52, name:'岚澈茶', type:'tea', journeys:['Body Sculpting'], tags:['体重难下降','水肿'], price:45, trial:16, desc:'水肿又体重难降，双重remove dampnessreduce swelling。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:53, name:'晨颜茶', type:'tea', journeys:['Beauty & Radiance'], tags:['气色发黄'], price:45, trial:16, desc:'气色发黄没精神，益气nourish blood，慢慢透出红润。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:54, name:'玉泽茶', type:'tea', journeys:['Beauty & Radiance'], tags:['缺乏光泽'], price:45, trial:16, desc:'皮肤缺水没光泽，nourish yin润燥，养出水润感。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:55, name:'霞光茶', type:'tea', journeys:['Beauty & Radiance'], tags:['疲惫dullness'], price:45, trial:16, desc:'疲惫写在脸上，qi and blood双补，找回气色。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:56, name:'曦辉贴', type:'plaster', journeys:['Beauty & Radiance'], tags:['气色发黄','疲惫dullness'], price:9, trial:4, desc:'气色差又疲惫，敷一敷双重提气色。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:57, name:'凝脂茶', type:'tea', journeys:['Beauty & Radiance'], tags:['弹性下降'], price:45, trial:16, desc:'皮肤弹性下降，益气养阴，帮肌肤找回紧实感。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:58, name:'霜华茶', type:'tea', journeys:['Beauty & Radiance'], tags:['初显fine lines'], price:45, trial:16, desc:'fine lines开始出现，nourish yin润肤，抚平初显的痕迹。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:59, name:'晚霞贴', type:'plaster', journeys:['Beauty & Radiance'], tags:['面颊松垮'], price:9, trial:4, desc:'面颊有点松垮，敷一敷帮忙提一提。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:60, name:'凝脂贴', type:'plaster', journeys:['Beauty & Radiance'], tags:['初显fine lines','弹性下降','面颊松垮'], price:9, trial:4, desc:'sagging、fine lines、垮脸一起出现，全面提升方案。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:61, name:'翠萼茶', type:'tea', journeys:['Beauty & Radiance'], tags:['反复冒痘'], price:45, trial:16, desc:'acne反反复复，clear heatremove dampness，慢慢wellnessconstitution。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:62, name:'玉肌茶', type:'tea', journeys:['Beauty & Radiance'], tags:['毛孔粗大'], price:45, trial:16, desc:'毛孔粗大，strengthen the spleen渗湿，肌肤更细腻。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:63, name:'芷若茶', type:'tea', journeys:['Beauty & Radiance'], tags:['泛红刺痛'], price:45, trial:16, desc:'泛红刺痛，凉血clear heat，舒缓sensitivity状态。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:64, name:'青荷茶', type:'tea', journeys:['Beauty & Radiance'], tags:['油光满面'], price:45, trial:16, desc:'满脸油光，clear heatremove dampness，控油更清爽。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:65, name:'翠荷茶', type:'tea', journeys:['Beauty & Radiance'], tags:['反复冒痘','油光满面'], price:45, trial:16, desc:'acne加油光一起来，双重clear heatremove dampness。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:66, name:'轻颜茶', type:'tea', journeys:['Beauty & Radiance'], tags:['面部浮肿'], price:45, trial:16, desc:'脸部有点浮肿，strengthen the spleen利水，消reduce swelling。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:67, name:'月轮茶', type:'tea', journeys:['Beauty & Radiance'], tags:['轮廓模糊'], price:45, trial:16, desc:'轮廓不够清晰，益气nourish blood，帮忙找回线条。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:68, name:'云颔茶', type:'tea', journeys:['Beauty & Radiance'], tags:['双下巴'], price:45, trial:16, desc:'双下巴困扰，化痰remove dampness，帮忙化开。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:69, name:'月澈茶', type:'tea', journeys:['Beauty & Radiance'], tags:['双下巴','面部浮肿'], price:45, trial:16, desc:'浮肿加双下巴，一起消一消。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:70, name:'晨露茶', type:'tea', journeys:['Daily Wellness'], tags:['容易fatigue'], price:45, trial:16, desc:'总是很疲惫，益气strengthen the spleen，找回精神头。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:71, name:'朝晖茶', type:'tea', journeys:['Daily Wellness'], tags:['精神不振'], price:45, trial:16, desc:'精神不振提不起劲，升阳益气，唤醒vitality。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:72, name:'松风茶', type:'tea', journeys:['Daily Wellness'], tags:['注意力难集中'], price:45, trial:16, desc:'注意力很难集中，开窍宁神，思路更清晰。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:73, name:'屏山茶', type:'tea', journeys:['Daily Wellness'], tags:['immunity力偏弱'], price:45, trial:16, desc:'容易生病抵抗力弱，益气固表，加固防护力。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:74, name:'朝阳茶', type:'tea', journeys:['Daily Wellness'], tags:['容易fatigue','精神不振'], price:45, trial:16, desc:'疲惫又没精神，双重益气升阳。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:75, name:'岚雾茶', type:'tea', journeys:['Daily Wellness'], tags:['湿气重'], price:45, trial:16, desc:'湿气重身体沉，strengthen the spleenremove dampness，轻盈一点。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:76, name:'荷露茶', type:'tea', journeys:['Daily Wellness'], tags:['怕热易出汗'], price:45, trial:16, desc:'一动就一身汗，敛汗益气，收一收。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:77, name:'四时茶', type:'tea', journeys:['Daily Wellness'], tags:['换季不适应'], price:45, trial:16, desc:'换季总不适应，调和营卫，帮身体更快适应变化。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:78, name:'谷芽茶', type:'tea', journeys:['Daily Wellness'], tags:['食欲不振'], price:45, trial:16, desc:'没什么胃口，健胃消食，找回食欲。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:79, name:'晚膳茶', type:'tea', journeys:['Daily Wellness'], tags:['消化不良'], price:45, trial:16, desc:'消化总是慢半拍，消食和胃，饭后更舒服。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:80, name:'暖芝茶', type:'tea', journeys:['Daily Wellness'], tags:['便秘'], price:45, trial:16, desc:'排便不太顺畅，润肠通便，温和wellness。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:81, name:'晚风茶', type:'tea', journeys:['Daily Wellness'], tags:['腹胀'], price:45, trial:16, desc:'肚子总是胀胀的，理气消胀，舒服一点。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:82, name:'谷雨茶', type:'tea', journeys:['Daily Wellness'], tags:['消化不良','腹胀'], price:45, trial:16, desc:'消化不良又腹胀，一起理顺。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:83, name:'谷序茶', type:'tea', journeys:['Daily Wellness'], tags:['便秘','消化不良','腹胀','食欲不振'], price:45, trial:16, desc:'胃口、消化、排便、腹胀全都不太顺，整体调一调。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:84, name:'松岚茶', type:'tea', journeys:['Daily Wellness'], tags:['stress大'], price:45, trial:16, desc:'stress山大，疏肝理气，松一口气。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:85, name:'竹韵茶', type:'tea', journeys:['Daily Wellness'], tags:['易烦躁'], price:45, trial:16, desc:'容易心浮气躁，清心除烦，静一静。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:86, name:'竹影茶', type:'tea', journeys:['Daily Wellness'], tags:['mood紧绷'], price:45, trial:16, desc:'mood总是紧绷，疏肝解郁，放松下来。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:87, name:'夜合茶', type:'tea', journeys:['Daily Wellness'], tags:['睡前思虑多'], price:45, trial:16, desc:'睡前脑子停不下来，nourish the heartcalm the mind，帮忙放空。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:88, name:'竹松茶', type:'tea', journeys:['Daily Wellness'], tags:['stress大','易烦躁'], price:45, trial:16, desc:'stress大又烦躁，双重疏肝清心。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:89, name:'忘忧茶', type:'tea', journeys:['Daily Wellness'], tags:['mood紧绷','睡前思虑多'], price:45, trial:16, desc:'mood紧绷又思虑重，一杯茶，把忧愁放一放。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:90, name:'松节贴', type:'plaster', journeys:['Pain Soothing'], tags:['久坐僵硬'], price:9, trial:4, desc:'久坐后脖子肩膀僵硬，敷一敷松一松。', active:true, inStock:true, featured:true, imgs:[]},
-    {id:91, name:'葛悠贴', type:'plaster', journeys:['Pain Soothing'], tags:['落枕'], price:9, trial:4, desc:'落枕转不了头，敷一敷解肌舒筋。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:92, name:'山岳贴', type:'plaster', journeys:['Pain Soothing'], tags:['腰酸背痛'], price:9, trial:4, desc:'腰酸背痛，敷一敷补liver and kidney、强腰背。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:93, name:'云肩贴', type:'plaster', journeys:['Pain Soothing'], tags:['neck and shoulders酸胀'], price:9, trial:4, desc:'neck and shoulders酸胀不适，敷一敷activate blood通络。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:94, name:'云松贴', type:'plaster', journeys:['Pain Soothing'], tags:['久坐僵硬','neck and shoulders酸胀'], price:9, trial:4, desc:'久坐又neck and shoulders酸胀，一起舒缓。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:95, name:'暖节贴', type:'plaster', journeys:['Pain Soothing'], tags:['joints酸胀'], price:9, trial:4, desc:'joints酸胀不适，敷一敷remove dampness通络。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:96, name:'晴岚贴', type:'plaster', journeys:['Pain Soothing'], tags:['遇冷加重'], price:9, trial:4, desc:'一遇冷就加重，敷一敷warm meridiansdispel cold。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:97, name:'展翼贴', type:'plaster', journeys:['Pain Soothing'], tags:['活动受限'], price:9, trial:4, desc:'活动起来不太利索，敷一敷舒筋活络。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:98, name:'暖岚贴', type:'plaster', journeys:['Pain Soothing'], tags:['joints酸胀','遇冷加重'], price:9, trial:4, desc:'joints又酸又怕冷，双重驱寒remove dampness。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:99, name:'赤霞贴', type:'plaster', journeys:['Pain Soothing'], tags:['muscle拉伤'], price:9, trial:4, desc:'muscle拉伤了，敷一敷activate blood舒缓。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:100, name:'紫云贴', type:'plaster', journeys:['Pain Soothing'], tags:['扭伤淤青'], price:9, trial:4, desc:'扭伤淤青，敷一敷resolve stasisreduce swelling。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:101, name:'暮筋茶', type:'tea', journeys:['Pain Soothing'], tags:['运动后酸痛'], price:45, trial:16, desc:'运动完浑身酸痛，喝一杯nourish bloodactivate blood。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:102, name:'霞云贴', type:'plaster', journeys:['Pain Soothing'], tags:['扭伤淤青','muscle拉伤'], price:9, trial:4, desc:'拉伤又淤青，一起activate bloodresolve stasis。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:103, name:'川野茶', type:'tea', journeys:['Pain Soothing'], tags:['周身酸痛'], price:45, trial:16, desc:'浑身酸痛没劲，qi and blood双补，慢慢缓解。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:104, name:'晚立贴', type:'plaster', journeys:['Pain Soothing'], tags:['久站久坐不适'], price:9, trial:4, desc:'站久坐久都不舒服，敷一敷舒筋活络。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:105, name:'隐山茶', type:'tea', journeys:['Pain Soothing'], tags:['反复隐痛'], price:45, trial:16, desc:'疼痛反反复复，nourish blood通络，慢慢wellness。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:106, name:'川隐茶', type:'tea', journeys:['Pain Soothing'], tags:['反复隐痛','周身酸痛'], price:45, trial:16, desc:'浑身酸痛又反复隐痛，双重qi and blood通络。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:107, name:'暮合贴', type:'plaster', journeys:['Quality Sleep'], tags:['躺下清醒'], price:9, trial:4, desc:'一躺下就很清醒，睡前敷一敷涌泉穴。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:108, name:'星语茶', type:'tea', journeys:['Quality Sleep'], tags:['思绪停不下来'], price:45, trial:16, desc:'脑子里的念头停不下来，nourish the heartcalm the mind，帮忙静下来。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:109, name:'夜阑茶', type:'tea', journeys:['Quality Sleep'], tags:['入睡耗时长'], price:45, trial:16, desc:'入睡总要很久，nourish the heartcalm the mind，帮忙更快入睡。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:110, name:'星阑茶', type:'tea', journeys:['Quality Sleep'], tags:['入睡耗时长','思绪停不下来'], price:45, trial:16, desc:'思绪多又难入睡，双重calm the mind助眠。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:111, name:'暮霭茶', type:'tea', journeys:['Quality Sleep'], tags:['夜间易醒'], price:45, trial:16, desc:'夜里总醒，nourish the heart益气，睡得更沉一点。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:112, name:'月阑贴', type:'plaster', journeys:['Quality Sleep'], tags:['醒后难再入睡'], price:9, trial:4, desc:'醒了就很难再睡着，睡前敷一敷帮忙回笼。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:113, name:'静巷茶', type:'tea', journeys:['Quality Sleep'], tags:['对声音sensitivity'], price:45, trial:16, desc:'一点动静就醒，宁心calm the mind，睡得更安稳。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:114, name:'霭月茶', type:'tea', journeys:['Quality Sleep'], tags:['夜间易醒','醒后难再入睡'], price:45, trial:16, desc:'易醒又难再入睡，双重calm the mind稳睡。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:115, name:'蝶梦茶', type:'tea', journeys:['Quality Sleep'], tags:['梦境频繁'], price:45, trial:16, desc:'晚上梦特别多，nourish the heartcalm the mind，睡得更踏实。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:116, name:'子夜茶', type:'tea', journeys:['Quality Sleep'], tags:['sleep质量差'], price:45, trial:16, desc:'整体sleep质量不好，nourish the heartcalm the mind，慢慢改善。', active:false, inStock:true, featured:false, imgs:[]},
-    {id:117, name:'蝶影茶', type:'tea', journeys:['Quality Sleep'], tags:['梦境频繁','sleep质量差'], price:45, trial:16, desc:'frequent dreams又睡不安稳，双重nourish the heartcalm the mind。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:118, name:'晓岚茶', type:'tea', journeys:['Quality Sleep'], tags:['睡醒仍困倦'], price:45, trial:16, desc:'醒来还是很困，益气升阳，唤醒清醒感。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:119, name:'卯时茶', type:'tea', journeys:['Quality Sleep'], tags:['起床困难'], price:45, trial:16, desc:'起床特别困难，温阳益气，帮忙醒过来。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:120, name:'午昼茶', type:'tea', journeys:['Quality Sleep'], tags:['日间嗜睡'], price:45, trial:16, desc:'白天总是犯困，strengthen the spleen升阳，提振精神。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:121, name:'晨曦茶', type:'tea', journeys:['Quality Sleep'], tags:['日间嗜睡','起床困难'], price:45, trial:16, desc:'起床难又犯困，双重升阳醒神。', active:true, inStock:true, featured:false, imgs:[]},
-    {id:122, name:'晓霞膜', type:'mask', journeys:[], tags:[], price:39, trial:15, desc:'不针对特定症状，日常美白提亮，周末宠爱自己的仪式感。', active:true, inStock:true, featured:true, imgs:[]},
+    {id:1, name:'鏈堣垝璐?, type:'plaster', journeys:['Women's Health'], tags:['鐥涚粡'], price:9, trial:4, desc:'Apply during menstrual period for cold pain in waist and abdomen, the warmth slowly spreads.', active:true, inStock:true, featured:false, imgs:[]},
+    {id:2, name:'杩熸睈鑼?, type:'tea', journeys:['Women's Health'], tags:['鏈堢粡杩囬暱'], price:45, trial:16, desc:'When menstruation lasts too long or is spotty, drink it to help the body regulate its rhythm.', active:true, inStock:true, featured:false, imgs:[]},
+    {id:3, name:'婊℃睈鑼?, type:'tea', journeys:['Women's Health'], tags:['menstrual flow杩囧'], price:45, trial:16, desc:'On days with heavier flow, drink a cup for peace of mind.', active:true, inStock:true, featured:false, imgs:[]},
+    {id:4, name:'娴呮睈鑼?, type:'tea', journeys:['Women's Health'], tags:['menstrual flow杩囧皯'], price:45, trial:16, desc:'Light and scanty periods, nourish qi and blood daily.', active:true, inStock:true, featured:false, imgs:[]},
+    {id:5, name:'寮︽湀鑼?, type:'tea', journeys:['Women's Health'], tags:['cycle绱婁贡'], price:45, trial:16, desc:'Irregular cycles, help the body find its own rhythm.', active:true, inStock:true, featured:false, imgs:[]},
+    {id:6, name:'鏈堥殭鑼?, type:'tea', journeys:['Women's Health'], tags:['缁忛棿鐐规淮'], price:45, trial:16, desc:'Occasional spotting between periods, nourish yin and cool blood, gentlewellness.', active:true, inStock:true, featured:false, imgs:[]},
+    {id:7, name:'鏈涙睈鑼?, type:'tea', journeys:['Women's Health'], tags:['鏈堢粡杩囬暱','menstrual flow杩囧'], price:45, trial:16, desc:'On days with long and heavy periods, a cup of tea helps stabilize.', active:true, inStock:true, featured:false, imgs:[]},
+    {id:8, name:'鐩堟湀鑼?, type:'tea', journeys:['Women's Health'], tags:['cycle绱婁贡','menstrual flow杩囧皯'], price:45, trial:16, desc:'Scanty and irregular cycles, slowly nourish and replenish.', active:true, inStock:true, featured:false, imgs:[]},
+    {id:9, name:'浜戝噣鑼?, type:'tea', journeys:['Women's Health'], tags:['閲忓'], price:45, trial:16, desc:'Excessive leucorrhea, strengthen spleen and remove dampness, feel fresh and clean.', active:true, inStock:true, featured:false, imgs:[]},
+    {id:10, name:'绱犻泤鑼?, type:'tea', journeys:['Women's Health'], tags:['棰滆壊寮傚父'], price:45, trial:16, desc:'Abnormal color but not severe, daily gentle cleansing.', active:true, inStock:true, featured:false, imgs:[]},
+    {id:11, name:'鑺峰叞鑼?, type:'tea', journeys:['Women's Health'], tags:['浼存湁寮傚懗'], price:45, trial:16, desc:'With odor, clear heat and remove dampness, regain freshness.', active:true, inStock:false, featured:false, imgs:[]},
+    {id:12, name:'鍏版堡Sitz Bath Pack', type:'soak', journeys:['Women's Health'], tags:['鍙嶅鐦欑棐'], price:25, trial:10, desc:'Recurring itching and discomfort, boil and take a reassuring hot bath.', active:true, inStock:true, featured:false, imgs:[]},
+    {id:13, name:'婢勬緢鑼?, type:'tea', journeys:['Women's Health'], tags:['浼存湁寮傚懗','棰滆壊寮傚父'], price:45, trial:16, desc:'棰滆壊鍜屽紓鍛冲悓鏃跺嚭鐜帮紝鍙岀榻愪笅娓呬竴娓呫€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:14, name:'鑺锋緞鑼?, type:'tea', journeys:['Women's Health'], tags:['浼存湁寮傚懗','閲忓','棰滆壊寮傚父'], price:45, trial:16, desc:'閲忓銆侀鑹层€佸紓鍛抽兘鏈夌殑鏃ュ瓙锛屽叏闈㈡竻鍏汇€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:15, name:'鏈堝簭鑼?, type:'tea', journeys:['Women's Health'], tags:['cycle涓嶇ǔ瀹?], price:45, trial:16, desc:'澶囧瓡鏈熼棿cycle鎬讳笉绋筹紝鐤忚倽鐞嗘皵甯繖璋冮『銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:16, name:'鐓︽殩璐?, type:'plaster', journeys:['Women's Health'], tags:['constitution鍋忓瘨'], price:9, trial:4, desc:'constitution鍋忓瘨鎵嬭剼鍑夛紝鏁蜂竴鏁凤紝鏆栧埌蹇冮噷銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:17, name:'缁胯惣鑼?, type:'tea', journeys:['Women's Health'], tags:['moodstress'], price:45, trial:16, desc:'澶囧瓡璺笂stress澶э紝鍠濅竴鏉紝鏉句竴鍙ｆ皵銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:18, name:'鍏伴Θ鑼?, type:'tea', journeys:['Women's Health'], tags:['澶囧瓡wellness'], price:45, trial:16, desc:'鏃ュ父澶囧瓡constitution璋冨吇锛屽钩琛iver and kidney鎵撳熀纭€銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:19, name:'姊呮偊鑼?, type:'tea', journeys:['Women's Health'], tags:['cycle涓嶇ǔ瀹?,'moodstress'], price:45, trial:16, desc:'cycle涓嶇ǔ鍙堝績鎯呯儲韬侊紝鐤忚倽nourish blood涓€璧锋潵銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:20, name:'鍏板簭鑼?, type:'tea', journeys:['Women's Health'], tags:['cycle涓嶇ǔ瀹?,'澶囧瓡wellness','moodstress'], price:45, trial:16, desc:'澶囧瓡鏈熼棿cycle銆乵ood閮介渶瑕佺収椤炬椂鐨勫叏闈ellness鑼躲€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:21, name:'闈欑帀璐?, type:'plaster', journeys:['Women's Health'], tags:['浣撴鎻愮ず澧炵敓'], price:9, trial:4, desc:'浣撴鎻愮ず鏈夊鐢燂紝鏃ュ父杈呭姪wellness锛岃閰嶅悎瀹氭湡澶嶆煡銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:22, name:'鍜岄鑼?, type:'tea', journeys:['Women's Health'], tags:['灏忚吂鍧犺儉'], price:45, trial:16, desc:'灏忚吂鎬绘槸鍧犺儉锛岀悊姘斿寲寮€閭ｈ偂闂烽椃鐨勬劅瑙夈€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:23, name:'缁涘崕鑼?, type:'tea', journeys:['Women's Health'], tags:['menstrual period涓嶉€傚姞閲?], price:45, trial:16, desc:'menstrual period杩欏嚑澶╃壒鍒笉鑸掓湇锛宎ctivate blood鍖栧紑閭ｈ偂婊炴订銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:24, name:'鏆栨邯鑼?, type:'tea', journeys:['Women's Health'], tags:['灏忚吂鍧犺儉','menstrual period涓嶉€傚姞閲?], price:45, trial:16, desc:'鍧犺儉鍔犱笂menstrual period鍔犻噸锛屼竴璧锋俯鏌斿寲寮€銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:25, name:'娓呴湶鑼?, type:'tea', journeys:['Women's Health'], tags:['娼儹鐩楁睏'], price:45, trial:16, desc:'娼儹鐩楁睏鐫′笉瀹夌ǔ锛宯ourish yin鏁涙睏娓呮竻鐖界埥銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:26, name:'鏈堟灂璐?, type:'plaster', journeys:['Women's Health'], tags:['insomnia'], price:9, trial:4, desc:'缈绘潵瑕嗗幓鐫′笉鐫€锛岀潯鍓嶆暦涓€鏁锋秾娉夌┐銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:27, name:'鍏板績鑼?, type:'tea', journeys:['Women's Health'], tags:['mood娉㈠姩'], price:45, trial:16, desc:'mood蹇戒笂蹇戒笅锛屽枬涓€鏉紝闈欎笅鏉ャ€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:28, name:'闈欐緶鑼?, type:'tea', journeys:['Women's Health'], tags:['蹇冩偢'], price:45, trial:16, desc:'蹇冭烦鎬讳笉瀹夌ǔ锛屾竻蹇冨畞鎮革紝鎱㈡參骞冲銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:29, name:'绱犳湀璐?, type:'plaster', journeys:['Women's Health'], tags:['insomnia','蹇冩偢'], price:9, trial:4, desc:'鍙堢潯涓嶅ソ鍙堝績鎮革紝鐫″墠鏁蜂竴鏁凤紝鍙岄噸瀹夐】銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:30, name:'闈欏ソ鑼?, type:'tea', journeys:['Women's Health'], tags:['insomnia','蹇冩偢','mood娉㈠姩','娼儹鐩楁睏'], price:49, trial:18, desc:'鏇村勾鏈熻澶氫笉閫備竴璧锋潵锛屼竴鏉尪闄綘绋崇ǔ璧拌繃銆?, active:true, inStock:true, featured:true, imgs:[]},
+    {id:31, name:'鏅ㄨ胺鑼?, type:'tea', journeys:['Body Sculpting'], tags:['杩涢涓嶈寰?], price:45, trial:16, desc:'涓夐娌¤寰嬶紝strengthen the spleen鍜岃儍锛屾壘鍥炲悆楗殑鑺傚銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:32, name:'宀氶殣鑼?, type:'tea', journeys:['Body Sculpting'], tags:['鍡滅敎鍡滄补'], price:45, trial:16, desc:'鐖卞悆鐢滅埍鍚冩补锛屽寲鐥皉emove dampness锛岀粰韬綋鍑忓噺璐熴€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:33, name:'瀹惰喅鑼?, type:'tea', journeys:['Body Sculpting'], tags:['澶栭棰戠箒'], price:45, trial:16, desc:'澶栭鍚冨浜嗭紝娓呭吇spleen and stomach锛屾竻娓呯埥鐖姐€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:34, name:'鏅ㄥ簭鑼?, type:'tea', journeys:['Body Sculpting'], tags:['楗鏃犺鍒?], price:45, trial:16, desc:'楗姣棤瑙勫垝锛宻trengthen the spleen鐩婃皵锛屾墦濂藉熀纭€鍐嶈皥鍏朵粬銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:35, name:'浜戦殣鑼?, type:'tea', journeys:['Body Sculpting'], tags:['鍡滅敎鍡滄补','楗鏃犺鍒?], price:45, trial:16, desc:'鍡滅敎鍡滄补鍙堟病瑙勫垝锛屽弻閲嶅寲娴婏紝杞昏涓婇樀銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:36, name:'鏅村窛鑼?, type:'tea', journeys:['Body Sculpting'], tags:['涔呭潗灏戝姩'], price:45, trial:16, desc:'涔呭潗涓嶅姩锛岀悊姘攁ctivate blood锛岃qi and blood閲嶆柊娴佸姩璧锋潵銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:37, name:'楣ゅЭ鑼?, type:'tea', journeys:['Body Sculpting'], tags:['杩愬姩鏂瑰紡涓嶅綋'], price:45, trial:16, desc:'杩愬姩鏂瑰紡涓嶅お瀵癸紝nourish blood鑸掔瓔锛屽姩浣滄洿浠庡銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:38, name:'鎭掓櫒鑼?, type:'tea', journeys:['Body Sculpting'], tags:['闅句互鍧氭寔'], price:45, trial:16, desc:'涓夊ぉ鎵撻奔涓ゅぉ鏅掔綉锛岀泭姘攕trengthen the spleen锛屾參鎱㈠吇鍑哄潥鎸佺殑搴曟皵銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:39, name:'鏆窛鑼?, type:'tea', journeys:['Body Sculpting'], tags:['杩愬姩鍚庢仮澶嶆參'], price:45, trial:16, desc:'杩愬姩瀹屾€绘槸寰堥毦鎭㈠锛岀泭姘攏ourish blood锛屽姞閫熷洖琛€銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:40, name:'楣ゅ窛鑼?, type:'tea', journeys:['Body Sculpting'], tags:['涔呭潗灏戝姩','杩愬姩鏂瑰紡涓嶅綋'], price:45, trial:16, desc:'涔呭潗鍙堣繍鍔ㄥЭ鍔夸笉瀵癸紝涓€璧疯垝Expand鏉ャ€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:41, name:'鎭掑窛鑼?, type:'tea', journeys:['Body Sculpting'], tags:['杩愬姩鍚庢仮澶嶆參','闅句互鍧氭寔'], price:45, trial:16, desc:'闅惧潥鎸佸張鎭㈠鎱紝qi and blood鍙岃ˉ鎾戜綇鐘舵€併€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:42, name:'鍒濇洣璐?, type:'plaster', journeys:['Body Sculpting'], tags:['浜у悗qi and blood铏?], price:9, trial:4, desc:'浜у悗qi and blood涓よ櫄锛屾俯鍜屾暦涓€鏁凤紝鎱㈡參琛ュ洖鏉ャ€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:43, name:'鏅撴湀璐?, type:'plaster', journeys:['Body Sculpting'], tags:['鑵归儴sagging'], price:9, trial:4, desc:'鑵归儴sagging娌″姏姘旓紝鏁蜂竴鏁峰府蹇欐彁涓€鎻愩€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:44, name:'鏆綊鑼?, type:'tea', journeys:['Body Sculpting'], tags:['浣撳姏鎭㈠鎱?], price:45, trial:16, desc:'浜у悗浣撳姏鎭㈠寰楁參锛宷i and blood鍙岃ˉ闄綘鎱㈡參鏉ャ€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:45, name:'鐢橀湶鑼?, type:'tea', journeys:['Body Sculpting'], tags:['鍝轰钩鏈焪ellness'], price:45, trial:16, desc:'鍝轰钩鏈熼渶瑕丮oreqi and blood鏀寔锛屾俯鍜屾粙鍏汇€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:46, name:'浜у悗鍏冩皵璐?, type:'plaster', journeys:['Body Sculpting'], tags:['浜у悗qi and blood铏?,'浣撳姏鎭㈠鎱?], price:9, trial:4, desc:'浜у悗qi and blood铏氬張鎭㈠鎱紝鍔犲己鐗堜竴璧峰吇鍥炴潵銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:47, name:'鏆栭槼璐?, type:'plaster', journeys:['Body Sculpting'], tags:['鎬曞喎'], price:9, trial:4, desc:'鎵嬭剼鎬曞喎锛屾俯闃砫ispel cold锛屾暦涓€鏁锋殩璧锋潵銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:48, name:'鏅存洣鑼?, type:'tea', journeys:['Body Sculpting'], tags:['鏄揻atigue'], price:45, trial:16, desc:'鎬绘槸鎻愪笉璧峰姴锛岀泭姘攕trengthen the spleen锛屾壘鍥炵簿绁炪€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:49, name:'浜戞緢鑼?, type:'tea', journeys:['Body Sculpting'], tags:['姘磋偪'], price:45, trial:16, desc:'韬綋姘磋偪娌夐噸锛宻trengthen the spleen鍒╂按锛岃交鐩堜竴鐐广€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:50, name:'杞荤泩鑼?, type:'tea', journeys:['Body Sculpting'], tags:['浣撻噸闅句笅闄?], price:45, trial:16, desc:'浣撻噸鎬诲崱鍏筹紝鍖栨箍strengthen the spleen锛屽府蹇欐澗鍔ㄤ竴涓媘etabolism銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:51, name:'鏆栬韩鑼?, type:'tea', journeys:['Body Sculpting'], tags:['鎬曞喎','鏄揻atigue'], price:45, trial:16, desc:'鍙堟€曞喎鍙坒atigue锛屾俯闃崇泭姘斾竴璧锋潵銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:52, name:'宀氭緢鑼?, type:'tea', journeys:['Body Sculpting'], tags:['浣撻噸闅句笅闄?,'姘磋偪'], price:45, trial:16, desc:'姘磋偪鍙堜綋閲嶉毦闄嶏紝鍙岄噸remove dampnessreduce swelling銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:53, name:'鏅ㄩ鑼?, type:'tea', journeys:['Beauty & Radiance'], tags:['姘旇壊鍙戦粍'], price:45, trial:16, desc:'姘旇壊鍙戦粍娌＄簿绁烇紝鐩婃皵nourish blood锛屾參鎱㈤€忓嚭绾㈡鼎銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:54, name:'鐜夋辰鑼?, type:'tea', journeys:['Beauty & Radiance'], tags:['缂轰箯鍏夋辰'], price:45, trial:16, desc:'鐨偆缂烘按娌″厜娉斤紝nourish yin娑︾嚗锛屽吇鍑烘按娑︽劅銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:55, name:'闇炲厜鑼?, type:'tea', journeys:['Beauty & Radiance'], tags:['鐤叉儷dullness'], price:45, trial:16, desc:'鐤叉儷鍐欏湪鑴镐笂锛宷i and blood鍙岃ˉ锛屾壘鍥炴皵鑹层€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:56, name:'鏇﹁緣璐?, type:'plaster', journeys:['Beauty & Radiance'], tags:['姘旇壊鍙戦粍','鐤叉儷dullness'], price:9, trial:4, desc:'姘旇壊宸張鐤叉儷锛屾暦涓€鏁峰弻閲嶆彁姘旇壊銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:57, name:'鍑濊剛鑼?, type:'tea', journeys:['Beauty & Radiance'], tags:['寮规€т笅闄?], price:45, trial:16, desc:'鐨偆寮规€т笅闄嶏紝鐩婃皵鍏婚槾锛屽府鑲岃偆鎵惧洖绱у疄鎰熴€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:58, name:'闇滃崕鑼?, type:'tea', journeys:['Beauty & Radiance'], tags:['鍒濇樉fine lines'], price:45, trial:16, desc:'fine lines寮€濮嬪嚭鐜帮紝nourish yin娑﹁偆锛屾姎骞冲垵鏄剧殑鐥曡抗銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:59, name:'鏅氶湠璐?, type:'plaster', journeys:['Beauty & Radiance'], tags:['闈㈤鏉惧灝'], price:9, trial:4, desc:'闈㈤鏈夌偣鏉惧灝锛屾暦涓€鏁峰府蹇欐彁涓€鎻愩€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:60, name:'鍑濊剛璐?, type:'plaster', journeys:['Beauty & Radiance'], tags:['鍒濇樉fine lines','寮规€т笅闄?,'闈㈤鏉惧灝'], price:9, trial:4, desc:'sagging銆乫ine lines銆佸灝鑴镐竴璧峰嚭鐜帮紝鍏ㄩ潰鎻愬崌鏂规銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:61, name:'缈犺惣鑼?, type:'tea', journeys:['Beauty & Radiance'], tags:['鍙嶅鍐掔棙'], price:45, trial:16, desc:'acne鍙嶅弽澶嶅锛宑lear heatremove dampness锛屾參鎱ellnessconstitution銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:62, name:'鐜夎倢鑼?, type:'tea', journeys:['Beauty & Radiance'], tags:['姣涘瓟绮楀ぇ'], price:45, trial:16, desc:'姣涘瓟绮楀ぇ锛宻trengthen the spleen娓楁箍锛岃倢鑲ゆ洿缁嗚吇銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:63, name:'鑺疯嫢鑼?, type:'tea', journeys:['Beauty & Radiance'], tags:['娉涚孩鍒虹棝'], price:45, trial:16, desc:'娉涚孩鍒虹棝锛屽噳琛€clear heat锛岃垝缂搒ensitivity鐘舵€併€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:64, name:'闈掕嵎鑼?, type:'tea', journeys:['Beauty & Radiance'], tags:['娌瑰厜婊￠潰'], price:45, trial:16, desc:'婊¤劯娌瑰厜锛宑lear heatremove dampness锛屾帶娌规洿娓呯埥銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:65, name:'缈犺嵎鑼?, type:'tea', journeys:['Beauty & Radiance'], tags:['鍙嶅鍐掔棙','娌瑰厜婊￠潰'], price:45, trial:16, desc:'acne鍔犳补鍏変竴璧锋潵锛屽弻閲峜lear heatremove dampness銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:66, name:'杞婚鑼?, type:'tea', journeys:['Beauty & Radiance'], tags:['闈㈤儴娴偪'], price:45, trial:16, desc:'鑴搁儴鏈夌偣娴偪锛宻trengthen the spleen鍒╂按锛屾秷reduce swelling銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:67, name:'鏈堣疆鑼?, type:'tea', journeys:['Beauty & Radiance'], tags:['杞粨妯＄硦'], price:45, trial:16, desc:'杞粨涓嶅娓呮櫚锛岀泭姘攏ourish blood锛屽府蹇欐壘鍥炵嚎鏉°€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:68, name:'浜戦鑼?, type:'tea', journeys:['Beauty & Radiance'], tags:['鍙屼笅宸?], price:45, trial:16, desc:'鍙屼笅宸村洶鎵帮紝鍖栫棸remove dampness锛屽府蹇欏寲寮€銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:69, name:'鏈堟緢鑼?, type:'tea', journeys:['Beauty & Radiance'], tags:['鍙屼笅宸?,'闈㈤儴娴偪'], price:45, trial:16, desc:'娴偪鍔犲弻涓嬪反锛屼竴璧锋秷涓€娑堛€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:70, name:'鏅ㄩ湶鑼?, type:'tea', journeys:['Daily Wellness'], tags:['瀹规槗fatigue'], price:45, trial:16, desc:'鎬绘槸寰堢柌鎯紝鐩婃皵strengthen the spleen锛屾壘鍥炵簿绁炲ご銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:71, name:'鏈濇櫀鑼?, type:'tea', journeys:['Daily Wellness'], tags:['绮剧涓嶆尟'], price:45, trial:16, desc:'绮剧涓嶆尟鎻愪笉璧峰姴锛屽崌闃崇泭姘旓紝鍞ら啋vitality銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:72, name:'鏉鹃鑼?, type:'tea', journeys:['Daily Wellness'], tags:['娉ㄦ剰鍔涢毦闆嗕腑'], price:45, trial:16, desc:'娉ㄦ剰鍔涘緢闅鹃泦涓紝寮€绐嶅畞绁烇紝鎬濊矾鏇存竻鏅般€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:73, name:'灞忓北鑼?, type:'tea', journeys:['Daily Wellness'], tags:['immunity鍔涘亸寮?], price:45, trial:16, desc:'瀹规槗鐢熺梾鎶垫姉鍔涘急锛岀泭姘斿浐琛紝鍔犲浐闃叉姢鍔涖€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:74, name:'鏈濋槼鑼?, type:'tea', journeys:['Daily Wellness'], tags:['瀹规槗fatigue','绮剧涓嶆尟'], price:45, trial:16, desc:'鐤叉儷鍙堟病绮剧锛屽弻閲嶇泭姘斿崌闃炽€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:75, name:'宀氶浘鑼?, type:'tea', journeys:['Daily Wellness'], tags:['婀挎皵閲?], price:45, trial:16, desc:'婀挎皵閲嶈韩浣撴矇锛宻trengthen the spleenremove dampness锛岃交鐩堜竴鐐广€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:76, name:'鑽烽湶鑼?, type:'tea', journeys:['Daily Wellness'], tags:['鎬曠儹鏄撳嚭姹?], price:45, trial:16, desc:'涓€鍔ㄥ氨涓€韬睏锛屾暃姹楃泭姘旓紝鏀朵竴鏀躲€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:77, name:'鍥涙椂鑼?, type:'tea', journeys:['Daily Wellness'], tags:['鎹㈠涓嶉€傚簲'], price:45, trial:16, desc:'鎹㈠鎬讳笉閫傚簲锛岃皟鍜岃惀鍗紝甯韩浣撴洿蹇€傚簲鍙樺寲銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:78, name:'璋疯娊鑼?, type:'tea', journeys:['Daily Wellness'], tags:['椋熸涓嶆尟'], price:45, trial:16, desc:'娌′粈涔堣儍鍙ｏ紝鍋ヨ儍娑堥锛屾壘鍥為娆层€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:79, name:'鏅氳喅鑼?, type:'tea', journeys:['Daily Wellness'], tags:['娑堝寲涓嶈壇'], price:45, trial:16, desc:'娑堝寲鎬绘槸鎱㈠崐鎷嶏紝娑堥鍜岃儍锛岄キ鍚庢洿鑸掓湇銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:80, name:'鏆栬姖鑼?, type:'tea', journeys:['Daily Wellness'], tags:['渚跨'], price:45, trial:16, desc:'鎺掍究涓嶅お椤虹晠锛屾鼎鑲犻€氫究锛屾俯鍜寃ellness銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:81, name:'鏅氶鑼?, type:'tea', journeys:['Daily Wellness'], tags:['鑵硅儉'], price:45, trial:16, desc:'鑲氬瓙鎬绘槸鑳€鑳€鐨勶紝鐞嗘皵娑堣儉锛岃垝鏈嶄竴鐐广€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:82, name:'璋烽洦鑼?, type:'tea', journeys:['Daily Wellness'], tags:['娑堝寲涓嶈壇','鑵硅儉'], price:45, trial:16, desc:'娑堝寲涓嶈壇鍙堣吂鑳€锛屼竴璧风悊椤恒€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:83, name:'璋峰簭鑼?, type:'tea', journeys:['Daily Wellness'], tags:['渚跨','娑堝寲涓嶈壇','鑵硅儉','椋熸涓嶆尟'], price:45, trial:16, desc:'鑳冨彛銆佹秷鍖栥€佹帓渚裤€佽吂鑳€鍏ㄩ兘涓嶅お椤猴紝鏁翠綋璋冧竴璋冦€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:84, name:'鏉惧矚鑼?, type:'tea', journeys:['Daily Wellness'], tags:['stress澶?], price:45, trial:16, desc:'stress灞卞ぇ锛岀枏鑲濈悊姘旓紝鏉句竴鍙ｆ皵銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:85, name:'绔归煹鑼?, type:'tea', journeys:['Daily Wellness'], tags:['鏄撶儲韬?], price:45, trial:16, desc:'瀹规槗蹇冩诞姘旇簛锛屾竻蹇冮櫎鐑︼紝闈欎竴闈欍€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:86, name:'绔瑰奖鑼?, type:'tea', journeys:['Daily Wellness'], tags:['mood绱х环'], price:45, trial:16, desc:'mood鎬绘槸绱х环锛岀枏鑲濊В閮侊紝鏀炬澗涓嬫潵銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:87, name:'澶滃悎鑼?, type:'tea', journeys:['Daily Wellness'], tags:['鐫″墠鎬濊檻澶?], price:45, trial:16, desc:'鐫″墠鑴戝瓙鍋滀笉涓嬫潵锛宯ourish the heartcalm the mind锛屽府蹇欐斁绌恒€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:88, name:'绔规澗鑼?, type:'tea', journeys:['Daily Wellness'], tags:['stress澶?,'鏄撶儲韬?], price:45, trial:16, desc:'stress澶у張鐑﹁簛锛屽弻閲嶇枏鑲濇竻蹇冦€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:89, name:'蹇樺咖鑼?, type:'tea', journeys:['Daily Wellness'], tags:['mood绱х环','鐫″墠鎬濊檻澶?], price:45, trial:16, desc:'mood绱х环鍙堟€濊檻閲嶏紝涓€鏉尪锛屾妸蹇ф剚鏀句竴鏀俱€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:90, name:'鏉捐妭璐?, type:'plaster', journeys:['Pain Soothing'], tags:['涔呭潗鍍电‖'], price:9, trial:4, desc:'涔呭潗鍚庤剸瀛愯偐鑶€鍍电‖锛屾暦涓€鏁锋澗涓€鏉俱€?, active:true, inStock:true, featured:true, imgs:[]},
+    {id:91, name:'钁涙偁璐?, type:'plaster', journeys:['Pain Soothing'], tags:['钀芥灂'], price:9, trial:4, desc:'钀芥灂杞笉浜嗗ご锛屾暦涓€鏁疯В鑲岃垝绛嬨€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:92, name:'灞卞渤璐?, type:'plaster', journeys:['Pain Soothing'], tags:['鑵伴吀鑳岀棝'], price:9, trial:4, desc:'鑵伴吀鑳岀棝锛屾暦涓€鏁疯ˉliver and kidney銆佸己鑵拌儗銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:93, name:'浜戣偐璐?, type:'plaster', journeys:['Pain Soothing'], tags:['neck and shoulders閰歌儉'], price:9, trial:4, desc:'neck and shoulders閰歌儉涓嶉€傦紝鏁蜂竴鏁穉ctivate blood閫氱粶銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:94, name:'浜戞澗璐?, type:'plaster', journeys:['Pain Soothing'], tags:['涔呭潗鍍电‖','neck and shoulders閰歌儉'], price:9, trial:4, desc:'涔呭潗鍙坣eck and shoulders閰歌儉锛屼竴璧疯垝缂撱€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:95, name:'鏆栬妭璐?, type:'plaster', journeys:['Pain Soothing'], tags:['joints閰歌儉'], price:9, trial:4, desc:'joints閰歌儉涓嶉€傦紝鏁蜂竴鏁穜emove dampness閫氱粶銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:96, name:'鏅村矚璐?, type:'plaster', journeys:['Pain Soothing'], tags:['閬囧喎鍔犻噸'], price:9, trial:4, desc:'涓€閬囧喎灏卞姞閲嶏紝鏁蜂竴鏁穡arm meridiansdispel cold銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:97, name:'灞曠考璐?, type:'plaster', journeys:['Pain Soothing'], tags:['娲诲姩鍙楅檺'], price:9, trial:4, desc:'娲诲姩璧锋潵涓嶅お鍒╃储锛屾暦涓€鏁疯垝绛嬫椿缁溿€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:98, name:'鏆栧矚璐?, type:'plaster', journeys:['Pain Soothing'], tags:['joints閰歌儉','閬囧喎鍔犻噸'], price:9, trial:4, desc:'joints鍙堥吀鍙堟€曞喎锛屽弻閲嶉┍瀵抮emove dampness銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:99, name:'璧ら湠璐?, type:'plaster', journeys:['Pain Soothing'], tags:['muscle鎷変激'], price:9, trial:4, desc:'muscle鎷変激浜嗭紝鏁蜂竴鏁穉ctivate blood鑸掔紦銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:100, name:'绱簯璐?, type:'plaster', journeys:['Pain Soothing'], tags:['鎵激娣ら潚'], price:9, trial:4, desc:'鎵激娣ら潚锛屾暦涓€鏁穜esolve stasisreduce swelling銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:101, name:'鏆瓔鑼?, type:'tea', journeys:['Pain Soothing'], tags:['杩愬姩鍚庨吀鐥?], price:45, trial:16, desc:'杩愬姩瀹屾祽韬吀鐥涳紝鍠濅竴鏉痭ourish bloodactivate blood銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:102, name:'闇炰簯璐?, type:'plaster', journeys:['Pain Soothing'], tags:['鎵激娣ら潚','muscle鎷変激'], price:9, trial:4, desc:'鎷変激鍙堟筏闈掞紝涓€璧穉ctivate bloodresolve stasis銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:103, name:'宸濋噹鑼?, type:'tea', journeys:['Pain Soothing'], tags:['鍛ㄨ韩閰哥棝'], price:45, trial:16, desc:'娴戣韩閰哥棝娌″姴锛宷i and blood鍙岃ˉ锛屾參鎱㈢紦瑙ｃ€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:104, name:'鏅氱珛璐?, type:'plaster', journeys:['Pain Soothing'], tags:['涔呯珯涔呭潗涓嶉€?], price:9, trial:4, desc:'绔欎箙鍧愪箙閮戒笉鑸掓湇锛屾暦涓€鏁疯垝绛嬫椿缁溿€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:105, name:'闅愬北鑼?, type:'tea', journeys:['Pain Soothing'], tags:['鍙嶅闅愮棝'], price:45, trial:16, desc:'鐤肩棝鍙嶅弽澶嶅锛宯ourish blood閫氱粶锛屾參鎱ellness銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:106, name:'宸濋殣鑼?, type:'tea', journeys:['Pain Soothing'], tags:['鍙嶅闅愮棝','鍛ㄨ韩閰哥棝'], price:45, trial:16, desc:'娴戣韩閰哥棝鍙堝弽澶嶉殣鐥涳紝鍙岄噸qi and blood閫氱粶銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:107, name:'鏆悎璐?, type:'plaster', journeys:['Quality Sleep'], tags:['韬轰笅娓呴啋'], price:9, trial:4, desc:'涓€韬轰笅灏卞緢娓呴啋锛岀潯鍓嶆暦涓€鏁锋秾娉夌┐銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:108, name:'鏄熻鑼?, type:'tea', journeys:['Quality Sleep'], tags:['鎬濈华鍋滀笉涓嬫潵'], price:45, trial:16, desc:'鑴戝瓙閲岀殑蹇靛ご鍋滀笉涓嬫潵锛宯ourish the heartcalm the mind锛屽府蹇欓潤涓嬫潵銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:109, name:'澶滈槕鑼?, type:'tea', journeys:['Quality Sleep'], tags:['鍏ョ潯鑰楁椂闀?], price:45, trial:16, desc:'鍏ョ潯鎬昏寰堜箙锛宯ourish the heartcalm the mind锛屽府蹇欐洿蹇叆鐫°€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:110, name:'鏄熼槕鑼?, type:'tea', journeys:['Quality Sleep'], tags:['鍏ョ潯鑰楁椂闀?,'鎬濈华鍋滀笉涓嬫潵'], price:45, trial:16, desc:'鎬濈华澶氬張闅惧叆鐫★紝鍙岄噸calm the mind鍔╃湢銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:111, name:'鏆湱鑼?, type:'tea', journeys:['Quality Sleep'], tags:['澶滈棿鏄撻啋'], price:45, trial:16, desc:'澶滈噷鎬婚啋锛宯ourish the heart鐩婃皵锛岀潯寰楁洿娌変竴鐐广€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:112, name:'鏈堥槕璐?, type:'plaster', journeys:['Quality Sleep'], tags:['閱掑悗闅惧啀鍏ョ潯'], price:9, trial:4, desc:'閱掍簡灏卞緢闅惧啀鐫＄潃锛岀潯鍓嶆暦涓€鏁峰府蹇欏洖绗笺€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:113, name:'闈欏贩鑼?, type:'tea', journeys:['Quality Sleep'], tags:['瀵瑰０闊硈ensitivity'], price:45, trial:16, desc:'涓€鐐瑰姩闈欏氨閱掞紝瀹佸績calm the mind锛岀潯寰楁洿瀹夌ǔ銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:114, name:'闇湀鑼?, type:'tea', journeys:['Quality Sleep'], tags:['澶滈棿鏄撻啋','閱掑悗闅惧啀鍏ョ潯'], price:45, trial:16, desc:'鏄撻啋鍙堥毦鍐嶅叆鐫★紝鍙岄噸calm the mind绋崇潯銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:115, name:'铦舵ⅵ鑼?, type:'tea', journeys:['Quality Sleep'], tags:['姊﹀棰戠箒'], price:45, trial:16, desc:'鏅氫笂姊︾壒鍒锛宯ourish the heartcalm the mind锛岀潯寰楁洿韪忓疄銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:116, name:'瀛愬鑼?, type:'tea', journeys:['Quality Sleep'], tags:['sleep璐ㄩ噺宸?], price:45, trial:16, desc:'鏁翠綋sleep璐ㄩ噺涓嶅ソ锛宯ourish the heartcalm the mind锛屾參鎱㈡敼鍠勩€?, active:false, inStock:true, featured:false, imgs:[]},
+    {id:117, name:'铦跺奖鑼?, type:'tea', journeys:['Quality Sleep'], tags:['姊﹀棰戠箒','sleep璐ㄩ噺宸?], price:45, trial:16, desc:'frequent dreams鍙堢潯涓嶅畨绋筹紝鍙岄噸nourish the heartcalm the mind銆?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:118, name:'鏅撳矚鑼?, type:'tea', journeys:['Quality Sleep'], tags:['鐫￠啋浠嶅洶鍊?], price:45, trial:16, desc:'閱掓潵杩樻槸寰堝洶锛岀泭姘斿崌闃筹紝鍞ら啋娓呴啋鎰熴€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:119, name:'鍗椂鑼?, type:'tea', journeys:['Quality Sleep'], tags:['璧峰簥鍥伴毦'], price:45, trial:16, desc:'璧峰簥鐗瑰埆鍥伴毦锛屾俯闃崇泭姘旓紝甯繖閱掕繃鏉ャ€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:120, name:'鍗堟樇鑼?, type:'tea', journeys:['Quality Sleep'], tags:['鏃ラ棿鍡滅潯'], price:45, trial:16, desc:'鐧藉ぉ鎬绘槸鐘洶锛宻trengthen the spleen鍗囬槼锛屾彁鎸簿绁炪€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:121, name:'鏅ㄦ洣鑼?, type:'tea', journeys:['Quality Sleep'], tags:['鏃ラ棿鍡滅潯','璧峰簥鍥伴毦'], price:45, trial:16, desc:'璧峰簥闅惧張鐘洶锛屽弻閲嶅崌闃抽啋绁炪€?, active:true, inStock:true, featured:false, imgs:[]},
+    {id:122, name:'鏅撻湠鑶?, type:'mask', journeys:[], tags:[], price:39, trial:15, desc:'涓嶉拡瀵圭壒瀹氱棁鐘讹紝鏃ュ父缇庣櫧鎻愪寒锛屽懆鏈疇鐖辫嚜宸辩殑浠紡鎰熴€?, active:true, inStock:true, featured:true, imgs:[]},
   ];
   var PRODUCTS_BY_ID = {};
   PRODUCTS.forEach(function(p){ PRODUCTS_BY_ID[p.id] = p; });
@@ -353,20 +353,20 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   function renderResult(order){
     var html = '<div class="oq-result">'
-      + '<div class="oq-result-hd"><div class="oq-order-no">Order Number '+order.orderNo+'</div><div class="oq-order-date">下单日期 '+order.date+'</div></div>';
+      + '<div class="oq-result-hd"><div class="oq-order-no">Order Number '+order.orderNo+'</div><div class="oq-order-date">涓嬪崟鏃ユ湡 '+order.date+'</div></div>';
 
     html += '<div class="stepper-wrap">';
     STATUS_LABELS.forEach(function(label, i){
       var cls = i < order.status ? 'done' : i === order.status ? 'current' : '';
-      html += '<div class="step '+cls+'"><div class="step-line"></div><div class="step-dot">'+(i<order.status?'✓':(i+1))+'</div><div class="step-label">'+label+'</div></div>';
+      html += '<div class="step '+cls+'"><div class="step-line"></div><div class="step-dot">'+(i<order.status?'鉁?:(i+1))+'</div><div class="step-label">'+label+'</div></div>';
     });
     html += '</div>';
 
     html += '<div class="oq-items-card">';
     order.items.forEach(function(it){
-      html += '<div class="oq-item"><span>'+it.name+' × '+it.qty+'</span><span>MYR '+(it.price*it.qty)+'</span></div>';
+      html += '<div class="oq-item"><span>'+it.name+' 脳 '+it.qty+'</span><span>MYR '+(it.price*it.qty)+'</span></div>';
     });
-    html += '<div class="oq-item total"><span>合计</span><span>MYR '+order.total+'</span></div>'
+    html += '<div class="oq-item total"><span>鍚堣</span><span>MYR '+order.total+'</span></div>'
       + '</div>';
 
     html += '</div>';
@@ -376,7 +376,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   function renderNotFound(){
     document.getElementById('resultArea').innerHTML =
       '<div class="not-found-box"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>'
-      + '<p>没有找到匹配的订单，请ConfirmOrder Number和Contact Information。</p></div>';
+      + '<p>娌℃湁鎵惧埌鍖归厤鐨勮鍗曪紝璇稢onfirmOrder Number鍜孋ontact Information銆?/p></div>';
   }
 
   var orderInput = document.getElementById('orderInput');
@@ -387,7 +387,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var orderNo = orderInput.value.trim();
     var contact = contactInput.value.trim();
     if(!orderNo || !contact){
-      errorEl.textContent = '请填写Order Number和Contact Information。';
+      errorEl.textContent = '璇峰～鍐橭rder Number鍜孋ontact Information銆?;
       errorEl.classList.add('show');
       document.getElementById('resultArea').innerHTML = '';
       return;
@@ -405,7 +405,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         document.getElementById('resultArea').innerHTML = '';
       }
     } catch(e){
-      errorEl.textContent = '暂时无法连接服务器，请稍后Retry。';
+      errorEl.textContent = '鏆傛椂鏃犳硶杩炴帴鏈嶅姟鍣紝璇风◢鍚嶳etry銆?;
       errorEl.classList.add('show');
     }
     btn.disabled = false;
@@ -449,14 +449,14 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   document.getElementById('brandBtn').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
   document.getElementById('bcHome').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
-  document.getElementById('searchBtn').addEventListener('click', function(){ showToast('Search · Coming soon'); });
+  document.getElementById('searchBtn').addEventListener('click', function(){ showToast('Search 路 Coming soon'); });
   var vhAcctMenu = document.getElementById('vhAcctMenu');
   document.getElementById('acctBtn').addEventListener('click', function(e){
     e.stopPropagation();
     vhAcctMenu.classList.toggle('open');
   });
   document.getElementById('vhamOrder').addEventListener('click', function(){
-    showToast('当前就在Order Tracking页');
+    showToast('褰撳墠灏卞湪Order Tracking椤?);
     vhAcctMenu.classList.remove('open');
   });
   document.getElementById('vhamBooking').addEventListener('click', function(){
@@ -502,15 +502,15 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   </div>
   <div class="vh-chat-body" id="vhChatBody"></div>
   <div class="vh-chat-input-row">
-    <input type="text" id="vhChatInput" placeholder="Type a message…" maxlength="300">
+    <input type="text" id="vhChatInput" placeholder="Type a message鈥? maxlength="300">
     <button type="button" id="vhChatSend"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
   </div>
 </div>
 <script>
 (function(){
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  // 聊天消息是任何匿名访客都能Submit的内容，管理员打开对话时会看到——不转义就直接拼进innerHTML
-  // 的话，访客可以在消息里塞HTML/脚本，在管理员已登录的浏览器里执行（存储型XSS）。
+  // 鑱婂ぉ娑堟伅鏄换浣曞尶鍚嶈瀹㈤兘鑳絊ubmit鐨勫唴瀹癸紝绠＄悊鍛樻墦寮€瀵硅瘽鏃朵細鐪嬪埌鈥斺€斾笉杞箟灏辩洿鎺ユ嫾杩沬nnerHTML
+  // 鐨勮瘽锛岃瀹㈠彲浠ュ湪娑堟伅閲屽HTML/鑴氭湰锛屽湪绠＄悊鍛樺凡鐧诲綍鐨勬祻瑙堝櫒閲屾墽琛岋紙瀛樺偍鍨媂SS锛夈€?
   function escapeHtml(s){
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
@@ -528,8 +528,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       return id;
     } catch(e){ return 'cust_temp'; }
   }
-  // 客户端第一次打开聊天面板时调用——后端会自动处理"这个人是不是第一次来"、要不要插入欢迎语，
-  // 前端不用再自己判断这些
+  // 瀹㈡埛绔涓€娆℃墦寮€鑱婂ぉ闈㈡澘鏃惰皟鐢ㄢ€斺€斿悗绔細鑷姩澶勭悊"杩欎釜浜烘槸涓嶆槸绗竴娆℃潵"銆佽涓嶈鎻掑叆娆㈣繋璇紝
+  // 鍓嶇涓嶇敤鍐嶈嚜宸卞垽鏂繖浜?
   async function ensureMyThread(){
     try {
       var res = await fetch(API_BASE + '/chat/ensure-thread', {
@@ -612,7 +612,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   // poll for admin replies / handoff changes while the widget is on screen
   pollTimer = setInterval(async function(){
-    if(!currentThread) return; // 还没打开过聊天面板，没必要轮询
+    if(!currentThread) return; // 杩樻病鎵撳紑杩囪亰澶╅潰鏉匡紝娌″繀瑕佽疆璇?
     await refreshMyThread();
     renderMessages();
   }, 4000);
