@@ -85,14 +85,14 @@ router.post('/orders', (req, res) => {
 router.get('/orders/lookup', (req, res) => {
   const { orderNo, phone } = req.query;
   if(!orderNo || !phone) return res.status(400).json({ error: '请提供订单编号和手机号' });
-  const order = db.prepare('SELECT * FROM orders WHERE order_no = ? AND contact = ?').get(orderNo, phone);
+  const order = db.prepare('SELECT * FROM orders WHERE order_no = ? AND contact = ? AND deleted_at IS NULL').get(orderNo, phone);
   if(!order) return res.status(404).json({ error: '找不到匹配的订单，请确认订单编号和手机号是否正确' });
   res.json(serializeOrder(order));
 });
 
 // ---- 管理员查看/处理订单 ----
 router.get('/admin/orders', authMiddleware, requireRole('SENIOR', 'FULFILLMENT'), (req, res) => {
-  const rows = db.prepare('SELECT * FROM orders ORDER BY created_at DESC').all();
+  const rows = db.prepare('SELECT * FROM orders WHERE deleted_at IS NULL ORDER BY created_at DESC').all();
   res.json(rows.map(serializeOrder));
 });
 
@@ -162,6 +162,47 @@ router.delete('/admin/payment-methods/:id', authMiddleware, requireRole('SENIOR'
   const result = db.prepare('DELETE FROM payment_methods WHERE id = ?').run(req.params.id);
   if(result.changes === 0) return res.status(404).json({ error: '付款方式不存在' });
   logAdminAction(req, 'delete', 'payment_method', req.params.id, existing ? (existing.bank_name||existing.type) : null);
+  res.json({ ok: true });
+});
+
+
+// ===== 软删除 / 回收箱（仅大管理员）=====
+
+// 软删除订单（移入回收箱，30天内可恢复）
+router.delete('/admin/orders/:id', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const row = db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.id);
+  if(!row) return res.status(404).json({ error: '订单不存在' });
+  if(row.deleted_at) return res.status(400).json({ error: '该订单已在回收箱中' });
+  db.prepare('UPDATE orders SET deleted_at = ?, deleted_by = ? WHERE id = ?').run(
+    new Date().toISOString(), req.admin.name, req.params.id
+  );
+  logAdminAction(req, 'soft_delete', 'order', req.params.id, '移入回收箱');
+  res.json({ ok: true });
+});
+
+// 回收箱列表（已删除且30天内的订单）
+router.get('/admin/orders/trash', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const cutoff = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
+  const rows = db.prepare('SELECT * FROM orders WHERE deleted_at IS NOT NULL AND deleted_at >= ? ORDER BY deleted_at DESC').all(cutoff);
+  res.json(rows.map(serializeOrder));
+});
+
+// 恢复订单（从回收箱）
+router.post('/admin/orders/:id/restore', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const row = db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.id);
+  if(!row) return res.status(404).json({ error: '订单不存在' });
+  if(!row.deleted_at) return res.status(400).json({ error: '该订单不在回收箱中' });
+  db.prepare('UPDATE orders SET deleted_at = NULL, deleted_by = NULL WHERE id = ?').run(req.params.id);
+  logAdminAction(req, 'restore', 'order', req.params.id, '从回收箱恢复');
+  res.json({ ok: true });
+});
+
+// 永久删除订单（回收箱里彻底删除）
+router.delete('/admin/orders/:id/permanent', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const row = db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.id);
+  if(!row) return res.status(404).json({ error: '订单不存在' });
+  db.prepare('DELETE FROM orders WHERE id = ?').run(req.params.id);
+  logAdminAction(req, 'permanent_delete', 'order', req.params.id, '回收箱永久删除');
   res.json({ ok: true });
 });
 

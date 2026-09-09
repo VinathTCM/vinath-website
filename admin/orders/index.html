@@ -564,6 +564,7 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
   <div class="tabs">
     <div class="tab active" data-tab="orders">订单管理</div>
     <div class="tab" data-tab="bookings">预约管理</div>
+    <div class="tab" data-tab="trash">回收箱</div>
     <div class="tab" data-tab="settings">预约设置</div>
     <div class="tab" data-tab="records">病历管理</div>
     <div class="tab" data-tab="daily">当日交易</div>
@@ -610,6 +611,24 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
         <tbody id="bookingTbody"></tbody>
       </table>
     </div></div>
+  </div>
+
+  <div id="tab-trash" style="display:none;">
+    <div class="panel-title">回收箱 <span style="font-size:13px;color:var(--ink-soft);font-weight:400;">（删除后30天内可恢复，超期自动永久删除）</span></div>
+    <div class="closure-card" style="margin-bottom:16px;">
+      <div class="closure-card-title">已删除的订单</div>
+      <table class="data-table" style="width:100%;">
+        <thead><tr><th>订单号</th><th>客户</th><th>金额</th><th>删除时间</th><th>删除人</th><th>剩余天数</th><th>操作</th></tr></thead>
+        <tbody id="trashOrderTbody"><tr><td colspan="7"><div class="empty-state">加载中...</div></td></tr></tbody>
+      </table>
+    </div>
+    <div class="closure-card">
+      <div class="closure-card-title">已删除的预约</div>
+      <table class="data-table" style="width:100%;">
+        <thead><tr><th>预约号</th><th>客户</th><th>医师</th><th>预约日期</th><th>删除时间</th><th>删除人</th><th>剩余天数</th><th>操作</th></tr></thead>
+        <tbody id="trashBookingTbody"><tr><td colspan="8"><div class="empty-state">加载中...</div></td></tr></tbody>
+      </table>
+    </div>
   </div>
 
   <div id="tab-settings" style="display:none;">
@@ -1388,7 +1407,7 @@ window.escapeHtml = function(s){
     fulfillment: ['orders'],                          // II类·接单打包出货员——不负责客服，不给消息tab
     support: ['chat']                                 // III类·客服——只负责及时回复消息，不接触订单/预约/拿货
   };
-  var ALL_TAB_KEYS = ['orders','bookings','settings','records','daily','sales','reports','admins','chat','wholesale','coupons','analytics','blacklist'];
+  var ALL_TAB_KEYS = ['orders','bookings','trash','settings','records','daily','sales','reports','admins','chat','wholesale','coupons','analytics','blacklist'];
   async function renderVinathAdminNav(navAdmin){
     if(!navAdmin) return;
     var ALL_ADMIN_TOOLS = [
@@ -1719,7 +1738,7 @@ window.escapeHtml = function(s){
           + '<td class="price-cell">MYR '+orderTotal(o).toFixed(2)+'</td>'
           + '<td>'+(o.region==='west'?'西马':'东马')+'</td>'
           + '<td><span class="badge '+orderStatusBadgeClass(o)+'">'+orderStatusLabel(o)+'</span></td>'
-          + '<td><button class="row-edit" data-id="'+o.id+'">查看</button></td>'
+          + '<td><button class="row-edit" data-id="'+o.id+'">查看</button>'+(cur.type==='senior'?'<button class="row-edit row-del-btn" data-id="'+o.id+'" data-type="order" style="color:#c0392b;border-color:#c0392b;margin-left:4px;">删除</button>':'')+'</td>'
           + '</tr>';
       }).join('');
       rowsHtml += wholesaleList.map(function(o){
@@ -1733,7 +1752,7 @@ window.escapeHtml = function(s){
           + '<td class="price-cell">MYR '+o.total.toFixed(2)+'</td>'
           + '<td>'+(o.region==='west'?'西马':'东马')+'</td>'
           + '<td><span class="badge badge-o'+(o.status||0)+'">'+wholesaleStatusLabel(o)+'</span></td>'
-          + '<td><button class="row-edit" data-id="'+o.id+'" data-wholesale="1">查看</button></td>'
+          + '<td><button class="row-edit" data-id="'+o.id+'" data-wholesale="1">查看</button>'+(cur.type==='senior'?'<button class="row-edit row-del-btn" data-id="'+o.id+'" data-type="order" style="color:#c0392b;border-color:#c0392b;margin-left:4px;">删除</button>':'')+'</td>'
           + '</tr>';
       }).join('');
       tbody.innerHTML = rowsHtml;
@@ -1748,6 +1767,7 @@ window.escapeHtml = function(s){
     // any chance of double-firing since there is only one class + one listener now.
     tbody.querySelectorAll('.row-edit').forEach(function(b){
       b.addEventListener('click', function(){
+        if(this.classList.contains('row-del-btn')){ softDeleteItem(this.getAttribute('data-type'), this.getAttribute('data-id')); return; }
         if(this.getAttribute('data-wholesale')) openWholesalePanel(this.getAttribute('data-id'));
         else openOrderPanel(this.getAttribute('data-id'));
       });
@@ -1960,14 +1980,17 @@ window.escapeHtml = function(s){
           + '<td>'+escapeHtml(b.area)+'</td>'
           + '<td>'+badge+'</td>'
           + '<td>'+reviewCell+'</td>'
-          + '<td><button class="row-edit" data-id="'+b.id+'">查看</button></td>'
+          + '<td><button class="row-edit" data-id="'+b.id+'">查看</button>'+(cur.type==='senior'?'<button class="row-edit row-del-btn" data-id="'+b.id+'" data-type="booking" style="color:#c0392b;border-color:#c0392b;margin-left:4px;">删除</button>':'')+'</td>'
           + '</tr>';
       }).join('');
     }
     document.getElementById('bookingCount').textContent = visibleBookings().length;
     document.getElementById('arrowBookingId').textContent = bookingIdSortDir ? (bookingIdSortDir==='asc' ? '↓' : '↑') : '';
     tbody.querySelectorAll('.row-edit').forEach(function(b){
-      b.addEventListener('click', function(){ openBookingPanel(this.getAttribute('data-id')); });
+      b.addEventListener('click', function(){
+        if(this.classList.contains('row-del-btn')){ softDeleteItem(this.getAttribute('data-type'), this.getAttribute('data-id')); return; }
+        openBookingPanel(this.getAttribute('data-id'));
+      });
     });
   }
   document.getElementById('thBookingId').addEventListener('click', function(){
@@ -4672,6 +4695,122 @@ window.escapeHtml = function(s){
   document.getElementById('panelClose').addEventListener('click', closePanel);
   overlay.addEventListener('click', closePanel);
 
+  // ===== 软删除 / 回收箱 =====
+  function softDeleteItem(type, id){
+    var label = type==='order' ? '订单' : '预约';
+    if(!confirm('确认删除此' + label + '（' + id + '）？\n\n删除后将进入回收箱，30天内可恢复，超期自动永久删除。')) return;
+    var url = API_BASE + '/admin/' + (type==='order' ? 'orders' : 'bookings') + '/' + id;
+    fetch(url, { method:'DELETE', headers:{ 'Authorization':'Bearer ' + authToken } })
+      .then(function(res){ if(!res.ok) return res.json().then(function(e){ throw new Error(e.error||'删除失败'); }); return res.json(); })
+      .then(function(){
+        showToast('已移入回收箱');
+        if(type==='order') renderOrders(); else renderBookings();
+      })
+      .catch(function(e){ showToast('删除失败：' + e.message); });
+  }
+
+  function daysRemaining(deletedAt){
+    if(!deletedAt) return '-';
+    var del = new Date(deletedAt).getTime();
+    var remain = 30 - Math.floor((Date.now() - del) / (24*3600*1000));
+    return remain > 0 ? remain + ' 天' : '即将清除';
+  }
+
+  function fmtDateTime(iso){
+    if(!iso) return '-';
+    var d = new Date(iso);
+    if(isNaN(d.getTime())) return iso;
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0')
+      + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+  }
+
+  async function renderTrash(){
+    var headers = { 'Authorization':'Bearer ' + authToken };
+    try {
+      var [oRes, bRes] = await Promise.all([
+        fetch(API_BASE + '/admin/orders/trash', { headers: headers }),
+        fetch(API_BASE + '/admin/bookings/trash', { headers: headers })
+      ]);
+      var orders = oRes.ok ? await oRes.json() : [];
+      var bookings = bRes.ok ? await bRes.json() : [];
+
+      var oTbody = document.getElementById('trashOrderTbody');
+      if(oTbody){
+        if(!orders.length){
+          oTbody.innerHTML = '<tr><td colspan="7"><div class="empty-state">回收箱为空</div></td></tr>';
+        } else {
+          oTbody.innerHTML = orders.map(function(o){
+            var total = o.items ? o.items.reduce(function(s,i){ return s + (i.price||0)*(i.qty||1); }, 0) + (o.shipping||0) : 0;
+            return '<tr>'
+              + '<td><span class="pname">'+o.id+'</span></td>'
+              + '<td>'+escapeHtml(o.recipient_name||o.name||'-')+'</td>'
+              + '<td class="price-cell">MYR '+(total||0).toFixed(2)+'</td>'
+              + '<td>'+fmtDateTime(o.deleted_at)+'</td>'
+              + '<td>'+escapeHtml(o.deleted_by||'-')+'</td>'
+              + '<td>'+daysRemaining(o.deleted_at)+'</td>'
+              + '<td><button class="row-edit trash-restore" data-id="'+o.id+'" data-type="order">恢复</button>'
+              + '<button class="row-edit trash-perm" data-id="'+o.id+'" data-type="order" style="color:#c0392b;border-color:#c0392b;margin-left:4px;">永久删除</button></td>'
+              + '</tr>';
+          }).join('');
+          bindTrashActions(oTbody);
+        }
+      }
+
+      var bTbody = document.getElementById('trashBookingTbody');
+      if(bTbody){
+        if(!bookings.length){
+          bTbody.innerHTML = '<tr><td colspan="8"><div class="empty-state">回收箱为空</div></td></tr>';
+        } else {
+          bTbody.innerHTML = bookings.map(function(b){
+            return '<tr>'
+              + '<td><span class="pname">'+b.id+'</span></td>'
+              + '<td>'+escapeHtml(b.customer_name||b.name||'-')+'</td>'
+              + '<td>'+escapeHtml(b.practitioner_name||'-')+'</td>'
+              + '<td>'+(b.appt_date||'-')+'</td>'
+              + '<td>'+fmtDateTime(b.deleted_at)+'</td>'
+              + '<td>'+escapeHtml(b.deleted_by||'-')+'</td>'
+              + '<td>'+daysRemaining(b.deleted_at)+'</td>'
+              + '<td><button class="row-edit trash-restore" data-id="'+b.id+'" data-type="booking">恢复</button>'
+              + '<button class="row-edit trash-perm" data-id="'+b.id+'" data-type="booking" style="color:#c0392b;border-color:#c0392b;margin-left:4px;">永久删除</button></td>'
+              + '</tr>';
+          }).join('');
+          bindTrashActions(bTbody);
+        }
+      }
+    } catch(e){
+      showToast('回收箱加载失败：' + e.message);
+    }
+  }
+
+  function bindTrashActions(container){
+    container.querySelectorAll('.trash-restore').forEach(function(btn){
+      btn.addEventListener('click', function(){ restoreItem(this.getAttribute('data-type'), this.getAttribute('data-id')); });
+    });
+    container.querySelectorAll('.trash-perm').forEach(function(btn){
+      btn.addEventListener('click', function(){ permanentDeleteItem(this.getAttribute('data-type'), this.getAttribute('data-id')); });
+    });
+  }
+
+  function restoreItem(type, id){
+    var label = type==='order' ? '订单' : '预约';
+    if(!confirm('确认恢复此' + label + '（' + id + '）？恢复后将重新出现在正常列表中。')) return;
+    var url = API_BASE + '/admin/' + (type==='order' ? 'orders' : 'bookings') + '/' + id + '/restore';
+    fetch(url, { method:'POST', headers:{ 'Authorization':'Bearer ' + authToken } })
+      .then(function(res){ if(!res.ok) return res.json().then(function(e){ throw new Error(e.error||'恢复失败'); }); return res.json(); })
+      .then(function(){ showToast('已恢复'); renderTrash(); })
+      .catch(function(e){ showToast('恢复失败：' + e.message); });
+  }
+
+  function permanentDeleteItem(type, id){
+    var label = type==='order' ? '订单' : '预约';
+    if(!confirm('确认永久删除此' + label + '（' + id + '）？\n\n此操作不可撤销，数据将彻底删除！')) return;
+    var url = API_BASE + '/admin/' + (type==='order' ? 'orders' : 'bookings') + '/' + id + '/permanent';
+    fetch(url, { method:'DELETE', headers:{ 'Authorization':'Bearer ' + authToken } })
+      .then(function(res){ if(!res.ok) return res.json().then(function(e){ throw new Error(e.error||'删除失败'); }); return res.json(); })
+      .then(function(){ showToast('已永久删除'); renderTrash(); })
+      .catch(function(e){ showToast('删除失败：' + e.message); });
+  }
+
   async function switchTab(key){
     document.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('active', x.getAttribute('data-tab')===key); });
     document.getElementById('tab-orders').style.display = key==='orders' ? '' : 'none';
@@ -4687,6 +4826,8 @@ window.escapeHtml = function(s){
     document.getElementById('tab-coupons').style.display = key==='coupons' ? '' : 'none';
     document.getElementById('tab-analytics').style.display = key==='analytics' ? '' : 'none';
     document.getElementById('tab-blacklist').style.display = key==='blacklist' ? '' : 'none';
+    var trashEl = document.getElementById('tab-trash');
+    if(trashEl) trashEl.style.display = key==='trash' ? '' : 'none';
     if(key==='orders') renderOrders();
     if(key==='bookings'){ await loadServiceReviews(); renderBookings(); }
     if(key==='settings'){ renderClosureList(); renderAreaList(); }
@@ -4697,6 +4838,7 @@ window.escapeHtml = function(s){
     if(key==='admins'){ renderSeniorList(); renderJuniorList(); renderJuniorAreaPicker(); renderModuleToggles(); loadAuditTypeFilter(); renderAuditLog(); }
     if(key==='chat'){ renderInstantRequests(); renderChatTab(); }
     if(key==='wholesale'){ renderWholesaleGrid(); renderWholesaleHistory(); }
+    if(key==='trash'){ renderTrash(); }
     if(key==='coupons') renderCouponStats();
     if(key==='analytics') renderAnalytics();
     if(key==='blacklist') renderBlacklist();

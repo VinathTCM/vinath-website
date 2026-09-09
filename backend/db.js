@@ -844,4 +844,36 @@ db.exec(`
   if(info.changes) console.log('已将 ' + info.changes + ' 味低于 RM0.10 的药材价格统一调整为 RM0.10/g。');
 })();
 
+
+// 软删除字段迁移：bookings / orders 表加 deleted_at、deleted_by
+// 已删除的记录从正常列表隐藏，进入回收箱；30天后自动永久删除。
+(function migrateSoftDeleteColumns(){
+  function ensureColumn(table, col, type){
+    try {
+      const cols = db.prepare("PRAGMA table_info(" + table + ")").all();
+      if(!cols.find(function(c){ return c.name === col; })){
+        db.prepare("ALTER TABLE " + table + " ADD COLUMN " + col + " " + type).run();
+        console.log('[软删除] 已为 ' + table + ' 表添加 ' + col + ' 字段');
+      }
+    } catch(e){ console.log('[软删除] 迁移 ' + table + '.' + col + ' 失败:', e.message); }
+  }
+  ensureColumn('bookings', 'deleted_at', 'TEXT');
+  ensureColumn('bookings', 'deleted_by', 'TEXT');
+  ensureColumn('orders', 'deleted_at', 'TEXT');
+  ensureColumn('orders', 'deleted_by', 'TEXT');
+})();
+
+// 启动时清理回收箱中超过30天的记录（永久删除）
+(function purgeOldSoftDeleted(){
+  const cutoff = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
+  try {
+    const bInfo = db.prepare("DELETE FROM bookings WHERE deleted_at IS NOT NULL AND deleted_at < ?").run(cutoff);
+    if(bInfo.changes) console.log('[回收箱] 已永久删除 ' + bInfo.changes + ' 条超过30天的预约记录');
+  } catch(e){}
+  try {
+    const oInfo = db.prepare("DELETE FROM orders WHERE deleted_at IS NOT NULL AND deleted_at < ?").run(cutoff);
+    if(oInfo.changes) console.log('[回收箱] 已永久删除 ' + oInfo.changes + ' 条超过30天的订单记录');
+  } catch(e){}
+})();
+
 module.exports = db;

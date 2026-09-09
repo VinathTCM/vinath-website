@@ -67,7 +67,7 @@ router.post('/bookings', (req, res) => {
 router.get('/bookings/lookup', (req, res) => {
   const { bookingNo, phone } = req.query;
   if(!bookingNo || !phone) return res.status(400).json({ error: '请提供预约编号和手机号' });
-  const booking = db.prepare('SELECT * FROM bookings WHERE booking_no = ? AND (SELECT phone FROM customers WHERE id = customer_id) = ?').get(bookingNo, phone);
+  const booking = db.prepare('SELECT * FROM bookings WHERE booking_no = ? AND (SELECT phone FROM customers WHERE id = customer_id) = ? AND deleted_at IS NULL').get(bookingNo, phone);
   if(!booking) return res.status(404).json({ error: '找不到匹配的预约，请确认预约编号和手机号是否正确' });
   const result = serializeBooking(booking);
   // 该预约关联的中药处方（病人端显示煎药/配送进度）
@@ -108,11 +108,11 @@ router.get('/admin/bookings', authMiddleware, requireRole('SENIOR', 'PRACTITIONE
     FROM bookings JOIN customers ON bookings.customer_id = customers.id
   `;
   if(req.admin.role === 'SENIOR'){
-    rows = db.prepare(baseQuery + ' ORDER BY bookings.created_at DESC').all();
+    rows = db.prepare(baseQuery + ' WHERE bookings.deleted_at IS NULL ORDER BY bookings.created_at DESC').all();
   } else {
     // 小管理员：只能看到自己名下、且未过期的预约（预约时间段结束 +24h 内）。
     // 过期的预约从小管理员视图消失，大管理员仍能看到全部。
-    const allMine = db.prepare(baseQuery + ' WHERE bookings.practitioner_id = ? ORDER BY bookings.created_at DESC').all(req.admin.sub);
+    const allMine = db.prepare(baseQuery + ' WHERE bookings.deleted_at IS NULL AND bookings.practitioner_id = ? ORDER BY bookings.created_at DESC').all(req.admin.sub);
     const nowMs = Date.now();
     rows = allMine.filter(function(b){ return isBookingVisibleNow(b, nowMs); });
   }
@@ -175,6 +175,52 @@ router.delete('/admin/blacklist/:id', authMiddleware, requireRole('SENIOR'), (re
   const result = db.prepare('DELETE FROM blacklist WHERE id = ?').run(req.params.id);
   if(result.changes === 0) return res.status(404).json({ error: '记录不存在' });
   logAdminAction(req, 'delete', 'blacklist', req.params.id, existing ? existing.phone : null);
+  res.json({ ok: true });
+});
+
+
+// ===== 软删除 / 回收箱（仅大管理员）=====
+
+// 软删除预约（移入回收箱，30天内可恢复）
+router.delete('/admin/bookings/:id', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const row = db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
+  if(!row) return res.status(404).json({ error: '预约不存在' });
+  if(row.deleted_at) return res.status(400).json({ error: '该预约已在回收箱中' });
+  db.prepare('UPDATE bookings SET deleted_at = ?, deleted_by = ? WHERE id = ?').run(
+    new Date().toISOString(), req.admin.name, req.params.id
+  );
+  logAdminAction(req, 'soft_delete', 'booking', req.params.id, '移入回收箱');
+  res.json({ ok: true });
+});
+
+// 回收箱列表（已删除且30天内的预约）
+router.get('/admin/bookings/trash', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const cutoff = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
+  const rows = db.prepare(`
+    SELECT bookings.*, customers.phone AS customer_phone, customers.name AS customer_name
+    FROM bookings JOIN customers ON bookings.customer_id = customers.id
+    WHERE bookings.deleted_at IS NOT NULL AND bookings.deleted_at >= ?
+    ORDER BY bookings.deleted_at DESC
+  `).all(cutoff);
+  res.json(rows.map(serializeBooking));
+});
+
+// 恢复预约（从回收箱）
+router.post('/admin/bookings/:id/restore', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const row = db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
+  if(!row) return res.status(404).json({ error: '预约不存在' });
+  if(!row.deleted_at) return res.status(400).json({ error: '该预约不在回收箱中' });
+  db.prepare('UPDATE bookings SET deleted_at = NULL, deleted_by = NULL WHERE id = ?').run(req.params.id);
+  logAdminAction(req, 'restore', 'booking', req.params.id, '从回收箱恢复');
+  res.json({ ok: true });
+});
+
+// 永久删除预约（回收箱里彻底删除）
+router.delete('/admin/bookings/:id/permanent', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const row = db.prepare('SELECT * FROM bookings WHERE id = ?').get(req.params.id);
+  if(!row) return res.status(404).json({ error: '预约不存在' });
+  db.prepare('DELETE FROM bookings WHERE id = ?').run(req.params.id);
+  logAdminAction(req, 'permanent_delete', 'booking', req.params.id, '回收箱永久删除');
   res.json({ ok: true });
 });
 
