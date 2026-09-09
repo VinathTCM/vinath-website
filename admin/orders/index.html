@@ -1054,7 +1054,7 @@ window.escapeHtml = function(s){
         bookings.forEach(function(b){
           BOOKINGS.push({ id:b.booking_no, date:(b.created_at||'').slice(0,10), name:b.customer_name, contact:b.customer_phone,
             method:'whatsapp', doctor:b.practitioner_name, apptDate:b.appt_date, apptDateISO:b.appt_date_iso,
-            slot:b.slot, area:b.area, addressDetail:b.address_detail, need:b.need, status:b.status,
+            slot:(b.slot||'ASAP'), area:b.area, addressDetail:b.address_detail, need:b.need, status:b.status,
             cancelled:b.cancelled, doctorNote:b.doctor_note, treatments:normArrField(b.treatments),
             practitionerId:b.practitioner_id, _backendId:b.id
           });
@@ -1573,6 +1573,9 @@ window.escapeHtml = function(s){
     {id:'2-3', label:'14:00-15:00'},
     {id:'4-5', label:'16:00-17:00'}
   ];
+  // 即时预约无固定时段，slot 存 'ASAP'；中文界面显示“尽快上门（即时预约）”，英文小票/报表显示 ASAP
+  function slotCN(s){ if(!s || s==='ASAP') return '尽快上门（即时预约）'; return s; }
+  function slotEN(s){ if(!s || s==='ASAP') return 'ASAP'; return s; }
 
   // full Malaysia state/area list, seeded once into localStorage on first load (see below)
   var MALAYSIA_AREAS_SEED = [{"state":"Johor","cities":[{"name":"巴西古当 Pasir Gudang","active":true},{"name":"Masai","active":true},{"name":"Bandar Seri Alam","active":true},{"name":"Ulu Tiram","active":true},{"name":"Plentong","active":true},{"name":"新山市区 Johor Bahru","active":true},{"name":"Tebrau","active":true},{"name":"Permas Jaya","active":true},{"name":"Johor Jaya","active":true},{"name":"Larkin","active":true},{"name":"Batu Pahat","active":false},{"name":"Muar","active":false},{"name":"Kluang","active":false},{"name":"Pontian","active":false},{"name":"Segamat","active":false},{"name":"Kulai","active":false}]},{"state":"Kedah","cities":[{"name":"Alor Setar","active":false},{"name":"Sungai Petani","active":false},{"name":"Kulim","active":false},{"name":"Langkawi","active":false},{"name":"Jitra","active":false}]},{"state":"Kelantan","cities":[{"name":"Kota Bharu","active":false},{"name":"Pasir Mas","active":false},{"name":"Tanah Merah","active":false},{"name":"Gua Musang","active":false},{"name":"Tumpat","active":false}]},{"state":"Malacca","cities":[{"name":"Melaka City","active":false},{"name":"Alor Gajah","active":false},{"name":"Jasin","active":false}]},{"state":"Negeri Sembilan","cities":[{"name":"Seremban","active":false},{"name":"Port Dickson","active":false},{"name":"Nilai","active":false},{"name":"Bahau","active":false},{"name":"Kuala Pilah","active":false}]},{"state":"Pahang","cities":[{"name":"Kuantan","active":false},{"name":"Temerloh","active":false},{"name":"Bentong","active":false},{"name":"Raub","active":false},{"name":"Cameron Highlands","active":false},{"name":"Mentakab","active":false}]},{"state":"Penang","cities":[{"name":"George Town","active":false},{"name":"Bukit Mertajam","active":false},{"name":"Butterworth","active":false},{"name":"Bayan Lepas","active":false},{"name":"Nibong Tebal","active":false}]},{"state":"Perak","cities":[{"name":"Ipoh","active":false},{"name":"Taiping","active":false},{"name":"Teluk Intan","active":false},{"name":"Sitiawan","active":false},{"name":"Kampar","active":false},{"name":"Batu Gajah","active":false}]},{"state":"Perlis","cities":[{"name":"Kangar","active":false},{"name":"Arau","active":false},{"name":"Padang Besar","active":false}]},{"state":"Sabah","cities":[{"name":"Kota Kinabalu","active":false},{"name":"Sandakan","active":false},{"name":"Tawau","active":false},{"name":"Lahad Datu","active":false},{"name":"Keningau","active":false},{"name":"Semporna","active":false},{"name":"Kudat","active":false},{"name":"Papar","active":false},{"name":"Beaufort","active":false},{"name":"Ranau","active":false},{"name":"Tuaran","active":false},{"name":"Penampang","active":false}]},{"state":"Sarawak","cities":[{"name":"Kuching","active":false},{"name":"Miri","active":false},{"name":"Sibu","active":false},{"name":"Bintulu","active":false},{"name":"Limbang","active":false},{"name":"Sri Aman","active":false},{"name":"Sarikei","active":false},{"name":"Mukah","active":false},{"name":"Kapit","active":false},{"name":"Betong","active":false}]},{"state":"Selangor","cities":[{"name":"Shah Alam","active":false},{"name":"Petaling Jaya","active":false},{"name":"Subang Jaya","active":false},{"name":"Klang","active":false},{"name":"Kajang","active":false},{"name":"Ampang","active":false},{"name":"Puchong","active":false},{"name":"Rawang","active":false},{"name":"Selayang","active":false}]},{"state":"Terengganu","cities":[{"name":"Kuala Terengganu","active":false},{"name":"Kemaman","active":false},{"name":"Dungun","active":false},{"name":"Marang","active":false}]},{"state":"Kuala Lumpur","cities":[{"name":"Kuala Lumpur","active":false}]},{"state":"Putrajaya","cities":[{"name":"Putrajaya","active":false}]},{"state":"Labuan","cities":[{"name":"Labuan","active":false}]}];
@@ -1596,7 +1599,7 @@ window.escapeHtml = function(s){
     visibleBookings().forEach(function(b){
       if(b.cancelled || b.status === 2) return;
       if(b.apptDateISO === TODAY_ISO){
-        urgent.push({type:'booking', id:b.id, level:'urgent', text:'今日预约 · '+b.name, sub:b.slot});
+        urgent.push({type:'booking', id:b.id, level:'urgent', text:'今日预约 · '+b.name, sub:slotCN(b.slot)});
       } else if(b.status === 0){
         normal.push({type:'booking', id:b.id, level:'normal', text:'待确认 · '+b.name, sub:b.apptDate});
       }
@@ -1953,7 +1956,7 @@ window.escapeHtml = function(s){
           + '<td>'+b.date+'</td>'
           + '<td>'+escapeHtml(b.name)+'</td>'
           + '<td>'+escapeHtml(b.doctor)+'</td>'
-          + '<td>'+b.apptDate+'<br><span style="color:var(--ink-soft);font-size:12px;">'+b.slot+'</span></td>'
+          + '<td>'+b.apptDate+'<br><span style="color:var(--ink-soft);font-size:12px;">'+slotCN(b.slot)+'</span></td>'
           + '<td>'+escapeHtml(b.area)+'</td>'
           + '<td>'+badge+'</td>'
           + '<td>'+reviewCell+'</td>'
@@ -2237,7 +2240,7 @@ window.escapeHtml = function(s){
       + '<div class="detail-row"><span class="l">联系偏好</span><span class="r">'+(b.method==='call'?'电话':'WhatsApp')+'</span></div></div>'
       + '<div class="detail-section"><div class="detail-section-title">预约安排</div>'
       + '<div class="detail-row"><span class="l">预约医师</span><span class="r">'+escapeHtml(b.doctor)+'</span></div>'
-      + '<div class="detail-row"><span class="l">预约时间</span><span class="r">'+b.apptDate+' '+b.slot+'</span></div>'
+      + '<div class="detail-row"><span class="l">预约时间</span><span class="r">'+b.apptDate+' '+slotCN(b.slot)+'</span></div>'
       + '<div class="detail-row"><span class="l">服务区域</span><span class="r">'+escapeHtml(b.area)+'</span></div>'
       + '<div class="detail-row"><span class="l">详细地址</span><span class="r">'+escapeHtml(b.addressDetail)+'</span></div></div>'
       + renderReviewDetailSection(b)
@@ -2921,7 +2924,7 @@ window.escapeHtml = function(s){
       + '<div class="summary-card"><div class="summary-num">'+bookingCount+'</div><div class="summary-lbl">相约次数</div></div>'
       + '<div class="summary-card"><div class="summary-num">'+records.length+'</div><div class="summary-lbl">交易笔数</div></div>';
     document.getElementById('dailyTbody').innerHTML = records.length ? records.map(function(r){
-      return '<tr><td>'+DAILY_TYPE_CN[r.typeKey]+'</td><td class="pname">'+r.ref+'</td><td>'+escapeHtml(r.name)+'</td><td style="max-width:260px;">'+r.note+'</td><td>'+r.slot+'</td><td class="price-cell">'+fmtMYR(r.amount)+'</td></tr>';
+      return '<tr><td>'+DAILY_TYPE_CN[r.typeKey]+'</td><td class="pname">'+r.ref+'</td><td>'+escapeHtml(r.name)+'</td><td style="max-width:260px;">'+r.note+'</td><td>'+slotCN(r.slot)+'</td><td class="price-cell">'+fmtMYR(r.amount)+'</td></tr>';
     }).join('') : '<tr><td colspan="6"><div class="empty-state">'+(isToday?'今天':selectedDailyDate)+'（'+selectedDailyDate+'）还没有交易记录</div></td></tr>';
   }
   document.getElementById('dailyDatePicker').value = TODAY_ISO;
@@ -2950,7 +2953,7 @@ window.escapeHtml = function(s){
     var bookingRevenue = records.filter(function(r){ return r.typeKey==='booking' || r.typeKey==='mr'; }).reduce(function(s,r){ return s+r.amount; },0);
     var total = orderRevenue + bookingRevenue;
     var rowsHtml = records.map(function(r){
-      return '<tr><td>'+DAILY_TYPE_EN[r.typeKey]+'</td><td>'+r.ref+'</td><td>'+r.name+'</td><td>'+itemsSummaryLang(r,lang)+'</td><td class="num">'+r.slot+'</td><td class="num">'+fmtMYR(r.amount)+'</td></tr>';
+      return '<tr><td>'+DAILY_TYPE_EN[r.typeKey]+'</td><td>'+r.ref+'</td><td>'+r.name+'</td><td>'+itemsSummaryLang(r,lang)+'</td><td class="num">'+slotEN(r.slot)+'</td><td class="num">'+fmtMYR(r.amount)+'</td></tr>';
     }).join('');
     var docNo = 'DR-'+selectedDailyDate.replace(/-/g,'');
     var html = ''
@@ -3203,7 +3206,7 @@ window.escapeHtml = function(s){
       + '<div class="receipt-meta-grid">'
       + '<div><div class="receipt-meta-lbl">'+'Name'+'</div><div class="receipt-meta-val">'+escapeHtml(b.name)+'</div></div>'
       + '<div><div class="receipt-meta-lbl">'+'Contact'+'</div><div class="receipt-meta-val">'+escapeHtml(b.contact)+'</div></div>'
-      + '<div><div class="receipt-meta-lbl">'+'Service Date'+'</div><div class="receipt-meta-val">'+ddmmyyyy(b.apptDate)+' '+b.slot+'</div></div>'
+      + '<div><div class="receipt-meta-lbl">'+'Service Date'+'</div><div class="receipt-meta-val">'+ddmmyyyy(b.apptDate)+' '+slotEN(b.slot)+'</div></div>'
       + '<div><div class="receipt-meta-lbl">'+'Practitioner'+'</div><div class="receipt-meta-val">'+doctorEnName(b.doctor)+'</div></div>'
       + '</div>'
       + '<table class="receipt-table"><thead><tr><th>'+'Service'+'</th><th class="num">'+'Qty'+'</th><th class="num">'+'Unit Price'+'</th><th class="num">'+'Subtotal'+'</th></tr></thead><tbody>'
@@ -3236,7 +3239,7 @@ window.escapeHtml = function(s){
       + '<div class="t-div"></div>'
       + '<div class="t-row"><span class="l">'+'Name'+'</span><span>'+escapeHtml(b.name)+'</span></div>'
       + '<div class="t-row"><span class="l">'+'Contact'+'</span><span>'+escapeHtml(b.contact)+'</span></div>'
-      + '<div class="t-row"><span class="l">'+'Service'+'</span><span>'+ddmmyyyy(b.apptDate)+', '+b.slot+'</span></div>'
+      + '<div class="t-row"><span class="l">'+'Service'+'</span><span>'+ddmmyyyy(b.apptDate)+', '+slotEN(b.slot)+'</span></div>'
       + '<div class="t-row"><span class="l">'+'Practitioner'+'</span><span>'+doctorEnName(b.doctor)+'</span></div>'
       + '<div class="t-div"></div>'
       + (itemsHtml || '<div style="color:#555;">'+'No treatment or product recorded yet'+'</div>')
@@ -4498,7 +4501,7 @@ window.escapeHtml = function(s){
           + '<div class="vrt-item total"><span>小计</span><span>'+fmtMYR(vTotal)+'</span></div></div>';
       }
       return '<div class="visit-row">'
-        + '<div class="visit-row-hd"><span>'+b.apptDate+' '+b.slot+'</span><span class="vdoc">'+escapeHtml(b.doctor)+'</span></div>'
+        + '<div class="visit-row-hd"><span>'+b.apptDate+' '+slotCN(b.slot)+'</span><span class="vdoc">'+escapeHtml(b.doctor)+'</span></div>'
         + '<div class="visit-row-need">客户自述：'+escapeHtml(b.need)+'</div>'
         + (b.doctorNote ? '<div class="visit-row-note">医师记录：'+b.doctorNote+'</div>' : '')
         + treatHtml

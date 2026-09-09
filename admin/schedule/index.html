@@ -190,7 +190,7 @@ window.scrollTo(0,0);
       if(!res.ok) return [];
       var rows = await res.json();
       return rows.map(function(b){ return { id:b.id, contact:b.customer_phone, name:b.customer_name, apptDate:b.appt_date,
-        apptDateISO:b.appt_date_iso, slot:b.slot, doctor:b.practitioner_name, area:b.area, addressDetail:b.address_detail,
+        apptDateISO:b.appt_date_iso, slot:(!b.slot||b.slot==='ASAP'?'尽快上门（即时预约）':b.slot), doctor:b.practitioner_name, area:b.area, addressDetail:b.address_detail,
         need:b.need, cancelled:b.cancelled, depositAmount:b.deposit_amount, depositMethod:b.deposit_method, depositStatus:b.deposit_status }; });
     } catch(e){ return []; }
   }

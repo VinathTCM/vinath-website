@@ -148,7 +148,7 @@ router.put('/admin/instant-requests/:id/respond', authMiddleware, requireRole('S
       (p && p.name) || req.admin.name,
       row.area,
       row.area + '（即时预约，地址待确认）',
-      todayISO, todayISO, null, row.need, row.consent_given_at || null);
+      todayISO, todayISO, 'ASAP', row.need, row.consent_given_at || null); // 即时预约无固定时段，用ASAP标记（中文界面转“尽快上门”，英文小票保持ASAP）
   }
   res.json({ ok: true, bookingId });
 });

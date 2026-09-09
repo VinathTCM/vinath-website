@@ -191,7 +191,7 @@ window.scrollTo(0,0);
       if(!res.ok) return [];
       var all = await res.json();
       return all.filter(function(b){ return b.customer_phone===phone && !b.cancelled; })
-        .map(function(b){ return { id:b.id, apptDate:b.appt_date, slot:b.slot, doctor:b.practitioner_name }; });
+        .map(function(b){ return { id:b.id, apptDate:b.appt_date, slot:(!b.slot||b.slot==='ASAP'?'尽快上门（即时预约）':b.slot), doctor:b.practitioner_name }; });
     } catch(e){ return []; }
   }
 

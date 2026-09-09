@@ -633,7 +633,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
         allBookings = allBookings.filter(function(b){ return !b.practitioner_id || b.practitioner_id === cur.id; });
       }
       bookings = allBookings.filter(function(b){ return b.customer_phone===activePatientPhone; })
-        .map(function(b){ return { contact:b.customer_phone, name:b.customer_name, apptDate:b.appt_date, apptDateISO:b.appt_date_iso, slot:b.slot,
+        .map(function(b){ return { contact:b.customer_phone, name:b.customer_name, apptDate:b.appt_date, apptDateISO:b.appt_date_iso, slot:(!b.slot||b.slot==='ASAP'?'尽快上门（即时预约）':b.slot),
           doctor:b.practitioner_name, cancelled:b.cancelled, need:b.need, doctorNote:b.doctor_note, treatments:b.treatments||[] }; });
       if(bookings.length && !patientName) patientName = bookings[0].name;
     } catch(e){}
@@ -1146,7 +1146,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
         .then(function(list){
           var mine = list.filter(function(b){ return b.customer_phone===r.patientPhone && !b.cancelled; });
           sel.innerHTML = '<option value="">不关联预约（治疗项目只保存在病历里）</option>' + mine.map(function(b){
-            var label = (b.booking_no||'')+' · '+(b.appt_date||'')+' '+(b.slot||'')+' · '+(b.practitioner_name||'');
+            var label = (b.booking_no||'')+' · '+(b.appt_date||'')+' '+(!b.slot||b.slot==='ASAP'?'尽快上门（即时预约）':b.slot)+' · '+(b.practitioner_name||'');
             return '<option value="'+b.id+'">'+escapeHtml(label)+'</option>';
           }).join('');
           // 编辑病历：自动选中该病历关联的预约
@@ -1724,7 +1724,7 @@ function fillPrintArea(receipt, size){
         var bkRes = await fetch(API_BASE + '/admin/bookings', { headers:{'Authorization':'Bearer '+authToken} });
         var bks = bkRes.ok ? await bkRes.json() : [];
         var mine = bks.filter(function(b){ return b.customer_phone===phone && !b.cancelled; });
-        document.getElementById('rxBkSelect').innerHTML = '<option value="">不关联预约</option>' + mine.map(function(b){ return '<option value="'+b.id+'">'+b.appt_date+' '+b.slot+' · '+b.practitioner_name+'</option>'; }).join('');
+        document.getElementById('rxBkSelect').innerHTML = '<option value="">不关联预约</option>' + mine.map(function(b){ return '<option value="'+b.id+'">'+b.appt_date+' '+(!b.slot||b.slot==='ASAP'?'尽快上门（即时预约）':b.slot)+' · '+b.practitioner_name+'</option>'; }).join('');
       } catch(e){}
     }
     document.getElementById('rxPhoneInput').addEventListener('blur', refreshRxOptions);
