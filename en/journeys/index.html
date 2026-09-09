@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -152,7 +152,7 @@ body{
   z-index:50; max-width:88vw; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .vh-toast.show{ opacity:1; transform:translate(-50%,0); }
 </style>
-  <link rel="icon" type="image/webp" href="/favicon.webp">
+  <link rel="icon" type="image/webp" href="/en/favicon.webp">
 
 <script>
   window.VINATH_PAGE_LANG = 'en';
@@ -160,7 +160,7 @@ body{
 
 
 <style>
-  /* 鑻辨枃鐗堟爣棰樹娇鐢?Poppins Black */
+  /* 英文版标题使用 Poppins Black */
   h1, h2, h3, h4, h5, h6,
   .hero-title, .section-title, .page-title,
   .eyebrow, .cta-title,
@@ -169,23 +169,23 @@ body{
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
   }
   
-  /* 澶ф爣棰樹娇鐢?Black 900 */
+  /* 大标题使用 Black 900 */
   h1, .hero-title, .section-title, .page-title {
     font-weight: 900 !important;
     letter-spacing: -0.02em;
   }
   
-  /* 浜岀骇鏍囬浣跨敤 ExtraBold 800 */
+  /* 二级标题使用 ExtraBold 800 */
   h2, .process-step-title, .journey-card-title, .footer-title {
     font-weight: 800 !important;
   }
   
-  /* 涓夌骇鏍囬浣跨敤 Bold 700 */
+  /* 三级标题使用 Bold 700 */
   h3, h4 {
     font-weight: 700 !important;
   }
   
-  /* 灏忔爣绛句娇鐢?SemiBold 600 */
+  /* 小标签使用 SemiBold 600 */
   .eyebrow, .cta-title {
     font-weight: 600 !important;
     letter-spacing: 0.05em;
@@ -199,7 +199,7 @@ body{
 <div class="page">
   <div class="vh-header">
     <div class="side">
-      <div class="vh-brand" id="brandBtn">VINATH<span class="vh-tm">鈩?/span></div>
+      <div class="vh-brand" id="brandBtn">VINATH<span class="vh-tm">™</span></div>
     </div>
     <div class="vh-icons">
       <div class="vh-ibtn" id="searchBtn" aria-label="Search">
@@ -221,7 +221,7 @@ body{
     </div>
   </div>
 
-  <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">鈥?/span><span class="bc-current">Wellness Journeys</span></div>
+  <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-current">Wellness Journeys</span></div>
 
   <div class="hero-wrap">
   <div class="hero" id="viewport">
@@ -243,7 +243,7 @@ body{
 
 <div class="vh-footer">
   <div class="vh-footer-top">
-    <div class="vh-footer-brand">VINATH<span class="vh-tm">鈩?/span></div>
+    <div class="vh-footer-brand">VINATH<span class="vh-tm">™</span></div>
   </div>
   <div class="vh-footer-bottom">
     <span>Copyright &copy; 2026 VINATH TCM HEALTH CARE. All rights reserved.</span>
@@ -258,7 +258,7 @@ body{
     var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
     fetch(API_BASE + '/analytics/pageview', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ page: 'Journeys璇︽儏椤? })
+      body: JSON.stringify({ page: 'Journeys详情页' })
     }).catch(function(){});
   })();
 
@@ -307,73 +307,73 @@ body{
   var JOURNEYS = [
     {
       full:true, art:ART_BALANCE, title:'Women's Health', en:'FEMININE BALANCE',
-      intro:'Women's bodies face different challenges at different stages 鈥?from menstruation and pregnancy preparation to menopause. TCM, through syndrome differentiation and internal-external璋冪悊, accompanies you to understand and care for every stage.',
+      intro:'Women's bodies face different challenges at different stages — from menstruation and pregnancy preparation to menopause. TCM, through syndrome differentiation and internal-external调理, accompanies you to understand and care for every stage.',
       conditions:[
-        {icon:'droplet', name:'鏈堢粡闂', scope:'Menstrual pain, irregular menstruation, abnormal flow and other cycle concerns', tcm:'Starting from qi, blood, and organ syndrome differentiation, helping the cycle return to regularity'},
-        {icon:'ripple', name:'鐧藉甫寮傚父', scope:'Abnormal discharge volume, color, texture, recurring discomfort', tcm:'Strengthening the spleen and removing dampness, helping restore natural balance'},
-        {icon:'sprout', name:'涓尰澶囧瓡', scope:'Not only needed when having difficulty conceiving, daily constitution璋冪悊 is equally important', tcm:'Regulating qi and blood, improving constitution, laying a good foundation for healthy pregnancy'},
-        {icon:'shield', name:'濡囩鑲垮潡', scope:'Common masses in the uterus and ovarian area (benign growths)', tcm:'As daily auxiliary璋冪悊 beyond medical follow-up, recommended to閰嶅悎 regular check-ups'},
-        {icon:'hourglass', name:'鏇村勾鏈?, scope:'Hot flashes, night sweats, insomnia, mood swings and other common changes', tcm:'Nourishing yin and harmonizing, helping smoothly pass through this stage'}
+        {icon:'droplet', name:'月经问题', scope:'Menstrual pain, irregular menstruation, abnormal flow and other cycle concerns', tcm:'Starting from qi, blood, and organ syndrome differentiation, helping the cycle return to regularity'},
+        {icon:'ripple', name:'白带异常', scope:'Abnormal discharge volume, color, texture, recurring discomfort', tcm:'Strengthening the spleen and removing dampness, helping restore natural balance'},
+        {icon:'sprout', name:'中医备孕', scope:'Not only needed when having difficulty conceiving, daily constitution调理 is equally important', tcm:'Regulating qi and blood, improving constitution, laying a good foundation for healthy pregnancy'},
+        {icon:'shield', name:'妇科肿块', scope:'Common masses in the uterus and ovarian area (benign growths)', tcm:'As daily auxiliary调理 beyond medical follow-up, recommended to配合 regular check-ups'},
+        {icon:'hourglass', name:'更年期', scope:'Hot flashes, night sweats, insomnia, mood swings and other common changes', tcm:'Nourishing yin and harmonizing, helping smoothly pass through this stage'}
       ]
     },
     {
       full:true, art:ART_SCULPT, title:'Body Shaping', en:'BODY SCULPTING',
-      intro:'Changes in weight and body shape are often closely related to constitution and metabolism. TCM, through璋冪悊 the spleen and stomach, lifestyle habits, diet structure, exercise routine, and鐤忛€?meridians, helps the body regain a light state.',
+      intro:'Changes in weight and body shape are often closely related to constitution and metabolism. TCM, through调理 the spleen and stomach, lifestyle habits, diet structure, exercise routine, and疏通 meridians, helps the body regain a light state.',
       conditions:[
-        {icon:'bowl', name:'楗璋冪悊', scope:'Want to lose fat but don't know how to鎼厤 diet, no direction for daily eating', tcm:'Customized diet advice by constitution, helping the body become light starting from eating right'},
-        {icon:'motion', name:'杩愬姩鎸囧', scope:'Wrong exercise method, hard to鍧氭寔, results always discounted', tcm:'缁撳悎浣撹川缁欏嚭杩愬姩寤鸿锛岃璋冨吇鍜岃繍鍔ㄧ浉杈呯浉鎴?},
-        {icon:'nest', name:'浜у悗濉戝舰', scope:'浜у悗姘旇浜忚櫄銆佽韩褰㈡澗寮涚殑鎭㈠鏈熻皟鐞?, tcm:'娓╁拰璋冭ˉ姘旇锛岄櫔浼磋韩浣撴參鎱㈡仮澶?},
-        {icon:'flame', name:'浠ｈ阿鍋忔參', scope:'鎬曞喎銆佹槗鐤插姵绛変唬璋㈠亸鎱㈢殑浣撹川琛ㄧ幇', tcm:'娓╅槼鍋ヨ劸锛屽府鍔╂彁鍗囪韩浣撲唬璋㈡椿鍔?}
+        {icon:'bowl', name:'饮食调理', scope:'Want to lose fat but don't know how to搭配 diet, no direction for daily eating', tcm:'Customized diet advice by constitution, helping the body become light starting from eating right'},
+        {icon:'motion', name:'运动指导', scope:'Wrong exercise method, hard to坚持, results always discounted', tcm:'结合体质给出运动建议，让调养和运动相辅相成'},
+        {icon:'nest', name:'产后塑形', scope:'产后气血亏虚、身形松弛的恢复期调理', tcm:'温和调补气血，陪伴身体慢慢恢复'},
+        {icon:'flame', name:'代谢偏慢', scope:'怕冷、易疲劳等代谢偏慢的体质表现', tcm:'温阳健脾，帮助提升身体代谢活力'}
       ]
     },
     {
       full:true, art:ART_BEAUTY, title:'Beauty & Skincare', en:'BEAUTY & RADIANCE',
-      intro:'鑲岃偆鐘舵€佹槸韬綋鐢卞唴鑰屽鐨勫啓鐓с€備腑鍖昏绌舵皵琛€璋冨拰锛屼粠鏍规簮鍛垫姢锛屽府鍔╄倢鑲ょ淮鎸佽嚜鐒剁殑鍏夊僵銆?,
+      intro:'肌肤状态是身体由内而外的写照。中医讲究气血调和，从根源呵护，帮助肌肤维持自然的光彩。',
       conditions:[
-        {icon:'sparkle', name:'闈㈣壊鏆楁矇', scope:'姘旇涓嶈冻瀵艰嚧鐨勮偆鑹叉殫娣°€佺己涔忓厜娉?, tcm:'琛ユ皵鍏昏锛岀敱鍐呰€屽鎻愪寒鑲よ壊'},
-        {icon:'lift', name:'鐨偆鏉惧紱', scope:'鑳跺師娴佸け銆佺毊鑲ゅ脊鎬т笅闄嶇殑鍒濊€佽〃鐜?, tcm:'缇庡閽堢伕閰嶅悎闈㈤儴鎺ㄦ嬁锛屽埡婵€姘旇寰幆锛屽府鍔╂彁鍗囪倢鑲ょ揣鑷村害'},
-        {icon:'spots', name:'鐥樼棙鍙嶅', scope:'鍐呯儹銆佹箍姘斿鑷寸殑鐥樼棙鍙嶅銆佹瘺瀛旂矖澶?, tcm:'娓呯儹绁涙箍锛屽府鍔╂仮澶嶈倢鑲ゅ钩琛?},
-        {icon:'face', name:'闈㈤儴杞粨', scope:'闈㈤儴娴偪銆佽疆寤撲笉娓呮櫚绛夊洶鎵?, tcm:'閫氳繃绌翠綅鎸夋懇涓庣粡缁滅枏閫氾紝甯姪淇グ闈㈤儴绾挎潯'}
+        {icon:'sparkle', name:'面色暗沉', scope:'气血不足导致的肤色暗淡、缺乏光泽', tcm:'补气养血，由内而外提亮肤色'},
+        {icon:'lift', name:'皮肤松弛', scope:'胶原流失、皮肤弹性下降的初老表现', tcm:'美容针灸配合面部推拿，刺激气血循环，帮助提升肌肤紧致度'},
+        {icon:'spots', name:'痘痘反复', scope:'内热、湿气导致的痘痘反复、毛孔粗大', tcm:'清热祛湿，帮助恢复肌肤平衡'},
+        {icon:'face', name:'面部轮廓', scope:'面部浮肿、轮廓不清晰等困扰', tcm:'通过穴位按摩与经络疏通，帮助修饰面部线条'}
       ]
     },
     {
       full:true, art:ART_WELLNESS, title:'Daily Wellness', en:'DAILY WELLNESS',
-      intro:'鍏荤敓涓嶆槸绛夌敓鐥呬簡鎵嶅紑濮嬶紝鑰屾槸铻嶅叆鏃ュ父鐨勭偣婊翠範鎯€備腑鍖婚櫔浼翠綘鏍规嵁鑷繁鐨勪綋璐紝鎵惧埌閫傚悎鐨勮皟鍏绘柟寮忋€?,
+      intro:'养生不是等生病了才开始，而是融入日常的点滴习惯。中医陪伴你根据自己的体质，找到适合的调养方式。',
       conditions:[
-        {icon:'battery', name:'浜氬仴搴?, scope:'瀹规槗鐤插姵銆佺簿绁炰笉鎸瓑璇翠笉娓呯殑涓嶉€?, tcm:'杈ㄨ瘑浣撹川锛屼粠鏍规湰璋冪悊韬綋鐘舵€?},
-        {icon:'climate', name:'姘斿€欒皟鍏?, scope:'婀跨儹姘斿€欍€佹棻闆ㄤ氦鏇匡紝韬綋瀹规槗鎰熷埌闂烽噸涓嶉€?, tcm:'椤哄簲褰撳湴姘斿€欏彉鍖栵紝璋冩暣Daily Wellness鏂瑰紡'},
-        {icon:'stomach', name:'鑲犺儍璋冪悊', scope:'椋熸涓嶆尟銆佹秷鍖栦笉鐣呫€佷究绉樼瓑鏃ュ父鑲犺儍鍥版壈', tcm:'鍋ヨ劸鍜岃儍銆佹鼎鑲犻€氫究锛屽府鍔╂仮澶嶆甯歌繍鍖?},
-        {icon:'heart', name:'鎯呯华鑸掔紦', scope:'鍘嬪姏澶с€佹儏缁揣缁锋椂鐨勮韩蹇冭皟閫?, tcm:'鐤忚倽鐞嗘皵锛屽府鍔╂斁鏉捐韩蹇?}
+        {icon:'battery', name:'亚健康', scope:'容易疲劳、精神不振等说不清的不适', tcm:'辨识体质，从根本调理身体状态'},
+        {icon:'climate', name:'气候调养', scope:'湿热气候、旱雨交替，身体容易感到闷重不适', tcm:'顺应当地气候变化，调整Daily Wellness方式'},
+        {icon:'stomach', name:'肠胃调理', scope:'食欲不振、消化不畅、便秘等日常肠胃困扰', tcm:'健脾和胃、润肠通便，帮助恢复正常运化'},
+        {icon:'heart', name:'情绪舒缓', scope:'压力大、情绪紧绷时的身心调适', tcm:'疏肝理气，帮助放松身心'}
       ]
     },
     {
       full:true, art:ART_PAIN, title:'Pain Soothing', en:'PAIN SOOTHING',
-      intro:'韬綋鐨勯吀鐥涚揣缁凤紝寰堝鏃跺€欐槸姘旇涓嶇晠鐨勪俊鍙枫€備腑鍖婚€氳繃鎺ㄦ嬁銆侀拡鐏哥瓑鏂瑰紡锛屽府鍔╃枏閫氱粡缁溿€佺紦瑙ｄ笉閫傘€?,
+      intro:'身体的酸痛紧绷，很多时候是气血不畅的信号。中医通过推拿、针灸等方式，帮助疏通经络、缓解不适。',
       conditions:[
-        {icon:'muscle', name:'棰堣偐鑵拌儗', scope:'涔呭潗銆佸Э鍔夸笉鑹甫鏉ョ殑棰堣偐鑵拌儗绱х环', tcm:'鎺ㄦ嬁鐞嗙瓔锛屽府鍔╃枏閫氭皵琛€銆佹斁鏉捐倢鑲?},
-        {icon:'joint', name:'鍏宠妭涓嶉€?, scope:'鍏宠妭閮ㄤ綅鐨勯吀鑳€銆佹椿鍔ㄤ笉鍒?, tcm:'娓╃粡閫氱粶锛屽府鍔╃紦瑙ｅ叧鑺備笉閫?},
-        {icon:'layers', name:'杩愬姩鎹熶激', scope:'杩愬姩鎴栧姵鎹熷悗鐨勮倢鑲夐吀鐥?, tcm:'娲昏鍖栫榾锛屽府鍔╁姞閫熸仮澶?},
-        {icon:'fatigue', name:'鐤插姵鎬х柤鐥?, scope:'闀挎湡鐤插姵绉疮寮曡捣鐨勫懆韬吀鐥?, tcm:'璋冪悊姘旇锛屼粠鏍规湰鏀瑰杽鐤插姵鐘舵€?}
+        {icon:'muscle', name:'颈肩腰背', scope:'久坐、姿势不良带来的颈肩腰背紧绷', tcm:'推拿理筋，帮助疏通气血、放松肌肉'},
+        {icon:'joint', name:'关节不适', scope:'关节部位的酸胀、活动不利', tcm:'温经通络，帮助缓解关节不适'},
+        {icon:'layers', name:'运动损伤', scope:'运动或劳损后的肌肉酸痛', tcm:'活血化瘀，帮助加速恢复'},
+        {icon:'fatigue', name:'疲劳性疼痛', scope:'长期疲劳积累引起的周身酸痛', tcm:'调理气血，从根本改善疲劳状态'}
       ]
     },
     {
       full:true, art:ART_SLEEP, title:'Quality Sleep', en:'QUALITY SLEEP',
-      intro:'鐫′笉濂斤紝寰€寰€鐗靛姩鐫€鐧藉ぉ鐨勭簿绁炲拰鎯呯华銆備腑鍖讳粠璋冨拰鑴忚厬銆佸畨绁炲畾蹇楀叆鎵嬶紝闄即浣犳壘鍥炲ソ鐪犮€?,
+      intro:'睡不好，往往牵动着白天的精神和情绪。中医从调和脏腑、安神定志入手，陪伴你找回好眠。',
       conditions:[
-        {icon:'moon', name:'鍏ョ潯鍥伴毦', scope:'韬轰笅鍚庨毦浠ュ叆鐫°€佹€濈华闅惧仠', tcm:'瀹夌瀹氬織锛屽府鍔╂斁鏉捐韩蹇冦€佹洿蹇叆鐫?},
-        {icon:'clock', name:'鐫＄湢娴呮槗閱?, scope:'澶滈棿瀹规槗閱掋€佺潯鐪犺川閲忎笉楂?, tcm:'璋冨拰鑴忚厬锛屽府鍔╁欢闀挎繁鐫℃椂闂?},
-        {icon:'dream', name:'澶氭ⅵ', scope:'鏁村澶氭ⅵ銆侀啋鏉ヤ粛鎰熺柌鎯?, tcm:'鍏诲績瀹夌锛屽府鍔╂敼鍠勭潯鐪犺川閲?},
-        {icon:'sunrise', name:'鏅ㄨ捣鐤叉儷', scope:'鐫′簡寰堜箙鍗翠緷鐒剁簿绁炰笉鎸?, tcm:'璋冪悊姘旇杩愯锛屽府鍔╂仮澶嶆竻閱掓椿鍔?}
+        {icon:'moon', name:'入睡困难', scope:'躺下后难以入睡、思绪难停', tcm:'安神定志，帮助放松身心、更快入睡'},
+        {icon:'clock', name:'睡眠浅易醒', scope:'夜间容易醒、睡眠质量不高', tcm:'调和脏腑，帮助延长深睡时间'},
+        {icon:'dream', name:'多梦', scope:'整夜多梦、醒来仍感疲惫', tcm:'养心安神，帮助改善睡眠质量'},
+        {icon:'sunrise', name:'晨起疲惫', scope:'睡了很久却依然精神不振', tcm:'调理气血运行，帮助恢复清醒活力'}
       ]
     }
   ];
 
-  // [stated bug fix] 鍐呭绠＄悊 鍚庡彴姣忎釜Journeys鍗＄墖涓婄殑寮€鍏筹紙active瀛楁锛変箣鍓嶅畬鍏ㄦ病鏈夊湴鏂硅鍙栧畠鈥斺€?
-  // 寮€鍏虫湰韬兘鐐广€佽兘鍙樼伆锛屼絾杞挱杩欒竟鍘嬫牴涓嶇煡閬撹繖浠朵簨锛屾墍浠ュ叧鎺夊摢涓狫ourneys锛孒ome/杩欎釜杞挱椤甸兘杩樻槸
-  // 鐓у父鏄剧ず銆傜幇鍦ㄦ敼鎴愪細鍘昏閭ｄ唤鏁版嵁锛屾妸鏍囪涓?鍏抽棴"鐨凧ourneys浠庤疆鎾噷杩囨护鎺夈€傛敞鎰忥細杩欏彧褰卞搷"杞挱
-  // 閲屽嚭涓嶅嚭鐜?锛堜篃灏辨槸鑳戒笉鑳介€氳繃Home閫涜繃鍘昏鐪嬪埌锛夆€斺€斿鏋滃鎴锋墜涓婃湁Journeys缁嗚妭椤电殑鐩存帴閾炬帴锛岃繕鏄?
-  // 鑳芥墦寮€锛屽洜涓鸿繖閲屾病鏈夋敼鍔ㄧ粏鑺傞〉鏈韩鐨勯€昏緫锛屼篃娌℃湁鍋氱湡姝ｇ殑璁块棶鏉冮檺鎺у埗锛堣繖涓繕鏄鎺ュ叆鐪熷悗绔?
-  // 鎵嶈兘鍋氬埌"鐩存帴閾炬帴涔熸墦涓嶅紑"锛夈€?
+  // [stated bug fix] 内容管理 后台每个Journeys卡片上的开关（active字段）之前完全没有地方读取它——
+  // 开关本身能点、能变灰，但轮播这边压根不知道这件事，所以关掉哪个Journeys，Home/这个轮播页都还是
+  // 照常显示。现在改成会去读那份数据，把标记为"关闭"的Journeys从轮播里过滤掉。注意：这只影响"轮播
+  // 里出不出现"（也就是能不能通过Home逛过去被看到）——如果客户手上有Journeys细节页的直接链接，还是
+  // 能打开，因为这里没有改动细节页本身的逻辑，也没有做真正的访问权限控制（这个还是要接入真后端
+  // 才能做到"直接链接也打不开"）。
   var JOURNEY_KEY_BY_TITLE = {'Women's Health':'women','Body Shaping':'sculpt','Beauty & Skincare':'beauty','Daily Wellness':'wellness','Pain Soothing':'pain','Quality Sleep':'sleep'};
   (function(){
     try {
@@ -389,14 +389,14 @@ body{
         var entry = key ? journeysData[key] : null;
         if(entry && entry.active === false) JOURNEYS.splice(i, 1);
       }
-      // 鎸夊唴瀹圭鐞嗛噷鎷栨嫿鍑烘潵鐨勯『搴忔帓鍒椻€斺€旀病鏈夊搴旀暟鎹殑锛堢悊璁轰笂涓嶄細鍙戠敓锛屽洜涓篔OURNEYS灏辫繖6涓級鎺掓渶鍚?
+      // 按内容管理里拖拽出来的顺序排列——没有对应数据的（理论上不会发生，因为JOURNEYS就这6个）排最后
       JOURNEYS.sort(function(a, b){
         var ka = JOURNEY_KEY_BY_TITLE[a.title], kb = JOURNEY_KEY_BY_TITLE[b.title];
         var oa = (ka && journeysData[ka] && typeof journeysData[ka].order==='number') ? journeysData[ka].order : 999;
         var ob = (kb && journeysData[kb] && typeof journeysData[kb].order==='number') ? journeysData[kb].order : 999;
         return oa - ob;
       });
-    } catch(e){ console.error('鎷夊彇Wellness Journeys澶辫触:', e); }
+    } catch(e){ console.error('拉取Wellness Journeys失败:', e); }
   })();
 
   var N = JOURNEYS.length, idx = 0;
@@ -444,9 +444,9 @@ body{
   function contentHTML(j){
     if(!j.full){
       return '<div class="j-inner ph-state">'
-        + '<div class="j-title">鏁鏈熷緟</div>'
+        + '<div class="j-title">敬请期待</div>'
         + '<div class="j-en">COMING SOON</div>'
-        + '<p class="j-intro ph-msg">杩欎釜Journeys姝ｅ湪绛瑰涓紝绋嶅悗涓轰綘鍛堢幇銆?/p>'
+        + '<p class="j-intro ph-msg">这个Journeys正在筹备中，稍后为你呈现。</p>'
         + '</div>';
     }
     var out = '<div class="j-inner">';
@@ -458,11 +458,11 @@ body{
     out += '</div>';
     out += '<div class="act-row">'
       + '<div class="act-card" id="yueBtn"><span class="aico">'+ICON.cal+'</span><span class="albl">Meet Now</span><span class="achev">'+ICON.chev+'</span></div>'
-      + '<div class="act-card" id="shopBtn"><span class="aico">'+ICON.bag+'</span><span class="albl">鍟嗗簵</span></div>'
+      + '<div class="act-card" id="shopBtn"><span class="aico">'+ICON.bag+'</span><span class="albl">商店</span></div>'
       + '</div>';
     out += '<div class="act-expand" id="yueExpand">'
       + '<a class="act-expand-item" id="waLinkOv" data-lbl="Personalized" rel="noopener"><span class="eico">'+ICON.tune+'</span>Personalized</a>'
-      + '<div class="act-expand-item" data-lbl="灞呭浼氳瘖"><span class="eico">'+ICON.home+'</span>灞呭浼氳瘖</div>'
+      + '<div class="act-expand-item" data-lbl="居家会诊"><span class="eico">'+ICON.home+'</span>居家会诊</div>'
       + '</div>';
     out += '</div>';
     return out;
@@ -494,11 +494,11 @@ body{
       subs[i].addEventListener('click', function(){
         var lbl = this.getAttribute('data-lbl');
         if(lbl === 'Personalized') return; // native <a href> handles navigation now
-        if(lbl === '灞呭浼氳瘖'){
+        if(lbl === '居家会诊'){
           window.location.href = withCart('/consult/?journey=' + encodeURIComponent(JOURNEYS[idx].title), cartItems);
           return;
         }
-        showToast('璺宠浆鑷炽€?+lbl+'銆嶉〉闈?);
+        showToast('跳转至「'+lbl+'」页面');
       });
     }
     updateWaLinkOv();
@@ -506,7 +506,7 @@ body{
   function updateWaLinkOv(){
     var link = document.getElementById('waLinkOv');
     if(!link) return;
-    var msg = '鎮ㄥソ锛屾垜鎯冲挩璇€?+JOURNEYS[idx].title+'銆嶇浉鍏崇殑璋冪悊鏂规銆?;
+    var msg = '您好，我想咨询「'+JOURNEYS[idx].title+'」相关的调理方案。';
     link.setAttribute('href', 'https://wa.me/'+WHATSAPP_NUMBER+'?text='+encodeURIComponent(msg));
   }
 
@@ -624,12 +624,12 @@ body{
       var raw = localStorage.getItem('vinath_business_info');
       if(raw){ var info = JSON.parse(raw); if(info.whatsapp) return info.whatsapp; }
     } catch(e){}
-    return '60138092888'; // fallback if 鍐呭绠＄悊's 鍩烘湰淇℃伅 tab has never been opened yet
+    return '60138092888'; // fallback if 内容管理's 基本信息 tab has never been opened yet
   }
   var WHATSAPP_NUMBER = getWhatsappNumber();
-  // [fix] journeys 椤甸潰鍘熸潵鍙粠 localStorage 璇?WhatsApp锛岃涓嶅埌灏卞洖閫€鏃у彿 60138092888锛?
-  // 杩欓噷浠庡悗绔?/site-settings/business_info 鎷夊彇鍚庡彴鍐呭绠＄悊閲岃缃殑姝ｇ‘鍙风爜锛?
-  // 鍚屾椂鏇存柊 localStorage 缂撳瓨鍜岄〉闈笂宸茬敓鎴愮殑 wa.me 閾炬帴锛屽悗缁姩鎬佺敓鎴愮殑閾炬帴涔熺敤鏂板彿鐮併€?
+  // [fix] journeys 页面原来只从 localStorage 读 WhatsApp，读不到就回退旧号 60138092888；
+  // 这里从后端 /site-settings/business_info 拉取后台内容管理里设置的正确号码，
+  // 同时更新 localStorage 缓存和页面上已生成的 wa.me 链接，后续动态生成的链接也用新号码。
   (function(){
     var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
     fetch(API_BASE + '/site-settings/business_info').then(function(res){ return res.ok ? res.json() : null; }).then(function(info){
@@ -676,7 +676,7 @@ body{
 
   document.getElementById('brandBtn').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
   document.getElementById('bcHome').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
-  document.getElementById('searchBtn').addEventListener('click', function(){ showToast('Search 路 鍔熻兘寮€鍙戜腑'); });
+  document.getElementById('searchBtn').addEventListener('click', function(){ showToast('Search · 功能开发中'); });
   var vhAcctMenu = document.getElementById('vhAcctMenu');
   document.getElementById('acctBtn').addEventListener('click', function(e){
     e.stopPropagation();
@@ -733,15 +733,15 @@ body{
   </div>
   <div class="vh-chat-body" id="vhChatBody"></div>
   <div class="vh-chat-input-row">
-    <input type="text" id="vhChatInput" placeholder="Type a message鈥? maxlength="300">
+    <input type="text" id="vhChatInput" placeholder="Type a message…" maxlength="300">
     <button type="button" id="vhChatSend"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
   </div>
 </div>
 <script>
 (function(){
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  // 鑱婂ぉ娑堟伅鏄换浣曞尶鍚嶈瀹㈤兘鑳芥彁浜ょ殑鍐呭锛岀鐞嗗憳鎵撳紑瀵硅瘽鏃朵細鐪嬪埌鈥斺€斾笉杞箟灏辩洿鎺ユ嫾杩沬nnerHTML
-  // 鐨勮瘽锛岃瀹㈠彲浠ュ湪娑堟伅閲屽HTML/鑴氭湰锛屽湪绠＄悊鍛樺凡鐧诲綍鐨勬祻瑙堝櫒閲屾墽琛岋紙瀛樺偍鍨媂SS锛夈€?
+  // 聊天消息是任何匿名访客都能提交的内容，管理员打开对话时会看到——不转义就直接拼进innerHTML
+  // 的话，访客可以在消息里塞HTML/脚本，在管理员已登录的浏览器里执行（存储型XSS）。
   function escapeHtml(s){
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
@@ -759,8 +759,8 @@ body{
       return id;
     } catch(e){ return 'cust_temp'; }
   }
-  // 瀹㈡埛绔涓€娆℃墦寮€鑱婂ぉ闈㈡澘鏃惰皟鐢ㄢ€斺€斿悗绔細鑷姩澶勭悊"杩欎釜浜烘槸涓嶆槸绗竴娆℃潵"銆佽涓嶈鎻掑叆娆㈣繋璇紝
-  // 鍓嶇涓嶇敤鍐嶈嚜宸卞垽鏂繖浜?
+  // 客户端第一次打开聊天面板时调用——后端会自动处理"这个人是不是第一次来"、要不要插入欢迎语，
+  // 前端不用再自己判断这些
   async function ensureMyThread(){
     try {
       var res = await fetch(API_BASE + '/chat/ensure-thread', {
@@ -843,7 +843,7 @@ body{
 
   // poll for admin replies / handoff changes while the widget is on screen
   pollTimer = setInterval(async function(){
-    if(!currentThread) return; // 杩樻病鎵撳紑杩囪亰澶╅潰鏉匡紝娌″繀瑕佽疆璇?
+    if(!currentThread) return; // 还没打开过聊天面板，没必要轮询
     await refreshMyThread();
     renderMessages();
   }, 4000);
