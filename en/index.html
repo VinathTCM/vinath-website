@@ -471,7 +471,7 @@
 
 
 <style>
-  /* 英文版Title use  Poppins Black */
+  /* English versionTitle use  Poppins Black */
   h1, h2, h3, h4, h5, h6,
   .hero-title, .section-title, .page-title,
   .eyebrow, .cta-title,
@@ -1548,8 +1548,8 @@
 <script>
 (function(){
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  // ChatMessageYes any 匿名访客都能Submit  content ， manage 员Open for 话时会看 to ——不转义就直接拼进innerHTML
-  //  话，访客 can  at Message里塞HTML/脚本， at  manage 员已Login  browse 里执Row（ storage 型XSS）。
+  // ChatMessageYes any anonymous visitor都能Submit  content ， manage 员Open for  when 会看 to ——不转义就直接拼进innerHTML
+  //  ，访客 can  at Message里塞HTML/脚本， at  manage 员已Login  browse 里执Row（ storage 型XSS）。
   function escapeHtml(s){
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
@@ -1567,7 +1567,7 @@
       return id;
     } catch(e){ return 'cust_temp'; }
   }
-  // Customer端第一次OpenChat面板时调用——后端会自动 process "这 personal Yes不Yes第一次来"、要不要插入欢迎语，
+  // Customer端第一次OpenChat面板 when 调用——后端会自动 process "这 personal Yes不Yes第一次来"、要不要插入欢迎语，
   // 前端不用再自己判断这些
   async function ensureMyThread(){
     try {

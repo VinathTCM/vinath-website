@@ -130,7 +130,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
 
 <style>
-  /* 英文版Title use  Poppins Black */
+  /* English versionTitle use  Poppins Black */
   h1, h2, h3, h4, h5, h6,
   .hero-title, .section-title, .page-title,
   .eyebrow, .cta-title,
@@ -328,11 +328,11 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     });
   }
 
-  var RX_STATUS_LABELS = { awaiting_pharmacy:'待药房接单', brewing:'煎药中', shipping:'配送中', delivered:'已送达' };
+  var RX_STATUS_LABELS = { awaiting_pharmacy:'Awaiting Pharmacy Acceptance', brewing:'Decocting', shipping:'Out for Delivery', delivered:'已送达' };
   var RX_FLOW = ['awaiting_pharmacy','brewing','shipping','delivered'];
-  var DISPENSE_LABELS = { decoct_pickup:'代煎自取', decoct_delivery:'代煎代送', herb_delivery:'Herbal Medicine配送', herb_pickup:'Herbal Medicine自取' };
+  var DISPENSE_LABELS = { decoct_pickup:'Decocted & Self-Pickup', decoct_delivery:'Decocted & Delivered', herb_delivery:'Herbal Medicine Delivery', herb_pickup:'Herbal Medicine Self-Pickup' };
 
-  // Herbal Medicine Progress卡：Sync药房制备/配送进度 + 运单号；无处方时不渲染
+  // Herbal Medicine Progress卡：Sync药房制备/Delivery进度 + 运单号；无处方 when 不渲染
   function renderHerbProgress(rx){
     var label = (DISPENSE_LABELS[rx.dispenseMode] || rx.dispenseMode || 'Herbal Medicine');
     var idx = RX_FLOW.indexOf(rx.status || 'awaiting_pharmacy');
@@ -522,7 +522,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     window.location.href = withCart('/orders/', cartItems);
   });
   document.getElementById('vhamBooking').addEventListener('click', function(){
-    showToast('当前就 at Booking Tracking页');
+    showToast('Currently on the Booking Tracking page');
     vhAcctMenu.classList.remove('open');
   });
   document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
@@ -572,8 +572,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 <script>
 (function(){
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  // ChatMessageYes any 匿名访客都能Submit  content ， manage 员Open for 话时会看 to ——不转义就直接拼进innerHTML
-  //  话，访客 can  at Message里塞HTML/脚本， at  manage 员已Login  browse 里执Row（ storage 型XSS）。
+  // ChatMessageYes any anonymous visitor都能Submit  content ， manage 员Open for  when 会看 to ——不转义就直接拼进innerHTML
+  //  ，访客 can  at Message里塞HTML/脚本， at  manage 员已Login  browse 里执Row（ storage 型XSS）。
   function escapeHtml(s){
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
@@ -591,7 +591,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       return id;
     } catch(e){ return 'cust_temp'; }
   }
-  // Customer端第一次OpenChat面板时调用——后端会自动 process "这 personal Yes不Yes第一次来"、要不要插入欢迎语，
+  // Customer端第一次OpenChat面板 when 调用——后端会自动 process "这 personal Yes不Yes第一次来"、要不要插入欢迎语，
   // 前端不用再自己判断这些
   async function ensureMyThread(){
     try {

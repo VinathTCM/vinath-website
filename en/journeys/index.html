@@ -160,7 +160,7 @@ body{
 
 
 <style>
-  /* 英文版Title use  Poppins Black */
+  /* English versionTitle use  Poppins Black */
   h1, h2, h3, h4, h5, h6,
   .hero-title, .section-title, .page-title,
   .eyebrow, .cta-title,
@@ -343,12 +343,12 @@ body{
         {icon:'battery', name:'亚健康', scope:'容易疲劳、精神不振 etc.说不清 不适', tcm:'辨识constitution， from 根本wellness care身体 state '},
         {icon:'climate', name:'气候调养', scope:'damp-heat气候、旱雨交替，身体容易感 to 闷重不适', tcm:'顺应当地气候变化，调整Daily Wellness method '},
         {icon:'stomach', name:'肠胃wellness care', scope:'食欲不振、消化不畅、便秘 etc.日常肠胃困扰', tcm:'strengthen the spleen and 胃、润肠通便，帮助Restore正常运化'},
-        {icon:'heart', name:'情绪舒缓', scope:'压力大、情绪紧绷时 身心调适', tcm:'soothe liver and regulate qi，帮助放松身心'}
+        {icon:'heart', name:'情绪舒缓', scope:'压力大、情绪紧绷 when  身心调适', tcm:'soothe liver and regulate qi，帮助放松身心'}
       ]
     },
     {
       full:true, art:ART_PAIN, title:'Pain Soothing', en:'PAIN SOOTHING',
-      intro:'身体 酸痛紧绷，很多时候Yesqi and blood不畅 信号。TCM via Tui Na、Acupuncture etc. method ，帮助疏通经络、relieve不适。',
+      intro:'身体 酸痛紧绷，很多 when 候Yesqi and blood不畅 信号。TCM via Tui Na、Acupuncture etc. method ，帮助疏通经络、relieve不适。',
       conditions:[
         {icon:'muscle', name:'颈肩腰背', scope:'久坐、姿势不良带来 颈肩腰背紧绷', tcm:'Tui Na理筋，帮助疏通qi and blood、放松肌肉'},
         {icon:'joint', name:'关节不适', scope:'关节部位 酸胀、活动不利', tcm:'温经通络，帮助relieve关节不适'},
@@ -740,8 +740,8 @@ body{
 <script>
 (function(){
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  // ChatMessageYes any 匿名访客都能Submit  content ， manage 员Open for 话时会看 to ——不转义就直接拼进innerHTML
-  //  话，访客 can  at Message里塞HTML/脚本， at  manage 员已Login  browse 里执Row（ storage 型XSS）。
+  // ChatMessageYes any anonymous visitor都能Submit  content ， manage 员Open for  when 会看 to ——不转义就直接拼进innerHTML
+  //  ，访客 can  at Message里塞HTML/脚本， at  manage 员已Login  browse 里执Row（ storage 型XSS）。
   function escapeHtml(s){
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
@@ -759,7 +759,7 @@ body{
       return id;
     } catch(e){ return 'cust_temp'; }
   }
-  // Customer端第一次OpenChat面板时调用——后端会自动 process "这 personal Yes不Yes第一次来"、要不要插入欢迎语，
+  // Customer端第一次OpenChat面板 when 调用——后端会自动 process "这 personal Yes不Yes第一次来"、要不要插入欢迎语，
   // 前端不用再自己判断这些
   async function ensureMyThread(){
     try {
