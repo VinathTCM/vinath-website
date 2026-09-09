@@ -332,13 +332,13 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   var RX_FLOW = ['awaiting_pharmacy','brewing','shipping','delivered'];
   var DISPENSE_LABELS = { decoct_pickup:'代煎自取', decoct_delivery:'代煎代送', herb_delivery:'中药配送', herb_pickup:'中药自取' };
 
-  // 中药进度卡：同步药房制备/配送进度 + 运单号；无处方时不渲染
+  // Herbal Medicine Progress卡：同步药房制备/配送进度 + 运单号；无处方时不渲染
   function renderHerbProgress(rx){
     var label = (DISPENSE_LABELS[rx.dispenseMode] || rx.dispenseMode || '中药');
     var idx = RX_FLOW.indexOf(rx.status || 'awaiting_pharmacy');
     if(idx < 0) idx = 0;
     var html = '<div class="oq-items-card herb-progress" style="margin-top:12px;">'
-      + '<div class="oq-item" style="font-weight:600;"><span>中药进度</span><span>'+label+' · '+(rx.doses||1)+' 剂</span></div>';
+      + '<div class="oq-item" style="font-weight:600;"><span>Herbal Medicine Progress</span><span>'+label+' · '+(rx.doses||1)+' doses</span></div>';
     html += '<div class="stepper-wrap" style="margin-top:10px;">';
     RX_FLOW.forEach(function(st, i){
       var cls = i < idx ? 'done' : i === idx ? 'current' : '';
@@ -346,11 +346,11 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     });
     html += '</div>';
     if(rx.status === 'shipping' && (rx.logisticsProvider || rx.trackingId)){
-      html += '<div class="oq-item" style="margin-top:10px;"><span>配送方式</span><span>'+(rx.logisticsProvider||'')+(rx.trackingId?' · 运单号：'+rx.trackingId:'')+'</span></div>';
+      html += '<div class="oq-item" style="margin-top:10px;"><span>Delivery Method</span><span>'+(rx.logisticsProvider||'')+(rx.trackingId?' · Tracking Number: '+rx.trackingId:'')+'</span></div>';
     }
     if(rx.items && rx.items.length){
       var herbs = rx.items.filter(function(it){ return it.herbName; }).map(function(it){ return it.herbName+(it.dosageGrams?' '+it.dosageGrams+'g':''); }).join('、');
-      if(herbs) html += '<div class="oq-item"><span>药材</span><span>'+herbs+'</span></div>';
+      if(herbs) html += '<div class="oq-item"><span>Herbs</span><span>'+herbs+'</span></div>';
     }
     html += '</div>';
     return html;
@@ -358,7 +358,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   function renderResult(booking){
     var html = '<div class="oq-result">'
-      + '<div class="oq-result-hd"><div class="oq-order-no">Booking ID '+booking.bookingNo+'</div><div class="oq-order-date">提交日期 '+booking.date+'</div></div>';
+      + '<div class="oq-result-hd"><div class="oq-order-no">Booking ID '+booking.bookingNo+'</div><div class="oq-order-date">Submission Date '+booking.date+'</div></div>';
 
     if(booking.cancelled){
       html += '<div class="oq-cancelled-banner"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>该预约Cancelled</div>';
@@ -372,9 +372,9 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     }
 
     html += '<div class="oq-items-card'+(booking.cancelled?' cancelled':'')+'">'
-      + '<div class="oq-item"><span>预约医师</span><span>'+booking.doctor+'</span></div>'
+      + '<div class="oq-item"><span>Assigned Physician</span><span>'+booking.doctor+'</span></div>'
       + '<div class="oq-item"><span>Booking Time</span><span>'+booking.apptDate+' '+booking.slot+'</span></div>'
-      + '<div class="oq-item"><span>服务区域</span><span>'+booking.area+'</span></div>'
+      + '<div class="oq-item"><span>Service Area</span><span>'+booking.area+'</span></div>'
       + '<div class="oq-item"><span>Contact Information</span><span>'+(booking.method==='call'?'电话':'WhatsApp')+'</span></div>'
       + '</div>';
 
@@ -383,8 +383,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     }
 
     if(!booking.cancelled && booking.status < 2){
-      html += '<div id="cancelArea"><button class="oq-cancel-btn" id="cancelBtn">取消此预约</button>'
-        + '<div class="oq-cancel-note">为保障各位客户的问诊安排，同一Phone Number每周最多可取消1次、每月最多3次。</div></div>';
+      html += '<div id="cancelArea"><button class="oq-cancel-btn" id="cancelBtn">Cancel This Booking</button>'
+        + '<div class="oq-cancel-note">To ensure quality service for all customers, the same Phone Number can cancel at most 1 time per week and 3 times per month.</div></div>';
     }
     html += '</div>';
     if(!booking.cancelled && booking.status === 2){
@@ -402,14 +402,14 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         var area = document.getElementById('cancelArea');
         if(!limit.allowed){
           var msg = limit.reason === 'week'
-            ? '您本周（近7天内）Cancelled过一次预约。如有紧急情况需要调整，请通过 WhatsApp 联系我们协助处理。'
-            : '您本月（近30天内）的取消次数已达到上限（3次）。如有紧急情况需要调整，请通过 WhatsApp 联系我们协助处理。';
+            ? 'You have cancelled one booking this week (within the last 7 days). If you need to adjust due to an emergency, please contact us via WhatsApp for assistance.'
+            : 'You have reached the cancellation limit (3 times) this month (within the last 30 days). If you need to adjust due to an emergency, please contact us via WhatsApp for assistance.';
           area.innerHTML = '<div class="oq-cancel-blocked">'+msg+'</div>';
           return;
         }
         area.innerHTML = '<div class="oq-cancel-confirm">'
           + '<div class="oq-cancel-confirm-text">Are you sure you want to cancel this booking?</div>'
-          + '<div class="oq-cancel-confirm-btns"><button class="oq-cancel-back" id="cancelBack">再想想</button><button class="oq-cancel-yes" id="cancelYes">Confirm Cancel</button></div>'
+          + '<div class="oq-cancel-confirm-btns"><button class="oq-cancel-back" id="cancelBack">Think Again</button><button class="oq-cancel-yes" id="cancelYes">Confirm Cancel</button></div>'
           + '</div>';
         document.getElementById('cancelBack').addEventListener('click', function(){ renderResult(booking); });
         document.getElementById('cancelYes').addEventListener('click', async function(){
@@ -422,7 +422,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
             });
             if(!res.ok){
               var err = await res.json();
-              area.innerHTML = '<div class="oq-cancel-blocked">'+(err.error||'取消失败，请稍后重试')+'</div>';
+              area.innerHTML = '<div class="oq-cancel-blocked">'+(err.error||'Cancellation failed, please try again later')+'</div>';
               return;
             }
             recordCancellation(currentContact);
