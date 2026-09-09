@@ -797,7 +797,7 @@
 
   // ========== 核心逻辑 ==========
   const STORAGE_KEY = 'vinath_lang';
-  const LANGS = ['zh', 'en', 'bm'];
+  const LANGS = ['zh', 'en'];
   let currentLang = localStorage.getItem(STORAGE_KEY) || 'zh';
 
   function t(key) {
