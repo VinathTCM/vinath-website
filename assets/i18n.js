@@ -270,6 +270,23 @@
       'process.step4.desc': '根据您的具体情况定制个性化中药配方和治疗方案。',
       'process.step5.title': '后续跟进',
       'process.step5.desc': '我们跟进您的进展，并根据需要调整治疗方案以获得最佳效果。',
+
+      // 页脚
+      'footer.services': '服务项目',
+      'footer.home_consult': '居家会诊',
+      'footer.womens_care': '女性调理',
+      'footer.beauty': '美容养颜',
+      'footer.pain_relief': '止痛调理',
+      'footer.herbal': '中药产品',
+      'footer.quick_links': '快速链接',
+      'footer.book': '预约咨询',
+      'footer.shop': '商店',
+      'footer.about': '关于我们',
+      'footer.support': '支持中心',
+      'footer.track_order': '订单追踪',
+      'footer.track_booking': '预约追踪',
+      'footer.contact': '联系我们',
+      'footer.follow': '关注我们',
 },
     en: {
       // Nav
@@ -531,6 +548,23 @@
       'process.step4.desc': 'Personalized herbal formula and treatment plan tailored to your specific condition.',
       'process.step5.title': 'Follow-up Care',
       'process.step5.desc': 'We check on your progress and adjust the treatment plan as needed for optimal results.',
+
+      // 页脚
+      'footer.services': 'Services',
+      'footer.home_consult': 'Home Consultation',
+      'footer.womens_care': 'Women\'s Care',
+      'footer.beauty': 'Beauty & Skincare',
+      'footer.pain_relief': 'Pain Relief',
+      'footer.herbal': 'Herbal Products',
+      'footer.quick_links': 'Quick Links',
+      'footer.book': 'Book Appointment',
+      'footer.shop': 'Shop',
+      'footer.about': 'About Us',
+      'footer.support': 'Support',
+      'footer.track_order': 'Track Order',
+      'footer.track_booking': 'Track Booking',
+      'footer.contact': 'Contact Us',
+      'footer.follow': 'Follow Us',
 },
     bm: {
       // Nav

@@ -466,7 +466,6 @@
 
 
 <script>
-  // 英文页面：标记为已翻译，i18n.js不会重复翻译内容
   window.VINATH_PAGE_LANG = 'en';
 </script>
 
@@ -490,51 +489,51 @@
   <a href="#top" class="logo">VINATH<span class="nav-tm">™</span></a>
   <ul class="nav-links">
     <li>
-      <a data-i18n="nav.journeys">Journeys</a>
+      <a href="/en/journeys/" data-i18n="nav.journeys">Journeys</a>
       <div class="nav-dropdown">
         <div class="nav-dropdown-inner" id="navJourneyList"></div>
       </div>
     </li>
     <li>
-      <a data-i18n="nav.shop">Shop</a>
+      <a href="/en/shop/" data-i18n="nav.shop">Shop</a>
       <div class="nav-dropdown">
         <div class="nav-dropdown-inner">
-          <a data-i18n="shop.plaster">Plaster Series</a>
-          <a data-i18n="shop.tea">Tea Series</a>
-          <a data-i18n="shop.soak">Herbal Soup Series</a>
-          <a data-i18n="shop.topical">Topical Series</a>
-          <a data-i18n="shop.all">All Products</a>
+          <a href="/en/shop/?cat=plaster" data-i18n="shop.plaster">Plaster Series</a>
+          <a href="/en/shop/?cat=tea" data-i18n="shop.tea">Tea Series</a>
+          <a href="/en/shop/?cat=soak" data-i18n="shop.soak">Herbal Soup Series</a>
+          <a href="/en/shop/?cat=mask" data-i18n="shop.topical">Topical Series</a>
+          <a href="/en/shop/" data-i18n="shop.all">All Products</a>
         </div>
       </div>
     </li>
     <li>
-      <a data-i18n="nav.consult">Home Consultation</a>
+      <a href="#consult" data-i18n="nav.consult">Home Consultation</a>
       <div class="nav-dropdown">
         <div class="nav-dropdown-inner">
-          <a data-i18n="consult.personal">Personalized Care</a>
-          <a data-i18n="consult.home">Home Consultation</a>
+          <a href="https://wa.me/60123456789?text=%E6%82%A8%E5%A5%BD%EF%BC%8C%E6%88%91%E6%83%B3%E4%BA%86%E8%A7%A3VINATH%E7%9A%84%E4%B8%AA%E4%BA%BA%E5%AE%9A%E5%88%B6%E8%B0%83%E7%90%86%E6%96%B9%E6%A1%88%E3%80%82" id="waLinkHome1" data-i18n="consult.personal">Personalized Care</a>
+          <a href="/en/consult/" data-i18n="consult.home">Home Consultation</a>
         </div>
       </div>
     </li>
     <li>
-      <a data-i18n="nav.support">Support</a>
+      <a href="/en/support/" data-i18n="nav.support">Support</a>
       <div class="nav-dropdown">
         <div class="nav-dropdown-inner">
-          <a data-i18n="support.faq">FAQ</a>
-          <a data-i18n="support.shipping">Shipping & Returns</a>
-          <a data-i18n="support.contact">Contact Support</a>
-          <a data-i18n="query.order">Track Order</a>
-          <a data-i18n="query.booking">Track Booking</a>
+          <a href="/en/support/#faq" data-i18n="support.faq">FAQ</a>
+          <a href="/en/support/#shipping" data-i18n="support.shipping">Shipping & Returns</a>
+          <a href="/en/support/#contact" data-i18n="support.contact">Contact Support</a>
+          <a href="/en/orders/" data-i18n="query.order">Track Order</a>
+          <a href="/en/bookings/" data-i18n="query.booking">Track Booking</a>
         </div>
       </div>
     </li>
     <li>
-      <a data-i18n="nav.about">About Us</a>
+      <a href="/en/about/" data-i18n="nav.about">About Us</a>
       <div class="nav-dropdown">
         <div class="nav-dropdown-inner">
-          <a data-i18n="about.story">Our Story</a>
-          <a data-i18n="about.team">Physician Team</a>
-          <a data-i18n="about.follow">Follow Us</a>
+          <a href="/en/about/#story" data-i18n="about.story">Our Story</a>
+          <a href="/en/about/#team" data-i18n="about.team">Physician Team</a>
+          <a href="/en/about/#follow" data-i18n="about.follow">Follow Us</a>
         </div>
       </div>
     </li>
@@ -544,14 +543,14 @@
       <svg id="navSearchBtn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
       <div class="nav-search-box" id="navSearchBox">
         <input type="text" id="navSearchInput" placeholder="搜索商品，例如：茶、痛经" data-i18n-placeholder="nav.searchPlaceholder">
-        <button data-i18n="common.search">Search</button>
+        <button type="button" id="navSearchGo" data-i18n="common.search">Search</button>
       </div>
     </span>
     <span class="nav-acct-wrap">
       <svg id="navAcctBtn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
       <div class="nav-acct-menu" id="navAcctMenu">
-        <div data-i18n="query.order">Track Order</div>
-        <div data-i18n="query.booking">Track Booking</div>
+        <div class="nam-item" id="namOrder" data-i18n="query.order">Track Order</div>
+        <div class="nam-item" id="namBooking" data-i18n="query.booking">Track Booking</div>
       </div>
     </span>
     <span class="nav-cart-wrap">
@@ -577,59 +576,59 @@
       <div class="mm-group-hd" data-g="j"><span data-i18n="nav.journeys">Journeys</span><svg class="mm-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></div>
       <div class="mm-group-body" id="mmg-j">
         <a href="/en/journeys/womens-care/" data-i18n="journeys.womens">女性调理</a>
-        <a data-i18n="journeys.slimming">Body Shaping</a>
-        <a data-i18n="journeys.beauty">Beauty & Skincare</a>
-        <a data-i18n="journeys.wellness">Daily Wellness</a>
-        <a data-i18n="journeys.pain">Pain Relief</a>
-        <a data-i18n="journeys.sleep">Quality Sleep</a>
+        <a href="/en/journeys/slimming/" data-i18n="journeys.slimming">Body Shaping</a>
+        <a href="/en/journeys/beauty/" data-i18n="journeys.beauty">Beauty & Skincare</a>
+        <a href="/en/journeys/wellness/" data-i18n="journeys.wellness">Daily Wellness</a>
+        <a href="/en/journeys/pain-relief/" data-i18n="journeys.pain">Pain Relief</a>
+        <a href="/en/journeys/sleep/" data-i18n="journeys.sleep">Quality Sleep</a>
       </div>
     </div>
     <div class="mm-group">
       <div class="mm-group-hd" data-g="s"><span data-i18n="nav.shop">Shop</span><svg class="mm-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></div>
       <div class="mm-group-body" id="mmg-s">
-        <a data-i18n="shop.plaster">Plaster Series</a>
-        <a data-i18n="shop.tea">Tea Series</a>
-        <a data-i18n="shop.soak">Herbal Soup Series</a>
-        <a data-i18n="shop.topical">Topical Series</a>
-        <a data-i18n="shop.all">All Products</a>
+        <a href="/en/shop/?cat=plaster" data-i18n="shop.plaster">Plaster Series</a>
+        <a href="/en/shop/?cat=tea" data-i18n="shop.tea">Tea Series</a>
+        <a href="/en/shop/?cat=soak" data-i18n="shop.soak">Herbal Soup Series</a>
+        <a href="/en/shop/?cat=mask" data-i18n="shop.topical">Topical Series</a>
+        <a href="/en/shop/" data-i18n="shop.all">All Products</a>
       </div>
     </div>
     <div class="mm-group">
       <div class="mm-group-hd" data-g="c"><span data-i18n="nav.consult">Home Consultation</span><svg class="mm-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></div>
       <div class="mm-group-body" id="mmg-c">
-        <a data-i18n="consult.personal">Personalized Care</a>
-        <a data-i18n="consult.home">Home Consultation</a>
+        <a href="https://wa.me/60123456789?text=%E6%82%A8%E5%A5%BD%EF%BC%8C%E6%88%91%E6%83%B3%E4%BA%86%E8%A7%A3VINATH%E7%9A%84%E4%B8%AA%E4%BA%BA%E5%AE%9A%E5%88%B6%E8%B0%83%E7%90%86%E6%96%B9%E6%A1%88%E3%80%82" id="waLinkHome2" data-i18n="consult.personal">Personalized Care</a>
+        <a href="/en/consult/" data-i18n="consult.home">Home Consultation</a>
       </div>
     </div>
     <div class="mm-group">
       <div class="mm-group-hd" data-g="sp"><span data-i18n="nav.support">Support</span><svg class="mm-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></div>
       <div class="mm-group-body" id="mmg-sp">
-        <a data-i18n="support.faq">FAQ</a>
-        <a data-i18n="support.shipping">Shipping & Returns</a>
-        <a data-i18n="support.contact">Contact Support</a>
-        <a data-i18n="query.order">Track Order</a>
-        <a data-i18n="query.booking">Track Booking</a>
+        <a href="/en/support/#faq" data-i18n="support.faq">FAQ</a>
+        <a href="/en/support/#shipping" data-i18n="support.shipping">Shipping & Returns</a>
+        <a href="/en/support/#contact" data-i18n="support.contact">Contact Support</a>
+        <a href="/en/orders/" data-i18n="query.order">Track Order</a>
+        <a href="/en/bookings/" data-i18n="query.booking">Track Booking</a>
       </div>
     </div>
     <div class="mm-group">
       <div class="mm-group-hd" data-g="a"><span data-i18n="nav.about">About Us</span><svg class="mm-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></div>
       <div class="mm-group-body" id="mmg-a">
-        <a data-i18n="about.story">Our Story</a>
-        <a data-i18n="about.team">Physician Team</a>
-        <a data-i18n="about.follow">Follow Us</a>
+        <a href="/en/about/#story" data-i18n="about.story">Our Story</a>
+        <a href="/en/about/#team" data-i18n="about.team">Physician Team</a>
+        <a href="/en/about/#follow" data-i18n="about.follow">Follow Us</a>
       </div>
     </div>
   </div>
 </div>
 
 <section class="hero">
-  <div data-i18n="home.hero.eyebrow">Modern TCM</div>
+  <div class="eyebrow" data-i18n="home.hero.eyebrow">Modern TCM</div>
   <div class="hero-visual">
     <img class="hero-media-img" id="heroMediaImg" alt="茶杯中缓缓升起的蒸汽">
   </div>
   <div class="cta-row">
-    <button data-i18n="home.hero.cta1">Start Your Journey</button>
-    <button data-i18n="home.hero.cta2">Explore Products</button>
+    <button class="btn btn-primary" id="startJourneyBtn" data-i18n="home.hero.cta1">Start Your Journey</button>
+    <button class="btn btn-secondary" id="exploreShopBtn" data-i18n="home.hero.cta2">Explore Products</button>
   </div>
 </section>
 
@@ -644,9 +643,9 @@
 <section class="service-process" id="process">
   <div class="process-container">
     <div class="process-head">
-      <div data-i18n="process.eyebrow">How It Works</div>
+      <div class="eyebrow" data-i18n="process.eyebrow">How It Works</div>
       <h2 data-i18n="process.title">Simple 5-Step Process</h2>
-      <p data-i18n="process.sub">From booking to follow-up, we make TCM care effortless.</p>
+      <p class="process-sub" data-i18n="process.sub">From booking to follow-up, we make TCM care effortless.</p>
     </div>
     <div class="process-steps">
       <div class="process-step">
@@ -797,7 +796,7 @@
 <section class="journey" id="journey">
   <div class="journey-container">
     <div class="journey-head">
-      <div data-i18n="home.journeys.eyebrow">Your Journey</div>
+      <div class="eyebrow" data-i18n="home.journeys.eyebrow">Your Journey</div>
       <h2 data-i18n="home.journeys.title">Choose Your Journey</h2>
     </div>
     <div class="rail-wrap">
@@ -815,9 +814,9 @@
 
 <section class="consult" id="consult">
   <div class="consult-inner">
-    <div data-i18n="home.consult.eyebrow">Online Consult · Booking</div>
-    <h2 data-i18n="home.consult.title">Home Consultation</h2>
-    <p data-i18n="home.consult.sub">Whether online consultation or home visit, it starts with understanding your body.</p>
+    <div class="eyebrow" data-i18n="home.consult.eyebrow">Online Consult · Booking</div>
+    <h2 class="consult-title" data-i18n="home.consult.title">Home Consultation</h2>
+    <p class="consult-sub" data-i18n="home.consult.sub">Whether online consultation or home visit, it starts with understanding your body.</p>
 
     <div class="consult-centered">
       <div class="pulse-visual">
@@ -861,30 +860,30 @@
   <div class="footer-grid">
     <!-- 第1列：服务项目 -->
     <div class="footer-col">
-      <h4 class="footer-col-title">Services</h4>
+      <h4 class="footer-col-title" data-i18n="footer.services">Services</h4>
       <ul class="footer-col-list">
-        <li><a href="/en/consult/">Home Consultation</a></li>
-        <li><a href="/en/journeys/womens-care/">Women's Care</a></li>
-        <li><a href="/en/journeys/beauty/">Beauty & Skincare</a></li>
-        <li><a href="/en/journeys/pain-relief/">Pain Relief</a></li>
-        <li><a href="/en/shop/">Herbal Products</a></li>
+        <li><a href="/en/consult/" data-i18n="footer.home_consult">Home Consultation</a></li>
+        <li><a href="/en/journeys/womens-care/" data-i18n="footer.womens_care">Women\</a></li>
+        <li><a href="/en/journeys/beauty/" data-i18n="footer.beauty">Beauty & Skincare</a></li>
+        <li><a href="/en/journeys/pain-relief/" data-i18n="footer.pain_relief">Pain Relief</a></li>
+        <li><a href="/en/shop/" data-i18n="footer.herbal">Herbal Products</a></li>
       </ul>
     </div>
     <!-- 第2列：快速链接 -->
     <div class="footer-col">
-      <h4 class="footer-col-title">Quick Links</h4>
+      <h4 class="footer-col-title" data-i18n="footer.quick_links">Quick Links</h4>
       <ul class="footer-col-list">
-        <li><a href="/en/consult/">Book Appointment</a></li>
-        <li><a href="/en/shop/">Shop</a></li>
-        <li><a href="/en/about/">About Us</a></li>
-        <li><a href="/en/support/">Support</a></li>
-        <li><a href="/en/orders/">Track Order</a></li>
-        <li><a href="/en/bookings/">Track Booking</a></li>
+        <li><a href="/en/consult/" data-i18n="footer.book">Book Appointment</a></li>
+        <li><a href="/en/shop/" data-i18n="footer.shop">Shop</a></li>
+        <li><a href="/en/about/" data-i18n="footer.about">About Us</a></li>
+        <li><a href="/en/support/" data-i18n="footer.support">Support</a></li>
+        <li><a href="/en/orders/" data-i18n="footer.track_order">Track Order</a></li>
+        <li><a href="/en/bookings/" data-i18n="footer.track_booking">Track Booking</a></li>
       </ul>
     </div>
     <!-- 第3列：联系我们 -->
     <div class="footer-col">
-      <h4 class="footer-col-title">Contact Us</h4>
+      <h4 class="footer-col-title" data-i18n="footer.contact">Contact Us</h4>
       <ul class="footer-col-list footer-contact-list">
         <li>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
@@ -906,7 +905,7 @@
     </div>
     <!-- 第4列：关注我们 -->
     <div class="footer-col">
-      <h4 class="footer-col-title">Follow Us</h4>
+      <h4 class="footer-col-title" data-i18n="footer.follow">Follow Us</h4>
       <div class="footer-social">
         <a href="https://www.facebook.com/share/14s8SxpHQzQ/" target="_blank" class="footer-social-link" aria-label="Facebook">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
@@ -916,7 +915,7 @@
         </a>
       </div>
       <p style="margin-top:16px; font-size:12px; color:var(--sage); line-height:1.6;">
-        Follow us for health tips, TCM knowledge, and special offers.
+        关注我们获取健康小贴士、中医知识和特别优惠。
       </p>
     </div>
   </div>
@@ -1501,8 +1500,8 @@
 </div>
 <div class="vh-chat-panel" id="vhChatPanel">
   <div class="vh-chat-hd">
-    <div data-i18n="home.chat.title">Online Consultation</div>
-    <div data-i18n="home.chat.sub">Chatting with Dr. Gong Shihong</div>
+    <div class="vh-chat-hd-title" id="vhChatTitle" data-i18n="home.chat.title">Online Consultation</div>
+    <div class="vh-chat-hd-sub" id="vhChatSub" data-i18n="home.chat.sub">Chatting with Dr. Gong Shihong</div>
     <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
   </div>
   <div class="vh-chat-body" id="vhChatBody"></div>
@@ -1563,7 +1562,7 @@
     var body = document.getElementById('vhChatBody');
     var sub = document.getElementById('vhChatSub');
     if(!currentThread || !currentMessages.length){
-      body.innerHTML = '<div data-i18n="home.chat.empty">Hello, feel free to leave a message here, we will reply soon.</div>';
+      body.innerHTML = '<div class="vh-chat-empty" data-i18n="home.chat.empty">Hello, feel free to leave a message here, we will reply soon.</div>';
     } else {
       body.innerHTML = currentMessages.map(function(m){
         return '<div class="vh-chat-msg '+m.from+'">'+escapeHtml(m.text)+'</div>';
@@ -1624,7 +1623,7 @@
 })();
 </script>
 
-  <script src="/assets/i18n.js?v=20260909c"></script>
+  <script src="/assets/i18n.js?v=20260909d"></script>
 
 <!-- WhatsApp 悬浮按钮 -->
 <style>
@@ -1690,9 +1689,6 @@
   <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </a>
 <div class="whatsapp-tooltip">Chat with us on WhatsApp!</div>
-
-
-
 
 </body>
 </html>
