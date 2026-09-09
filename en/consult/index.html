@@ -385,7 +385,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   var instantPollTimer = null;
   var instantReqId = null;
 
-  // 客户在这个页面填手机号是"0123456789"这种本地写法（带开头的0），但后台黑名单表单跟WhatsApp
+  // 客户在这个页面填Phone Number是"0123456789"这种本地写法（带开头的0），但后台黑名单表单跟WhatsApp
   // 号码那个输入框一样，是"+60"固定前缀+不带0的号码——两边格式不一样，直接比对字符串永远对不上，
   // 所以比对前先都归一化成同一种去掉非数字字符、也去掉开头0的形式再比。
   function normalizePhoneForMatch(v){
@@ -487,13 +487,13 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         renderInstantFlow();
       });
     } else if(instantStep === 2){
-      // 联系方式先收集，再派单——不再是"看到匹配结果后才填资料"
-      html += '<div class="hc-stage-title">您的联系方式</div>'
-        + '<div class="hc-stage-hint">填好后我们才会把请求派给「'+instantForm.area+'」附近的执业中Physician。</div>'
-        + '<div class="hc-field"><label>称呼</label><input type="text" id="instantNameInput" placeholder="How should we address you" value="'+instantForm.name+'"></div>'
-        + '<div class="hc-field"><label>手机号</label><div class="hc-phone-row"><span class="hc-phone-prefix">+60</span><input type="text" id="instantPhoneInput" inputmode="numeric" placeholder="0123456789" value="'+instantForm.phone+'"></div>'
+      // Contact Information先收集，再派单——不再是"看到匹配结果后才填资料"
+      html += '<div class="hc-stage-title">Your Contact Information</div>'
+        + '<div class="hc-stage-hint">Only after filling in will we send the request to physicians near '+instantForm.area+'".</div>'
+        + '<div class="hc-field"><label>Name</label><input type="text" id="instantNameInput" placeholder="How should we address you" value="'+instantForm.name+'"></div>'
+        + '<div class="hc-field"><label>Phone Number</label><div class="hc-phone-row"><span class="hc-phone-prefix">+60</span><input type="text" id="instantPhoneInput" inputmode="numeric" placeholder="0123456789" value="'+instantForm.phone+'"></div>'
         + '<div class="hc-field-error" id="instantPhoneError">Please enter a valid phone number (starting with 0, 10-11 digits)</div></div>'
-        + '<button class="hc-next-btn" id="instantSubmitBtn" disabled>Submit并匹配</button>';
+        + '<button class="hc-next-btn" id="instantSubmitBtn" disabled>Submit & Match</button>';
       document.getElementById('stageArea').innerHTML = html;
       var nameEl = document.getElementById('instantNameInput');
       var phoneEl = document.getElementById('instantPhoneInput');
@@ -519,7 +519,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         });
       });
     } else if(instantStep === 3){
-      html += '<div class="hc-matching"><div class="hc-matching-spin"></div><div style="font-size:14.5px;">正在为您匹配「'+instantForm.area+'」附近的执业中Physician…</div></div>';
+      html += '<div class="hc-matching"><div class="hc-matching-spin"></div><div style="font-size:14.5px;">正在为您匹配「'+instantForm.area+'" nearby licensed TCM Physicians…</div></div>';
       document.getElementById('stageArea').innerHTML = html;
     } else if(instantStep === 4){
       renderInstantWaitingOrResult();
@@ -536,9 +536,9 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     if(req.status === 'unmatched'){
       stageArea.innerHTML = backHtml
         + '<div class="hc-match-result"><div class="icon" style="background:rgba(212,175,55,0.12);"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>'
-        + '<h3>您的请求已Submit，我们会尽快联系您</h3>'
-        + '<p>「'+req.area+'」的Physician目前暂时都在忙或未开启即时接单，您的请求已转给客服团队，会尽快通过电话 +60'+(req.customer_contact||'').replace(/^0/,'')+' 与您联系Confirm上门安排。您也可以改为预约一个安排好的上门Time，我们会提前为您Confirm好Physician。</p></div>'
-        + '<button class="hc-next-btn" id="instantGoScheduleBtn">改为预约安排Time</button>';
+        + '<h3>Your request has been submitted, we will contact you as soon as possible</h3>'
+        + '<p>「'+req.area+'" physicians are currently busy or have not enabled instant接单. Your request has been forwarded to the customer service team, and we will contact you as soon as possible via phone +60'+(req.customer_contact||'').replace(/^0/,'')+' to confirm the home visit arrangement. You can also choose to book a scheduled home visit time, and we will confirm a physician for you in advance.</p></div>'
+        + '<button class="hc-next-btn" id="instantGoScheduleBtn">Switch to Scheduled Booking</button>';
       document.getElementById('instantGoScheduleBtn').addEventListener('click', exitInstant);
       if(instantPollTimer) clearInterval(instantPollTimer);
       instantPollTimer = setInterval(async function(){
@@ -553,9 +553,9 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       if(instantPollTimer) clearInterval(instantPollTimer);
       stageArea.innerHTML = backHtml
         + '<div class="hc-matching"><div class="hc-matching-spin"></div>'
-        + '<div style="font-size:14.5px;">已为您匹配到附近的执业中Physician，等待PhysicianConfirm接单中…</div>'
+        + '<div style="font-size:14.5px;">We have matched you with a nearby licensed TCM Physician, waiting for the physician to confirm the booking…</div>'
         + '<div style="font-size:12.5px; color:var(--espresso-soft); margin-top:10px;">Physician一般会在15分钟内回应，请留意手机来电。</div></div>'
-        + '<div class="hc-proto-note">这个页面会每隔几秒自动查看一次Physician是否已回应；如果中途关闭页面，暂时还没有真正的推送通知能提醒您，PhysicianConfirm后会直接打您留的Phone Contact。</div>';
+        + '<div class="hc-proto-note">This page automatically checks every few seconds whether the physician has responded; if you close the page midway, there is currently no real push notification to alert you.醒您，PhysicianConfirm后会直接打您留的Phone Contact。</div>';
       instantPollTimer = setInterval(async function(){
         var latest = await getInstantRequestById(instantReqId);
         if(latest && latest.status !== 'pending_confirmation'){
@@ -570,7 +570,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       stageArea.innerHTML = backHtml
         + '<div class="hc-match-result"><div class="icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>'
         + '<h3>已Confirm！'+matchedName+' 将As soon as possible</h3>'
-        + '<p>'+matchedName+' 已接单，将尽快通过 +60'+req.customer_contact+' 联系您Confirm上门Time。</p></div>'
+        + '<p>'+matchedName+' 已接单，将尽快通过 +60'+req.customer_contact+' 联系您ConfirmHome Visit Time。</p></div>'
         + '<button class="hc-next-btn" id="instantDoneBtn">Complete</button>';
       document.getElementById('instantDoneBtn').addEventListener('click', exitInstant);
     } else if(req.status === 'declined' || req.status === 'expired'){
@@ -578,8 +578,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       stageArea.innerHTML = backHtml
         + '<div class="hc-match-result"><div class="icon" style="background:rgba(212,175,55,0.12);"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>'
         + '<h3>我们会尽快联系您</h3>'
-        + '<p>很抱歉，「'+req.area+'」附近的Physician暂时无法接单，您的请求已转给客服团队跟进，会尽快通过电话与您联系安排。您也可以改为预约一个安排好的上门Time，我们会提前为您Confirm好Physician。</p></div>'
-        + '<button class="hc-next-btn" id="instantGoScheduleBtn2">改为预约安排Time</button>';
+        + '<p>很抱歉，「'+req.area+'」附近的Physician暂时无法接单，您的请求已转给客服团队跟进，会尽快通过电话与您联系安排。您也可以改为预约一个安排好的Home Visit Time，我们会提前为您Confirm好Physician。</p></div>'
+        + '<button class="hc-next-btn" id="instantGoScheduleBtn2">Switch to Scheduled Booking</button>';
       document.getElementById('instantGoScheduleBtn2').addEventListener('click', exitInstant);
       if(instantPollTimer) clearInterval(instantPollTimer);
       instantPollTimer = setInterval(async function(){
@@ -713,12 +713,12 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         }).join('')
       + '</select>'
       + '<div class="hc-stage-hint" style="margin:8px 0 0;">After selecting the area, Next will show you the Physicians available for booking in this area.</div></div>';
-    // [stated] 称呼+手机号原本在最后一步（Submit前）才收集，导致客户选好Physician、填完日期时段后，
+    // [stated] Name+Phone Number原本在最后一步（Submit前）才收集，导致客户选好Physician、填完日期时段后，
     // Submit时才可能发现这位Physician因为黑名单原因不能预约，走了大半流程才被拒绝。挪到这里、放在选
     // Physician之前，这样选Physician那一步就能提前把冲突的Physician从列表里排除掉，客户根本不会走到"选了又
     // 被拒"这一步。
-    html += '<div class="hc-field"><label>称呼</label><input type="text" id="nameInput" placeholder="How should we address you" value="'+form.name+'"></div>'
-      + '<div class="hc-field"><label>手机号</label>'
+    html += '<div class="hc-field"><label>Name</label><input type="text" id="nameInput" placeholder="How should we address you" value="'+form.name+'"></div>'
+      + '<div class="hc-field"><label>Phone Number</label>'
       + '<div class="hc-phone-row"><span class="hc-phone-prefix">+60</span><input type="text" id="phoneInput" inputmode="numeric" placeholder="0123456789" value="'+form.phone+'"></div>'
       + '<div class="hc-field-error" id="phoneError">Please enter a valid phone number (starting with 0, 10-11 digits)</div></div>';
     html += '<button class="hc-next-btn" id="nextBtn">Next</button>';
@@ -975,7 +975,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   function renderStage4(){
     var html = '<div class="hc-stage-title">详细Address</div>'
       + '<div class="hc-stage-hint">方便Physician上门时核对Address。</div>'
-      + '<div class="hc-field"><label>联系方式</label><div class="hc-context-card"><div class="hc-context-row"><span class="cl">称呼</span><span>'+form.name+'</span></div><div class="hc-context-row"><span class="cl">手机号</span><span>+60'+form.phone+'</span></div></div></div>'
+      + '<div class="hc-field"><label>Contact Information</label><div class="hc-context-card"><div class="hc-context-row"><span class="cl">Name</span><span>'+form.name+'</span></div><div class="hc-context-row"><span class="cl">Phone Number</span><span>+60'+form.phone+'</span></div></div></div>'
       + '<div class="hc-field"><label>服务区域</label><div class="hc-context-card"><div class="hc-context-row"><span class="cl">区域</span><span>'+form.area+'</span></div></div></div>'
       + '<div class="hc-field"><label>详细Address</label><textarea id="addrInput" placeholder="House number, street, postcode, etc. detailed Address">'+form.addressDetail+'</textarea></div>'
       + '<button class="hc-next-btn" id="submitBtn" disabled>Submit Booking</button>'
@@ -1017,7 +1017,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   function closeContactModal(){
     document.getElementById('contactModal').classList.remove('show');
   }
-  // [stated] PDPA相关——Submit Booking前，客户需要明确勾选同意收集Name/手机号的用途说明，
+  // [stated] PDPA相关——Submit Booking前，客户需要明确勾选同意收集Name/Phone Number的用途说明，
   // 这个同意状态和Time戳会记录进预约本身，不是一个点了就忘、什么都没留下的形式化弹窗
   var consentPendingAction = null;
   function openConsentModal(onAgree){
@@ -1093,7 +1093,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
           + '<div><b>Physician：</b>'+docName+'</div>'
           + '<div><b>Time：</b>'+apptDateStr+' '+slotLabel+'</div>'
           + '<div><b>Address：</b>'+form.area+'</div>'
-          + '<div><b>联系方式：</b>'+(method==='call'?'电话':'WhatsApp')+'</div>';
+          + '<div><b>Contact Information：</b>'+(method==='call'?'电话':'WhatsApp')+'</div>';
         completedBooking = {bookingNo:bookingNo, doctor:docName, apptDate:apptDateStr, slot:slotLabel, area:form.area, method:method};
         trackBtn.style.display = '';
       } catch(e){
