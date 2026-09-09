@@ -98,11 +98,11 @@
 (async function(){
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
   var POLICY_DOCS = ['privacy','terms','sales','legal','sitemap'];
-  var POLICY_LABELS = {privacy:'隐私政策', terms:'使用条款', sales:'销售与退款政策', legal:'法律声明', sitemap:'网站地图'};
+  var POLICY_LABELS = {privacy:'Privacy Policy', terms:'Terms of Use', sales:'Sales & Refund Policy', legal:'Legal Notice', sitemap:'Sitemap'};
   // same defaults as the admin tool ships with, so this page still shows something sensible
   // even before the admin side has ever been opened/saved
   var POLICY_DEFAULTS = {
-    privacy: { title:'隐私政策', content:
+    privacy: { title:'Privacy Policy', content:
 `## Privacy Policy — English Version
 
 Last updated: 9 September 2026
@@ -465,7 +465,7 @@ VINATH TCM HEALTH CARE
 
 如对本隐私政策有任何疑问，或希望向马来西亚个人数据保护专员署（PDP Commissioner）投诉，可通过 https://www.pdp.gov.my 联系。`
     },
-    terms: { title:'使用条款', content:
+    terms: { title:'Terms of Use', content:
 `## Terms of Use — English Version
 
 Last updated: 9 September 2026
@@ -726,7 +726,7 @@ Jika anda mempunyai sebarang soalan tentang terma-terma ini, sila hubungi kami m
 
 如对本条款有任何疑问，请通过 WhatsApp +6011-4579 9499 或邮箱 vinathtcm@outlook.com 联系我们。`
     },
-    sales: { title:'销售与退款政策', content:
+    sales: { title:'Sales & Refund Policy', content:
 `## Sales & Refund Policy — English Version
 
 Last updated: 9 September 2026
@@ -1107,7 +1107,7 @@ VINATH TCM HEALTH CARE
 客服 WhatsApp：+6011-4579 9499
 邮箱：vinathtcm@outlook.com`
     },
-    legal: { title:'法律声明', content:
+    legal: { title:'Legal Notice', content:
 `## Legal Notice — English Version
 
 Last updated: 9 September 2026
@@ -1284,7 +1284,7 @@ Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.
 - 邮箱：vinathtcm@outlook.com
 - 地址：53A, JALAN SELAYUR 5, TAMAN PASIR PUTIH, 81700 PASIR GUDANG, JOHOR, MALAYSIA`
     },
-    sitemap: { title:'网站地图', content:
+    sitemap: { title:'Sitemap', content:
 `## Sitemap — English Version
 
 ### Home
