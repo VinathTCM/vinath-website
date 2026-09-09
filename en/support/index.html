@@ -131,7 +131,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
 
 <style>
-  /* 英文版标题使用 Poppins Black */
+  /* 英文版Title使用 Poppins Black */
   h1, h2, h3, h4, h5, h6,
   .hero-title, .section-title, .page-title,
   .eyebrow, .cta-title,
@@ -140,23 +140,23 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
   }
   
-  /* 大标题使用 Black 900 */
+  /* 大Title使用 Black 900 */
   h1, .hero-title, .section-title, .page-title {
     font-weight: 900 !important;
     letter-spacing: -0.02em;
   }
   
-  /* 二级标题使用 ExtraBold 800 */
+  /* 二级Title使用 ExtraBold 800 */
   h2, .process-step-title, .journey-card-title, .footer-title {
     font-weight: 800 !important;
   }
   
-  /* 三级标题使用 Bold 700 */
+  /* 三级Title使用 Bold 700 */
   h3, h4 {
     font-weight: 700 !important;
   }
   
-  /* 小标签使用 SemiBold 600 */
+  /* 小Tag使用 SemiBold 600 */
   .eyebrow, .cta-title {
     font-weight: 600 !important;
     letter-spacing: 0.05em;
@@ -292,13 +292,13 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     if(el) el.href = el.href.replace('60123456789', whatsapp);
   })();
   var FAQS = [
-    {q:'How do I know which product is right for me?', a:'Each "Journeys" page lists common daily wellness concerns. You can first get a general idea; for more accurate advice, welcome to book a one-on-one consultation through a Home Consultation咨询，由执业中医师根据您的具体情况给出建议，也可以在商店里按膏药/茶饮等分类自行选购。'},
+    {q:'How do I know which product is right for me?', a:'Each "Journeys" page lists common daily wellness concerns. You can first get a general idea; for more accurate advice, welcome to book a one-on-one consultation through a Home Consultation咨询，由执业TCM师根据您的具体情况给出建议，也可以在Shop里按膏药/茶饮等Category自Row选购。'},
     {q:'Are the products safe? What should I pay attention to?', a:'All products are formulated by a team of licensed TCM physicians, using food-grade herbal materials, without preservatives or chemical drug ingredients. Each product detail page has a "Usage Notes" section that marks precautions for that product (such as use with caution during pregnancy). We recommend purchasing买前仔细View。'},
     {q:'How do I use patches, herbal teas, and sitz bath packs?', a:'The "Formula & Usage" section on each product detail page has specific usage methods and frequency instructions. Please follow the instructions. If you have any questions, you can also Contact Support for consultation.'},
     {q:'Can I use these during pregnancy or breastfeeding?', a:'Some products contain blood-activating herbs and are not recommended for use during pregnancy. There will be special markings in the "Usage Notes" section of the detail page. If you have any questions, we recommend consulting a physician first. If unsure, you can through a Home Consultation直接Contact Us。'},
-    {q:'Do I need to register an account to place an order?', a:'不需要。VINATH Support访客下单，无需RegisterLogin。下单成功后我们会提供订单编号，您可以随时通过「订单Account」，凭订单编号和联系方式View订单Status。'},
+    {q:'Do I need to register an account to place an order?', a:'不需要。VINATH Support访客下单，无需RegisterLogin。下单Success后我们会提供Order编号，您可以随时通过「OrderAccount」，凭Order编号和联系方式ViewOrderStatus。'},
     {q:'What if I forget my order number?', a:"We recommend taking a screenshot of the order number on the order success page. If you can't find it, feel free to Contact Support via WhatsApp, and we can assist you."},
-    {q:'What is "Home Consultation"?', a:'"Home Consultation" is our on-site TCM wellness service, where licensed TCM physicians visit you based on your situation. Currently the service area is mainly Pasir Putih, Pasir Gudang）为中心，车程约35分钟内的区域（含新山市区）。'},
+    {q:'What is "Home Consultation"?', a:'"Home Consultation" is our on-site TCM wellness service, where licensed TCM physicians visit you based on your situation. Currently the service area is mainly Pasir Putih, Pasir Gudang）为中心，车程约35分钟内的区域（含Johor Bahru市区）。'},
     {q:'Can "Home Consultation" bookings be cancelled or rescheduled?', a:'Yes. Go to "Booking Tracking" to find your booking and you can cancel it yourself — to ensure quality service for all customers, the same phone number can cancel at most 1 time per week and 3 times per month. If you need to reschedule, or have reached the cancellation limit限但有特殊情况，请通过 WhatsApp Contact Us协助处理。'}
   ];
 
@@ -425,8 +425,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 <script>
 (function(){
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  // 聊天消息Yes任何匿名访客都能Submit的内容，管理员Open对话时会看到——不转义就直接拼进innerHTML
-  // 的话，访客可以在消息里塞HTML/脚本，在管理员已Login的浏览器里执行（存储型XSS）。
+  // ChatMessageYes任何匿名访客都能Submit的内容，管理员Open对话时会看到——不转义就直接拼进innerHTML
+  // 的话，访客可以在Message里塞HTML/脚本，在管理员已Login的浏览器里执Row（存储型XSS）。
   function escapeHtml(s){
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
@@ -444,7 +444,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       return id;
     } catch(e){ return 'cust_temp'; }
   }
-  // 客户端第一次Open聊天面板时调用——后端会自动处理"这个人Yes不Yes第一次来"、要不要插入欢迎语，
+  // Customer端第一次OpenChat面板时调用——后端会自动处理"这个人Yes不Yes第一次来"、要不要插入欢迎语，
   // 前端不用再自己判断这些
   async function ensureMyThread(){
     try {
@@ -528,7 +528,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   // poll for admin replies / handoff changes while the widget is on screen
   pollTimer = setInterval(async function(){
-    if(!currentThread) return; // 还没Open过聊天面板，没必要轮询
+    if(!currentThread) return; // 还没Open过Chat面板，没必要轮询
     await refreshMyThread();
     renderMessages();
   }, 4000);

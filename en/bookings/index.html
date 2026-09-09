@@ -130,7 +130,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
 
 <style>
-  /* 英文版标题使用 Poppins Black */
+  /* 英文版Title使用 Poppins Black */
   h1, h2, h3, h4, h5, h6,
   .hero-title, .section-title, .page-title,
   .eyebrow, .cta-title,
@@ -139,23 +139,23 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
   }
   
-  /* 大标题使用 Black 900 */
+  /* 大Title使用 Black 900 */
   h1, .hero-title, .section-title, .page-title {
     font-weight: 900 !important;
     letter-spacing: -0.02em;
   }
   
-  /* 二级标题使用 ExtraBold 800 */
+  /* 二级Title使用 ExtraBold 800 */
   h2, .process-step-title, .journey-card-title, .footer-title {
     font-weight: 800 !important;
   }
   
-  /* 三级标题使用 Bold 700 */
+  /* 三级Title使用 Bold 700 */
   h3, h4 {
     font-weight: 700 !important;
   }
   
-  /* 小标签使用 SemiBold 600 */
+  /* 小Tag使用 SemiBold 600 */
   .eyebrow, .cta-title {
     font-weight: 600 !important;
     letter-spacing: 0.05em;
@@ -274,7 +274,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     return {allowed:true};
   }
 
-  // ---- 服务评价: only for completed, non-cancelled bookings — one review per booking number. ----
+  // ---- ServiceReview: only for completed, non-cancelled bookings — one review per booking number. ----
   async function findReview(bookingNo){
     try {
       var res = await fetch(API_BASE + '/reviews/' + encodeURIComponent(bookingNo));
@@ -330,11 +330,11 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   var RX_STATUS_LABELS = { awaiting_pharmacy:'待药房接单', brewing:'煎药中', shipping:'配送中', delivered:'已送达' };
   var RX_FLOW = ['awaiting_pharmacy','brewing','shipping','delivered'];
-  var DISPENSE_LABELS = { decoct_pickup:'代煎自取', decoct_delivery:'代煎代送', herb_delivery:'中药配送', herb_pickup:'中药自取' };
+  var DISPENSE_LABELS = { decoct_pickup:'代煎自取', decoct_delivery:'代煎代送', herb_delivery:'Herbal Medicine配送', herb_pickup:'Herbal Medicine自取' };
 
-  // Herbal Medicine Progress卡：同步药房制备/配送进度 + 运单号；无处方时不渲染
+  // Herbal Medicine Progress卡：Sync药房制备/配送进度 + 运单号；无处方时不渲染
   function renderHerbProgress(rx){
-    var label = (DISPENSE_LABELS[rx.dispenseMode] || rx.dispenseMode || '中药');
+    var label = (DISPENSE_LABELS[rx.dispenseMode] || rx.dispenseMode || 'Herbal Medicine');
     var idx = RX_FLOW.indexOf(rx.status || 'awaiting_pharmacy');
     if(idx < 0) idx = 0;
     var html = '<div class="oq-items-card herb-progress" style="margin-top:12px;">'
@@ -361,7 +361,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="oq-result-hd"><div class="oq-order-no">Booking ID '+booking.bookingNo+'</div><div class="oq-order-date">Submission Date '+booking.date+'</div></div>';
 
     if(booking.cancelled){
-      html += '<div class="oq-cancelled-banner"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>该预约Cancelled</div>';
+      html += '<div class="oq-cancelled-banner"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>该BookingCancelled</div>';
     } else {
       html += '<div class="stepper-wrap">';
       STATUS_LABELS.forEach(function(label, i){
@@ -429,7 +429,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
             booking.cancelled = true;
             renderResult(booking);
           } catch(e){
-            area.innerHTML = '<div class="oq-cancel-blocked">暂时无法连接服务器，Please Try Again Later。</div>';
+            area.innerHTML = '<div class="oq-cancel-blocked">暂时无法连接Service器，Please Try Again Later。</div>';
           }
         });
       });
@@ -469,7 +469,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         document.getElementById('resultArea').innerHTML = '';
       }
     } catch(e){
-      errorEl.textContent = '暂时无法连接服务器，Please Try Again Later。';
+      errorEl.textContent = '暂时无法连接Service器，Please Try Again Later。';
       errorEl.classList.add('show');
     }
     btn.disabled = false;
@@ -512,7 +512,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   document.getElementById('brandBtn').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
   document.getElementById('bcHome').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
-  document.getElementById('searchBtn').addEventListener('click', function(){ showToast('Search · 功能开发中'); });
+  document.getElementById('searchBtn').addEventListener('click', function(){ showToast('Search · 功能Open发中'); });
   var vhAcctMenu = document.getElementById('vhAcctMenu');
   document.getElementById('acctBtn').addEventListener('click', function(e){
     e.stopPropagation();
@@ -572,8 +572,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 <script>
 (function(){
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  // 聊天消息Yes任何匿名访客都能Submit的内容，管理员Open对话时会看到——不转义就直接拼进innerHTML
-  // 的话，访客可以在消息里塞HTML/脚本，在管理员已Login的浏览器里执行（存储型XSS）。
+  // ChatMessageYes任何匿名访客都能Submit的内容，管理员Open对话时会看到——不转义就直接拼进innerHTML
+  // 的话，访客可以在Message里塞HTML/脚本，在管理员已Login的浏览器里执Row（存储型XSS）。
   function escapeHtml(s){
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
@@ -591,7 +591,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       return id;
     } catch(e){ return 'cust_temp'; }
   }
-  // 客户端第一次Open聊天面板时调用——后端会自动处理"这个人Yes不Yes第一次来"、要不要插入欢迎语，
+  // Customer端第一次OpenChat面板时调用——后端会自动处理"这个人Yes不Yes第一次来"、要不要插入欢迎语，
   // 前端不用再自己判断这些
   async function ensureMyThread(){
     try {
@@ -675,7 +675,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   // poll for admin replies / handoff changes while the widget is on screen
   pollTimer = setInterval(async function(){
-    if(!currentThread) return; // 还没Open过聊天面板，没必要轮询
+    if(!currentThread) return; // 还没Open过Chat面板，没必要轮询
     await refreshMyThread();
     renderMessages();
   }, 4000);

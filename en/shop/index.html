@@ -192,7 +192,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
 
 <style>
-  /* 英文版标题使用 Poppins Black */
+  /* 英文版Title使用 Poppins Black */
   h1, h2, h3, h4, h5, h6,
   .hero-title, .section-title, .page-title,
   .eyebrow, .cta-title,
@@ -201,23 +201,23 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
   }
   
-  /* 大标题使用 Black 900 */
+  /* 大Title使用 Black 900 */
   h1, .hero-title, .section-title, .page-title {
     font-weight: 900 !important;
     letter-spacing: -0.02em;
   }
   
-  /* 二级标题使用 ExtraBold 800 */
+  /* 二级Title使用 ExtraBold 800 */
   h2, .process-step-title, .journey-card-title, .footer-title {
     font-weight: 800 !important;
   }
   
-  /* 三级标题使用 Bold 700 */
+  /* 三级Title使用 Bold 700 */
   h3, h4 {
     font-weight: 700 !important;
   }
   
-  /* 小标签使用 SemiBold 600 */
+  /* 小Tag使用 SemiBold 600 */
   .eyebrow, .cta-title {
     font-weight: 600 !important;
     letter-spacing: 0.05em;
@@ -355,14 +355,14 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     "Women's Health": [
       {cond:'月经问题', tags:['Menstrual Pain','Prolonged Period','menstrual flow过多','menstrual flow过少','cycle紊乱','Spotting']},
       {cond:'白带异常', tags:['Heavy Flow','Abnormal Color','伴有Odor','反复Itching']},
-      {cond:'中医备孕', tags:['cycle不稳定','constitution偏寒','moodstress','备孕wellness']},
-      {cond:'妇科肿块', tags:['体检提示增生','小腹坠胀','menstrual period不适加重']},
+      {cond:'TCM备孕', tags:['cycle不稳定','constitution偏寒','moodstress','备孕wellness']},
+      {cond:'妇科肿块', tags:['体检Tip增生','小腹坠胀','menstrual period不适加重']},
       {cond:'更年期', tags:['潮热盗汗','insomnia','mood波动','心悸']},
     ],
     'Body Sculpting': [
       {cond:'饮食wellness', tags:['进食不规律','嗜甜嗜油','外食频繁','饮食无规划']},
-      {cond:'运动指导', tags:['久坐少动','运动方式不当','难以坚持','运动后恢复慢']},
-      {cond:'产后塑形', tags:['产后qi and blood虚','腹部sagging','体力恢复慢','哺乳期wellness']},
+      {cond:'运动指导', tags:['久坐少动','运动方式不当','难以坚持','运动后Restore慢']},
+      {cond:'产后塑形', tags:['产后qi and blood虚','腹部sagging','体力Restore慢','哺乳期wellness']},
       {cond:'metabolism偏慢', tags:['怕冷','易fatigue','水肿','体重难下降']},
     ],
     'Beauty & Radiance': [
@@ -428,18 +428,18 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     {id:10, name:'Su Ya Tea', type:'tea', journeys:["Women's Health"], tags:['Abnormal Color'], price:45, trial:16, desc:'Abnormal color but not severe, daily gentle cleansing.', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Poria', amt:'10g'},{herb:'Phellodendron Bark', amt:'4g'},{herb:'Coix Seed', amt:'12g'},{herb:'Licorice Root', amt:'3g'}], usage:'轻煎10分钟，连饮1-2周，1 dose daily。'},
     {id:11, name:'芷兰茶', type:'tea', journeys:["Women's Health"], tags:['伴有Odor'], price:45, trial:16, desc:'With odor, clear heat and remove dampness, regain freshness.', active:true, inStock:false, featured:false, imgs:[], form:'茶', herbs:[{herb:'Dandelion', amt:'10g'},{herb:'土茯苓', amt:'12g'},{herb:'车前子（包煎）', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'车前子包煎，余药同煎15分钟，连饮1-2周，1 dose daily。'},
     {id:12, name:'兰汤Sitz Bath Pack', type:'soak', journeys:["Women's Health"], tags:['反复Itching'], price:25, trial:10, desc:'Recurring itching and discomfort, boil and take a reassuring hot bath.', active:true, inStock:true, featured:false, imgs:[], form:'Topical Use坐浴', herbs:[{herb:'Sophora Root', amt:'15g'},{herb:'Cnidium Fruit', amt:'12g'},{herb:'Phellodendron Bark', amt:'10g'},{herb:'Sichuan Pepper', amt:'5g'},{herb:'Mugwort Leaf', amt:'10g'}], usage:'布袋包好，加水2000ml煮沸15分钟，待温（约40°C）坐浴15分钟，每晚1次，连用5-7天，menstrual period停用。'},
-    {id:13, name:'澄澈茶', type:'tea', journeys:["Women's Health"], tags:['伴有Odor','Abnormal Color'], price:45, trial:16, desc:'颜色和Odor同时出现，双管齐下清一清。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Phellodendron Bark', amt:'5g'},{herb:'车前子（包煎）', amt:'10g'},{herb:'Coix Seed', amt:'12g'},{herb:'Dandelion', amt:'8g'},{herb:'土茯苓', amt:'10g'}], usage:'车前子包煎，余药同煎15分钟，连饮2周，1 dose daily，症状明显时每日一剂半。'},
-    {id:14, name:'芷澄茶', type:'tea', journeys:["Women's Health"], tags:['伴有Odor','Heavy Flow','Abnormal Color'], price:45, trial:16, desc:'Heavy Flow、颜色、Odor都有的日子，全面清养。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Chinese Yam', amt:'15g'},{herb:'Euryale Seed', amt:'10g'},{herb:'Phellodendron Bark', amt:'5g'},{herb:'Atractylodes', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'轻煎10-15分钟，连饮2-3周，Heavy Flow色黄味重时每日一剂半。'},
-    {id:15, name:'月序茶', type:'tea', journeys:["Women's Health"], tags:['cycle不稳定'], price:45, trial:16, desc:'备孕期间cycle总不稳，疏肝理气帮忙调顺。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Bupleurum Root', amt:'5g'},{herb:'Cyperus Rhizome', amt:'8g'},{herb:'Angelica Root', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'焖泡，经净后开始连饮2周，menstrual period停用。'},
+    {id:13, name:'澄澈茶', type:'tea', journeys:["Women's Health"], tags:['伴有Odor','Abnormal Color'], price:45, trial:16, desc:'Color和Odor同时出现，双管齐下清一清。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Phellodendron Bark', amt:'5g'},{herb:'车前子（包煎）', amt:'10g'},{herb:'Coix Seed', amt:'12g'},{herb:'Dandelion', amt:'8g'},{herb:'土茯苓', amt:'10g'}], usage:'车前子包煎，余药同煎15分钟，连饮2周，1 dose daily，症状明显时每日一剂半。'},
+    {id:14, name:'芷澄茶', type:'tea', journeys:["Women's Health"], tags:['伴有Odor','Heavy Flow','Abnormal Color'], price:45, trial:16, desc:'Heavy Flow、Color、Odor都有的日子，全面清养。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Chinese Yam', amt:'15g'},{herb:'Euryale Seed', amt:'10g'},{herb:'Phellodendron Bark', amt:'5g'},{herb:'Atractylodes', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'轻煎10-15分钟，连饮2-3周，Heavy Flow色黄味重时每日一剂半。'},
+    {id:15, name:'月序茶', type:'tea', journeys:["Women's Health"], tags:['cycle不稳定'], price:45, trial:16, desc:'备孕期间cycle总不稳，疏肝理气帮忙调顺。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Bupleurum Root', amt:'5g'},{herb:'Cyperus Rhizome', amt:'8g'},{herb:'Angelica Root', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'焖泡，经净后Open始连饮2周，menstrual period停用。'},
     {id:16, name:'煦暖贴', type:'plaster', journeys:["Women's Health"], tags:['constitution偏寒'], price:9, trial:4, desc:'constitution偏寒手脚凉，敷一敷，暖到心里。', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Cinnamon Bark', amt:'6g'},{herb:'Mugwort Leaf', amt:'10g'},{herb:'Fennel', amt:'8g'},{herb:'Dried Ginger', amt:'6g'}], usage:'研末姜汁调糊，敷关元、命门穴，每周3-4次，4-6 hours each time，menstrual period停用。'},
     {id:17, name:'绿萼茶', type:'tea', journeys:["Women's Health"], tags:['moodstress'], price:45, trial:16, desc:'备孕路上stress大，喝一杯，松一口气。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'合欢花', amt:'6g'},{herb:'绿萼梅', amt:'5g'},{herb:'Poria', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'焖泡代Herbal Tea，mood紧张期1 dose daily。'},
     {id:18, name:'兰馨茶', type:'tea', journeys:["Women's Health"], tags:['备孕wellness'], price:45, trial:16, desc:'日常备孕constitution调养，平补liver and kidney打基础。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Cuscuta Seed', amt:'12g'},{herb:'Raspberry', amt:'10g'},{herb:'Goji Berry', amt:'10g'},{herb:'桑葚', amt:'8g'}], usage:'轻煎15分钟，日常保健每周4-5次，每次1剂。'},
     {id:19, name:'梅悦茶', type:'tea', journeys:["Women's Health"], tags:['cycle不稳定','moodstress'], price:45, trial:16, desc:'cycle不稳又心情烦躁，疏肝nourish blood一起来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Bupleurum Root', amt:'5g'},{herb:'White Peony Root', amt:'10g'},{herb:'合欢花', amt:'5g'},{herb:'绿萼梅', amt:'4g'},{herb:'Poria', amt:'10g'}], usage:'焖泡，Outside menstruation1 dose daily，连饮2-3周。'},
-    {id:20, name:'兰序茶', type:'tea', journeys:["Women's Health"], tags:['cycle不稳定','备孕wellness','moodstress'], price:45, trial:16, desc:'备孕期间cycle、mood都需要照顾时的全面wellness茶。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Cuscuta Seed', amt:'12g'},{herb:'White Peony Root', amt:'10g'},{herb:'Goji Berry', amt:'10g'},{herb:'Bupleurum Root', amt:'4g'},{herb:'合欢花', amt:'5g'},{herb:'Red Date', amt:'3枚'}], usage:'经净后开始1 dose daily，连饮约2周，mood紧张期可加至一剂半，menstrual period停用。Confirm怀孕后停用并咨询医师。'},
-    {id:21, name:'静玉贴', type:'plaster', journeys:["Women's Health"], tags:['体检提示增生'], price:9, trial:4, desc:'体检提示有增生，日常辅助wellness，请配合定期复查。', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Sparganium', amt:'6g'},{herb:'Zedoary', amt:'6g'},{herb:'皂角刺', amt:'8g'},{herb:'Cinnamon Twig', amt:'5g'}], usage:'研末醋调糊，敷小腹部（避开menstrual period），每周3次，每次4小时。需配合定期复查，孕期禁用。'},
-    {id:22, name:'和风茶', type:'tea', journeys:["Women's Health"], tags:['小腹坠胀'], price:45, trial:16, desc:'小腹总是坠胀，理气化开那股闷闷的感觉。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Lindera Root', amt:'6g'},{herb:'Buddha Hand', amt:'6g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'焖泡代茶，日常不适时1 dose daily。'},
-    {id:23, name:'绛华茶', type:'tea', journeys:["Women's Health"], tags:['menstrual period不适加重'], price:45, trial:16, desc:'menstrual period这几天特别不舒服，activate blood化开那股滞涩。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Motherwort', amt:'10g'},{herb:'Cyperus Rhizome', amt:'8g'},{herb:'Hawthorn', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'轻煎，menstrual period前3天开始1 dose daily至经净。'},
-    {id:24, name:'暖溪茶', type:'tea', journeys:["Women's Health"], tags:['小腹坠胀','menstrual period不适加重'], price:45, trial:16, desc:'坠胀加上menstrual period加重，一起温柔化开。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Motherwort', amt:'10g'},{herb:'Lindera Root', amt:'8g'},{herb:'Buddha Hand', amt:'6g'},{herb:'Hawthorn', amt:'8g'},{herb:'China Rose', amt:'4g'}], usage:'轻煎15分钟，menstrual period前3天至menstrual period第3天1 dose daily。'},
+    {id:20, name:'兰序茶', type:'tea', journeys:["Women's Health"], tags:['cycle不稳定','备孕wellness','moodstress'], price:45, trial:16, desc:'备孕期间cycle、mood都需要照顾时的全面wellness茶。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Cuscuta Seed', amt:'12g'},{herb:'White Peony Root', amt:'10g'},{herb:'Goji Berry', amt:'10g'},{herb:'Bupleurum Root', amt:'4g'},{herb:'合欢花', amt:'5g'},{herb:'Red Date', amt:'3枚'}], usage:'经净后Open始1 dose daily，连饮约2周，mood紧张期可加至一剂半，menstrual period停用。Confirm怀孕后停用并咨询Physician。'},
+    {id:21, name:'静玉贴', type:'plaster', journeys:["Women's Health"], tags:['体检Tip增生'], price:9, trial:4, desc:'体检Tip有增生，日常辅助wellness，请配合定期复查。', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Sparganium', amt:'6g'},{herb:'Zedoary', amt:'6g'},{herb:'皂角刺', amt:'8g'},{herb:'Cinnamon Twig', amt:'5g'}], usage:'研末醋调糊，敷小腹部（避Openmenstrual period），每周3次，每次4小时。需配合定期复查，孕期Disabled。'},
+    {id:22, name:'和风茶', type:'tea', journeys:["Women's Health"], tags:['小腹坠胀'], price:45, trial:16, desc:'小腹总Yes坠胀，理气化Open那股闷闷的感觉。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Lindera Root', amt:'6g'},{herb:'Buddha Hand', amt:'6g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'焖泡代茶，日常不适时1 dose daily。'},
+    {id:23, name:'绛华茶', type:'tea', journeys:["Women's Health"], tags:['menstrual period不适加重'], price:45, trial:16, desc:'menstrual period这几天特别不舒服，activate blood化Open那股滞涩。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Motherwort', amt:'10g'},{herb:'Cyperus Rhizome', amt:'8g'},{herb:'Hawthorn', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'轻煎，menstrual period前3天Open始1 dose daily至经净。'},
+    {id:24, name:'暖溪茶', type:'tea', journeys:["Women's Health"], tags:['小腹坠胀','menstrual period不适加重'], price:45, trial:16, desc:'坠胀加上menstrual period加重，一起温柔化Open。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Motherwort', amt:'10g'},{herb:'Lindera Root', amt:'8g'},{herb:'Buddha Hand', amt:'6g'},{herb:'Hawthorn', amt:'8g'},{herb:'China Rose', amt:'4g'}], usage:'轻煎15分钟，menstrual period前3天至menstrual period第3天1 dose daily。'},
     {id:25, name:'清露茶', type:'tea', journeys:["Women's Health"], tags:['潮热盗汗'], price:45, trial:16, desc:'潮热盗汗睡不安稳，nourish yin敛汗清清爽爽。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'浮小麦', amt:'12g'},{herb:'Lycium Bark', amt:'8g'},{herb:'Mulberry Leaf', amt:'6g'},{herb:'Ophiopogon', amt:'8g'},{herb:'Schisandra Fruit', amt:'5g'}], usage:'轻煎15分钟，午后饮用尤宜，连饮2-4周。'},
     {id:26, name:'月枕贴', type:'plaster', journeys:["Women's Health"], tags:['insomnia'], price:9, trial:4, desc:'翻来覆去睡不着，睡前敷一敷涌泉穴。', active:true, inStock:true, featured:false, imgs:[], form:'贴，涌泉穴Topical Use', herbs:[{herb:'Sour Jujube Seed', amt:'15g'},{herb:'首乌藤', amt:'15g'},{herb:'Polygala Root', amt:'8g'},{herb:'Evodia Fruit', amt:'6g'}], usage:'研末醋调糊，睡前敷双侧涌泉穴，胶布固定，次晨取下，连用1-2周。'},
     {id:27, name:'兰心茶', type:'tea', journeys:["Women's Health"], tags:['mood波动'], price:45, trial:16, desc:'mood忽上忽下，喝一杯，静下来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'淮小麦', amt:'20g'},{herb:'Red Date', amt:'6枚'},{herb:'Licorice Root', amt:'5g'},{herb:'Albizia Bark', amt:'8g'},{herb:'Curcuma Root', amt:'6g'}], usage:'轻煎15-20分钟，mood波动期1 dose daily。'},
@@ -454,17 +454,17 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     {id:36, name:'晴川茶', type:'tea', journeys:['Body Sculpting'], tags:['久坐少动'], price:45, trial:16, desc:'久坐不动，理气activate blood，让qi and blood重新流动起来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Tangerine Peel', amt:'6g'},{herb:'Salvia Root', amt:'8g'},{herb:'Coix Seed', amt:'12g'},{herb:'Licorice Root', amt:'3g'}], usage:'焖泡，久坐后饮用。'},
     {id:37, name:'鹤姿茶', type:'tea', journeys:['Body Sculpting'], tags:['运动方式不当'], price:45, trial:16, desc:'运动方式不太对，nourish blood舒筋，动作更从容。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Angelica Root', amt:'8g'},{herb:'木瓜', amt:'8g'},{herb:'伸筋草', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'轻煎，运动前后饮用。'},
     {id:38, name:'恒晨茶', type:'tea', journeys:['Body Sculpting'], tags:['难以坚持'], price:45, trial:16, desc:'三天打鱼两天晒网，益气strengthen the spleen，慢慢养出坚持的底气。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Atractylodes Rhizome', amt:'8g'},{herb:'Tangerine Peel', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'晨起饮用，连续wellness。'},
-    {id:39, name:'暮川茶', type:'tea', journeys:['Body Sculpting'], tags:['运动后恢复慢'], price:45, trial:16, desc:'运动完总是很难恢复，益气nourish blood，加速回血。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Angelica Root', amt:'6g'},{herb:'Cinnamon Twig', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'运动后饮用。'},
+    {id:39, name:'暮川茶', type:'tea', journeys:['Body Sculpting'], tags:['运动后Restore慢'], price:45, trial:16, desc:'运动完总Yes很难Restore，益气nourish blood，加速回血。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Angelica Root', amt:'6g'},{herb:'Cinnamon Twig', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'运动后饮用。'},
     {id:40, name:'鹤川茶', type:'tea', journeys:['Body Sculpting'], tags:['久坐少动','运动方式不当'], price:45, trial:16, desc:'久坐又运动姿势不对，一起舒Expand来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Salvia Root', amt:'10g'},{herb:'Angelica Root', amt:'8g'},{herb:'木瓜', amt:'6g'},{herb:'Tangerine Peel', amt:'4g'}], usage:'轻煎，1 dose daily。'},
-    {id:41, name:'恒川茶', type:'tea', journeys:['Body Sculpting'], tags:['运动后恢复慢','难以坚持'], price:45, trial:16, desc:'难坚持又恢复慢，qi and blood双补撑住状态。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'15g'},{herb:'Atractylodes Rhizome', amt:'8g'},{herb:'Angelica Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'晨起或运动后饮用。'},
+    {id:41, name:'恒川茶', type:'tea', journeys:['Body Sculpting'], tags:['运动后Restore慢','难以坚持'], price:45, trial:16, desc:'难坚持又Restore慢，qi and blood双补撑住状态。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'15g'},{herb:'Atractylodes Rhizome', amt:'8g'},{herb:'Angelica Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'晨起或运动后饮用。'},
     {id:42, name:'初曦贴', type:'plaster', journeys:['Body Sculpting'], tags:['产后qi and blood虚'], price:9, trial:4, desc:'产后qi and blood两虚，温和敷一敷，慢慢补回来。', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Angelica Root', amt:'10g'},{herb:'Astragalus Root', amt:'12g'},{herb:'Prepared Rehmannia', amt:'8g'}], usage:'姜汁调糊，敷神阙穴，每周3次，4-6 hours each time。'},
     {id:43, name:'晓月贴', type:'plaster', journeys:['Body Sculpting'], tags:['腹部sagging'], price:9, trial:4, desc:'腹部sagging没力气，敷一敷帮忙提一提。', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Astragalus Root', amt:'15g'},{herb:'Cimicifuga', amt:'6g'},{herb:'Bitter Orange', amt:'8g'}], usage:'姜汁调糊，敷腹部，每周3-4次。'},
-    {id:44, name:'暮归茶', type:'tea', journeys:['Body Sculpting'], tags:['体力恢复慢'], price:45, trial:16, desc:'产后体力恢复得慢，qi and blood双补陪你慢慢来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Angelica Root', amt:'8g'},{herb:'Prepared Rehmannia', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'产后2周起，1 dose daily。'},
-    {id:45, name:'甘露茶', type:'tea', journeys:['Body Sculpting'], tags:['哺乳期wellness'], price:45, trial:16, desc:'哺乳期需要Moreqi and blood支持，温和滋养。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Vaccaria Seed', amt:'8g'},{herb:'Astragalus Root', amt:'10g'},{herb:'Angelica Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'哺乳期1 dose daily。'},
-    {id:46, name:'产后元气贴', type:'plaster', journeys:['Body Sculpting'], tags:['产后qi and blood虚','体力恢复慢'], price:9, trial:4, desc:'产后qi and blood虚又恢复慢，加强版一起养回来。', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Astragalus Root', amt:'15g'},{herb:'Angelica Root', amt:'10g'},{herb:'Prepared Rehmannia', amt:'8g'},{herb:'Atractylodes Rhizome', amt:'6g'}], usage:'姜汁调糊，敷神阙穴，每周3-4次。'},
+    {id:44, name:'暮归茶', type:'tea', journeys:['Body Sculpting'], tags:['体力Restore慢'], price:45, trial:16, desc:'产后体力Restore得慢，qi and blood双补陪你慢慢来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Angelica Root', amt:'8g'},{herb:'Prepared Rehmannia', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'产后2周起，1 dose daily。'},
+    {id:45, name:'甘露茶', type:'tea', journeys:['Body Sculpting'], tags:['哺乳期wellness'], price:45, trial:16, desc:'哺乳期需要Moreqi and bloodSupport，温和滋养。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Vaccaria Seed', amt:'8g'},{herb:'Astragalus Root', amt:'10g'},{herb:'Angelica Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'哺乳期1 dose daily。'},
+    {id:46, name:'产后元气贴', type:'plaster', journeys:['Body Sculpting'], tags:['产后qi and blood虚','体力Restore慢'], price:9, trial:4, desc:'产后qi and blood虚又Restore慢，加强版一起养回来。', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Astragalus Root', amt:'15g'},{herb:'Angelica Root', amt:'10g'},{herb:'Prepared Rehmannia', amt:'8g'},{herb:'Atractylodes Rhizome', amt:'6g'}], usage:'姜汁调糊，敷神阙穴，每周3-4次。'},
     {id:47, name:'暖阳贴', type:'plaster', journeys:['Body Sculpting'], tags:['怕冷'], price:9, trial:4, desc:'手脚怕冷，温阳dispel cold，敷一敷暖起来。', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Cinnamon Bark', amt:'8g'},{herb:'Dried Ginger', amt:'10g'},{herb:'Fennel', amt:'8g'},{herb:'Mugwort Leaf', amt:'10g'}], usage:'姜汁调糊，敷关元穴，每周3次。'},
-    {id:48, name:'晴曦茶', type:'tea', journeys:['Body Sculpting'], tags:['易fatigue'], price:45, trial:16, desc:'总是提不起劲，益气strengthen the spleen，找回精神。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Codonopsis', amt:'10g'},{herb:'Astragalus Root', amt:'8g'},{herb:'Tangerine Peel', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'晨起饮用。'},
-    {id:49, name:'云澈茶', type:'tea', journeys:['Body Sculpting'], tags:['水肿'], price:45, trial:16, desc:'身体水肿沉重，strengthen the spleen利水，轻盈一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Poria', amt:'12g'},{herb:'Alisma', amt:'8g'},{herb:'冬瓜皮', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'轻煎，1 dose daily。'},
+    {id:48, name:'晴曦茶', type:'tea', journeys:['Body Sculpting'], tags:['易fatigue'], price:45, trial:16, desc:'总Yes提不起劲，益气strengthen the spleen，找回精神。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Codonopsis', amt:'10g'},{herb:'Astragalus Root', amt:'8g'},{herb:'Tangerine Peel', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'晨起饮用。'},
+    {id:49, name:'云澈茶', type:'tea', journeys:['Body Sculpting'], tags:['水肿'], price:45, trial:16, desc:'身体水肿沉重，strengthen the spleen利水，轻盈一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Poria', amt:'12g'},{herb:'Alisma', amt:'8g'},{herb:'Winter瓜皮', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'轻煎，1 dose daily。'},
     {id:50, name:'轻盈茶', type:'tea', journeys:['Body Sculpting'], tags:['体重难下降'], price:45, trial:16, desc:'体重总卡关，化湿strengthen the spleen，帮忙松动一下metabolism。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Lotus Leaf', amt:'8g'},{herb:'Atractylodes Rhizome', amt:'8g'},{herb:'Alisma', amt:'8g'},{herb:'Tangerine Peel', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'餐后饮用。'},
     {id:51, name:'暖身茶', type:'tea', journeys:['Body Sculpting'], tags:['怕冷','易fatigue'], price:45, trial:16, desc:'又怕冷又fatigue，温阳益气一起来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Cinnamon Bark', amt:'6g'},{herb:'Codonopsis', amt:'8g'},{herb:'Dried Ginger', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'晨起饮用。'},
     {id:52, name:'岚澈茶', type:'tea', journeys:['Body Sculpting'], tags:['体重难下降','水肿'], price:45, trial:16, desc:'水肿又体重难降，双重remove dampnessreduce swelling。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Poria', amt:'12g'},{herb:'Coix Seed', amt:'15g'},{herb:'Alisma', amt:'8g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'轻煎，1 dose daily。'},
@@ -473,7 +473,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     {id:55, name:'霞光茶', type:'tea', journeys:['Beauty & Radiance'], tags:['疲惫dullness'], price:45, trial:16, desc:'疲惫写在脸上，qi and blood双补，找回气色。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Angelica Root', amt:'6g'},{herb:'Goji Berry', amt:'8g'},{herb:'Tangerine Peel', amt:'3g'}], usage:'晨起饮用。'},
     {id:56, name:'曦辉贴', type:'plaster', journeys:['Beauty & Radiance'], tags:['气色发黄','疲惫dullness'], price:9, trial:4, desc:'气色差又疲惫，敷一敷双重提气色。', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Angelica Root', amt:'10g'},{herb:'Safflower', amt:'3g'}], usage:'姜汁调糊，敷相关穴位，每周2-3次。'},
     {id:57, name:'凝脂茶', type:'tea', journeys:['Beauty & Radiance'], tags:['弹性下降'], price:45, trial:16, desc:'皮肤弹性下降，益气养阴，帮肌肤找回紧实感。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Chinese Yam', amt:'10g'},{herb:'Goji Berry', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:58, name:'霜华茶', type:'tea', journeys:['Beauty & Radiance'], tags:['初显fine lines'], price:45, trial:16, desc:'fine lines开始出现，nourish yin润肤，抚平初显的痕迹。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Polygonatum Odoratum', amt:'10g'},{herb:'White Peony Root', amt:'8g'},{herb:'Angelica Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
+    {id:58, name:'霜华茶', type:'tea', journeys:['Beauty & Radiance'], tags:['初显fine lines'], price:45, trial:16, desc:'fine linesOpen始出现，nourish yin润肤，抚平初显的痕迹。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Polygonatum Odoratum', amt:'10g'},{herb:'White Peony Root', amt:'8g'},{herb:'Angelica Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
     {id:59, name:'晚霞贴', type:'plaster', journeys:['Beauty & Radiance'], tags:['面颊松垮'], price:9, trial:4, desc:'面颊有点松垮，敷一敷帮忙提一提。', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Cimicifuga', amt:'5g'},{herb:'Angelica Root', amt:'6g'}], usage:'姜汁调糊，敷面部相关穴位，每周2-3次。'},
     {id:60, name:'凝脂贴', type:'plaster', journeys:['Beauty & Radiance'], tags:['初显fine lines','弹性下降','面颊松垮'], price:9, trial:4, desc:'sagging、fine lines、垮脸一起出现，全面提升方案。', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Cimicifuga', amt:'6g'},{herb:'Angelica Root', amt:'10g'},{herb:'White Peony Root', amt:'8g'}], usage:'姜汁调糊，敷相关穴位，每周3次。'},
     {id:61, name:'翠萼茶', type:'tea', journeys:['Beauty & Radiance'], tags:['反复冒痘'], price:45, trial:16, desc:'acne反反复复，clear heatremove dampness，慢慢wellnessconstitution。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Dandelion', amt:'8g'},{herb:'Forsythia Fruit', amt:'6g'},{herb:'Coix Seed', amt:'12g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
@@ -481,27 +481,27 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     {id:63, name:'芷若茶', type:'tea', journeys:['Beauty & Radiance'], tags:['泛红刺痛'], price:45, trial:16, desc:'泛红刺痛，凉血clear heat，舒缓sensitivity状态。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Raw Rehmannia', amt:'8g'},{herb:'牡丹皮', amt:'6g'},{herb:'Honeysuckle Flower', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
     {id:64, name:'青荷茶', type:'tea', journeys:['Beauty & Radiance'], tags:['油光满面'], price:45, trial:16, desc:'满脸油光，clear heatremove dampness，控油更清爽。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Phellodendron Bark', amt:'4g'},{herb:'Coix Seed', amt:'12g'},{herb:'Poria', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
     {id:65, name:'翠荷茶', type:'tea', journeys:['Beauty & Radiance'], tags:['反复冒痘','油光满面'], price:45, trial:16, desc:'acne加油光一起来，双重clear heatremove dampness。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Dandelion', amt:'10g'},{herb:'Phellodendron Bark', amt:'5g'},{herb:'Coix Seed', amt:'15g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily，连饮2-3周。'},
-    {id:66, name:'轻颜茶', type:'tea', journeys:['Beauty & Radiance'], tags:['面部浮肿'], price:45, trial:16, desc:'脸部有点浮肿，strengthen the spleen利水，消reduce swelling。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Poria', amt:'10g'},{herb:'冬瓜皮', amt:'8g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
+    {id:66, name:'轻颜茶', type:'tea', journeys:['Beauty & Radiance'], tags:['面部浮肿'], price:45, trial:16, desc:'脸部有点浮肿，strengthen the spleen利水，消reduce swelling。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Poria', amt:'10g'},{herb:'Winter瓜皮', amt:'8g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
     {id:67, name:'月轮茶', type:'tea', journeys:['Beauty & Radiance'], tags:['轮廓模糊'], price:45, trial:16, desc:'轮廓不够清晰，益气nourish blood，帮忙找回线条。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'8g'},{herb:'Angelica Root', amt:'6g'},{herb:'Tangerine Peel', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:68, name:'云颔茶', type:'tea', journeys:['Beauty & Radiance'], tags:['双下巴'], price:45, trial:16, desc:'双下巴困扰，化痰remove dampness，帮忙化开。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Tangerine Peel', amt:'8g'},{herb:'Poria', amt:'10g'},{herb:'Fritillaria Thunbergii', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:69, name:'月澈茶', type:'tea', journeys:['Beauty & Radiance'], tags:['双下巴','面部浮肿'], price:45, trial:16, desc:'浮肿加双下巴，一起消一消。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Poria', amt:'12g'},{herb:'Tangerine Peel', amt:'8g'},{herb:'冬瓜皮', amt:'8g'},{herb:'Fritillaria Thunbergii', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily，连饮2周。'},
-    {id:70, name:'晨露茶', type:'tea', journeys:['Daily Wellness'], tags:['容易fatigue'], price:45, trial:16, desc:'总是很疲惫，益气strengthen the spleen，找回精神头。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Codonopsis', amt:'10g'},{herb:'Astragalus Root', amt:'8g'},{herb:'Tangerine Peel', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'晨起饮用。'},
+    {id:68, name:'云颔茶', type:'tea', journeys:['Beauty & Radiance'], tags:['双下巴'], price:45, trial:16, desc:'双下巴困扰，化痰remove dampness，帮忙化Open。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Tangerine Peel', amt:'8g'},{herb:'Poria', amt:'10g'},{herb:'Fritillaria Thunbergii', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
+    {id:69, name:'月澈茶', type:'tea', journeys:['Beauty & Radiance'], tags:['双下巴','面部浮肿'], price:45, trial:16, desc:'浮肿加双下巴，一起消一消。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Poria', amt:'12g'},{herb:'Tangerine Peel', amt:'8g'},{herb:'Winter瓜皮', amt:'8g'},{herb:'Fritillaria Thunbergii', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily，连饮2周。'},
+    {id:70, name:'晨露茶', type:'tea', journeys:['Daily Wellness'], tags:['容易fatigue'], price:45, trial:16, desc:'总Yes很疲惫，益气strengthen the spleen，找回精神头。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Codonopsis', amt:'10g'},{herb:'Astragalus Root', amt:'8g'},{herb:'Tangerine Peel', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'晨起饮用。'},
     {id:71, name:'朝晖茶', type:'tea', journeys:['Daily Wellness'], tags:['精神不振'], price:45, trial:16, desc:'精神不振提不起劲，升阳益气，唤醒vitality。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Cimicifuga', amt:'4g'},{herb:'Bupleurum Root', amt:'3g'},{herb:'Licorice Root', amt:'3g'}], usage:'晨起饮用。'},
-    {id:72, name:'松风茶', type:'tea', journeys:['Daily Wellness'], tags:['注意力难集中'], price:45, trial:16, desc:'注意力很难集中，开窍宁神，思路更清晰。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Polygala Root', amt:'6g'},{herb:'Acorus', amt:'6g'},{herb:'Poria', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'上午饮用。'},
+    {id:72, name:'松风茶', type:'tea', journeys:['Daily Wellness'], tags:['注意力难集中'], price:45, trial:16, desc:'注意力很难集中，Open窍宁神，思路更清晰。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Polygala Root', amt:'6g'},{herb:'Acorus', amt:'6g'},{herb:'Poria', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'Morning饮用。'},
     {id:73, name:'屏山茶', type:'tea', journeys:['Daily Wellness'], tags:['immunity力偏弱'], price:45, trial:16, desc:'容易生病抵抗力弱，益气固表，加固防护力。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Atractylodes Rhizome', amt:'8g'},{herb:'Saposhnikovia', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily，连续wellness。'},
     {id:74, name:'朝阳茶', type:'tea', journeys:['Daily Wellness'], tags:['容易fatigue','精神不振'], price:45, trial:16, desc:'疲惫又没精神，双重益气升阳。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Codonopsis', amt:'10g'},{herb:'Cimicifuga', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'晨起饮用。'},
     {id:75, name:'岚雾茶', type:'tea', journeys:['Daily Wellness'], tags:['Heavy Dampness'], price:45, trial:16, desc:'Heavy Dampness身体沉，strengthen the spleenremove dampness，轻盈一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Atractylodes', amt:'8g'},{herb:'Poria', amt:'10g'},{herb:'Coix Seed', amt:'12g'},{herb:'Tangerine Peel', amt:'4g'}], usage:'1 dose daily。'},
     {id:76, name:'荷露茶', type:'tea', journeys:['Daily Wellness'], tags:['怕热易出汗'], price:45, trial:16, desc:'一动就一身汗，敛汗益气，收一收。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'浮小麦', amt:'12g'},{herb:'Schisandra Fruit', amt:'5g'},{herb:'Ophiopogon', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
     {id:77, name:'四时茶', type:'tea', journeys:['Daily Wellness'], tags:['换季不适应'], price:45, trial:16, desc:'换季总不适应，调和营卫，帮身体更快适应变化。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Cinnamon Twig', amt:'5g'},{herb:'White Peony Root', amt:'6g'},{herb:'Astragalus Root', amt:'8g'},{herb:'炙甘草', amt:'3g'},{herb:'Ginger', amt:'3片'},{herb:'Red Date', amt:'2枚'}], usage:'换季前后1 dose daily。'},
     {id:78, name:'谷芽茶', type:'tea', journeys:['Daily Wellness'], tags:['食欲不振'], price:45, trial:16, desc:'没什么胃口，健胃消食，找回食欲。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Hawthorn', amt:'8g'},{herb:'Malt', amt:'10g'},{herb:'Chicken Gizzard Lining', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'餐前饮用。'},
-    {id:79, name:'晚膳茶', type:'tea', journeys:['Daily Wellness'], tags:['Indigestion'], price:45, trial:16, desc:'消化总是慢半拍，消食和胃，饭后更舒服。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Hawthorn', amt:'10g'},{herb:'Medicated Leaven', amt:'8g'},{herb:'Radish Seed', amt:'6g'},{herb:'Tangerine Peel', amt:'5g'}], usage:'餐后饮用。'},
+    {id:79, name:'晚膳茶', type:'tea', journeys:['Daily Wellness'], tags:['Indigestion'], price:45, trial:16, desc:'消化总Yes慢半拍，消食和胃，饭后更舒服。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Hawthorn', amt:'10g'},{herb:'Medicated Leaven', amt:'8g'},{herb:'Radish Seed', amt:'6g'},{herb:'Tangerine Peel', amt:'5g'}], usage:'餐后饮用。'},
     {id:80, name:'暖芝茶', type:'tea', journeys:['Daily Wellness'], tags:['便秘'], price:45, trial:16, desc:'排便不太顺畅，润肠通便，温和wellness。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Hemp Seed', amt:'10g'},{herb:'Bush Cherry Seed', amt:'8g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:81, name:'晚风茶', type:'tea', journeys:['Daily Wellness'], tags:['腹胀'], price:45, trial:16, desc:'肚子总是胀胀的，理气消胀，舒服一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Tangerine Peel', amt:'8g'},{herb:'Bitter Orange', amt:'6g'},{herb:'Magnolia Bark', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'餐后饮用。'},
+    {id:81, name:'晚风茶', type:'tea', journeys:['Daily Wellness'], tags:['腹胀'], price:45, trial:16, desc:'肚子总Yes胀胀的，理气消胀，舒服一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Tangerine Peel', amt:'8g'},{herb:'Bitter Orange', amt:'6g'},{herb:'Magnolia Bark', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'餐后饮用。'},
     {id:82, name:'谷雨茶', type:'tea', journeys:['Daily Wellness'], tags:['Indigestion','腹胀'], price:45, trial:16, desc:'Indigestion又腹胀，一起理顺。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Hawthorn', amt:'10g'},{herb:'Immature Bitter Orange', amt:'6g'},{herb:'Radish Seed', amt:'8g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'餐后饮用。'},
     {id:83, name:'谷序茶', type:'tea', journeys:['Daily Wellness'], tags:['便秘','Indigestion','腹胀','食欲不振'], price:45, trial:16, desc:'胃口、消化、排便、腹胀全都不太顺，整体调一调。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Codonopsis', amt:'10g'},{herb:'Atractylodes Rhizome', amt:'8g'},{herb:'Tangerine Peel', amt:'6g'},{herb:'Bitter Orange', amt:'6g'},{herb:'Hawthorn', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily，连续wellness。'},
     {id:84, name:'松岚茶', type:'tea', journeys:['Daily Wellness'], tags:['stress大'], price:45, trial:16, desc:'stress山大，疏肝理气，松一口气。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Bupleurum Root', amt:'5g'},{herb:'Cyperus Rhizome', amt:'8g'},{herb:'Buddha Hand', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
     {id:85, name:'竹韵茶', type:'tea', journeys:['Daily Wellness'], tags:['易烦躁'], price:45, trial:16, desc:'容易心浮气躁，清心除烦，静一静。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Gardenia Fruit', amt:'5g'},{herb:'Lophatherum', amt:'6g'},{herb:'Albizia Bark', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:86, name:'竹影茶', type:'tea', journeys:['Daily Wellness'], tags:['mood紧绷'], price:45, trial:16, desc:'mood总是紧绷，疏肝解郁，放松下来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Albizia Bark', amt:'8g'},{herb:'Curcuma Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
+    {id:86, name:'竹影茶', type:'tea', journeys:['Daily Wellness'], tags:['mood紧绷'], price:45, trial:16, desc:'mood总Yes紧绷，疏肝解郁，放松下来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Albizia Bark', amt:'8g'},{herb:'Curcuma Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
     {id:87, name:'夜合茶', type:'tea', journeys:['Daily Wellness'], tags:['睡前思虑多'], price:45, trial:16, desc:'睡前脑子停不下来，nourish the heartcalm the mind，帮忙放空。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯神', amt:'10g'},{herb:'Sour Jujube Seed', amt:'10g'},{herb:'Longan Fruit', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'睡前1小时饮用。'},
     {id:88, name:'竹松茶', type:'tea', journeys:['Daily Wellness'], tags:['stress大','易烦躁'], price:45, trial:16, desc:'stress大又烦躁，双重疏肝清心。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Bupleurum Root', amt:'6g'},{herb:'Gardenia Fruit', amt:'5g'},{herb:'White Peony Root', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
     {id:89, name:'忘忧茶', type:'tea', journeys:['Daily Wellness'], tags:['mood紧绷','睡前思虑多'], price:45, trial:16, desc:'mood紧绷又思虑重，一杯茶，把忧愁放一放。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'淮小麦', amt:'20g'},{herb:'Red Date', amt:'6枚'},{herb:'Albizia Bark', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'睡前1小时饮用。'},
@@ -530,19 +530,19 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     {id:112, name:'月阑贴', type:'plaster', journeys:['Quality Sleep'], tags:['醒后难再入睡'], price:9, trial:4, desc:'醒了就很难再睡着，睡前敷一敷帮忙回笼。', active:true, inStock:true, featured:false, imgs:[], form:'贴，涌泉穴Topical Use', herbs:[{herb:'Sour Jujube Seed', amt:'10g'},{herb:'首乌藤', amt:'10g'},{herb:'Schisandra Fruit', amt:'5g'}], usage:'研末醋调糊，睡前敷涌泉穴，次晨取下。'},
     {id:113, name:'静巷茶', type:'tea', journeys:['Quality Sleep'], tags:['对声音sensitivity'], price:45, trial:16, desc:'一点动静就醒，宁心calm the mind，睡得更安稳。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯神', amt:'10g'},{herb:'Polygala Root', amt:'6g'},{herb:'Arborvitae Seed', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'睡前1小时饮用。'},
     {id:114, name:'霭月茶', type:'tea', journeys:['Quality Sleep'], tags:['夜间易醒','醒后难再入睡'], price:45, trial:16, desc:'易醒又难再入睡，双重calm the mind稳睡。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯神', amt:'10g'},{herb:'Sour Jujube Seed', amt:'12g'},{herb:'首乌藤', amt:'10g'},{herb:'Schisandra Fruit', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'睡前1小时饮用。'},
-    {id:115, name:'蝶梦茶', type:'tea', journeys:['Quality Sleep'], tags:['梦境频繁'], price:45, trial:16, desc:'晚上梦特别多，nourish the heartcalm the mind，睡得更踏实。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Longan Fruit', amt:'8g'},{herb:'Sour Jujube Seed', amt:'10g'},{herb:'茯神', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:115, name:'蝶梦茶', type:'tea', journeys:['Quality Sleep'], tags:['梦境频繁'], price:45, trial:16, desc:'Evening梦特别多，nourish the heartcalm the mind，睡得更踏实。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Longan Fruit', amt:'8g'},{herb:'Sour Jujube Seed', amt:'10g'},{herb:'茯神', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'睡前1小时饮用。'},
     {id:116, name:'子夜茶', type:'tea', journeys:['Quality Sleep'], tags:['sleep质量差'], price:45, trial:16, desc:'整体sleep质量不好，nourish the heartcalm the mind，慢慢改善。', active:false, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Poria', amt:'10g'},{herb:'Sour Jujube Seed', amt:'10g'},{herb:'Albizia Bark', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'睡前1小时饮用。'},
     {id:117, name:'蝶影茶', type:'tea', journeys:['Quality Sleep'], tags:['梦境频繁','sleep质量差'], price:45, trial:16, desc:'frequent dreams又睡不安稳，双重nourish the heartcalm the mind。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Longan Fruit', amt:'10g'},{herb:'Sour Jujube Seed', amt:'12g'},{herb:'茯神', amt:'10g'},{herb:'Albizia Bark', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'睡前1小时饮用。'},
-    {id:118, name:'晓岚茶', type:'tea', journeys:['Quality Sleep'], tags:['睡醒仍困倦'], price:45, trial:16, desc:'醒来还是很困，益气升阳，唤醒清醒感。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'8g'},{herb:'Cimicifuga', amt:'4g'},{herb:'Acorus', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'晨起饮用。'},
+    {id:118, name:'晓岚茶', type:'tea', journeys:['Quality Sleep'], tags:['睡醒仍困倦'], price:45, trial:16, desc:'醒来还Yes很困，益气升阳，唤醒清醒感。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'8g'},{herb:'Cimicifuga', amt:'4g'},{herb:'Acorus', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'晨起饮用。'},
     {id:119, name:'卯时茶', type:'tea', journeys:['Quality Sleep'], tags:['起床困难'], price:45, trial:16, desc:'起床特别困难，温阳益气，帮忙醒过来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Cinnamon Bark', amt:'3g'},{herb:'Cimicifuga', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'晨起饮用。'},
-    {id:120, name:'午昼茶', type:'tea', journeys:['Quality Sleep'], tags:['日间嗜睡'], price:45, trial:16, desc:'白天总是犯困，strengthen the spleen升阳，提振精神。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Atractylodes', amt:'8g'},{herb:'Cimicifuga', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'上午饮用。'},
+    {id:120, name:'午昼茶', type:'tea', journeys:['Quality Sleep'], tags:['日间嗜睡'], price:45, trial:16, desc:'白天总Yes犯困，strengthen the spleen升阳，提振精神。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Atractylodes', amt:'8g'},{herb:'Cimicifuga', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'Morning饮用。'},
     {id:121, name:'晨曦茶', type:'tea', journeys:['Quality Sleep'], tags:['日间嗜睡','起床困难'], price:45, trial:16, desc:'起床难又犯困，双重升阳醒神。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Cinnamon Bark', amt:'4g'},{herb:'Cimicifuga', amt:'5g'},{herb:'Atractylodes', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'晨起饮用。'},
     {id:122, name:'晓霞膜', type:'mask', journeys:[], tags:[], price:39, trial:15, desc:'不针对特定症状，日常美白提亮，周末宠爱自己的仪式感。', active:true, inStock:true, featured:true, imgs:[], form:'Topical Use面膜', herbs:[{herb:'Angelica Dahurica', amt:'8g'},{herb:'Bletilla', amt:'6g'},{herb:'绿豆粉', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'研极细粉，加蜂蜜或温水调成糊状，敷面15-20分钟后温水洗净，每周2-3次。'},
   ];
 
   // [stated bug fix] this page used to run entirely off its own frozen copy of PRODUCTS with zero
-  // connection to 商品管理 — not just description, NOTHING synced (name/price/stock/active/tags
-  // all included). Now overlays whatever's in the shared catalog (published by 商品管理's
+  // connection to Products管理 — not just description, NOTHING synced (name/price/stock/active/tags
+  // all included). Now overlays whatever's in the shared catalog (published by Products管理's
   // syncCatalogToStorage) onto this page's own copy at load time, so an edit made in the admin
   // tool shows up here the next time this page is opened in the same browser.
   function mergeCatalogFromStorage(){
@@ -584,16 +584,16 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
                                                                                   // 避免页面上出现"MYR null"
           desc:p.description, active:p.active, inStock:p.stock_qty > 0, stockQty:p.stock_qty,
           featured:p.featured, imgs:p.images||[], form:'', herbs:[], usage:p.usage_note||'',
-          journeys:[], tags:[] // 后端目前还没有存这两个字段——原本是给症状标签匹配功能用的，
-                                // 那个功能之前因为广告法合规的原因已经拿掉了，这里留空数组只是
-                                // 为了不让还在引用这两个字段的代码报错，不影响实际显示
+          journeys:[], tags:[] // 后端目前还没有存这两个字段——原本Yes给症状Tag匹配功能用的，
+                                // 那个功能之前因为广告法合规的原因已经拿掉了，这里留空数组只Yes
+                                // 为了不让还在引用这两个字段的代码报错，不影响实际Show
         };
       });
       PRODUCTS.length = 0;
       mapped.forEach(function(p){ PRODUCTS.push(p); });
     } catch(e){
-      console.error('连接后端失败:', e);
-      showToast('暂时无法连接服务器，请稍后Retry');
+      console.error('连接后端Failed:', e);
+      showToast('暂时无法连接Service器，请稍后Retry');
     }
     buildCategories();
     updateCartBadge();
@@ -629,7 +629,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         + '<div class="cat-thumb"><img src="'+meta.art+'" loading="lazy" decoding="async" alt="'+meta.label+'">'
         + '<div class="cat-ring"></div></div>'
         + '<div class="cat-name">'+meta.label+'</div>'
-        + '<div class="cat-count">'+countByType(t)+' items商品</div>'
+        + '<div class="cat-count">'+countByType(t)+' itemsProducts</div>'
         + '</div>';
     });
     catScroll.innerHTML = html;
@@ -646,7 +646,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     });
   });
 
-  // ---- 收藏/心愿单: no login system exists, so this is per-browser/per-device (same limitation
+  // ---- Favorite/心愿单: no login system exists, so this is per-browser/per-device (same limitation
   // as the shopping cart already has) rather than tied to a real customer account. ----
   var WISH_HEART_SVG = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9.5-9C.5 8 2 4 6 4c2 0 3.5 1 4 2 .5-1 2-2 4-2 4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg>';
   var WISHLIST_KEY = 'vinath_wishlist';
@@ -684,7 +684,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   function renderGroups(list){
     if(!list.length){
-      document.getElementById('prodGroups').innerHTML = '<div class="prod-empty">没有找到符合的商品</div>';
+      document.getElementById('prodGroups').innerHTML = '<div class="prod-empty">没有找到符合的Products</div>';
       return;
     }
     document.getElementById('prodGroups').innerHTML = '<div class="prod-grid">' + list.map(renderProductCard).join('') + '</div>';
@@ -712,7 +712,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         return p.name.toLowerCase().indexOf(q)!==-1 || (p.desc||'').toLowerCase().indexOf(q)!==-1;
       });
     }
-    ehCount.textContent = list.length + ' items商品';
+    ehCount.textContent = list.length + ' itemsProducts';
     renderGroups(list);
   }
   ehSearch.addEventListener('input', applyFilters);
@@ -731,13 +731,13 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     currentTypeList = PRODUCTS.filter(function(p){ return p.type===t && p.active; });
     ehTitle.textContent = TYPE_META[t].label;
     ehSearch.value = '';
-    ehCount.textContent = currentTypeList.length + ' items商品';
+    ehCount.textContent = currentTypeList.length + ' itemsProducts';
     renderGroups(currentTypeList);
     expandZone.classList.add('open');
     setTimeout(function(){ expandZone.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 120);
   }
 
-  // ---- 全局商品Search: searches across every category at once, reusing the same expand-zone
+  // ---- 全局ProductsSearch: searches across every category at once, reusing the same expand-zone
   // rendering as a single-category view (currentTypeList/applyFilters/renderGroups) ----
   var globalSearchInput = document.getElementById('globalSearchInput');
   var gsClearBtn = document.getElementById('gsClearBtn');
@@ -794,7 +794,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     currentTypeList = PRODUCTS.filter(function(p){ return p.active && ids.indexOf(p.id)!==-1; });
     ehTitle.textContent = 'My Favorites';
     ehSearch.value = '';
-    ehCount.textContent = currentTypeList.length + ' items商品';
+    ehCount.textContent = currentTypeList.length + ' itemsProducts';
     renderGroups(currentTypeList);
     expandZone.classList.add('open');
     expandZone.scrollIntoView({behavior:'smooth', block:'nearest'});
@@ -825,7 +825,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         + '<div class="feat-body'+(hasImg?'':' feat-body-plain')+'"><div class="feat-name">'+p.name+'</div><div class="feat-price">MYR '+p.trial+' 起</div></div>'
         + '</div>';
     });
-    featGrid.innerHTML = html || '<div class="prod-empty">暂无精选商品</div>';
+    featGrid.innerHTML = html || '<div class="prod-empty">暂无精选Products</div>';
     featGrid.querySelectorAll('.feat-card').forEach(function(c){
       c.addEventListener('click', function(){ openQuickView(this.getAttribute('data-id')); });
     });
@@ -957,7 +957,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     };
     qvName.textContent = p.name;
     qvDesc.textContent = p.desc;
-    qvOosMsg.innerHTML = p.inStock ? '' : '<div class="qv-oos">这款Out of Stock，补货后会自动恢复上架。</div>';
+    qvOosMsg.innerHTML = p.inStock ? '' : '<div class="qv-oos">这款Out of Stock，补货后会自动Restore上架。</div>';
     qvVariants.innerHTML =
       '<div class="qv-variant on" data-v="full"><div class="vv-lbl">正装</div><div class="vv-price">MYR '+p.price+'</div></div>'
       + '<div class="qv-variant" data-v="trial"><div class="vv-lbl">试用装</div><div class="vv-price">MYR '+p.trial+'</div></div>';
@@ -1068,8 +1068,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 <script>
 (function(){
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  // 聊天消息是任何匿名访客都能Submit的内容，管理员打开对话时会看到——不转义就直接拼进innerHTML
-  // 的话，访客可以在消息里塞HTML/脚本，在管理员已登录的浏览器里执行（存储型XSS）。
+  // ChatMessageYes任何匿名访客都能Submit的内容，管理员Open对话时会看到——不转义就直接拼进innerHTML
+  // 的话，访客可以在Message里塞HTML/脚本，在管理员已Login的浏览器里执Row（存储型XSS）。
   function escapeHtml(s){
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
@@ -1087,7 +1087,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       return id;
     } catch(e){ return 'cust_temp'; }
   }
-  // 客户端第一次打开聊天面板时调用——后端会自动处理"这个人是不是第一次来"、要不要插入欢迎语，
+  // Customer端第一次OpenChat面板时调用——后端会自动处理"这个人Yes不Yes第一次来"、要不要插入欢迎语，
   // 前端不用再自己判断这些
   async function ensureMyThread(){
     try {
@@ -1171,7 +1171,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   // poll for admin replies / handoff changes while the widget is on screen
   pollTimer = setInterval(async function(){
-    if(!currentThread) return; // 还没打开过聊天面板，没必要轮询
+    if(!currentThread) return; // 还没Open过Chat面板，没必要轮询
     await refreshMyThread();
     renderMessages();
   }, 4000);
