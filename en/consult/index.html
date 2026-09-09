@@ -162,7 +162,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
 
 <style>
-  /* 英文版Title使用 Poppins Black */
+  /* 英文版Title use  Poppins Black */
   h1, h2, h3, h4, h5, h6,
   .hero-title, .section-title, .page-title,
   .eyebrow, .cta-title,
@@ -171,23 +171,23 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
   }
   
-  /* 大Title使用 Black 900 */
+  /* 大Title use  Black 900 */
   h1, .hero-title, .section-title, .page-title {
     font-weight: 900 !important;
     letter-spacing: -0.02em;
   }
   
-  /* 二级Title使用 ExtraBold 800 */
+  /* 二级Title use  ExtraBold 800 */
   h2, .process-step-title, .journey-card-title, .footer-title {
     font-weight: 800 !important;
   }
   
-  /* 三级Title使用 Bold 700 */
+  /* 三级Title use  Bold 700 */
   h3, h4 {
     font-weight: 700 !important;
   }
   
-  /* 小Tag使用 SemiBold 600 */
+  /* 小Tag use  SemiBold 600 */
   .eyebrow, .cta-title {
     font-weight: 600 !important;
     letter-spacing: 0.05em;
@@ -311,12 +311,12 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       var raw = localStorage.getItem('vinath_business_info');
       if(raw){ var info = JSON.parse(raw); if(info.whatsapp) return info.whatsapp; }
     } catch(e){}
-    return '60138092888'; // fallback if 内容管理's 基本Information tab has never been opened yet
+    return '60138092888'; // fallback if  content  manage 's 基本Information tab has never been opened yet
   }
   var WHATSAPP_NUMBER = getWhatsappNumber();
-  // [fix] consult 页面原来只从 localStorage 读 WhatsApp，读不到就回退旧号 60138092888；
-  // 这里从后端 /site-settings/business_info 拉取后台内容管理里Settings的正确号码，
-  // 同时Update localStorage 缓存和页面上已生成的 wa.me 链接，后续动态生成的链接也用新号码。
+  // [fix] consult  page 原来只 from  localStorage 读 WhatsApp，读不 to 就回退旧号 60138092888；
+  //  here  from 后端 /site-settings/business_info 拉取后台 content  manage 里Settings 正确号码，
+  //  meanwhile Update localStorage 缓存 and  page 上已生成  wa.me 链接，后续动态生成 链接也用新号码。
   (function(){
     var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
     fetch(API_BASE + '/site-settings/business_info').then(function(res){ return res.ok ? res.json() : null; }).then(function(info){
@@ -351,7 +351,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     'Pasir Gudang', 'Masai', 'Bandar Seri Alam', 'Ulu Tiram', 'Plentong',
     'Johor Bahru市区 Johor Bahru', 'Tebrau', 'Permas Jaya', 'Johor Jaya', 'Larkin'
   ];
-  // reads the same admin-configured list as OrderBooking管理's "Service地区Settings" — only currently-active
+  // reads the same admin-configured list as OrderBooking manage 's "Service region Settings" — only currently-active
   // areas show up here, grouped by state so the list stays usable once more than one is open
   function getActiveServiceAreaGroups(){
     try {
@@ -371,7 +371,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   // ---- Instant Booking (instant match): a separate lightweight mini-flow, not part of the scheduled
   // 4-stage booking above. Prototype only — see .hc-proto-note in the UI itself; the "auto-match
-  // to the right 小管理员" part reads OrderBooking管理's admin-created junior-admin list from
+  // to the right 小 manage 员" part reads OrderBooking manage 's admin-created junior-admin list from
   // localStorage, but nothing here can actually notify a real device on the other end without a
   // real backend (same limitation as the admin tool's own "Message" tab).
   // [stated] flow corrected: customer info now collected BEFORE dispatch (was collected only
@@ -385,9 +385,9 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   var instantPollTimer = null;
   var instantReqId = null;
 
-  // Customer在这个页面填Phone NumberYes"0123456789"这种本地写法（带Open头的0），但后台黑名单表单跟WhatsApp
-  // 号码那个输入框一样，Yes"+60"固定前缀+不带0的号码——两边格式不一样，直接比对字符串永远对不上，
-  // 所以比对前先都归一化成同一种去掉非数字字符、也去掉Open头0的形式再比。
+  // Customer at 这个 page 填Phone NumberYes"0123456789"这种本地写法（带Open头 0），但后台黑名单表单跟WhatsApp
+  // 号码那个输入框一样，Yes"+60"固定前缀+不带0 号码——两边格式不一样，直接比 for  string 永远 for 不上，
+  //  so 比 for 前先都归一化成同一种去掉非 number  character 、也去掉Open头0 形式再比。
   function normalizePhoneForMatch(v){
     var digits = (v||'').replace(/\D/g,'');
     if(digits.charAt(0)==='0') digits = digits.slice(1);
@@ -410,11 +410,11 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       var todayISO = new Date().toISOString().slice(0,10);
       // only I类·执业中Physician who has explicitly opened up "接单" AND whose license hasn't expired
       // gets auto-matched — checking the license directly here (not just trusting acceptingOrders)
-      // covers the case where they never logged back into OrderBooking管理 after it expired to have
+      // covers the case where they never logged back into OrderBooking manage  after it expired to have
       // that flag force-cleared there
       return juniors.find(function(x){
         var licenseOk = !x.licenseExpiry || x.licenseExpiry >= todayISO;
-        if(phone && isBlacklisted(x.id, phone)) return false; // 黑名单里的这一对，即时派单直接跳过
+        if(phone && isBlacklisted(x.id, phone)) return false; // 黑名单里 这一 for ， i.e. 时派单直接跳过
         return (x.adminType||'practitioner')==='practitioner' && x.regions.indexOf(area)!==-1 && x.acceptingOrders===true && licenseOk;
       }) || null;
     } catch(e){ return null; }
@@ -487,7 +487,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         renderInstantFlow();
       });
     } else if(instantStep === 2){
-      // Contact Information先收集，再派单——不再Yes"看到匹配结果后才填资料"
+      // Contact Information先收集，再派单——不再Yes"看 to 匹配 result 后才填 profile "
       html += '<div class="hc-stage-title">Your Contact Information</div>'
         + '<div class="hc-stage-hint">Only after filling in will we send the request to physicians near '+instantForm.area+'".</div>'
         + '<div class="hc-field"><label>Name</label><input type="text" id="instantNameInput" placeholder="How should we address you" value="'+instantForm.name+'"></div>'
@@ -519,7 +519,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         });
       });
     } else if(instantStep === 3){
-      html += '<div class="hc-matching"><div class="hc-matching-spin"></div><div style="font-size:14.5px;">正在为您匹配「'+instantForm.area+'" nearby licensed TCM Physicians…</div></div>';
+      html += '<div class="hc-matching"><div class="hc-matching-spin"></div><div style="font-size:14.5px;"> currently  for 您匹配「'+instantForm.area+'" nearby licensed TCM Physicians…</div></div>';
       document.getElementById('stageArea').innerHTML = html;
     } else if(instantStep === 4){
       renderInstantWaitingOrResult();
@@ -554,8 +554,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       stageArea.innerHTML = backHtml
         + '<div class="hc-matching"><div class="hc-matching-spin"></div>'
         + '<div style="font-size:14.5px;">We have matched you with a nearby licensed TCM Physician, waiting for the physician to confirm the booking…</div>'
-        + '<div style="font-size:12.5px; color:var(--espresso-soft); margin-top:10px;">Physician一般会在15分钟内回应，请留意Mobile来电。</div></div>'
-        + '<div class="hc-proto-note">This page automatically checks every few seconds whether the physician has responded; if you close the page midway, there is currently no real push notification to alert you.醒您，PhysicianConfirm后会直接打您留的Phone Contact。</div>';
+        + '<div style="font-size:12.5px; color:var(--espresso-soft); margin-top:10px;">Physician一般会 at 15分钟内回应，Please 留意Mobile来电。</div></div>'
+        + '<div class="hc-proto-note">This page automatically checks every few seconds whether the physician has responded; if you close the page midway, there is currently no real push notification to alert you.醒您，PhysicianConfirm后会直接打您留 Phone Contact。</div>';
       instantPollTimer = setInterval(async function(){
         var latest = await getInstantRequestById(instantReqId);
         if(latest && latest.status !== 'pending_confirmation'){
@@ -570,15 +570,15 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       stageArea.innerHTML = backHtml
         + '<div class="hc-match-result"><div class="icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>'
         + '<h3>已Confirm！'+matchedName+' 将As soon as possible</h3>'
-        + '<p>'+matchedName+' 已接单，将尽快通过 +60'+req.customer_contact+' 联系您ConfirmHome Visit Time。</p></div>'
+        + '<p>'+matchedName+' 已接单，将尽快 via  +60'+req.customer_contact+'  contact 您ConfirmHome Visit Time。</p></div>'
         + '<button class="hc-next-btn" id="instantDoneBtn">Complete</button>';
       document.getElementById('instantDoneBtn').addEventListener('click', exitInstant);
     } else if(req.status === 'declined' || req.status === 'expired'){
       if(instantPollTimer){ clearInterval(instantPollTimer); instantPollTimer = null; }
       stageArea.innerHTML = backHtml
         + '<div class="hc-match-result"><div class="icon" style="background:rgba(212,175,55,0.12);"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>'
-        + '<h3>我们会尽快联系您</h3>'
-        + '<p>很抱歉，「'+req.area+'」附近的Physician暂时无法接单，您的请求已转给客服团队跟进，会尽快通过Phone与您联系安排。您也可以改为Booking一个安排好的Home Visit Time，我们会提前为您Confirm好Physician。</p></div>'
+        + '<h3>我们会尽快 contact 您</h3>'
+        + '<p>很抱歉，「'+req.area+'」 nearby  Physician暂时无法接单，您  request 已转 give 客服团队跟进，会尽快 via Phone and 您 contact 安排。您也 can 改 for Booking一个安排好 Home Visit Time，我们会 ahead  for 您Confirm好Physician。</p></div>'
         + '<button class="hc-next-btn" id="instantGoScheduleBtn2">Switch to Scheduled Booking</button>';
       document.getElementById('instantGoScheduleBtn2').addEventListener('click', exitInstant);
       if(instantPollTimer) clearInterval(instantPollTimer);
@@ -622,7 +622,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   var stage = 1;
   var form = { needs:'', supplement:'', doctor:'', date:null, slot:'', name:'', phone:'', area:'', addressDetail:'' };
 
-  // ---- admin-configured closed dates (set from OrderBooking管理 admin tool's "BookingSettings" tab) ----
+  // ---- admin-configured closed dates (set from OrderBooking manage  admin tool's "BookingSettings" tab) ----
   // Shared via localStorage under the same origin — see note in the admin tool: this only
   // takes effect for browsers/devices that share that localStorage (i.e. same browser the
   // admin used), it does not reach other customers' devices without a real backend.
@@ -691,14 +691,14 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   function renderStage1(){
     var html = '<div class="hc-stage-title">What help are you seeking?</div>';
     if(hasJourney && hasTags){
-      html += '<div class="hc-stage-hint">我们看到您在浏览时Follow的内容，一并带来了：</div>'
+      html += '<div class="hc-stage-hint">我们看 to 您 at  browse 时Follow  content ，一并带来 ：</div>'
         + '<div class="hc-context-card">'
         + '<div class="hc-context-row"><span class="cl">Journeys</span><span>'+ctxJourney+'</span></div>'
         + '<div class="hc-context-row"><span class="cl">症状</span><span>'+ctxTags.map(function(t){ return '<span class="hc-tag-chip">'+t+'</span>'; }).join('')+'</span></div>'
         + '</div>'
-        + '<div class="hc-field"><label>还有其他需要补充的吗？（选填）</label><textarea id="needsInput" placeholder="e.g., symptom duration, past wellness experience, etc.">'+form.supplement+'</textarea></div>';
+        + '<div class="hc-field"><label>还 has 其他 need 补充 吗？（选填）</label><textarea id="needsInput" placeholder="e.g., symptom duration, past wellness experience, etc.">'+form.supplement+'</textarea></div>';
     } else if(hasJourney){
-      html += '<div class="hc-stage-hint">我们看到您在浏览「'+ctxJourney+'」，方便的话请再具体说说想wellness care的方向：</div>'
+      html += '<div class="hc-stage-hint">我们看 to 您 at  browse 「'+ctxJourney+'」，方便 话Please 再具体说说想wellness care  direction ：</div>'
         + '<div class="hc-context-card"><div class="hc-context-row"><span class="cl">Journeys</span><span>'+ctxJourney+'</span></div></div>'
         + '<div class="hc-field"><label>Your Situation</label><textarea id="needsInput" placeholder="e.g., easily fatigued, light sleep, want to improve constitution…">'+form.needs+'</textarea></div>';
     } else {
@@ -713,10 +713,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         }).join('')
       + '</select>'
       + '<div class="hc-stage-hint" style="margin:8px 0 0;">After selecting the area, Next will show you the Physicians available for booking in this area.</div></div>';
-    // [stated] Name+Phone Number原本在最后一步（Submit前）才收集，导致Customer选好Physician、填完Date时段后，
-    // Submit时才可能发现这位Physician因为黑名单原因不能Booking，走了大半流程才被拒绝。挪到这里、放在选
-    // Physician之前，这样选Physician那一步就能提前把冲突的Physician从List里排除掉，Customer根本不会走到"选了又
-    // 被拒"这一步。
+    // [stated] Name+Phone Number原本 at  finally 一步（Submit前）才收集，导致Customer选好Physician、填完Date timeslot 后，
+    // Submit时才 possible 发现这位Physician because 黑名单 cause 不能Booking，走 大半 process 才  reject 。挪 to  here 、放 at 选
+    // Physician之前，这样选Physician那一步就能 ahead  冲突 Physician from List里排除掉，Customer根本不会走 to "选 又
+    //  拒"这一步。
     html += '<div class="hc-field"><label>Name</label><input type="text" id="nameInput" placeholder="How should we address you" value="'+form.name+'"></div>'
       + '<div class="hc-field"><label>Phone Number</label>'
       + '<div class="hc-phone-row"><span class="hc-phone-prefix">+60</span><input type="text" id="phoneInput" inputmode="numeric" placeholder="0123456789" value="'+form.phone+'"></div>'
@@ -752,10 +752,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     });
   }
 
-  // ---- Physician卡片按地区动态Show：大管理员 (固定的2位，来自 DOCTORS 数组，保留原本的AvatarVideo)
-  // 若在后台Settings了"出诊地区"，则按地区过滤；没Settings过的话默认哪个区域都Show（避免后台还没配置
-  // 资料时Booking页面突然一个Physician都不Show）。I类小管理员按各自分配到的地区加入进来，用后台Upload的
-  // 静态AvatarImage（没有Video）。数据都来自 OrderBooking管理 后台写入的 localStorage。----
+  // ---- Physician卡片按 region 动态Show：大 manage 员 (固定 2位，来自 DOCTORS 数组， retain 原本 AvatarVideo)
+  // 若 at 后台Settings "出诊 region "，则按 region  filter ；没Settings过 话默认哪个 area 都Show（避免后台还没 configure 
+  //  profile 时Booking page  suddenly 一个Physician都不Show）。I类小 manage 员按各自分配 to   region 加入进来，用后台Upload 
+  // 静态AvatarImage（没 has Video）。 data 都来自 OrderBooking manage  后台写入  localStorage。----
   function getPractitionerProfilesLocal(){
     try { var raw = localStorage.getItem('vinath_practitioner_profiles'); return raw ? JSON.parse(raw) : {}; } catch(e){ return {}; }
   }
@@ -814,7 +814,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       if((j.regions||[]).indexOf(area)===-1) return;
       if(phone && isBlacklisted(j.id, phone)) return;
       var todayISO = new Date().toISOString().slice(0,10);
-      if(j.licenseExpiry && j.licenseExpiry < todayISO) return; // 执照Expired，不再作为可BookingPhysician展示
+      if(j.licenseExpiry && j.licenseExpiry < todayISO) return; // 执照Expired，不再作 for 可BookingPhysician display 
       var prof = profiles[j.id] || {};
       results.push({ id:j.id, name:j.name, video:null,
         specialtyText: prof.specialty || '执业中Physician', avatar: prof.avatar || '' });
@@ -824,18 +824,18 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   function renderStage2(){
     if(!__apiPractitioners){
-      var html = '<div class="hc-stage-title">选择您想Booking的Physician</div>'
-        + '<div class="hc-matching"><div class="hc-matching-spin"></div><div style="font-size:14.5px;">正在加载PhysicianInformation…</div></div>';
+      var html = '<div class="hc-stage-title">选择您想Booking Physician</div>'
+        + '<div class="hc-matching"><div class="hc-matching-spin"></div><div style="font-size:14.5px;"> currently  load PhysicianInformation…</div></div>';
       document.getElementById('stageArea').innerHTML = html;
       fetchPractitionersFromApi().then(function(){ renderStage2(); });
       return;
     }
     var practitioners = getPractitionersForArea(form.area, form.phone);
-    var html = '<div class="hc-stage-title">选择您想Booking的Physician</div>'
-      + '<div class="hc-stage-hint">以下Yes「'+form.area+'」可Booking的执业中Physician。</div>';
+    var html = '<div class="hc-stage-title">选择您想Booking Physician</div>'
+      + '<div class="hc-stage-hint">以下Yes「'+form.area+'」可Booking 执业中Physician。</div>';
     if(!practitioners.length){
       html += '<div class="hc-match-result"><div class="icon unmatched"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16" x2="12" y2="16.01"/></svg></div>'
-        + '<h3>该区域暂无可BookingPhysician</h3><p>「'+form.area+'」目前暂时没有安排Physician上门，您可以Back改选其他区域，或通过「Instant Booking」Contact Us看YesNo能临时安排。</p></div>';
+        + '<h3>This  area 暂无可BookingPhysician</h3><p>「'+form.area+'」目前暂时没 has 安排Physician上门，您 can Back改选其他 area ， or  via 「Instant Booking」Contact Us看YesNo能临时安排。</p></div>';
       html += '<div class="hc-back-link" id="backLink">← BackPrevious</div>';
       document.getElementById('stageArea').innerHTML = html;
       document.getElementById('backLink').addEventListener('click', function(){ stage = 1; render(); });
@@ -921,8 +921,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   function renderStage3(){
     var dates = getBookableDates(21);
-    var html = '<div class="hc-stage-title">选择Date与Time</div>'
-      + '<div class="hc-stage-hint">Sunday为Closed日，当日Afternoon已过则无法Booking当日剩余时段；公共假期等临时休诊Date不会出现在下方OptionalDate中，部分时段停诊则会以划线样式Show在对应时段上。</div>'
+    var html = '<div class="hc-stage-title">选择Date and Time</div>'
+      + '<div class="hc-stage-hint">Sunday for Closed日，当日Afternoon已过则无法Booking当日剩余 timeslot ； public 假期 etc.临时休诊Date不会出现 at  lower OptionalDate中， part  timeslot 停诊则会以划线StyleShow at  for 应 timeslot 上。</div>'
       + '<div class="hc-date-strip" id="dateStrip">';
     dates.forEach(function(d, i){
       var selected = form.date && d.toDateString() === form.date.toDateString();
@@ -939,7 +939,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
     function renderSlots(){
       if(!form.date){ document.getElementById('slotArea').innerHTML = ''; return; }
-      var sh = '<div class="hc-field"><label>可Booking时段</label><div class="hc-slot-grid">';
+      var sh = '<div class="hc-field"><label>可Booking timeslot </label><div class="hc-slot-grid">';
       SLOTS.forEach(function(slot){
         var avail = isSlotAvailable(form.date, slot);
         var on = form.slot === slot.id;
@@ -974,9 +974,9 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   function renderStage4(){
     var html = '<div class="hc-stage-title">详细Address</div>'
-      + '<div class="hc-stage-hint">方便Physician上门时核对Address。</div>'
+      + '<div class="hc-stage-hint">方便Physician上门时核 for Address。</div>'
       + '<div class="hc-field"><label>Contact Information</label><div class="hc-context-card"><div class="hc-context-row"><span class="cl">Name</span><span>'+form.name+'</span></div><div class="hc-context-row"><span class="cl">Phone Number</span><span>+60'+form.phone+'</span></div></div></div>'
-      + '<div class="hc-field"><label>Service区域</label><div class="hc-context-card"><div class="hc-context-row"><span class="cl">区域</span><span>'+form.area+'</span></div></div></div>'
+      + '<div class="hc-field"><label>Service area </label><div class="hc-context-card"><div class="hc-context-row"><span class="cl"> area </span><span>'+form.area+'</span></div></div></div>'
       + '<div class="hc-field"><label>详细Address</label><textarea id="addrInput" placeholder="House number, street, postcode, etc. detailed Address">'+form.addressDetail+'</textarea></div>'
       + '<button class="hc-next-btn" id="submitBtn" disabled>Submit Booking</button>'
       + '<div class="hc-back-link" id="backLink">← BackPrevious</div>';
@@ -994,11 +994,11 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     submitBtn.addEventListener('click', function(){
       form.addressDetail = addrInput.value.trim();
       if(form.doctor && isBlacklisted(form.doctor, form.phone)){
-        // 正常情况下选Physician那一步（stage2）已经会把黑名单里的Physician排除掉，走不到这里；这个只Yes
-        // 防一种边缘情况——Customer在选Physician和Submit Booking之间的这段Time里，管理员刚好把这一对加入了
+        // 正常 situation 下选Physician那一步（stage2） already 会 黑名单里 Physician排除掉，走不 to  here ；这个只Yes
+        // 防一种边缘 situation ——Customer at 选Physician and Submit Booking之间 这段Time里， manage 员刚好 这一 for 加入 
         // 黑名单，兜底再查一次
         form.doctor = '';
-        alert('抱歉，您选择的Physician暂时无法为您提供Service，请Re-select一位Physician。');
+        alert('抱歉，您选择 Physician暂时无法 for 您 provide Service，Please Re-select一位Physician。');
         stage = 2;
         render();
         return;
@@ -1017,8 +1017,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   function closeContactModal(){
     document.getElementById('contactModal').classList.remove('show');
   }
-  // [stated] PDPA相关——Submit Booking前，Customer需要明确勾选同意收集Name/Phone Number的用途说明，
-  // 这个同意Status和Time戳会记录进Booking本身，不Yes一个点了就忘、什么都没留下的形式化弹窗
+  // [stated] PDPA related ——Submit Booking前，Customer need 明确勾选 agree 收集Name/Phone Number 用途 explain ，
+  // 这个 agree Status and Time戳会 record 进Booking本身，不Yes一个点 就忘、什么都没留下 形式化弹窗
   var consentPendingAction = null;
   function openConsentModal(onAgree){
     consentPendingAction = onAgree;
@@ -1063,9 +1063,9 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       var d = form.date;
       var apptISO = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 
-      // [stated bug fix] 这里原来只Yes在页面上Show"Booking Successful"、把Booking写进localStorage——现在改成
-      // 真正Submit给后端，后端Confirm收到、真正存进数据库了，才告诉Customer"Booking Successful"，不YesSubmit表单
-      // 就直接算Success，这样才Yes真的"接单"，而不Yes好看的假象。
+      // [stated bug fix]  here 原来只Yes at  page 上Show"Booking Successful"、 Booking写进localStorage——现 at 改成
+      // 真正Submit give 后端，后端Confirm收 to 、真正存进 data 库 ，才告诉Customer"Booking Successful"，不YesSubmit表单
+      // 就直接算Success，这样才Yes真 "接单"，而不Yes好看 假象。
       try {
         var res = await fetch(API_BASE + '/bookings', {
           method: 'POST',
@@ -1088,7 +1088,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         icon.className = 'hc-modal-icon success';
         icon.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
         title.textContent = 'Booking Successful';
-        text.textContent = '我们已收到您的Booking，会通过'+(method==='call'?'Phone':'WhatsApp')+'与您ConfirmDetails。';
+        text.textContent = '我们已收 to 您 Booking，会 via '+(method==='call'?'Phone':'WhatsApp')+' and 您ConfirmDetails。';
         summary.innerHTML = '<div><b>Booking Number：</b>'+bookingNo+'</div>'
           + '<div><b>Physician：</b>'+docName+'</div>'
           + '<div><b>Time：</b>'+apptDateStr+' '+slotLabel+'</div>'
@@ -1105,7 +1105,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       icon.className = 'hc-modal-icon fail';
       icon.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
       title.textContent = 'Booking未Success';
-      text.textContent = '该时段可能刚被Booking，请重新Select Time，或Contact Us协助安排。';
+      text.textContent = 'This  timeslot  possible 刚 Booking，Please 重新Select Time， or Contact Us协助安排。';
       summary.innerHTML = '';
       completedBooking = null;
       trackBtn.style.display = 'none';
@@ -1187,7 +1187,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   document.getElementById('brandBtn').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
   document.getElementById('bcHome').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
-  document.getElementById('searchBtn').addEventListener('click', function(){ showToast('Search · 功能Open发中'); });
+  document.getElementById('searchBtn').addEventListener('click', function(){ showToast('Search · Feature Coming Soon'); });
   var vhAcctMenu = document.getElementById('vhAcctMenu');
   document.getElementById('acctBtn').addEventListener('click', function(e){
     e.stopPropagation();
@@ -1251,8 +1251,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 <script>
 (function(){
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  // ChatMessageYes任何匿名访客都能Submit的内容，管理员Open对话时会看到——不转义就直接拼进innerHTML
-  // 的话，访客可以在Message里塞HTML/脚本，在管理员已Login的浏览器里执Row（存储型XSS）。
+  // ChatMessageYes any 匿名访客都能Submit  content ， manage 员Open for 话时会看 to ——不转义就直接拼进innerHTML
+  //  话，访客 can  at Message里塞HTML/脚本， at  manage 员已Login  browse 里执Row（ storage 型XSS）。
   function escapeHtml(s){
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
@@ -1270,7 +1270,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       return id;
     } catch(e){ return 'cust_temp'; }
   }
-  // Customer端第一次OpenChat面板时调用——后端会自动处理"这个人Yes不Yes第一次来"、要不要插入欢迎语，
+  // Customer端第一次OpenChat面板时调用——后端会自动 process "这 personal Yes不Yes第一次来"、要不要插入欢迎语，
   // 前端不用再自己判断这些
   async function ensureMyThread(){
     try {
@@ -1354,7 +1354,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   // poll for admin replies / handoff changes while the widget is on screen
   pollTimer = setInterval(async function(){
-    if(!currentThread) return; // 还没Open过Chat面板，没必要轮询
+    if(!currentThread) return; // 还没Open过Chat面板，没 necessary 轮询
     await refreshMyThread();
     renderMessages();
   }, 4000);

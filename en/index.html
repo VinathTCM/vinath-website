@@ -389,21 +389,21 @@
 
 <!-- SEO Meta -->
 <meta name="description" content="VINATH TCM - Professional Traditional Chinese Medicine clinic in Johor, Malaysia. Home consultation, acupuncture, herbal medicine, women's health, beauty & skincare services. Licensed TCM physicians at your doorstep.">
-<meta name="keywords" content="TCM,Acupuncture,Tui Na,Herbal Medicine,居家Consultation,Women's Health,Malaysia,Johor,Johor Bahru,VINATH TCM,Traditional Chinese Medicine,acupuncture,herbal medicine">
+<meta name="keywords" content="TCM,Acupuncture,Tui Na,Herbal Medicine,Home Consultation,Women's Health,Malaysia,Johor,Johor Bahru,VINATH TCM,Traditional Chinese Medicine,acupuncture,herbal medicine">
 <meta name="author" content="VINATH TCM HEALTH CARE">
 <meta name="robots" content="index, follow">
 
-<!-- Open Graph (社交媒体Share) -->
+<!-- Open Graph (Social MediaShare) -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="VINATH TCM - Modern TCM · 居家Consultation">
-<meta property="og:description" content="Professional TCM clinic in Johor, Malaysia, offering home consultation, acupuncture, Tui Na, herbal medicine and women's wellness. Registered physicians. VisitService。">
+<meta property="og:title" content="VINATH TCM - Modern TCM · Home Consultation">
+<meta property="og:description" content="Professional TCM clinic in Johor, Malaysia, offering home consultation, acupuncture, Tui Na, herbal medicine and women's wellness. Registered physicians. Visit Service.">
 <meta property="og:url" content="https://www.vinathtcm.com/">
 <meta property="og:image" content="https://www.vinathtcm.com/favicon.webp">
 <meta property="og:site_name" content="VINATH TCM">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="VINATH TCM - Modern TCM · 居家Consultation">
+<meta name="twitter:title" content="VINATH TCM - Modern TCM · Home Consultation">
 <meta name="twitter:description" content="Professional TCM clinic in Johor, Malaysia, offering home consultation, acupuncture, Tui Na and herbal medicine services.">
 <meta name="twitter:image" content="https://www.vinathtcm.com/favicon.webp">
 
@@ -413,7 +413,7 @@
 <meta property="og:locale:alternate" content="ms_MY">
 
 
-  <!-- Hero CTA 加大样式 -->
+  <!-- Hero CTA 加大Style -->
   <style>
     .hero .cta-row {
       gap: 16px !important;
@@ -471,7 +471,7 @@
 
 
 <style>
-  /* 英文版Title使用 Poppins Black */
+  /* 英文版Title use  Poppins Black */
   h1, h2, h3, h4, h5, h6,
   .hero-title, .section-title, .page-title,
   .eyebrow, .cta-title,
@@ -480,23 +480,23 @@
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
   }
   
-  /* 大Title使用 Black 900 */
+  /* 大Title use  Black 900 */
   h1, .hero-title, .section-title, .page-title {
     font-weight: 900 !important;
     letter-spacing: -0.02em;
   }
   
-  /* 二级Title使用 ExtraBold 800 */
+  /* 二级Title use  ExtraBold 800 */
   h2, .process-step-title, .journey-card-title, .footer-title {
     font-weight: 800 !important;
   }
   
-  /* 三级Title使用 Bold 700 */
+  /* 三级Title use  Bold 700 */
   h3, h4 {
     font-weight: 700 !important;
   }
   
-  /* 小Tag使用 SemiBold 600 */
+  /* 小Tag use  SemiBold 600 */
   .eyebrow, .cta-title {
     font-weight: 600 !important;
     letter-spacing: 0.05em;
@@ -958,7 +958,7 @@
     <span>Copyright &copy; 2026 VINATH TCM HEALTH CARE. All rights reserved.</span>
     <span class="footer-my">Malaysia</span>
   </div>
-  <!-- Footer4Column样式 -->
+  <!-- Footer4ColumnStyle -->
   <style>
     .footer-grid {
       display: grid;
@@ -1094,10 +1094,10 @@
     'Pain Soothing': 'Free movement, comfortable every day.',
     'Quality Sleep': 'Sleep deeper, wake lighter.'
   };
-  // [stated bug fix] Home的导航下拉和这个Journeys卡片板块，之前完全Yes写死的HTML，跟内容管理后台
-  // 的Journeys数据毫无关系——关掉一个Journeys只会影响Details页轮播，这里完全不受影响；AddJourneys也不会自动
-  // 出现在这两处。现在改成跟细节页模板一样，从共享数据里读取、按active过滤，同时保留跟其他页面
-  // 一致的"版本化种子"逻辑（内容管理没被手动Edit过的Journeys，未来文案Update还Yes能正常Refresh过来）。
+  // [stated bug fix] Home  navigate 下拉 and 这个Journeys卡片板块，之前完全Yes写死 HTML，跟 content  manage 后台
+  //  Journeys data 毫无 relation ——关掉一个Journeys只会影响Details页轮播， here 完全不受影响；AddJourneys也不会自动
+  // 出现 at 这两处。现 at 改成跟细节页模板一样， from 共享 data 里读取、按active filter ， meanwhile  retain 跟其他 page 
+  // 一致 "版本化种子"逻辑（ content  manage 没 手动Edit过 Journeys，未来文案Update还Yes能正常Refresh过来）。
   (async function(){
     var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
     var journeysData;
@@ -1548,8 +1548,8 @@
 <script>
 (function(){
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  // ChatMessageYes任何匿名访客都能Submit的内容，管理员Open对话时会看到——不转义就直接拼进innerHTML
-  // 的话，访客可以在Message里塞HTML/脚本，在管理员已Login的浏览器里执Row（存储型XSS）。
+  // ChatMessageYes any 匿名访客都能Submit  content ， manage 员Open for 话时会看 to ——不转义就直接拼进innerHTML
+  //  话，访客 can  at Message里塞HTML/脚本， at  manage 员已Login  browse 里执Row（ storage 型XSS）。
   function escapeHtml(s){
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
@@ -1567,7 +1567,7 @@
       return id;
     } catch(e){ return 'cust_temp'; }
   }
-  // Customer端第一次OpenChat面板时调用——后端会自动处理"这个人Yes不Yes第一次来"、要不要插入欢迎语，
+  // Customer端第一次OpenChat面板时调用——后端会自动 process "这 personal Yes不Yes第一次来"、要不要插入欢迎语，
   // 前端不用再自己判断这些
   async function ensureMyThread(){
     try {
@@ -1651,7 +1651,7 @@
 
   // poll for admin replies / handoff changes while the widget is on screen
   pollTimer = setInterval(async function(){
-    if(!currentThread) return; // 还没Open过Chat面板，没必要轮询
+    if(!currentThread) return; // 还没Open过Chat面板，没 necessary 轮询
     await refreshMyThread();
     renderMessages();
   }, 4000);
