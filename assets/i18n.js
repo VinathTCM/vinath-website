@@ -1062,6 +1062,25 @@
     if (LANGS.indexOf(lang) === -1) return;
     currentLang = lang;
     localStorage.setItem(STORAGE_KEY, lang);
+    
+    // 方案C：子目录多语言 - 切换语言时跳转到对应版本
+    var currentPath = window.location.pathname;
+    var isEnPage = currentPath.indexOf('/en/') === 0;
+    
+    if (lang === 'en' && !isEnPage) {
+      // 中文页面 -> 跳转到英文版本
+      var enPath = '/en' + currentPath;
+      if (currentPath === '/' || currentPath === '') enPath = '/en/';
+      window.location.href = enPath;
+      return;
+    } else if (lang === 'zh' && isEnPage) {
+      // 英文页面 -> 跳回中文版本
+      var zhPath = currentPath.replace(/^\/en/, '');
+      if (zhPath === '' || zhPath === '/') zhPath = '/';
+      window.location.href = zhPath;
+      return;
+    }
+    
     applyTranslations();
     // 延迟再执行一次，确保动态内容也被翻译
     scheduleAutoTranslate();
