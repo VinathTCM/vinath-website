@@ -465,7 +465,6 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       + '<div class="card"><div class="section-title">患者列表</div>'
       + (list.length ? list.map(function(p){
           return '<div class="patient-row" data-phone="'+escapeHtml(p.phone)+'" data-name="'+escapeHtml(p.name)+'"><div><div class="pname">'+escapeHtml(p.name)+(p.gender?' <span style="color:var(--ink-soft);font-weight:400;font-size:12px;">'+escapeHtml(p.gender)+(p.age!=null&&p.age!==''?' · '+p.age+'岁':'')+'</span>':'')+'</div><div class="pmeta">+60'+escapeHtml(p.phone)+' · 共 '+p.count+' 次就诊记录 · 最近：'+p.lastVisit
-            + (isSenior ? ' · <a href="javascript:void(0)" class="del-patient-link" data-del-patient="'+escapeHtml(p.phone)+'" data-name="'+escapeHtml(p.name)+'" style="color:#c0392b;">删除患者全部病历</a>' : '')
             + '</div></div><span style="color:var(--ink-soft);">查看时间轴 →</span></div>';
         }).join('') : '<div class="empty-state">还没有任何病历记录，点右上角"新建病历"开始</div>')
       + '</div></div>';
