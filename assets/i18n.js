@@ -152,6 +152,24 @@
       'support.shipping': '配送与退换',
       'support.contact': '联系客服',
       'about.follow': '关注我们',
+      'nav.searchPlaceholder': '搜索商品，例如：茶、痛经',
+      'home.hero.eyebrow': '现代中医',
+      'home.hero.cta1': '开启你的旅程',
+      'home.hero.cta2': '探索产品',
+      'home.vitals.journeys': '健康旅程',
+      'home.vitals.licensed': '持证中医师',
+      'home.vitals.ancient': '古法配方',
+      'home.vitals.smallbatch': '小批量精制',
+      'home.journeys.eyebrow': '你的旅程',
+      'home.consult.eyebrow': '在线问诊 · 预约咨询',
+      'home.consult.sub': '无论线上咨询还是居家会诊，都从读懂你此刻的身体开始。',
+      'home.consult.tab': '相约',
+      'home.consult.personalDesc': '根据体质与需求，量身定制专属方案。',
+      'home.consult.homeDesc': '预约执业中医师，足不出户，收获健康。',
+      'home.consult.slogan': '健康，本该简单 · Easy Health',
+      'home.chat.title': '在线咨询',
+      'home.chat.sub': '正在与 龚诗宏医师 对话',
+      'home.chat.empty': '您好，有任何问题都可以在这里留言，我们会尽快回复您。',
     },
     en: {
       // Nav
@@ -295,6 +313,24 @@
       'support.shipping': 'Shipping & Returns',
       'support.contact': 'Contact Support',
       'about.follow': 'Follow Us',
+      'nav.searchPlaceholder': 'Search products, e.g.: tea, menstrual pain',
+      'home.hero.eyebrow': 'Modern TCM',
+      'home.hero.cta1': 'Start Your Journey',
+      'home.hero.cta2': 'Explore Products',
+      'home.vitals.journeys': 'Health Journeys',
+      'home.vitals.licensed': 'Licensed Physicians',
+      'home.vitals.ancient': 'Ancient Formulas',
+      'home.vitals.smallbatch': 'Small Batch Crafted',
+      'home.journeys.eyebrow': 'Your Journey',
+      'home.consult.eyebrow': 'Online Consult · Booking',
+      'home.consult.sub': 'Whether online consultation or home visit, it starts with understanding your body.',
+      'home.consult.tab': 'Consult',
+      'home.consult.personalDesc': 'Tailored exclusive plan based on your constitution and needs.',
+      'home.consult.homeDesc': 'Book a licensed TCM physician, stay home and gain health.',
+      'home.consult.slogan': 'Health, made simple · Easy Health',
+      'home.chat.title': 'Online Consultation',
+      'home.chat.sub': 'Chatting with Dr. Gong Shihong',
+      'home.chat.empty': 'Hello, feel free to leave a message here, we will reply soon.',
     },
     bm: {
       // Nav
@@ -438,6 +474,24 @@
       'support.shipping': 'Penghantaran & Pulangan',
       'support.contact': 'Hubungi Sokongan',
       'about.follow': 'Ikuti Kami',
+      'nav.searchPlaceholder': 'Cari produk, cth: teh, sakit haid',
+      'home.hero.eyebrow': 'TCM Moden',
+      'home.hero.cta1': 'Mula Perjalanan Anda',
+      'home.hero.cta2': 'Terokai Produk',
+      'home.vitals.journeys': 'Perjalanan Kesihatan',
+      'home.vitals.licensed': 'Doktor Berlesen',
+      'home.vitals.ancient': 'Formula Purba',
+      'home.vitals.smallbatch': 'Dihasilkan Kumpulan Kecil',
+      'home.journeys.eyebrow': 'Perjalanan Anda',
+      'home.consult.eyebrow': 'Perundingan Dalam Talian · Tempahan',
+      'home.consult.sub': 'Sama ada perundingan dalam talian atau lawatan rumah, ia bermula dengan memahami badan anda.',
+      'home.consult.tab': 'Perundingan',
+      'home.consult.personalDesc': 'Pelan eksklusif yang disesuaikan mengikut perlembagaan dan keperluan anda.',
+      'home.consult.homeDesc': 'Tempah doktor TCM berlesen, tinggal di rumah dan perolehi kesihatan.',
+      'home.consult.slogan': 'Kesihatan, dipermudahkan · Easy Health',
+      'home.chat.title': 'Perundingan Dalam Talian',
+      'home.chat.sub': 'Berbual dengan Dr. Gong Shihong',
+      'home.chat.empty': 'Halo, sila tinggalkan mesej di sini, kami akan membalas tidak lama lagi.',
     }
   };
 
@@ -462,6 +516,11 @@
       } else {
         el.textContent = translation;
       }
+    });
+    // data-i18n-placeholder: 专门用于 input/textarea 的 placeholder
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n-placeholder');
+      el.placeholder = t(key);
     });
     // 更新 html lang 属性
     document.documentElement.setAttribute('lang', currentLang);
