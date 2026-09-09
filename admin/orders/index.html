@@ -665,7 +665,7 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
   <div id="tab-records" style="display:none;">
     <div class="toolbar">
       <div class="hint">共 <b id="recordCount">0</b> 位客户档案（按联系方式归并同一位客户的历次预约）</div>
-      <div class="search-box"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.3" cy="10.3" r="6.3"/><line x1="19.5" y1="19.5" x2="15" y2="15"/></svg><input type="text" id="recordSearch" placeholder="搜索姓名或联系方式"></div>
+      <div class="search-box"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.3" cy="10.3" r="6.3"/><line x1="19.5" y1="19.5" x2="15" y2="15"/></svg><input type="text" id="recordSearch" placeholder="查找病人（姓名 / 手机号）"></div>
     </div>
     <div class="card"><div class="tbl-scroll">
       <table>
@@ -1034,6 +1034,7 @@ window.escapeHtml = function(s){
   var orderFilter = null, bookingFilter = null;
   var orderSearchQ = '', bookingSearchQ = '';
   var cachedCouponOwners = [];
+  var MR_PATIENTS = {}; // key=phone(不带0), value=name — 以病历里的姓名为权威来源
 
   // 历史数据里 treatments 可能存成 JSON 字符串或对象，统一规范成数组，避免 .map/.reduce 崩溃
   function normArrField(v){
@@ -1047,12 +1048,21 @@ window.escapeHtml = function(s){
   async function loadOrdersAndBookingsFromBackend(silent){
     if(!authToken) return;
     try {
-      var [ordersRes, bookingsRes, couponRes] = await Promise.all([
+      var [ordersRes, bookingsRes, couponRes, mrPatientsRes] = await Promise.all([
         fetch(API_BASE + '/admin/orders', { headers: { 'Authorization': 'Bearer ' + authToken } }),
         fetch(API_BASE + '/admin/bookings', { headers: { 'Authorization': 'Bearer ' + authToken } }),
-        fetch(API_BASE + '/auth/coupon-codes')
+        fetch(API_BASE + '/auth/coupon-codes'),
+        fetch(API_BASE + '/admin/medical-records/patients', { headers: { 'Authorization': 'Bearer ' + authToken } }).catch(function(){return null;})
       ]);
       if(couponRes.ok) cachedCouponOwners = await couponRes.json();
+      // 拉取病历患者列表，用于统一姓名（以病历里的姓名为准）
+      if(mrPatientsRes && mrPatientsRes.ok){
+        try{
+          var mrList = await mrPatientsRes.json();
+          MR_PATIENTS = {};
+          mrList.forEach(function(p){ if(p.phone) MR_PATIENTS[p.phone] = p.name; });
+        }catch(e){}
+      }
       if(ordersRes.ok){
         var orders = await ordersRes.json();
         ORDERS.length = 0;
@@ -4408,6 +4418,8 @@ window.escapeHtml = function(s){
     });
     return Object.keys(byContact).map(function(key){
       var p = byContact[key];
+      // 姓名以病历（medical_records）里的为权威来源；没有病历的才用预约里的姓名
+      if(MR_PATIENTS[key]) p.name = MR_PATIENTS[key];
       p.visits.sort(function(a,c){ return a.apptDateISO < c.apptDateISO ? 1 : -1; });
       return p;
     });
@@ -4476,6 +4488,12 @@ window.escapeHtml = function(s){
   document.querySelectorAll('#tab-records th.sortable-th').forEach(function(th){
     th.addEventListener('click', function(){ onRecordSortClick(this.getAttribute('data-sort')); });
   });
+  function highlightMatch(text, q){
+    if(!q) return escapeHtml(text);
+    var idx = text.toLowerCase().indexOf(q);
+    if(idx === -1) return escapeHtml(text);
+    return escapeHtml(text.slice(0,idx)) + '<mark style="background:#fff3cd;padding:0 2px;border-radius:2px;">' + escapeHtml(text.slice(idx, idx+q.length)) + '</mark>' + escapeHtml(text.slice(idx+q.length));
+  }
   function renderRecords(){
     var all = getPatients();
     var patients = sortPatients(all.filter(function(p){
@@ -4484,12 +4502,12 @@ window.escapeHtml = function(s){
     }));
     var tbody = document.getElementById('recordTbody');
     if(!patients.length){
-      tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state">没有符合条件的客户档案</div></td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5"><div class="empty-state">'+(recordSearchQ ? '未找到匹配「'+escapeHtml(recordSearchQ)+'」的病人，试试其他姓名或手机号' : '没有符合条件的客户档案')+'</div></td></tr>';
     } else {
       tbody.innerHTML = patients.map(function(p){
         return '<tr>'
-          + '<td class="pname">'+escapeHtml(p.name)+'</td>'
-          + '<td>'+escapeHtml(p.contact)+'</td>'
+          + '<td class="pname">'+highlightMatch(p.name, recordSearchQ)+'</td>'
+          + '<td>'+highlightMatch('+60'+p.contact, recordSearchQ)+'</td>'
           + '<td>'+p.visits.length+'</td>'
           + '<td>'+p.latestApptLabel+'</td>'
           + '<td><button class="row-edit" data-contact="'+escapeHtml(p.contact)+'">查看</button></td>'
