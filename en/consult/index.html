@@ -691,14 +691,14 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   function renderStage1(){
     var html = '<div class="hc-stage-title">What help are you seeking?</div>';
     if(hasJourney && hasTags){
-      html += '<div class="hc-stage-hint">我们看到您在浏览时关注的内容，一并带来了：</div>'
+      html += '<div class="hc-stage-hint">我们看到您在Browse时关注的内容，一并带来了：</div>'
         + '<div class="hc-context-card">'
         + '<div class="hc-context-row"><span class="cl">Journeys</span><span>'+ctxJourney+'</span></div>'
         + '<div class="hc-context-row"><span class="cl">症状</span><span>'+ctxTags.map(function(t){ return '<span class="hc-tag-chip">'+t+'</span>'; }).join('')+'</span></div>'
         + '</div>'
         + '<div class="hc-field"><label>还有其他需要补充的吗？（选填）</label><textarea id="needsInput" placeholder="e.g., symptom duration, past wellness experience, etc.">'+form.supplement+'</textarea></div>';
     } else if(hasJourney){
-      html += '<div class="hc-stage-hint">我们看到您在浏览「'+ctxJourney+'」，方便的话请再具体说说想调理的方向：</div>'
+      html += '<div class="hc-stage-hint">我们看到您在Browse「'+ctxJourney+'」，方便的话请再具体说说想调理的方向：</div>'
         + '<div class="hc-context-card"><div class="hc-context-row"><span class="cl">Journeys</span><span>'+ctxJourney+'</span></div></div>'
         + '<div class="hc-field"><label>Your Situation</label><textarea id="needsInput" placeholder="e.g., easily fatigued, light sleep, want to improve constitution…">'+form.needs+'</textarea></div>';
     } else {
@@ -1252,7 +1252,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 (function(){
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
   // 聊天消息Yes任何匿名访客都能Submit的内容，管理员Open对话时会看到——不转义就直接拼进innerHTML
-  // 的话，访客可以在消息里塞HTML/脚本，在管理员已Login的浏览器里执行（存储型XSS）。
+  // 的话，访客可以在消息里塞HTML/脚本，在管理员已Login的Browse器里执行（存储型XSS）。
   function escapeHtml(s){
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];

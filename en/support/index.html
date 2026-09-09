@@ -426,7 +426,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 (function(){
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
   // 聊天消息Yes任何匿名访客都能Submit的内容，管理员Open对话时会看到——不转义就直接拼进innerHTML
-  // 的话，访客可以在消息里塞HTML/脚本，在管理员已Login的浏览器里执行（存储型XSS）。
+  // 的话，访客可以在消息里塞HTML/脚本，在管理员已Login的Browse器里执行（存储型XSS）。
   function escapeHtml(s){
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
