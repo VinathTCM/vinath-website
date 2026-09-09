@@ -287,6 +287,10 @@
       'footer.track_booking': '预约追踪',
       'footer.contact': '联系我们',
       'footer.follow': '关注我们',
+
+      // 首页相约卡片
+      'home.consult.collapse': '收起',
+      'home.consult.expand': '相约',
 },
     en: {
       // Nav
@@ -565,6 +569,10 @@
       'footer.track_booking': 'Track Booking',
       'footer.contact': 'Contact Us',
       'footer.follow': 'Follow Us',
+
+      // 首页相约卡片
+      'home.consult.collapse': 'Collapse',
+      'home.consult.expand': 'Book Now',
 },
     bm: {
       // Nav

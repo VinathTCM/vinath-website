@@ -1240,7 +1240,7 @@
   trigger.addEventListener('click', function(){
     var isOpen = options.classList.toggle('open');
     trigger.classList.toggle('active', isOpen);
-    trigger.querySelector('span').textContent = isOpen ? '收起' : '相约';
+    trigger.querySelector('span').textContent = isOpen ? (typeof t === 'function' ? t('home.consult.collapse') : '收起') : (typeof t === 'function' ? t('home.consult.expand') : '相约');
   });
 
   var pulseVisual = document.querySelector('.pulse-visual');
@@ -1618,7 +1618,7 @@
 })();
 </script>
 
-  <script src="/assets/i18n.js?v=20260909d"></script>
+  <script src="/assets/i18n.js?v=20260909e"></script>
 
 <!-- WhatsApp 悬浮按钮 -->
 <style>
