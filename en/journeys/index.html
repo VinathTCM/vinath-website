@@ -175,8 +175,8 @@ body{
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 19.5c1.2-3.8 3.9-5.7 7-5.7s5.8 1.9 7 5.7"/></svg>
         </div>
         <div class="vh-acct-menu" id="vhAcctMenu">
-          <div class="vham-item" id="vhamOrder">查询订单</div>
-          <div class="vham-item" id="vhamBooking">查询预约</div>
+          <div class="vham-item" id="vhamOrder">Track Order</div>
+          <div class="vham-item" id="vhamBooking">Track Booking</div>
         </div>
       </span>
       <div class="vh-ibtn" id="cartBtn" aria-label="购物包">
@@ -186,7 +186,7 @@ body{
     </div>
   </div>
 
-  <div class="breadcrumb"><span class="bc-link" id="bcHome">首页</span><span class="sep">›</span><span class="bc-current">健康旅程</span></div>
+  <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-current">健康旅程</span></div>
 
   <div class="hero-wrap">
   <div class="hero" id="viewport">
@@ -271,7 +271,7 @@ body{
 
   var JOURNEYS = [
     {
-      full:true, art:ART_BALANCE, title:'女性调理', en:'FEMININE BALANCE',
+      full:true, art:ART_BALANCE, title:'Women's Health', en:'FEMININE BALANCE',
       intro:'女性身体在不同阶段会遇到不同的课题——从月经、备孕到更年期。中医通过辨证施治、内外同调，陪伴你了解和照顾好每一个阶段。',
       conditions:[
         {icon:'droplet', name:'月经问题', scope:'痛经、月经不调、经量异常等周期困扰', tcm:'从气血、脏腑辨证入手，帮助周期回归规律'},
@@ -282,7 +282,7 @@ body{
       ]
     },
     {
-      full:true, art:ART_SCULPT, title:'中医塑体', en:'BODY SCULPTING',
+      full:true, art:ART_SCULPT, title:'Body Shaping', en:'BODY SCULPTING',
       intro:'体重和身形的变化，往往和体质、代谢息息相关。中医通过调理脾胃、生活习惯、饮食结构、运动作息、疏通经络，帮助身体找回轻盈的状态。',
       conditions:[
         {icon:'bowl', name:'饮食调理', scope:'想减脂却不知如何搭配饮食，日常怎么吃没有方向', tcm:'按体质定制饮食建议，从吃对开始帮助身体变轻盈'},
@@ -292,7 +292,7 @@ body{
       ]
     },
     {
-      full:true, art:ART_BEAUTY, title:'美容养颜', en:'BEAUTY & RADIANCE',
+      full:true, art:ART_BEAUTY, title:'Beauty & Skincare', en:'BEAUTY & RADIANCE',
       intro:'肌肤状态是身体由内而外的写照。中医讲究气血调和，从根源呵护，帮助肌肤维持自然的光彩。',
       conditions:[
         {icon:'sparkle', name:'面色暗沉', scope:'气血不足导致的肤色暗淡、缺乏光泽', tcm:'补气养血，由内而外提亮肤色'},
@@ -302,17 +302,17 @@ body{
       ]
     },
     {
-      full:true, art:ART_WELLNESS, title:'日常养生', en:'DAILY WELLNESS',
+      full:true, art:ART_WELLNESS, title:'Daily Wellness', en:'DAILY WELLNESS',
       intro:'养生不是等生病了才开始，而是融入日常的点滴习惯。中医陪伴你根据自己的体质，找到适合的调养方式。',
       conditions:[
         {icon:'battery', name:'亚健康', scope:'容易疲劳、精神不振等说不清的不适', tcm:'辨识体质，从根本调理身体状态'},
-        {icon:'climate', name:'气候调养', scope:'湿热气候、旱雨交替，身体容易感到闷重不适', tcm:'顺应当地气候变化，调整日常养生方式'},
+        {icon:'climate', name:'气候调养', scope:'湿热气候、旱雨交替，身体容易感到闷重不适', tcm:'顺应当地气候变化，调整Daily Wellness方式'},
         {icon:'stomach', name:'肠胃调理', scope:'食欲不振、消化不畅、便秘等日常肠胃困扰', tcm:'健脾和胃、润肠通便，帮助恢复正常运化'},
         {icon:'heart', name:'情绪舒缓', scope:'压力大、情绪紧绷时的身心调适', tcm:'疏肝理气，帮助放松身心'}
       ]
     },
     {
-      full:true, art:ART_PAIN, title:'舒缓疼痛', en:'PAIN SOOTHING',
+      full:true, art:ART_PAIN, title:'Pain Soothing', en:'PAIN SOOTHING',
       intro:'身体的酸痛紧绷，很多时候是气血不畅的信号。中医通过推拿、针灸等方式，帮助疏通经络、缓解不适。',
       conditions:[
         {icon:'muscle', name:'颈肩腰背', scope:'久坐、姿势不良带来的颈肩腰背紧绷', tcm:'推拿理筋，帮助疏通气血、放松肌肉'},
@@ -322,7 +322,7 @@ body{
       ]
     },
     {
-      full:true, art:ART_SLEEP, title:'优质睡眠', en:'QUALITY SLEEP',
+      full:true, art:ART_SLEEP, title:'Quality Sleep', en:'QUALITY SLEEP',
       intro:'睡不好，往往牵动着白天的精神和情绪。中医从调和脏腑、安神定志入手，陪伴你找回好眠。',
       conditions:[
         {icon:'moon', name:'入睡困难', scope:'躺下后难以入睡、思绪难停', tcm:'安神定志，帮助放松身心、更快入睡'},
@@ -334,12 +334,12 @@ body{
   ];
 
   // [stated bug fix] 内容管理 后台每个旅程卡片上的开关（active字段）之前完全没有地方读取它——
-  // 开关本身能点、能变灰，但轮播这边压根不知道这件事，所以关掉哪个旅程，首页/这个轮播页都还是
+  // 开关本身能点、能变灰，但轮播这边压根不知道这件事，所以关掉哪个旅程，Home/这个轮播页都还是
   // 照常显示。现在改成会去读那份数据，把标记为"关闭"的旅程从轮播里过滤掉。注意：这只影响"轮播
-  // 里出不出现"（也就是能不能通过首页逛过去被看到）——如果客户手上有旅程细节页的直接链接，还是
+  // 里出不出现"（也就是能不能通过Home逛过去被看到）——如果客户手上有旅程细节页的直接链接，还是
   // 能打开，因为这里没有改动细节页本身的逻辑，也没有做真正的访问权限控制（这个还是要接入真后端
   // 才能做到"直接链接也打不开"）。
-  var JOURNEY_KEY_BY_TITLE = {'女性调理':'women','中医塑体':'sculpt','美容养颜':'beauty','日常养生':'wellness','舒缓疼痛':'pain','优质睡眠':'sleep'};
+  var JOURNEY_KEY_BY_TITLE = {'Women's Health':'women','Body Shaping':'sculpt','Beauty & Skincare':'beauty','Daily Wellness':'wellness','Pain Soothing':'pain','Quality Sleep':'sleep'};
   (function(){
     try {
       var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
@@ -692,7 +692,7 @@ body{
 </div>
 <div class="vh-chat-panel" id="vhChatPanel">
   <div class="vh-chat-hd">
-    <div class="vh-chat-hd-title" id="vhChatTitle">在线咨询</div>
+    <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
     <div class="vh-chat-hd-sub" id="vhChatSub">正在与 龚诗宏医师 对话</div>
     <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
   </div>

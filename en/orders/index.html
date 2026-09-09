@@ -116,12 +116,12 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10.3" cy="10.3" r="6.3"/><line x1="19.5" y1="19.5" x2="15" y2="15"/></svg>
       </div>
       <span class="vh-acct-wrap">
-        <div class="vh-ibtn" id="acctBtn" aria-label="查询">
+        <div class="vh-ibtn" id="acctBtn" aria-label="Search">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 19.5c1.2-3.8 3.9-5.7 7-5.7s5.8 1.9 7 5.7"/></svg>
         </div>
         <div class="vh-acct-menu" id="vhAcctMenu">
-          <div class="vham-item" id="vhamOrder">查询订单</div>
-          <div class="vham-item" id="vhamBooking">查询预约</div>
+          <div class="vham-item" id="vhamOrder">Track Order</div>
+          <div class="vham-item" id="vhamBooking">Track Booking</div>
         </div>
       </span>
       <div class="vh-ibtn" id="cartBtn" aria-label="购物包">
@@ -131,10 +131,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     </div>
   </div>
 
-  <div class="breadcrumb"><span class="bc-link" id="bcHome">首页</span><span class="sep">›</span><span class="bc-current">订单查询</span></div>
+  <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-current">Order Tracking</span></div>
 
   <div class="content">
-    <h1 class="oq-title">订单查询</h1>
+    <h1 class="oq-title">Order Tracking</h1>
     <p class="oq-sub">不需要注册登录，输入订单号和下单时留的联系方式，就能查看订单状态。</p>
 
     <div class="oq-form">
@@ -147,7 +147,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         <input type="text" id="contactInput" placeholder="下单时留的邮箱或手机号">
       </div>
       <div class="oq-error" id="oqError">没有找到匹配的订单，请确认订单号和联系方式是否正确。</div>
-      <button class="oq-btn" id="lookupBtn">查询订单</button>
+      <button class="oq-btn" id="lookupBtn">Track Order</button>
       <div class="oq-hint-examples" id="demoHint"></div>
     </div>
 
@@ -172,12 +172,12 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
     fetch(API_BASE + '/analytics/pageview', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ page: '订单查询' })
+      body: JSON.stringify({ page: 'Order Tracking' })
     }).catch(function(){});
   })();
 
 (function(){
-  var STATUS_LABELS = ['订单已提交','备货中','已发货','已送达'];
+  var STATUS_LABELS = ['订单已提交','备货中','Shipped','已送达'];
 
   var PRODUCTS = [
     {id:1, name:'月舒贴', type:'plaster', journeys:['女性调理'], tags:['痛经'], price:9, trial:4, desc:'经期腰腹冷痛时敷一敷，温感慢慢散开。', active:true, inStock:true, featured:false, imgs:[]},
@@ -421,7 +421,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     vhAcctMenu.classList.toggle('open');
   });
   document.getElementById('vhamOrder').addEventListener('click', function(){
-    showToast('当前就在订单查询页');
+    showToast('当前就在Order Tracking页');
     vhAcctMenu.classList.remove('open');
   });
   document.getElementById('vhamBooking').addEventListener('click', function(){
@@ -461,7 +461,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 </div>
 <div class="vh-chat-panel" id="vhChatPanel">
   <div class="vh-chat-hd">
-    <div class="vh-chat-hd-title" id="vhChatTitle">在线咨询</div>
+    <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
     <div class="vh-chat-hd-sub" id="vhChatSub">正在与 龚诗宏医师 对话</div>
     <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
   </div>

@@ -230,8 +230,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 19.5c1.2-3.8 3.9-5.7 7-5.7s5.8 1.9 7 5.7"/></svg>
         </div>
         <div class="vh-acct-menu" id="vhAcctMenu">
-          <div class="vham-item" id="vhamOrder">查询订单</div>
-          <div class="vham-item" id="vhamBooking">查询预约</div>
+          <div class="vham-item" id="vhamOrder">Track Order</div>
+          <div class="vham-item" id="vhamBooking">Track Booking</div>
         </div>
       </span>
       <div class="vh-ibtn" id="cartBtn" aria-label="购物包">
@@ -241,7 +241,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     </div>
   </div>
 
-  <div class="breadcrumb"><span class="bc-link" id="bcHome">首页</span><span class="sep">›</span><span class="bc-link" id="bcShop">商店</span><span class="sep">›</span><span class="bc-current">结算</span></div>
+  <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-link" id="bcShop">商店</span><span class="sep">›</span><span class="bc-current">结算</span></div>
 
   <div class="content">
     <h1 class="co-title">结算</h1>
@@ -252,7 +252,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 <div class="order-consent-overlay" id="orderConsentModal">
   <div class="order-consent-box">
     <div class="oc-title">提交前，请确认</div>
-    <div class="oc-text">我同意本服务收集我的姓名、手机号码与收货地址，如通过银行转账/DuitNow付款还包括我上传的付款截图，这些信息仅用于处理及配送本次订单、核对付款，不会用作广告推销，不会对外泄露。详细说明请见<a href="/en/policy/#privacy" target="_blank">Privacy Policy</a>。</div>
+    <div class="oc-text">我同意本服务收集我的Name、Phone Number与收货Address，如通过Bank Transfer/DuitNow付款还包括我上传的付款截图，这些信息仅用于处理及配送本次订单、核对付款，不会用作广告推销，不会对外泄露。详细说明请见<a href="/en/policy/#privacy" target="_blank">Privacy Policy</a>。</div>
     <label class="oc-check-row">
       <input type="checkbox" id="orderConsentCheckbox">
       <span>我已阅读并同意以上内容</span>
@@ -280,7 +280,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
     fetch(API_BASE + '/analytics/pageview', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ page: '购物车结算' })
+      body: JSON.stringify({ page: 'Shopping Cart结算' })
     }).catch(function(){});
   })();
 
@@ -466,7 +466,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     return items;
   }
 
-  var cart = []; // 实际内容在 initFromBackend() 里、后端商品数据到位之后才会解析填充
+  var cart = []; // 实际内容在 initFromBackend() 里、后端Products数据到位之后才会解析填充
   var disclaimerChecked = false;
   var contactValue = '';
   var contactMode = 'phone'; // 'phone' | 'email'
@@ -545,13 +545,13 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     return SHIP_FEE[STATE_BY_CODE[addressForm.state].region];
   }
 
-  var DISCLAIMER_HTML = '我已阅读并理解以下说明，确认购买：<b>本店商品由执业中医师团队调配，选用药食同源材料，不添加防腐剂及化学药物成分。中医强调辨证论治、因人而异，固定配方仅供日常调理参考，未必完全贴合每个人的体质与情况。</b>如需更精准的个性化方案，建议通过「相约」预约一对一咨询。';
+  var DISCLAIMER_HTML = '我已阅读并理解以下说明，确认购买：<b>本店Products由执业中医师团队调配，选用药食同源材料，不添加防腐剂及化学药物成分。中医强调辨证论治、因人而异，固定配方仅供日常调理参考，未必完全贴合每个人的体质与情况。</b>如需更精准的个性化方案，建议通过「相约」预约一对一咨询。';
 
   function unitPrice(item){ return item.variant === 'trial' ? item.product.trial : item.product.price; }
   function variantLabel(item){ return item.variant === 'trial' ? '试用装' : '正装'; }
 
   // ---- 优惠码: reads the shared product catalog (for each product's pre-computed coupon price,
-  // published by 商品管理 based on its 定价规则) and the admin roster (senior + junior, each with
+  // published by Products管理 based on its 定价规则) and the admin roster (senior + junior, each with
   // their own code) from 订单预约管理. Same-browser-only like everything else without a backend —
   // a code created on the admin's device won't validate on a customer's own device. ----
   var appliedCoupon = null; // {code, name} once a valid code is applied
@@ -626,7 +626,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     document.getElementById('mainArea').innerHTML =
       '<div class="empty-state">'
       + '<svg viewBox="0 0 24 24" width="46" height="46" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>'
-      + '<p>购物车还是空的，去商店看看喜欢的商品吧。</p>'
+      + '<p>Shopping Cart还是空的，去商店看看喜欢的Products吧。</p>'
       + '<button class="empty-btn" id="goShopBtn">去商店</button>'
       + '</div>';
     document.getElementById('goShopBtn').addEventListener('click', function(){ window.location.href = '/shop/'; });
@@ -644,7 +644,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     return 'VN' + ymd + rand;
   }
 
-  // [stated] 之前这里是模拟的信用卡/Touch 'n Go/DuitNow扫码支付表单——填的卡号、扫的二维码
+  // [stated] 之前这里是模拟的Credit Card/Touch 'n Go/DuitNow扫码支付表单——填的卡号、扫的二维码
   // 都是假的，点"确认支付"不会真的划走任何钱，也没有真实的支付网关在背后处理。现在改成
   // 不依赖任何第三方支付服务商的方式：客户看到的是公司自己配置的银行账户/DuitNow收款码，
   // 自己完成转账/扫码后，把付款截图上传上来作为凭证，订单会标记为"待核实付款"，
@@ -667,7 +667,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         + '</div><div class="pay-qr-hint">请转账至以上账户，完成后上传付款截图</div>';
     } else if(m.type==='duitnow'){
       detailHtml = '<div class="pay-qr-box"><img src="'+m.qrImage+'" style="width:100%;height:100%;object-fit:contain;"></div>'
-        + '<div class="pay-qr-hint">打开支持 DuitNow 的银行 App 或电子钱包，扫描以上收款码完成付款</div>';
+        + '<div class="pay-qr-hint">打开支持 DuitNow 的银行 App 或E-Wallet，扫描以上收款码完成付款</div>';
     } else {
       detailHtml = (m.qrImage ? '<div class="pay-qr-box"><img src="'+m.qrImage+'" style="width:100%;height:100%;object-fit:contain;"></div>' : '')
         + (m.customNote ? '<div class="pay-qr-hint">'+escapeHtml(m.customNote).replace(/\n/g,'<br>')+'</div>' : '<div class="pay-qr-hint">完成付款后请上传截图</div>');
@@ -697,7 +697,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     if(btn) btn.disabled = !(selectedPaymentMethodId && paymentScreenshotData);
   }
 
-  // [stated] 订单跟预约一样，也会收集姓名、手机号、地址（付款方式是银行转账/DuitNow的话还有
+  // [stated] 订单跟预约一样，也会收集Name、手机号、Address（付款方式是Bank Transfer/DuitNow的话还有
   // 上传的截图），提交前同样需要一个明确的同意步骤，不能只有预约流程有、订单流程没有。
   var orderConsentPendingAction = null;
   function openOrderConsentModal(onAgree){
@@ -723,7 +723,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   async function finalizeOrderSubmission(methods){
     var selectedMethod = methods.find(function(m){ return m.id===selectedPaymentMethodId; });
-    var payLabel = selectedMethod.type==='bank_transfer' ? '银行转账（'+selectedMethod.bankName+'）'
+    var payLabel = selectedMethod.type==='bank_transfer' ? 'Bank Transfer（'+selectedMethod.bankName+'）'
       : selectedMethod.type==='duitnow' ? 'DuitNow'
       : (selectedMethod.accountName || '其他方式');
     var addr = pendingOrder.address;
@@ -769,7 +769,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       document.getElementById('mainArea').innerHTML = '<div class="payment-view">'
         + '<div class="pay-summary">应付金额<span class="pay-total">MYR '+pendingOrder.total+'</span></div>'
         + '<div class="empty-state" style="padding:30px 0;">暂时还没有可用的付款方式，请通过「相约」联系我们完成付款安排。</div>'
-        + '<div class="os-back" id="backToCartBtn">← 返回购物车</div></div>';
+        + '<div class="os-back" id="backToCartBtn">← 返回Shopping Cart</div></div>';
       document.getElementById('backToCartBtn').addEventListener('click', function(){ pendingOrder = null; render(); });
       return;
     }
@@ -779,7 +779,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="pay-summary">应付金额<span class="pay-total">MYR '+pendingOrder.total+'</span></div>'
       + '<div class="pay-methods">';
     methods.forEach(function(m){
-      var label = m.type==='bank_transfer' ? '银行转账' : m.type==='duitnow' ? 'DuitNow' : (m.accountName || '其他方式');
+      var label = m.type==='bank_transfer' ? 'Bank Transfer' : m.type==='duitnow' ? 'DuitNow' : (m.accountName || '其他方式');
       var sub = m.type==='bank_transfer' ? m.bankName : m.type==='duitnow' ? (m.accountName || '扫码支付') : '点击查看付款方式';
       var icon = m.type==='bank_transfer'
         ? '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="8" width="19" height="12" rx="1.5"/><path d="M2.5 8l9.5-5 9.5 5"/><line x1="6" y1="12" x2="6" y2="16"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="18" y1="12" x2="18" y2="16"/></svg>'
@@ -792,7 +792,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     html += '</div><div id="paymentFormArea" class="pay-form-area"></div>'
       + '<button class="checkout-btn" id="confirmPayBtn" disabled>提交付款凭证 · MYR '+pendingOrder.total+'</button>'
       + '<div style="font-size:12px;color:var(--ink-soft,#7A6F60);text-align:center;margin-top:10px;">提交后订单会标记为"待核实付款"，我们核对到账后会尽快为您安排发货</div>'
-      + '<div class="os-back" id="backToCartBtn">← 返回购物车</div>'
+      + '<div class="os-back" id="backToCartBtn">← 返回Shopping Cart</div>'
       + '</div>';
     document.getElementById('mainArea').innerHTML = html;
     renderPaymentForm();
@@ -823,21 +823,21 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var st = addr ? STATE_BY_CODE[addr.state] : null;
     var html = '<div class="order-success">'
       + '<div class="os-icon"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>'
-      + '<div class="os-title">订单提交成功</div>'
+      + '<div class="os-title">Order Submitted Successfully</div>'
       + '<div class="os-sub">感谢您的选购，我们会尽快为您安排发货</div>'
       + '<div class="os-order-no">订单号 <b>'+completedOrder.orderNo+'</b></div>'
       + '<div class="os-summary-card">';
     completedOrder.items.forEach(function(it){
       html += '<div class="os-item"><span>'+it.product.name+' × '+it.qty+'</span><span>MYR '+(unitPrice(it)*it.qty)+'</span></div>';
     });
-    html += '<div class="os-item"><span>运费'+(st?'（'+(st.region==='east'?'东马':'西马')+'）':'')+'</span><span>MYR '+(completedOrder.shipping||0)+'</span></div>';
+    html += '<div class="os-item"><span>Shipping'+(st?'（'+(st.region==='east'?'东马':'西马')+'）':'')+'</span><span>MYR '+(completedOrder.shipping||0)+'</span></div>';
     html += '<div class="os-item total"><span>合计</span><span>MYR '+completedOrder.total+'</span></div>'
       + '</div>';
     if(addr && st){
-      html += '<div class="os-summary-card os-addr-card"><div class="os-addr-label">收货地址</div>'
+      html += '<div class="os-summary-card os-addr-card"><div class="os-addr-label">收货Address</div>'
         + '<div class="os-addr-text">'+addr.name+' · '+addr.line+'，'+addr.city+' '+addr.postcode+'，'+st.name+'</div></div>';
     }
-    html += '<button class="checkout-btn" id="trackOrderBtn">查询订单状态</button>'
+    html += '<button class="checkout-btn" id="trackOrderBtn">Track Order状态</button>'
       + '<div class="os-back" id="backToShopBtn">继续逛逛 →</div>'
       + '</div>';
     document.getElementById('mainArea').innerHTML = html;
@@ -862,7 +862,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var allChecked = cart.every(function(it){ return it.checked; });
     var html = '<div class="select-all-row">'
       + '<span class="item-checkbox'+(allChecked?' on':'')+'" id="selectAllBox">'+CHECK_SVG+'</span>'
-      + '<span>全选（'+cart.length+' 件商品）</span></div>';
+      + '<span>全选（'+cart.length+' 件Products）</span></div>';
 
     cart.forEach(function(item, idx){
       var p = item.product;
@@ -902,14 +902,14 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
           : '<input type="text" id="couponInput" placeholder="输入优惠码"><button type="button" id="couponApplyBtn">使用</button>')
       + '</div>'
       + '<div class="coupon-error" id="couponError"></div>'
-      + '<div class="summary-row"><span>已选商品</span><span>'+checkedCount+' 件</span></div>'
+      + '<div class="summary-row"><span>已选Products</span><span>'+checkedCount+' 件</span></div>'
       + (couponSavings > 0 ? '<div class="summary-row coupon-discount-row"><span>优惠码折扣</span><span>− MYR '+couponSavings.toFixed(2)+'</span></div>' : '')
-      + '<div class="summary-row"><span>运费</span><span>'+(addressForm.state ? 'MYR '+ship : '请选择地址') +'</span></div>'
+      + '<div class="summary-row"><span>Shipping</span><span>'+(addressForm.state ? 'MYR '+ship : '请选择Address') +'</span></div>'
       + '<div class="summary-row total"><span>合计</span><span class="sr-price">MYR '+grandTotal.toFixed(2)+'</span></div>'
       + '</div>';
 
     // ---- shipping address ----
-    html += '<div class="addr-field"><label>收货地址</label>';
+    html += '<div class="addr-field"><label>收货Address</label>';
     if(!editingAddress && isAddressComplete()){
       var st = STATE_BY_CODE[addressForm.state];
       html += '<div class="saved-addr-card">'
@@ -918,14 +918,14 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         + '</div>';
     } else {
       html += '<div class="addr-form">'
-        + '<input type="text" id="addrName" placeholder="收件人姓名" value="'+addressForm.name+'">'
-        + '<input type="text" id="addrLine" placeholder="详细地址（门牌号、街道）" value="'+addressForm.line+'">'
+        + '<input type="text" id="addrName" placeholder="收件人Name" value="'+addressForm.name+'">'
+        + '<input type="text" id="addrLine" placeholder="详细Address（门牌号、街道）" value="'+addressForm.line+'">'
         + '<div class="two-col">'
-          + '<input type="text" id="addrCity" placeholder="城市" value="'+addressForm.city+'">'
+          + '<input type="text" id="addrCity" placeholder="City" value="'+addressForm.city+'">'
           + '<input type="text" id="addrPostcode" placeholder="邮政编码" maxlength="5" value="'+addressForm.postcode+'">'
         + '</div>'
         + '<select id="addrState">'
-          + '<option value="">选择州属</option>'
+          + '<option value="">选择State属</option>'
           + '<optgroup label="西马 Peninsular">'
           + MY_STATES.filter(function(s){ return s.region==='west'; }).map(function(s){ return '<option value="'+s.code+'"'+(addressForm.state===s.code?' selected':'')+'>'+s.name+'</option>'; }).join('')
           + '</optgroup>'
@@ -933,7 +933,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
           + MY_STATES.filter(function(s){ return s.region==='east'; }).map(function(s){ return '<option value="'+s.code+'"'+(addressForm.state===s.code?' selected':'')+'>'+s.name+'</option>'; }).join('')
           + '</optgroup>'
           + '</select>'
-        + '<label class="remember-row"><span class="item-checkbox'+(rememberAddr?' on':'')+'" id="rememberBox">'+CHECK_SVG+'</span>记住此地址，下次自动填写</label>'
+        + '<label class="remember-row"><span class="item-checkbox'+(rememberAddr?' on':'')+'" id="rememberBox">'+CHECK_SVG+'</span>记住此Address，下次自动填写</label>'
         + '</div>';
     }
     html += '</div>';
@@ -953,7 +953,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var contactTouched = contactValue.trim().length > 0;
     var contactOk = isContactValid();
     html += '<div class="field-error'+(contactTouched && !contactOk ? ' show':'')+'" id="contactError">'
-      + (contactMode==='phone' ? '请输入正确的马来西亚手机号（0开头，10-11位数字）' : '请输入正确的邮箱地址')
+      + (contactMode==='phone' ? '请输入正确的马来西亚手机号（0开头，10-11位数字）' : '请输入正确的邮箱Address')
       + '</div>';
     html += '</div>';
 
@@ -966,13 +966,13 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var canCheckout = checkedItems.length > 0 && disclaimerChecked && contactOk && addrOk;
     html += '<button class="checkout-btn" id="checkoutBtn"'+(canCheckout?'':' disabled')+'>去支付 · MYR '+grandTotal+'</button>';
     if(!addrOk){
-      html += '<div class="checkout-hint">请填写完整的收货地址</div>';
+      html += '<div class="checkout-hint">请填写完整的收货Address</div>';
     } else if(!contactOk){
       html += '<div class="checkout-hint">请填写正确的联系方式</div>';
     } else if(!disclaimerChecked){
       html += '<div class="checkout-hint">请先阅读并勾选上方说明</div>';
     } else if(checkedItems.length === 0){
-      html += '<div class="checkout-hint">请至少选择一件商品</div>';
+      html += '<div class="checkout-hint">请至少选择一件Products</div>';
     }
 
     document.getElementById('mainArea').innerHTML = html;
@@ -987,10 +987,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var canCheckout = checkedItems.length > 0 && disclaimerChecked && contactOk && addrOk;
     var btn = document.getElementById('checkoutBtn');
     if(btn) btn.disabled = !canCheckout;
-    var hintText = !addrOk ? '请填写完整的收货地址'
+    var hintText = !addrOk ? '请填写完整的收货Address'
       : !contactOk ? '请填写正确的联系方式'
       : !disclaimerChecked ? '请先阅读并勾选上方说明'
-      : checkedItems.length===0 ? '请至少选择一件商品'
+      : checkedItems.length===0 ? '请至少选择一件Products'
       : null;
     var hintEl = document.querySelector('.checkout-hint');
     if(hintText){
@@ -1167,7 +1167,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
   vhAcctMenu.addEventListener('click', function(e){ e.stopPropagation(); });
   document.getElementById('cartBtn').addEventListener('click', function(){
-    showToast(cart.length > 0 ? '当前在结算页' : '购物车是空的');
+    showToast(cart.length > 0 ? '当前在结算页' : 'Shopping Cart是空的');
   });
 
   initFromBackend();
@@ -1199,7 +1199,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 </div>
 <div class="vh-chat-panel" id="vhChatPanel">
   <div class="vh-chat-hd">
-    <div class="vh-chat-hd-title" id="vhChatTitle">在线咨询</div>
+    <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
     <div class="vh-chat-hd-sub" id="vhChatSub">正在与 龚诗宏医师 对话</div>
     <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
   </div>

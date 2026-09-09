@@ -152,8 +152,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 19.5c1.2-3.8 3.9-5.7 7-5.7s5.8 1.9 7 5.7"/></svg>
         </div>
         <div class="vh-acct-menu" id="vhAcctMenu">
-          <div class="vham-item" id="vhamOrder">查询订单</div>
-          <div class="vham-item" id="vhamBooking">查询预约</div>
+          <div class="vham-item" id="vhamOrder">Track Order</div>
+          <div class="vham-item" id="vhamBooking">Track Booking</div>
         </div>
       </span>
       <div class="vh-ibtn" id="cartBtn" aria-label="购物包">
@@ -484,7 +484,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   if(product){
     fetch(API_BASE + '/analytics/pageview', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ page: '商品详情-' + product.name })
+      body: JSON.stringify({ page: 'Product Details-' + product.name })
     }).catch(function(){});
     // 商品关注度统计——记录停留时长，方便后台看"用户对哪些商品感兴趣（停留时间较长）"；
     // 离开/切到后台标签页/关闭页面都会触发一次，只记一次，避免重复计入。用 fetch 搭配
@@ -513,7 +513,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   var pdImgs = [];
 
   function renderNotFound(){
-    document.getElementById('breadcrumb').innerHTML = '<span class="bc-link" id="bcHome">首页</span><span class="sep">›</span><span class="bc-link" id="bcShop">商店</span><span class="sep">›</span><span class="bc-current">商品未找到</span>';
+    document.getElementById('breadcrumb').innerHTML = '<span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-link" id="bcShop">商店</span><span class="sep">›</span><span class="bc-current">商品未找到</span>';
     document.getElementById('mainContent').innerHTML = '<div class="not-found">没有找到这个商品，可能已下架或链接有误。</div>';
     bindHeaderNav();
   }
@@ -535,7 +535,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     }).join('');
     var dots = pdImgs.length>1 ? pdImgs.map(function(_,i){ return '<span class="pd-dot'+(i===0?' on':'')+'"></span>'; }).join('') : '';
     return '<div class="pd-hero" id="pdHero">'
-      + (!product.inStock ? '<div class="pd-oos-badge">暂时缺货</div>' : '')
+      + (!product.inStock ? '<div class="pd-oos-badge">暂时Out of Stock</div>' : '')
       + '<span class="pd-wish'+(isWishlisted(product.id)?' on':'')+'" id="pdWishBtn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9.5-9C.5 8 2 4 6 4c2 0 3.5 1 4 2 .5-1 2-2 4-2 4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg></span>'
       + '<div class="pd-hero-track" id="pdTrack">'+slides+'</div>'
       + '<div class="pd-hero-nav prev hide" id="pdPrev"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l-7 7 7 7"/></svg></div>'
@@ -548,7 +548,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var chips = product.herbs.map(function(h){ return '<span class="pd-herb-chip">'+h.herb+'</span>'; }).join('');
     return '<div class="pd-section"><div class="pd-section-title">配方与用法</div>'
       + '<div class="pd-form-row"><span class="fl">剂型</span><span>'+product.form+'</span></div>'
-      + '<div class="pd-herb-label">成分</div>'
+      + '<div class="pd-herb-label">Ingredients</div>'
       + '<div class="pd-herb-chips">'+chips+'</div>'
       + '<div class="pd-usage-box"><b>用法：</b>'+product.usage+'</div>'
       + '</div>';
@@ -589,7 +589,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   }
 
   function render(){
-    document.getElementById('breadcrumb').innerHTML = '<span class="bc-link" id="bcHome">首页</span><span class="sep">›</span><span class="bc-link" id="bcShop">商店</span><span class="sep">›</span><span class="bc-current">'+product.name+'</span>';
+    document.getElementById('breadcrumb').innerHTML = '<span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-link" id="bcShop">商店</span><span class="sep">›</span><span class="bc-current">'+product.name+'</span>';
 
     var html = buildHero();
     html += '<div class="pd-type">'+TYPE_LABEL[product.type]+'</div>';
@@ -601,11 +601,11 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="pd-variant" data-v="trial"><div class="vv-lbl">试用装</div><div class="vv-price">MYR '+product.trial+'</div></div>'
       + '</div>';
 
-    html += '<div class="pd-qty-row"><div class="pd-qty-label">数量</div>'
+    html += '<div class="pd-qty-row"><div class="pd-qty-label">Quantity</div>'
       + '<div class="pd-stepper"><div class="pd-step-btn" id="pdMinus">－</div><div class="pd-qty-num" id="pdQtyNum">1</div><div class="pd-step-btn" id="pdPlus">＋</div></div></div>';
 
-    if(!product.inStock) html += '<div class="pd-oos-msg">这款暂时缺货，补货后会自动恢复上架。</div>';
-    html += '<button class="pd-add" id="pdAdd"'+(product.inStock?'':' disabled')+'>'+(product.inStock?'加入购物车':'暂时缺货')+'</button>';
+    if(!product.inStock) html += '<div class="pd-oos-msg">这款暂时Out of Stock，补货后会自动恢复上架。</div>';
+    html += '<button class="pd-add" id="pdAdd"'+(product.inStock?'':' disabled')+'>'+(product.inStock?'Add to Cart':'暂时Out of Stock')+'</button>';
 
     html += buildFormulaSection();
     html += buildSafetySection();
@@ -640,7 +640,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         if(existing){ existing.qty += qty; } else { cartItems.push({id:product.id, variant:selectedVariant, qty:qty}); }
         updateCartBadge();
         var variantLbl = selectedVariant==='trial' ? '试用装' : '正装';
-        showToast('已加入购物车：'+product.name+'（'+variantLbl+'）×'+qty);
+        showToast('已Add to Cart：'+product.name+'（'+variantLbl+'）×'+qty);
       });
     }
     var prevBtn = document.getElementById('pdPrev'), nextBtn = document.getElementById('pdNext');
@@ -740,7 +740,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 </div>
 <div class="vh-chat-panel" id="vhChatPanel">
   <div class="vh-chat-hd">
-    <div class="vh-chat-hd-title" id="vhChatTitle">在线咨询</div>
+    <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
     <div class="vh-chat-hd-sub" id="vhChatSub">正在与 龚诗宏医师 对话</div>
     <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
   </div>

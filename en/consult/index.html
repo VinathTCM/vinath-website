@@ -177,8 +177,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 19.5c1.2-3.8 3.9-5.7 7-5.7s5.8 1.9 7 5.7"/></svg>
         </div>
         <div class="vh-acct-menu" id="vhAcctMenu">
-          <div class="vham-item" id="vhamOrder">查询订单</div>
-          <div class="vham-item" id="vhamBooking">查询预约</div>
+          <div class="vham-item" id="vhamOrder">Track Order</div>
+          <div class="vham-item" id="vhamBooking">Track Booking</div>
         </div>
       </span>
       <div class="vh-ibtn" id="cartBtn" aria-label="购物包">
@@ -188,10 +188,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     </div>
   </div>
 
-  <div class="breadcrumb"><span class="bc-link" id="bcHome">首页</span><span class="sep">›</span><span class="bc-current">居家会诊</span></div>
+  <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-current">Home Consultation</span></div>
 
   <div class="content">
-    <h1 class="hc-title">居家会诊</h1>
+    <h1 class="hc-title">Home Consultation</h1>
     <div class="hc-sub">预约执业中医师上门，足不出户，收获健康</div>
 
     <div id="instantCtaArea"></div>
@@ -228,13 +228,13 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 <div class="hc-modal-overlay" id="consentModal">
   <div class="hc-modal">
     <div class="hc-modal-icon contact"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"/></svg></div>
-    <div class="hc-modal-title">提交预约前，请确认</div>
-    <div class="hc-modal-text" style="text-align:left;">我同意本服务收集我的姓名与手机号码，仅用于联络、安排上门传统辅助医疗服务，不会用作广告推销，不会对外泄露。详细说明请见<a href="/en/policy/" target="_blank" style="color:var(--clay);font-weight:600;">Privacy Policy</a>。</div>
+    <div class="hc-modal-title">Submit Booking前，请确认</div>
+    <div class="hc-modal-text" style="text-align:left;">我同意本服务收集我的Name与Phone Number，仅用于联络、安排上门传统辅助医疗服务，不会用作广告推销，不会对外泄露。详细说明请见<a href="/en/policy/" target="_blank" style="color:var(--clay);font-weight:600;">Privacy Policy</a>。</div>
     <label style="display:flex;align-items:flex-start;gap:9px;margin:16px 4px 4px;text-align:left;cursor:pointer;font-size:13.5px;color:var(--ink);line-height:1.5;">
       <input type="checkbox" id="consentCheckbox" style="margin-top:3px;flex:none;width:16px;height:16px;">
       <span>我已阅读并同意以上内容</span>
     </label>
-    <div class="hc-field-error" id="consentError" style="text-align:left;margin-top:4px;">请先勾选同意，才能继续提交预约</div>
+    <div class="hc-field-error" id="consentError" style="text-align:left;margin-top:4px;">请先勾选同意，才能继续Submit Booking</div>
     <button type="button" class="hc-next-btn" id="consentAgreeBtn" style="margin-top:16px;">同意并提交</button>
     <div class="hc-back-link" id="consentCancelBtn" style="margin-top:10px;">取消</div>
   </div>
@@ -266,7 +266,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
     fetch(API_BASE + '/analytics/pageview', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ page: '居家会诊' })
+      body: JSON.stringify({ page: 'Home Consultation' })
     }).catch(function(){});
   })();
 
@@ -314,7 +314,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   // matches what this list always was before area management existed
   var SERVICE_AREAS_FALLBACK = [
     '巴西古当 Pasir Gudang', 'Masai', 'Bandar Seri Alam', 'Ulu Tiram', 'Plentong',
-    '新山市区 Johor Bahru', 'Tebrau', 'Permas Jaya', 'Johor Jaya', 'Larkin'
+    'Johor Bahru市区 Johor Bahru', 'Tebrau', 'Permas Jaya', 'Johor Jaya', 'Larkin'
   ];
   // reads the same admin-configured list as 订单预约管理's "服务地区设置" — only currently-active
   // areas show up here, grouped by state so the list stays usable once more than one is open
@@ -837,9 +837,9 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     practitioners.filter(function(d){ return d.video; }).forEach(setupAvatarVideo);
   }
 
-  // ---- doctor avatar videos: lazy-load + preread, same mechanism as 关于 page's team section ----
+  // ---- doctor avatar videos: lazy-load + preread, same mechanism as About Us page's team section ----
   // (native <source> format negotiation + explicit muted/playsInline JS properties for Safari,
-  // since this markup is also injected via innerHTML — see 关于-page Safari-autoplay lesson)
+  // since this markup is also injected via innerHTML — see About Us-page Safari-autoplay lesson)
   function setupAvatarVideo(doc){
     if(!doc.video) return;
     var video = document.getElementById(doc.video.id);
@@ -938,12 +938,12 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   }
 
   function renderStage4(){
-    var html = '<div class="hc-stage-title">详细地址</div>'
-      + '<div class="hc-stage-hint">方便医师上门时核对地址。</div>'
+    var html = '<div class="hc-stage-title">详细Address</div>'
+      + '<div class="hc-stage-hint">方便医师上门时核对Address。</div>'
       + '<div class="hc-field"><label>联系方式</label><div class="hc-context-card"><div class="hc-context-row"><span class="cl">称呼</span><span>'+form.name+'</span></div><div class="hc-context-row"><span class="cl">手机号</span><span>+60'+form.phone+'</span></div></div></div>'
       + '<div class="hc-field"><label>服务区域</label><div class="hc-context-card"><div class="hc-context-row"><span class="cl">区域</span><span>'+form.area+'</span></div></div></div>'
-      + '<div class="hc-field"><label>详细地址</label><textarea id="addrInput" placeholder="门牌号、街道、邮编等详细地址">'+form.addressDetail+'</textarea></div>'
-      + '<button class="hc-next-btn" id="submitBtn" disabled>提交预约</button>'
+      + '<div class="hc-field"><label>详细Address</label><textarea id="addrInput" placeholder="门牌号、街道、邮编等详细Address">'+form.addressDetail+'</textarea></div>'
+      + '<button class="hc-next-btn" id="submitBtn" disabled>Submit Booking</button>'
       + '<div class="hc-back-link" id="backLink">← 返回上一步</div>';
     document.getElementById('stageArea').innerHTML = html;
 
@@ -960,7 +960,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       form.addressDetail = addrInput.value.trim();
       if(form.doctor && isBlacklisted(form.doctor, form.phone)){
         // 正常情况下选医师那一步（stage2）已经会把黑名单里的医师排除掉，走不到这里；这个只是
-        // 防一种边缘情况——客户在选医师和提交预约之间的这段时间里，管理员刚好把这一对加入了
+        // 防一种边缘情况——客户在选医师和Submit Booking之间的这段时间里，管理员刚好把这一对加入了
         // 黑名单，兜底再查一次
         form.doctor = '';
         alert('抱歉，您选择的医师暂时无法为您提供服务，请重新选择一位医师。');
@@ -982,7 +982,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   function closeContactModal(){
     document.getElementById('contactModal').classList.remove('show');
   }
-  // [stated] PDPA相关——提交预约前，客户需要明确勾选同意收集姓名/手机号的用途说明，
+  // [stated] PDPA相关——Submit Booking前，客户需要明确勾选同意收集Name/手机号的用途说明，
   // 这个同意状态和时间戳会记录进预约本身，不是一个点了就忘、什么都没留下的形式化弹窗
   var consentPendingAction = null;
   function openConsentModal(onAgree){
@@ -1028,8 +1028,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       var d = form.date;
       var apptISO = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 
-      // [stated bug fix] 这里原来只是在页面上显示"预约成功"、把预约写进localStorage——现在改成
-      // 真正提交给后端，后端确认收到、真正存进数据库了，才告诉客户"预约成功"，不是提交表单
+      // [stated bug fix] 这里原来只是在页面上显示"Booking Successful"、把预约写进localStorage——现在改成
+      // 真正提交给后端，后端确认收到、真正存进数据库了，才告诉客户"Booking Successful"，不是提交表单
       // 就直接算成功，这样才是真的"接单"，而不是好看的假象。
       try {
         var res = await fetch(API_BASE + '/bookings', {
@@ -1052,12 +1052,12 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
         icon.className = 'hc-modal-icon success';
         icon.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
-        title.textContent = '预约成功';
+        title.textContent = 'Booking Successful';
         text.textContent = '我们已收到您的预约，会通过'+(method==='call'?'电话':'WhatsApp')+'与您确认详情。';
         summary.innerHTML = '<div><b>预约编号：</b>'+bookingNo+'</div>'
           + '<div><b>医师：</b>'+docName+'</div>'
           + '<div><b>时间：</b>'+apptDateStr+' '+slotLabel+'</div>'
-          + '<div><b>地址：</b>'+form.area+'</div>'
+          + '<div><b>Address：</b>'+form.area+'</div>'
           + '<div><b>联系方式：</b>'+(method==='call'?'电话':'WhatsApp')+'</div>';
         completedBooking = {bookingNo:bookingNo, doctor:docName, apptDate:apptDateStr, slot:slotLabel, area:form.area, method:method};
         trackBtn.style.display = '';
@@ -1070,7 +1070,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       icon.className = 'hc-modal-icon fail';
       icon.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
       title.textContent = '预约未成功';
-      text.textContent = '该时段可能刚被预约，请重新选择时间，或联系我们协助安排。';
+      text.textContent = '该时段可能刚被预约，请重新Select Time，或联系我们协助安排。';
       summary.innerHTML = '';
       completedBooking = null;
       trackBtn.style.display = 'none';
@@ -1203,7 +1203,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 </div>
 <div class="vh-chat-panel" id="vhChatPanel">
   <div class="vh-chat-hd">
-    <div class="vh-chat-hd-title" id="vhChatTitle">在线咨询</div>
+    <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
     <div class="vh-chat-hd-sub" id="vhChatSub">正在与 龚诗宏医师 对话</div>
     <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
   </div>

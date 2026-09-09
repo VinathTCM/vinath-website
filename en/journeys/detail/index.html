@@ -149,8 +149,8 @@ body{
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 19.5c1.2-3.8 3.9-5.7 7-5.7s5.8 1.9 7 5.7"/></svg>
         </div>
         <div class="vh-acct-menu" id="vhAcctMenu">
-          <div class="vham-item" id="vhamOrder">查询订单</div>
-          <div class="vham-item" id="vhamBooking">查询预约</div>
+          <div class="vham-item" id="vhamOrder">Track Order</div>
+          <div class="vham-item" id="vhamBooking">Track Booking</div>
         </div>
       </span>
       <div class="vh-ibtn" id="cartBtn" aria-label="购物包">
@@ -160,7 +160,7 @@ body{
     </div>
   </div>
 
-  <div class="breadcrumb"><span class="bc-link" id="bcHome">首页</span><span class="sep">›</span><span class="bc-current" id="bcCurrent">旅程</span></div>
+  <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-current" id="bcCurrent">旅程</span></div>
 
   <div class="hero-wrap">
     <div class="hero">
@@ -670,8 +670,8 @@ body{
     if(!link) return;
     var tags = selectedTags[condIdx] ? Array.from(selectedTags[condIdx]) : [];
     var msg = tags.length
-      ? '您好，我想咨询「'+JOURNEY_NAME+'」相关的调理方案，我目前的情况：'+tags.join('、')+'。'
-      : '您好，我想咨询「'+JOURNEY_NAME+'」相关的调理方案。';
+      ? '您好，我想咨询「'+JOURNEY_NAME+'」相关的Wellness Plan，我目前的情况：'+tags.join('、')+'。'
+      : '您好，我想咨询「'+JOURNEY_NAME+'」相关的Wellness Plan。';
     link.setAttribute('href', 'https://wa.me/'+WHATSAPP_NUMBER+'?text='+encodeURIComponent(msg));
   }
   for(var wi=0; wi<CONDITIONS.length; wi++){ updateWaLink(wi); }
@@ -772,7 +772,7 @@ body{
 </div>
 <div class="vh-chat-panel" id="vhChatPanel">
   <div class="vh-chat-hd">
-    <div class="vh-chat-hd-title" id="vhChatTitle">在线咨询</div>
+    <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
     <div class="vh-chat-hd-sub" id="vhChatSub">正在与 龚诗宏医师 对话</div>
     <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
   </div>

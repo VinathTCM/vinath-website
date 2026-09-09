@@ -199,7 +199,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       <div class="vh-brand" id="brandBtn">VINATH<span class="vh-tm">™</span></div>
     </div>
     <div class="vh-icons">
-      <div class="vh-ibtn" id="searchBtn" aria-label="搜索">
+      <div class="vh-ibtn" id="searchBtn" aria-label="Search">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10.3" cy="10.3" r="6.3"/><line x1="19.5" y1="19.5" x2="15" y2="15"/></svg>
       </div>
       <span class="vh-acct-wrap">
@@ -207,8 +207,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 19.5c1.2-3.8 3.9-5.7 7-5.7s5.8 1.9 7 5.7"/></svg>
         </div>
         <div class="vh-acct-menu" id="vhAcctMenu">
-          <div class="vham-item" id="vhamOrder">查询订单</div>
-          <div class="vham-item" id="vhamBooking">查询预约</div>
+          <div class="vham-item" id="vhamOrder">Track Order</div>
+          <div class="vham-item" id="vhamBooking">Track Booking</div>
         </div>
       </span>
       <div class="vh-ibtn" id="cartBtn" aria-label="购物包">
@@ -218,14 +218,14 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     </div>
   </div>
 
-  <div class="breadcrumb"><span class="bc-link" id="bcHome">首页</span><span class="sep">›</span><span class="bc-current">商店</span></div>
+  <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-current">Shop</span></div>
 
   <div class="content">
-    <h1 class="shop-title">商店</h1>
+    <h1 class="shop-title">Shop</h1>
 
     <div class="global-search-wrap">
       <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.3" cy="10.3" r="6.3"/><line x1="19.5" y1="19.5" x2="15" y2="15"/></svg>
-      <input type="text" id="globalSearchInput" placeholder="搜索全部商品，例如：茶、痛经、月舒贴">
+      <input type="text" id="globalSearchInput" placeholder="SearchAll Products，例如：茶、痛经、月舒贴">
       <span class="gs-clear" id="gsClearBtn">✕</span>
     </div>
 
@@ -244,7 +244,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
           <div class="eh-title" id="ehTitle"></div>
           <div class="eh-search-wrap">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.3" cy="10.3" r="6.3"/><line x1="19.5" y1="19.5" x2="15" y2="15"/></svg>
-            <input type="text" id="ehSearch" placeholder="搜索这个系列的商品">
+            <input type="text" id="ehSearch" placeholder="Search这个系列的商品">
             <span class="eh-count" id="ehCount"></span>
           </div>
         </div>
@@ -285,7 +285,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         <div class="qv-step-btn" id="qvPlus">＋</div>
       </div>
     </div>
-    <button class="qv-add" id="qvAdd">加入购物车</button>
+    <button class="qv-add" id="qvAdd">Add to Cart</button>
   </div>
 </div>
 
@@ -306,7 +306,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
     fetch(API_BASE + '/analytics/pageview', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ page: '商店' })
+      body: JSON.stringify({ page: 'Shop' })
     }).catch(function(){});
   })();
 
@@ -363,7 +363,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       var raw = localStorage.getItem('vinath_shop_categories');
       if(raw) return JSON.parse(raw);
     } catch(e){}
-    return [{key:'plaster',name:'膏药系列'},{key:'tea',name:'茶饮系列'},{key:'soak',name:'汤包系列'},{key:'mask',name:'外用系列'}];
+    return [{key:'plaster',name:'Plaster Series'},{key:'tea',name:'Tea Series'},{key:'soak',name:'Herbal Soup Series'},{key:'mask',name:'Topical Series'}];
   }
   var SHOP_CATEGORIES = getShopCategoriesLocal();
   var TYPE_META = {};
@@ -702,7 +702,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     setTimeout(function(){ expandZone.scrollIntoView({behavior:'smooth', block:'nearest'}); }, 120);
   }
 
-  // ---- 全局商品搜索: searches across every category at once, reusing the same expand-zone
+  // ---- 全局商品Search: searches across every category at once, reusing the same expand-zone
   // rendering as a single-category view (currentTypeList/applyFilters/renderGroups) ----
   var globalSearchInput = document.getElementById('globalSearchInput');
   var gsClearBtn = document.getElementById('gsClearBtn');
@@ -718,7 +718,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     openType = 'ALL';
     catScroll.querySelectorAll('.cat-card').forEach(function(c){ c.classList.remove('on'); });
     currentTypeList = PRODUCTS.filter(function(p){ return p.active; });
-    ehTitle.textContent = '搜索结果';
+    ehTitle.textContent = 'Search结果';
     ehSearch.value = q;
     applyFilters();
     expandZone.classList.add('open');
@@ -934,7 +934,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       });
     });
     qvAdd.disabled = !p.inStock;
-    qvAdd.textContent = p.inStock ? '加入购物车' : '暂时缺货';
+    qvAdd.textContent = p.inStock ? 'Add to Cart' : '暂时缺货';
     qvOverlay.classList.add('open');
     qvSheet.classList.add('open');
   }
@@ -957,7 +957,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     if(existing){ existing.qty += qty; } else { cartItems.push({id:currentProduct.id, variant:selectedVariant, qty:qty}); }
     updateCartBadge();
     var variantLbl = selectedVariant === 'trial' ? '试用装' : '正装';
-    showToast('已加入购物车：'+currentProduct.name+'（'+variantLbl+'）×'+qty);
+    showToast('已Add to Cart：'+currentProduct.name+'（'+variantLbl+'）×'+qty);
     closeQuickView();
   });
 
@@ -972,7 +972,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   document.getElementById('brandBtn').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
   document.getElementById('bcHome').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
-  document.getElementById('searchBtn').addEventListener('click', function(){ showToast('搜索 · 功能开发中'); });
+  document.getElementById('searchBtn').addEventListener('click', function(){ showToast('Search · 功能开发中'); });
   var vhAcctMenu = document.getElementById('vhAcctMenu');
   document.getElementById('acctBtn').addEventListener('click', function(e){
     e.stopPropagation();
@@ -1020,7 +1020,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 </div>
 <div class="vh-chat-panel" id="vhChatPanel">
   <div class="vh-chat-hd">
-    <div class="vh-chat-hd-title" id="vhChatTitle">在线咨询</div>
+    <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
     <div class="vh-chat-hd-sub" id="vhChatSub">正在与 龚诗宏医师 对话</div>
     <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
   </div>
