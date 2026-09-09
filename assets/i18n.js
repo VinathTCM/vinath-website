@@ -899,48 +899,8 @@
   }
 
   function autoTranslate() {
-    if (currentLang === 'zh') {
-      // 切换回中文时，恢复被自动翻译的元素
-      document.querySelectorAll('[data-i18n-auto]').forEach(function(el) {
-        var original = el.getAttribute('data-i18n-original');
-        if (original) {
-          el.textContent = original;
-        }
-        el.removeAttribute('data-i18n-auto');
-        el.removeAttribute('data-i18n-original');
-      });
-      return;
-    }
-
-    var dict = buildReverseDict();
-    var count = 0;
-
-    // 遍历所有元素，只处理纯文本节点（没有子元素的）
-    var allElements = document.querySelectorAll('body *:not(script):not(style):not([data-i18n]):not([data-i18n-auto])');
-    for (var i = 0; i < allElements.length; i++) {
-      var el = allElements[i];
-      // 跳过有子元素的容器
-      if (el.children.length > 0) continue;
-      // 跳过 input/textarea/option（这些由 data-i18n 处理）
-      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'OPTION') continue;
-      // 跳过语言切换按钮
-      if (el.classList && el.classList.contains('vinath-lang-btn')) continue;
-
-      var text = el.textContent.trim();
-      if (!text || text.length > 80) continue;
-
-      var key = dict[text];
-      if (key) {
-        var translation = t(key);
-        if (translation !== key && translation !== text) {
-          // 保存原始中文文本，标记为自动翻译
-          el.setAttribute('data-i18n-original', text);
-          el.setAttribute('data-i18n-auto', key);
-          el.textContent = translation;
-          count++;
-        }
-      }
-    }
+    // 已禁用运行时自动翻译 - 英文页面使用静态翻译（HTML中已写好英文）
+    // 此函数保留为空，以兼容现有调用
   }
 
   function setLang(lang) {
