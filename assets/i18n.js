@@ -572,7 +572,7 @@
 
       // 首页相约卡片
       'home.consult.collapse': 'Collapse',
-      'home.consult.expand': 'Book Now',
+      'home.consult.expand': 'Meet Now',
 },
     bm: {
       // Nav
