@@ -445,7 +445,7 @@
       'home.journeys.eyebrow': 'Your Journey',
       'home.consult.eyebrow': 'Online Consult · Booking',
       'home.consult.sub': 'Whether online consultation or home visit, it starts with understanding your body.',
-      'home.consult.tab': 'Consult',
+      'home.consult.tab': 'Meet Now',
       'home.consult.personalDesc': 'Tailored exclusive plan based on your constitution and needs.',
       'home.consult.homeDesc': 'Book a licensed TCM physician, stay home and gain health.',
       'home.consult.slogan': 'Health, made simple · Easy Health',
