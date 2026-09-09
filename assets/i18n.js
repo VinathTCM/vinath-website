@@ -202,6 +202,59 @@
       'journey.pain.desc': '自在活动，畅快每一天。',
       'journey.sleep.title': '优质睡眠',
       'journey.sleep.desc': '睡得更深，醒得更轻盈。',
+      'common.agreeSubmit': '同意并提交',
+      'common.queryBooking': '查询此预约',
+      'common.whatsappConsult': 'WhatsApp 咨询',
+      'common.submitOrder': '提交订单',
+      'common.viewDetail': '查看详情',
+      'common.bookNow': '立即预约',
+      'common.learnMore': '了解更多',
+      'common.backToHome': '返回首页',
+      'common.contactUs': '联系我们',
+      'form.phone': '手机号',
+      'form.name': '称呼',
+      'form.selectArea': '请选择您所在的区域',
+      'form.selectDoctor': '请选择医师',
+      'form.selectDate': '请选择日期',
+      'form.selectTime': '请选择时间',
+      'form.notes': '备注',
+      'form.email': '邮箱',
+      'form.address': '地址',
+      'area.johorBahru': '新山市区',
+      'area.pasirGudang': '巴西古当',
+      'area.tampoi': '淡杯',
+      'area.kulai': '古来',
+      'area.skudai': '士姑来',
+      'area.mountAustin': '奥斯丁',
+      'hint.afterArea': '选好区域后，下一步会为您显示这个区域可预约的医师',
+      'hint.loading': '加载中，请稍候...',
+      'hint.noResult': '暂无结果',
+      'hint.required': '此为必填项',
+      'journey.menopause': '更年期',
+      'journey.hotFlashes': '潮热盗汗',
+      'journey.benignLump': '良性增生结块',
+      'journey.personalized': '个人定制',
+      'journey.homeConsult': '居家会诊',
+      'journey.followUp': '建议配合定期复查',
+      'journey.ovarianMass': '卵巢部位常见的癥瘕积聚',
+      'journey.nourishYin': '滋阴调和',
+      'about.tcmMaster': '中医骨伤科学硕士',
+      'about.tcmDoctor': '中医师',
+      'about.personalizedFormula': '一人一方定制调理方案',
+      'about.specializeMenopause': '擅长更年期不适',
+      'about.formulaTested': '配方经过反复调试打磨',
+      'about.persistence': '每一次坚持',
+      'support.pregnancySafe': '孕期或哺乳期可以使用吗',
+      'support.shippingFee': '运费',
+      'support.returnPolicy': '退换政策',
+      'support.consultDoctorFirst': '建议先咨询医师后再使用',
+      'support.hygieneQuality': '从卫生与品质保障角度考虑',
+      'support.saveOrderId': '建议在下单成功页面截图保存订单编号',
+      'support.productIssue': '商品本身问题由我们承担',
+      'support.orderQuestion': '有任何产品或订单上的疑问',
+      'support.appointmentArrangement': '为保障各位客户的问诊安排',
+      'support.cannotFind': '如果找不到了',
+      'lang.zh': '中文',
     },
     en: {
       // Nav
@@ -395,6 +448,59 @@
       'journey.pain.desc': 'Move freely, enjoy every day.',
       'journey.sleep.title': 'Quality Sleep',
       'journey.sleep.desc': 'Sleep deeper, wake lighter.',
+      'common.agreeSubmit': 'Agree & Submit',
+      'common.queryBooking': 'Query This Booking',
+      'common.whatsappConsult': 'WhatsApp Consultation',
+      'common.submitOrder': 'Submit Order',
+      'common.viewDetail': 'View Details',
+      'common.bookNow': 'Book Now',
+      'common.learnMore': 'Learn More',
+      'common.backToHome': 'Back to Home',
+      'common.contactUs': 'Contact Us',
+      'form.phone': 'Phone Number',
+      'form.name': 'Name / Title',
+      'form.selectArea': 'Please select your area',
+      'form.selectDoctor': 'Please select a physician',
+      'form.selectDate': 'Please select a date',
+      'form.selectTime': 'Please select a time',
+      'form.notes': 'Notes',
+      'form.email': 'Email',
+      'form.address': 'Address',
+      'area.johorBahru': 'Johor Bahru City',
+      'area.pasirGudang': 'Pasir Gudang',
+      'area.tampoi': 'Tampoi',
+      'area.kulai': 'Kulai',
+      'area.skudai': 'Skudai',
+      'area.mountAustin': 'Mount Austin',
+      'hint.afterArea': 'After selecting an area, available physicians will be shown',
+      'hint.loading': 'Loading, please wait...',
+      'hint.noResult': 'No results found',
+      'hint.required': 'This field is required',
+      'journey.menopause': 'Menopause',
+      'journey.hotFlashes': 'Hot Flashes & Night Sweats',
+      'journey.benignLump': 'Benign Hyperplasia & Lumps',
+      'journey.personalized': 'Personalized Care',
+      'journey.homeConsult': 'Home Consultation',
+      'journey.followUp': 'Recommended with regular follow-up',
+      'journey.ovarianMass': 'Common ovarian masses and accumulations',
+      'journey.nourishYin': 'Nourish Yin and Harmonize',
+      'about.tcmMaster': 'Master of TCM Orthopedics',
+      'about.tcmDoctor': 'TCM Physician',
+      'about.personalizedFormula': 'Customized formula for each individual',
+      'about.specializeMenopause': 'Specializes in menopausal discomfort',
+      'about.formulaTested': 'Formulas经过反复调试打磨',
+      'about.persistence': 'Every persistence',
+      'support.pregnancySafe': 'Is it safe during pregnancy or breastfeeding?',
+      'support.shippingFee': 'Shipping Fee',
+      'support.returnPolicy': 'Return & Refund Policy',
+      'support.consultDoctorFirst': 'Recommended to consult a physician before use',
+      'support.hygieneQuality': 'From hygiene and quality assurance perspective',
+      'support.saveOrderId': 'Recommended to screenshot and save the order number on the confirmation page',
+      'support.productIssue': 'Product quality issues are borne by us',
+      'support.orderQuestion': 'For any product or order questions',
+      'support.appointmentArrangement': 'To ensure the consultation arrangement for all customers',
+      'support.cannotFind': 'If you cannot find it',
+      'lang.zh': '中文',
     },
     bm: {
       // Nav
@@ -588,6 +694,59 @@
       'journey.pain.desc': 'Bergerak bebas, nikmati setiap hari.',
       'journey.sleep.title': 'Tidur Berkualiti',
       'journey.sleep.desc': 'Tidur lebih lena, bangun lebih segar.',
+      'common.agreeSubmit': 'Setuju & Hantar',
+      'common.queryBooking': 'Cari Tempahan Ini',
+      'common.whatsappConsult': 'Perundingan WhatsApp',
+      'common.submitOrder': 'Hantar Pesanan',
+      'common.viewDetail': 'Lihat Butiran',
+      'common.bookNow': 'Tempah Sekarang',
+      'common.learnMore': 'Ketahui Lebih Lanjut',
+      'common.backToHome': 'Kembali ke Laman Utama',
+      'common.contactUs': 'Hubungi Kami',
+      'form.phone': 'Nombor Telefon',
+      'form.name': 'Nama / Gelaran',
+      'form.selectArea': 'Sila pilih kawasan anda',
+      'form.selectDoctor': 'Sila pilih doktor',
+      'form.selectDate': 'Sila pilih tarikh',
+      'form.selectTime': 'Sila pilih masa',
+      'form.notes': 'Catatan',
+      'form.email': 'E-mel',
+      'form.address': 'Alamat',
+      'area.johorBahru': 'Bandar Johor Bahru',
+      'area.pasirGudang': 'Pasir Gudang',
+      'area.tampoi': 'Tampoi',
+      'area.kulai': 'Kulai',
+      'area.skudai': 'Skudai',
+      'area.mountAustin': 'Mount Austin',
+      'hint.afterArea': 'Selepas memilih kawasan, doktor yang tersedia akan dipaparkan',
+      'hint.loading': 'Memuatkan, sila tunggu...',
+      'hint.noResult': 'Tiada hasil dijumpai',
+      'hint.required': 'Medan ini wajib diisi',
+      'journey.menopause': 'Menopaus',
+      'journey.hotFlashes': 'Rasa Panas & Berpeluh Malam',
+      'journey.benignLump': 'Hiperplasia Benign & Ketulan',
+      'journey.personalized': 'Penjagaan Peribadi',
+      'journey.homeConsult': 'Perundingan Rumah',
+      'journey.followUp': 'Disyorkan dengan susulan berkala',
+      'journey.ovarianMass': 'Ketulan dan pengumpulan ovari yang biasa',
+      'journey.nourishYin': 'Menyuburkan Yin dan Menyelaraskan',
+      'about.tcmMaster': 'Sarjana Sains Ortopedik TCM',
+      'about.tcmDoctor': 'Doktor TCM',
+      'about.personalizedFormula': 'Formula tersuai untuk setiap individu',
+      'about.specializeMenopause': 'Mengkhusus dalam ketidakselesaan menopaus',
+      'about.formulaTested': 'Formula diuji dan diperhalusi berulang kali',
+      'about.persistence': 'Setiap kegigihan',
+      'support.pregnancySafe': 'Selamat digunakan semasa hamil atau menyusu?',
+      'support.shippingFee': 'Yuran Penghantaran',
+      'support.returnPolicy': 'Dasar Pulangan & Bayaran Balik',
+      'support.consultDoctorFirst': 'Disyorkan berunding dengan doktor sebelum digunakan',
+      'support.hygieneQuality': 'Dari perspektif kebersihan dan jaminan kualiti',
+      'support.saveOrderId': 'Disyorkan membuat tangkapan skrin dan menyimpan nombor pesanan di halaman pengesahan',
+      'support.productIssue': 'Isu kualiti produk ditanggung oleh kami',
+      'support.orderQuestion': 'Untuk sebarang soalan produk atau pesanan',
+      'support.appointmentArrangement': 'Bagi menjamin susunan perundingan semua pelanggan',
+      'support.cannotFind': 'Jika anda tidak dapat mencarinya',
+      'lang.zh': '中文',
     }
   };
 
@@ -751,33 +910,47 @@
                   encodeURIComponent(item.text) +
                   '&langpair=zh|' + item.apiLang;
 
-        fetch(url)
-          .then(function(r) { return r.json(); })
-          .then(function(data) {
-            var translated = '';
-            if (data && data.responseData && data.responseData.translatedText) {
-              translated = data.responseData.translatedText;
-              // 修复常见翻译问题
-              translated = translated.replace(/&amp;/g, '&');
-              translated = translated.replace(/&quot;/g, '"');
-              translated = translated.replace(/&#39;/g, "'");
-            }
-            if (translated) {
-              translationCache[getCacheKey(item.text, item.targetLang)] = {
-                text: translated,
-                time: Date.now()
-              };
-              saveCache();
-              item.callback(translated);
-            }
-          })
-          .catch(function() {})
-          .finally(function() {
-            completed++;
-            if (completed === batch.length) {
-              setTimeout(processApiQueue, API_DELAY);
-            }
-          });
+        var retryCount = 0;
+        var maxRetries = 2;
+        
+        function doFetch() {
+          fetch(url)
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+              var translated = '';
+              if (data && data.responseData && data.responseData.translatedText) {
+                translated = data.responseData.translatedText;
+                // 修复常见翻译问题
+                translated = translated.replace(/&amp;/g, '&');
+                translated = translated.replace(/&quot;/g, '"');
+                translated = translated.replace(/&#39;/g, "'");
+              }
+              if (translated) {
+                translationCache[getCacheKey(item.text, item.targetLang)] = {
+                  text: translated,
+                  time: Date.now()
+                };
+                saveCache();
+                item.callback(translated);
+              }
+              completed++;
+              if (completed === batch.length) {
+                setTimeout(processApiQueue, API_DELAY);
+              }
+            })
+            .catch(function() {
+              if (retryCount < maxRetries) {
+                retryCount++;
+                setTimeout(doFetch, 1000 * retryCount);
+              } else {
+                completed++;
+                if (completed === batch.length) {
+                  setTimeout(processApiQueue, API_DELAY);
+                }
+              }
+            });
+        }
+        doFetch();
       }, idx * API_DELAY);
     });
   }
@@ -822,8 +995,8 @@
         toTranslate.push({ el: el, text: text });
       }
 
-      // 限制每次最多翻译30个元素
-      toTranslate = toTranslate.slice(0, 30);
+      // 限制每次最多翻译60个元素
+      toTranslate = toTranslate.slice(0, 60);
 
       toTranslate.forEach(function(item) {
         translateWithAPI(item.text, currentLang, function(translated) {
@@ -972,10 +1145,24 @@
   }
 
   // ========== 初始化 ==========
+  var scrollTimer = null;
   function init() {
     createLangSwitcher();
     applyTranslations();
     startObserver();
+    
+    // 页面加载后多次触发翻译，确保动态内容都被翻译
+    setTimeout(function() { scheduleAutoTranslate(); }, 1000);
+    setTimeout(function() { scheduleAutoTranslate(); }, 3000);
+    setTimeout(function() { scheduleAutoTranslate(); }, 5000);
+    
+    // 滚动时触发翻译（可见区域的新内容）
+    window.addEventListener('scroll', function() {
+      if (scrollTimer) clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(function() {
+        scheduleAutoTranslate();
+      }, 500);
+    }, { passive: true });
   }
 
   if (document.readyState === 'loading') {
