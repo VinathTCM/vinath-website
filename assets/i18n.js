@@ -806,6 +806,9 @@
   }
 
   function applyTranslations() {
+    // 英文静态页面：内容已经是英文，不重复翻译
+    if (window.VINATH_PAGE_LANG === 'en') return;
+    
     document.querySelectorAll('[data-i18n]').forEach(function(el) {
       var key = el.getAttribute('data-i18n');
       var translation = t(key);
