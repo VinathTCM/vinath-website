@@ -694,7 +694,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       html += '<div class="hc-stage-hint">我们看 to 您 at  browse 时Follow  content ，一并带来 ：</div>'
         + '<div class="hc-context-card">'
         + '<div class="hc-context-row"><span class="cl">Journeys</span><span>'+ctxJourney+'</span></div>'
-        + '<div class="hc-context-row"><span class="cl">症状</span><span>'+ctxTags.map(function(t){ return '<span class="hc-tag-chip">'+t+'</span>'; }).join('')+'</span></div>'
+        + '<div class="hc-context-row"><span class="cl">symptoms</span><span>'+ctxTags.map(function(t){ return '<span class="hc-tag-chip">'+t+'</span>'; }).join('')+'</span></div>'
         + '</div>'
         + '<div class="hc-field"><label>还 has 其他 need 补充 吗？（选填）</label><textarea id="needsInput" placeholder="e.g., symptom duration, past wellness experience, etc.">'+form.supplement+'</textarea></div>';
     } else if(hasJourney){
@@ -922,7 +922,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   function renderStage3(){
     var dates = getBookableDates(21);
     var html = '<div class="hc-stage-title">选择Date and Time</div>'
-      + '<div class="hc-stage-hint">Sunday for Closed日，当日Afternoon已过则无法Booking当日剩余 timeslot ； public 假期 etc.临时休诊Date不会出现 at  lower OptionalDate中， part  timeslot 停诊则会以划线StyleShow at  for 应 timeslot 上。</div>'
+      + '<div class="hc-stage-hint">Sunday for Closed日，当日Afternoon已过则无法Booking当日剩余 timeslot ； public 假期 etc.临时休诊Date不会appear at  lower OptionalDate中， part  timeslot 停诊则会以划线StyleShow at  for 应 timeslot 上。</div>'
       + '<div class="hc-date-strip" id="dateStrip">';
     dates.forEach(function(d, i){
       var selected = form.date && d.toDateString() === form.date.toDateString();

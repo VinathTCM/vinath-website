@@ -1096,7 +1096,7 @@
   };
   // [stated bug fix] Home  navigate 下拉 and 这个Journeys卡片板块，之前完全Yes写死 HTML，跟 content  manage 后台
   //  Journeys data 毫无 relation ——关掉一个Journeys只会影响Details页轮播， here 完全不受影响；AddJourneys也不会自动
-  // 出现 at 这两处。现 at 改成跟细节页模板一样， from 共享 data 里读取、按active filter ， meanwhile  retain 跟其他 page 
+  // appear at 这两处。现 at 改成跟细节页模板一样， from 共享 data 里读取、按active filter ， meanwhile  retain 跟其他 page 
   // 一致 "版本化种子"逻辑（ content  manage 没 手动Edit过 Journeys，未来文案Update还Yes能正常Refresh过来）。
   (async function(){
     var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
