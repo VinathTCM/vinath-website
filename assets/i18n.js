@@ -841,6 +841,11 @@
   const STORAGE_KEY = 'vinath_lang';
   const LANGS = ['zh', 'en'];
   let currentLang = localStorage.getItem(STORAGE_KEY) || 'zh';
+  
+  // 英文静态页面：强制使用英文，确保t()函数返回英文翻译
+  if (window.VINATH_PAGE_LANG === 'en') {
+    currentLang = 'en';
+  }
 
   function t(key) {
     return (I18N[currentLang] && I18N[currentLang][key]) ||
