@@ -555,7 +555,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         + '<div class="hc-matching"><div class="hc-matching-spin"></div>'
         + '<div style="font-size:14.5px;">We have matched you with a nearby licensed TCM Physician, waiting for the physician to confirm the booking…</div>'
         + '<div style="font-size:12.5px; color:var(--espresso-soft); margin-top:10px;">Physicians usually respond within 15 minutes. Please watch for incoming calls.</div></div>'
-        + '<div class="hc-proto-note">This page automatically checks every few seconds whether the physician has responded; if you close the page midway, there is currently no real push notification to alert you.醒您，PhysicianConfirm后会直接打您留的Phone Contact。</div>';
+        + '<div class="hc-proto-note">This page automatically checks every few seconds whether the physician has responded; if you close the page midway, there is currently no real push notification to alert you. Once the physician confirms, we will call the phone contact you provided directly.</div>';
       instantPollTimer = setInterval(async function(){
         var latest = await getInstantRequestById(instantReqId);
         if(latest && latest.status !== 'pending_confirmation'){
@@ -668,7 +668,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     return slot.startHour >= 14;
   }
   function fmtDate(d){
-    return d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 '+DOW[d.getDay()];
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+DOW[d.getDay()];
   }
   function normalizeDigits(v){
     return v.replace(/[\uFF10-\uFF19]/g, function(ch){ return String.fromCharCode(ch.charCodeAt(0) - 0xFEE0); });
