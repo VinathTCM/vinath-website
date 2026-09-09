@@ -255,7 +255,22 @@
       'support.appointmentArrangement': '为保障各位客户的问诊安排',
       'support.cannotFind': '如果找不到了',
       'lang.zh': '中文',
-    },
+    
+      // 服务流程
+      'process.eyebrow': '服务流程',
+      'process.title': '简单5步流程',
+      'process.sub': '从预约到跟进，让中医调理轻松无忧。',
+      'process.step1.title': '预约',
+      'process.step1.desc': '在线或通过WhatsApp选择您偏好的日期、时间和服务类型。',
+      'process.step2.title': '医师上门',
+      'process.step2.desc': '注册中医师按约定时间到达您家。',
+      'process.step3.title': '诊断',
+      'process.step3.desc': '全面咨询，包括脉诊、舌诊和健康评估。',
+      'process.step4.title': '开方',
+      'process.step4.desc': '根据您的具体情况定制个性化中药配方和治疗方案。',
+      'process.step5.title': '后续跟进',
+      'process.step5.desc': '我们跟进您的进展，并根据需要调整治疗方案以获得最佳效果。',
+},
     en: {
       // Nav
       'nav.home': 'Home',
@@ -501,7 +516,22 @@
       'support.appointmentArrangement': 'To ensure the consultation arrangement for all customers',
       'support.cannotFind': 'If you cannot find it',
       'lang.zh': '中文',
-    },
+    
+      // 服务流程
+      'process.eyebrow': 'How It Works',
+      'process.title': 'Simple 5-Step Process',
+      'process.sub': 'From booking to follow-up, we make TCM care effortless.',
+      'process.step1.title': 'Book Appointment',
+      'process.step1.desc': 'Choose your preferred date, time, and service type online or via WhatsApp.',
+      'process.step2.title': 'Practitioner Visits',
+      'process.step2.desc': 'A licensed TCM practitioner arrives at your home at the scheduled time.',
+      'process.step3.title': 'Diagnosis',
+      'process.step3.desc': 'Comprehensive consultation including pulse reading, tongue analysis, and health assessment.',
+      'process.step4.title': 'Prescription',
+      'process.step4.desc': 'Personalized herbal formula and treatment plan tailored to your specific condition.',
+      'process.step5.title': 'Follow-up Care',
+      'process.step5.desc': 'We check on your progress and adjust the treatment plan as needed for optimal results.',
+},
     bm: {
       // Nav
       'nav.home': 'Laman Utama',
@@ -747,7 +777,22 @@
       'support.appointmentArrangement': 'Bagi menjamin susunan perundingan semua pelanggan',
       'support.cannotFind': 'Jika anda tidak dapat mencarinya',
       'lang.zh': '中文',
-    }
+    
+      // 服务流程
+      'process.eyebrow': 'Cara Kerja',
+      'process.title': 'Proses 5 Langkah Mudah',
+      'process.sub': 'Dari tempahan hingga susulan, kami memudahkan penjagaan TCM.',
+      'process.step1.title': 'Tempa Janji',
+      'process.step1.desc': 'Pilih tarikh, masa, dan jenis perkhidmatan pilihan anda dalam talian atau melalui WhatsApp.',
+      'process.step2.title': 'Pengamal Berkunjung',
+      'process.step2.desc': 'Pengamal TCM berlesen tiba di rumah anda pada masa yang dijadualkan.',
+      'process.step3.title': 'Diagnosa',
+      'process.step3.desc': 'Perundingan komprehensif termasuk pembacaan nadi, analisis lidah, dan penilaian kesihatan.',
+      'process.step4.title': 'Preskripsi',
+      'process.step4.desc': 'Formula herba peribadi dan pelan rawatan disesuaikan dengan keadaan khusus anda.',
+      'process.step5.title': 'Penjagaan Susulan',
+      'process.step5.desc': 'Kami memantau kemajuan anda dan menyesuaikan pelan rawatan mengikut keperluan untuk hasil optimum.',
+}
   };
 
   // ========== 核心逻辑 ==========
