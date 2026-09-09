@@ -135,18 +135,18 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   <div class="content">
     <h1 class="oq-title">Order Tracking</h1>
-    <p class="oq-sub">不需要注册登录，输入订单号和下单时留的联系方式，就能查看订单状态。</p>
+    <p class="oq-sub">No registration required. Enter your order number and contact information to view your order status.</p>
 
     <div class="oq-form">
       <div class="oq-field">
-        <label>订单号</label>
+        <label>Order Number</label>
         <input type="text" id="orderInput" placeholder="例如：VN20260715001">
       </div>
       <div class="oq-field">
-        <label>联系方式</label>
+        <label>Contact Information</label>
         <input type="text" id="contactInput" placeholder="下单时留的邮箱或手机号">
       </div>
-      <div class="oq-error" id="oqError">没有找到匹配的订单，请确认订单号和联系方式是否正确。</div>
+      <div class="oq-error" id="oqError">No matching order found. Please verify your order number and contact information.</div>
       <button class="oq-btn" id="lookupBtn">Track Order</button>
       <div class="oq-hint-examples" id="demoHint"></div>
     </div>
@@ -318,7 +318,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   function renderResult(order){
     var html = '<div class="oq-result">'
-      + '<div class="oq-result-hd"><div class="oq-order-no">订单号 '+order.orderNo+'</div><div class="oq-order-date">下单日期 '+order.date+'</div></div>';
+      + '<div class="oq-result-hd"><div class="oq-order-no">Order Number '+order.orderNo+'</div><div class="oq-order-date">下单日期 '+order.date+'</div></div>';
 
     html += '<div class="stepper-wrap">';
     STATUS_LABELS.forEach(function(label, i){
@@ -341,7 +341,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   function renderNotFound(){
     document.getElementById('resultArea').innerHTML =
       '<div class="not-found-box"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>'
-      + '<p>没有找到匹配的订单，请确认订单号和联系方式。</p></div>';
+      + '<p>没有找到匹配的订单，请确认Order Number和Contact Information。</p></div>';
   }
 
   var orderInput = document.getElementById('orderInput');
@@ -352,7 +352,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var orderNo = orderInput.value.trim();
     var contact = contactInput.value.trim();
     if(!orderNo || !contact){
-      errorEl.textContent = '请填写订单号和联系方式。';
+      errorEl.textContent = '请填写Order Number和Contact Information。';
       errorEl.classList.add('show');
       document.getElementById('resultArea').innerHTML = '';
       return;
@@ -365,7 +365,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         errorEl.classList.remove('show');
         renderResult(order);
       } else {
-        errorEl.textContent = '没有找到匹配的订单，请确认订单号和联系方式是否正确。';
+        errorEl.textContent = 'No matching order found. Please verify your order number and contact information.';
         errorEl.classList.add('show');
         document.getElementById('resultArea').innerHTML = '';
       }
@@ -462,7 +462,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 <div class="vh-chat-panel" id="vhChatPanel">
   <div class="vh-chat-hd">
     <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
-    <div class="vh-chat-hd-sub" id="vhChatSub">正在与 龚诗宏医师 对话</div>
+    <div class="vh-chat-hd-sub" id="vhChatSub">Chatting with Dr. Gong Shihong</div>
     <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
   </div>
   <div class="vh-chat-body" id="vhChatBody"></div>

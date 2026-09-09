@@ -241,25 +241,25 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     </div>
   </div>
 
-  <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-link" id="bcShop">商店</span><span class="sep">›</span><span class="bc-current">结算</span></div>
+  <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-link" id="bcShop">Shop</span><span class="sep">›</span><span class="bc-current">Checkout</span></div>
 
   <div class="content">
-    <h1 class="co-title">结算</h1>
+    <h1 class="co-title">Checkout</h1>
     <div id="mainArea"></div>
   </div>
 </div>
 
 <div class="order-consent-overlay" id="orderConsentModal">
   <div class="order-consent-box">
-    <div class="oc-title">提交前，请确认</div>
-    <div class="oc-text">我同意本服务收集我的Name、Phone Number与收货Address，如通过Bank Transfer/DuitNow付款还包括我上传的付款截图，这些信息仅用于处理及配送本次订单、核对付款，不会用作广告推销，不会对外泄露。详细说明请见<a href="/en/policy/#privacy" target="_blank">Privacy Policy</a>。</div>
+    <div class="oc-title">Before submitting, please confirm</div>
+    <div class="oc-text">I agree that this service collects my Name, Phone Number, and shipping Address. If paying via Bank Transfer/DuitNow, this also includes the payment screenshot I upload. This informationis only used for processing and delivering this order, verifying payment, will not be used for advertising, and will not be disclosed. For details, please see<a href="/en/policy/#privacy" target="_blank">Privacy Policy</a>。</div>
     <label class="oc-check-row">
       <input type="checkbox" id="orderConsentCheckbox">
-      <span>我已阅读并同意以上内容</span>
+      <span>I have read and agree to the above</span>
     </label>
-    <div class="oc-error" id="orderConsentError">请先勾选同意，才能继续提交</div>
-    <button type="button" class="checkout-btn" id="orderConsentAgreeBtn">同意并继续</button>
-    <div class="oc-cancel" id="orderConsentCancelBtn">取消</div>
+    <div class="oc-error" id="orderConsentError">Please check the agreement first to continue submitting</div>
+    <button type="button" class="checkout-btn" id="orderConsentAgreeBtn">Agree & Continue</button>
+    <div class="oc-cancel" id="orderConsentCancelBtn">Cancel</div>
   </div>
 </div>
 
@@ -280,7 +280,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
     fetch(API_BASE + '/analytics/pageview', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ page: 'Shopping Cart结算' })
+      body: JSON.stringify({ page: 'Shopping CartCheckout' })
     }).catch(function(){});
   })();
 
@@ -453,7 +453,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         return {id:parts[0], variant:(parts[1]==='t'?'trial':'full'), qty:Math.max(1, Number(parts[2])||1)};
       }).filter(Boolean);
     } else {
-      // no cart in the URL (e.g. this page opened directly rather than clicked through from 商店) —
+      // no cart in the URL (e.g. this page opened directly rather than clicked through from Shop) —
       // fall back to whatever was last saved there, so testing/using this page standalone still works
       idList = cartIdsFromStorage();
     }
@@ -626,8 +626,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     document.getElementById('mainArea').innerHTML =
       '<div class="empty-state">'
       + '<svg viewBox="0 0 24 24" width="46" height="46" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>'
-      + '<p>Shopping Cart还是空的，去商店看看喜欢的Products吧。</p>'
-      + '<button class="empty-btn" id="goShopBtn">去商店</button>'
+      + '<p>Shopping Cart还是空的，去Shop看看喜欢的Products吧。</p>'
+      + '<button class="empty-btn" id="goShopBtn">去Shop</button>'
       + '</div>';
     document.getElementById('goShopBtn').addEventListener('click', function(){ window.location.href = '/shop/'; });
   }
@@ -856,7 +856,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var titleEl = document.querySelector('.co-title');
     if(completedOrder){ titleEl.textContent = '订单完成'; renderOrderSuccess(); return; }
     if(pendingOrder){ titleEl.textContent = '支付'; renderPayment(); return; }
-    titleEl.textContent = '结算';
+    titleEl.textContent = 'Checkout';
     if(!cart.length){ renderEmpty(); updateCartBadge(); return; }
 
     var allChecked = cart.every(function(it){ return it.checked; });
@@ -867,7 +867,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     cart.forEach(function(item, idx){
       var p = item.product;
       var hasImg = p.imgs && p.imgs[0];
-      var oos = !p.inStock ? '<div class="item-oos">暂时缺货，无法结算此项</div>' : '';
+      var oos = !p.inStock ? '<div class="item-oos">暂时缺货，无法Checkout此项</div>' : '';
       var origPrice = unitPrice(item);
       var effPrice = effectiveUnitPrice(item);
       var priceHtml = effPrice < origPrice
@@ -1167,7 +1167,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
   vhAcctMenu.addEventListener('click', function(e){ e.stopPropagation(); });
   document.getElementById('cartBtn').addEventListener('click', function(){
-    showToast(cart.length > 0 ? '当前在结算页' : 'Shopping Cart是空的');
+    showToast(cart.length > 0 ? '当前在Checkout页' : 'Shopping Cart是空的');
   });
 
   initFromBackend();
@@ -1200,7 +1200,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 <div class="vh-chat-panel" id="vhChatPanel">
   <div class="vh-chat-hd">
     <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
-    <div class="vh-chat-hd-sub" id="vhChatSub">正在与 龚诗宏医师 对话</div>
+    <div class="vh-chat-hd-sub" id="vhChatSub">Chatting with Dr. Gong Shihong</div>
     <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
   </div>
   <div class="vh-chat-body" id="vhChatBody"></div>

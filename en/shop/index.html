@@ -229,7 +229,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       <span class="gs-clear" id="gsClearBtn">✕</span>
     </div>
 
-    <div class="wish-filter-chip" id="wishFilterChip"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9.5-9C.5 8 2 4 6 4c2 0 3.5 1 4 2 .5-1 2-2 4-2 4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg><span id="wishFilterLabel">我的收藏</span></div>
+    <div class="wish-filter-chip" id="wishFilterChip"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9.5-9C.5 8 2 4 6 4c2 0 3.5 1 4 2 .5-1 2-2 4-2 4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg><span id="wishFilterLabel">My Favorites</span></div>
 
     <div class="cat-section">
       <div class="cat-scroll" id="catScroll"></div>
@@ -252,7 +252,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       </div>
     </div>
 
-    <div class="feat-title">当季主打</div>
+    <div class="feat-title">Seasonal Picks</div>
     <div class="feat-sub">SEASONAL PICKS</div>
     <div class="feat-grid" id="featGrid"></div>
   </div>
@@ -274,11 +274,11 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     <div class="qv-type" id="qvType"></div>
     <div class="qv-name" id="qvName"></div>
     <div class="qv-desc" id="qvDesc"></div>
-    <div class="qv-full-link" id="qvFullLink">查看完整详情 →</div>
+    <div class="qv-full-link" id="qvFullLink">View Full Details →</div>
     <div id="qvOosMsg"></div>
     <div class="qv-variants" id="qvVariants"></div>
     <div class="qv-qty-row">
-      <div class="qv-qty-label">数量</div>
+      <div class="qv-qty-label">Quantity</div>
       <div class="qv-stepper">
         <div class="qv-step-btn" id="qvMinus">－</div>
         <div class="qv-qty-num" id="qvQtyNum">1</div>
@@ -735,12 +735,12 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     if(openType === 'ALL') globalSearchInput.value = ehSearch.value;
   });
 
-  // ---- "我的收藏" filter: same expand-zone mechanism as global search, filtered to wishlisted ids ----
+  // ---- "My Favorites" filter: same expand-zone mechanism as global search, filtered to wishlisted ids ----
   var wishFilterChip = document.getElementById('wishFilterChip');
   var wishFilterActive = false;
   function updateWishFilterCount(){
     var n = getWishlist().length;
-    document.getElementById('wishFilterLabel').textContent = n ? '我的收藏 ('+n+')' : '我的收藏';
+    document.getElementById('wishFilterLabel').textContent = n ? 'My Favorites ('+n+')' : 'My Favorites';
   }
   wishFilterChip.addEventListener('click', function(){
     wishFilterActive = !wishFilterActive;
@@ -757,7 +757,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     catScroll.querySelectorAll('.cat-card').forEach(function(c){ c.classList.remove('on'); });
     var ids = getWishlist();
     currentTypeList = PRODUCTS.filter(function(p){ return p.active && ids.indexOf(p.id)!==-1; });
-    ehTitle.textContent = '我的收藏';
+    ehTitle.textContent = 'My Favorites';
     ehSearch.value = '';
     ehCount.textContent = currentTypeList.length + ' 件商品';
     renderGroups(currentTypeList);
@@ -785,7 +785,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         + (hasImg
             ? '<img src="'+p.imgs[0]+'" loading="lazy" decoding="async" alt="'+p.name+'"><div class="feat-scrim"></div>'
             : '<div class="pt-icon">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>')
-        + '<div class="feat-pin">当季主打</div>'
+        + '<div class="feat-pin">Seasonal Picks</div>'
         + '<span class="prod-wish'+(wished?' on':'')+'" data-wid="'+p.id+'" style="top:12px;right:12px;">'+WISH_HEART_SVG+'</span>'
         + '<div class="feat-body'+(hasImg?'':' feat-body-plain')+'"><div class="feat-name">'+p.name+'</div><div class="feat-price">MYR '+p.trial+' 起</div></div>'
         + '</div>';
@@ -1021,7 +1021,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 <div class="vh-chat-panel" id="vhChatPanel">
   <div class="vh-chat-hd">
     <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
-    <div class="vh-chat-hd-sub" id="vhChatSub">正在与 龚诗宏医师 对话</div>
+    <div class="vh-chat-hd-sub" id="vhChatSub">Chatting with Dr. Gong Shihong</div>
     <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
   </div>
   <div class="vh-chat-body" id="vhChatBody"></div>

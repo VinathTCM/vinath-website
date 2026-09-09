@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title id="pageTitle">VINATH · 旅程</title>
+<title id="pageTitle">VINATH · Journeys</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&display=swap');
 
@@ -160,7 +160,7 @@ body{
     </div>
   </div>
 
-  <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-current" id="bcCurrent">旅程</span></div>
+  <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-current" id="bcCurrent">Journeys</span></div>
 
   <div class="hero-wrap">
     <div class="hero">
@@ -170,7 +170,7 @@ body{
   </div>
 
   <div class="content">
-    <h1 class="j-title" id="jTitle">旅程</h1>
+    <h1 class="j-title" id="jTitle">Journeys</h1>
     <div class="j-en" id="jEn"></div>
     <p class="j-intro" id="jIntro"></p>
 
@@ -178,10 +178,10 @@ body{
 
     <div class="cond-list" id="condList"></div>
 
-    <div class="cond-disclaimer">以上产品推荐仅为Daily Wellness调理参考，不构成医疗诊断或治疗建议，不能替代专业医师的辨证诊治。如有持续或明显不适，请咨询注册中医师或西医。</div>
+    <div class="cond-disclaimer">The above product recommendations are for Daily Wellness reference only, and do not constitute medical diagnosis or treatment advice, nor can they replace professional physician consultation. If you have persistent or obvious discomfort, please consult a licensed TCM physician or Western medicine doctor.</div>
 
     <div class="shop-all" id="shopAllBtn">
-      <span id="shopAllText">浏览相关全部商品</span>
+      <span id="shopAllText">Browse All Related Products</span>
     </div>
   </div>
 </div>
@@ -556,7 +556,7 @@ body{
         var fromBackend = JSON.parse(xhr.responseText);
         if(fromBackend) return fromBackend;
       }
-    } catch(e){ console.error('拉取健康旅程失败，使用本地兜底数据:', e); }
+    } catch(e){ console.error('拉取健康Journeys失败，使用本地兜底数据:', e); }
     var fresh = {};
     for(var k in JOURNEYS_SEED){ fresh[k] = JOURNEYS_SEED[k]; }
     fresh.__seedVersion = JOURNEYS_SEED_VERSION;
@@ -578,7 +578,7 @@ body{
     document.getElementById('condSectionNote').textContent = journeyData.note || '';
     document.getElementById('shopAllText').textContent = '浏览' + journeyData.name + '相关全部商品';
   } else {
-    document.querySelector('.content').innerHTML = '<div class="cond-disclaimer" style="margin-top:40px;">找不到这个旅程——链接可能有误，或者这个旅程还没有在"内容管理"里发布内容。</div>';
+    document.querySelector('.content').innerHTML = '<div class="cond-disclaimer" style="margin-top:40px;">找不到这个Journeys——链接可能有误，或者这个Journeys还没有在"内容管理"里发布内容。</div>';
     return;
   }
 
@@ -774,7 +774,7 @@ body{
 <div class="vh-chat-panel" id="vhChatPanel">
   <div class="vh-chat-hd">
     <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
-    <div class="vh-chat-hd-sub" id="vhChatSub">正在与 龚诗宏医师 对话</div>
+    <div class="vh-chat-hd-sub" id="vhChatSub">Chatting with Dr. Gong Shihong</div>
     <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
   </div>
   <div class="vh-chat-body" id="vhChatBody"></div>

@@ -186,17 +186,17 @@ body{
     </div>
   </div>
 
-  <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-current">健康旅程</span></div>
+  <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-current">Wellness Journeys</span></div>
 
   <div class="hero-wrap">
   <div class="hero" id="viewport">
     <div class="hero-track" id="track"></div>
     <div class="hero-tap left" id="tapPrev" aria-hidden="true"></div>
     <div class="hero-tap right" id="tapNext" aria-hidden="true"></div>
-    <div class="hero-nav prev hide" id="prevBtn" aria-label="上一个旅程">
+    <div class="hero-nav prev hide" id="prevBtn" aria-label="上一个Journeys">
       <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l-7 7 7 7"/></svg>
     </div>
-    <div class="hero-nav next" id="nextBtn" aria-label="下一个旅程">
+    <div class="hero-nav next" id="nextBtn" aria-label="下一个Journeys">
       <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5l7 7-7 7"/></svg>
     </div>
     <div class="hero-dots" id="dots"></div>
@@ -223,7 +223,7 @@ body{
     var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
     fetch(API_BASE + '/analytics/pageview', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ page: '旅程详情页' })
+      body: JSON.stringify({ page: 'Journeys详情页' })
     }).catch(function(){});
   })();
 
@@ -333,10 +333,10 @@ body{
     }
   ];
 
-  // [stated bug fix] 内容管理 后台每个旅程卡片上的开关（active字段）之前完全没有地方读取它——
-  // 开关本身能点、能变灰，但轮播这边压根不知道这件事，所以关掉哪个旅程，Home/这个轮播页都还是
-  // 照常显示。现在改成会去读那份数据，把标记为"关闭"的旅程从轮播里过滤掉。注意：这只影响"轮播
-  // 里出不出现"（也就是能不能通过Home逛过去被看到）——如果客户手上有旅程细节页的直接链接，还是
+  // [stated bug fix] 内容管理 后台每个Journeys卡片上的开关（active字段）之前完全没有地方读取它——
+  // 开关本身能点、能变灰，但轮播这边压根不知道这件事，所以关掉哪个Journeys，Home/这个轮播页都还是
+  // 照常显示。现在改成会去读那份数据，把标记为"关闭"的Journeys从轮播里过滤掉。注意：这只影响"轮播
+  // 里出不出现"（也就是能不能通过Home逛过去被看到）——如果客户手上有Journeys细节页的直接链接，还是
   // 能打开，因为这里没有改动细节页本身的逻辑，也没有做真正的访问权限控制（这个还是要接入真后端
   // 才能做到"直接链接也打不开"）。
   var JOURNEY_KEY_BY_TITLE = {'Women's Health':'women','Body Shaping':'sculpt','Beauty & Skincare':'beauty','Daily Wellness':'wellness','Pain Soothing':'pain','Quality Sleep':'sleep'};
@@ -361,7 +361,7 @@ body{
         var ob = (kb && journeysData[kb] && typeof journeysData[kb].order==='number') ? journeysData[kb].order : 999;
         return oa - ob;
       });
-    } catch(e){ console.error('拉取健康旅程失败:', e); }
+    } catch(e){ console.error('拉取Wellness Journeys失败:', e); }
   })();
 
   var N = JOURNEYS.length, idx = 0;
@@ -377,7 +377,7 @@ body{
     for(var i=0;i<N;i++){
       var j = JOURNEYS[i];
       html += '<div class="hero-slide'+(j.full?'':' ph')+(i===idx?' active':'')+'">'
-        + '<img src="'+j.art+'" '+(i===0?'':'loading="lazy"')+' decoding="async" alt="'+(j.title||'旅程')+'">'
+        + '<img src="'+j.art+'" '+(i===0?'':'loading="lazy"')+' decoding="async" alt="'+(j.title||'Journeys')+'">'
         + '<div class="hero-scrim"></div></div>';
     }
     track.innerHTML = html;
@@ -411,7 +411,7 @@ body{
       return '<div class="j-inner ph-state">'
         + '<div class="j-title">敬请期待</div>'
         + '<div class="j-en">COMING SOON</div>'
-        + '<p class="j-intro ph-msg">这个旅程正在筹备中，稍后为你呈现。</p>'
+        + '<p class="j-intro ph-msg">这个Journeys正在筹备中，稍后为你呈现。</p>'
         + '</div>';
     }
     var out = '<div class="j-inner">';
@@ -693,7 +693,7 @@ body{
 <div class="vh-chat-panel" id="vhChatPanel">
   <div class="vh-chat-hd">
     <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
-    <div class="vh-chat-hd-sub" id="vhChatSub">正在与 龚诗宏医师 对话</div>
+    <div class="vh-chat-hd-sub" id="vhChatSub">Chatting with Dr. Gong Shihong</div>
     <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
   </div>
   <div class="vh-chat-body" id="vhChatBody"></div>

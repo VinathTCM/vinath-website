@@ -160,7 +160,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   <div class="content">
     <h1 class="oq-title">Booking Tracking</h1>
-    <p class="oq-sub">不需要注册登录，输入Booking ID和预约时留的联系方式，就能查看预约状态。</p>
+    <p class="oq-sub">No registration required. Enter your Booking ID and contact information to view your booking status.</p>
 
     <div class="oq-form">
       <div class="oq-field">
@@ -168,10 +168,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         <input type="text" id="orderInput" placeholder="例如：BK20260720001">
       </div>
       <div class="oq-field">
-        <label>手机号</label>
-        <input type="text" id="contactInput" placeholder="预约时留的手机号">
+        <label>Phone Number</label>
+        <input type="text" id="contactInput" placeholder="预约时留的Phone Number">
       </div>
-      <div class="oq-error" id="oqError">没有找到匹配的预约，请确认Booking ID和联系方式是否正确。</div>
+      <div class="oq-error" id="oqError">No matching booking found. Please verify your Booking ID and contact information.</div>
       <button class="oq-btn" id="lookupBtn">Track Booking</button>
       <div class="oq-hint-examples" id="demoHint"></div>
     </div>
@@ -349,7 +349,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
     if(!booking.cancelled && booking.status < 2){
       html += '<div id="cancelArea"><button class="oq-cancel-btn" id="cancelBtn">取消此预约</button>'
-        + '<div class="oq-cancel-note">为保障各位客户的问诊安排，同一手机号每周最多可取消1次、每月最多3次。</div></div>';
+        + '<div class="oq-cancel-note">为保障各位客户的问诊安排，同一Phone Number每周最多可取消1次、每月最多3次。</div></div>';
     }
     html += '</div>';
     if(!booking.cancelled && booking.status === 2){
@@ -429,7 +429,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         currentContact = contact;
         renderResult(booking);
       } else {
-        errorEl.textContent = '没有找到匹配的预约，请确认Booking ID和联系方式是否正确。';
+        errorEl.textContent = 'No matching booking found. Please verify your Booking ID and contact information.';
         errorEl.classList.add('show');
         document.getElementById('resultArea').innerHTML = '';
       }
@@ -525,7 +525,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 <div class="vh-chat-panel" id="vhChatPanel">
   <div class="vh-chat-hd">
     <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
-    <div class="vh-chat-hd-sub" id="vhChatSub">正在与 龚诗宏医师 对话</div>
+    <div class="vh-chat-hd-sub" id="vhChatSub">Chatting with Dr. Gong Shihong</div>
     <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
   </div>
   <div class="vh-chat-body" id="vhChatBody"></div>

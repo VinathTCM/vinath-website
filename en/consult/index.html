@@ -192,7 +192,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   <div class="content">
     <h1 class="hc-title">Home Consultation</h1>
-    <div class="hc-sub">预约执业中Physician上门，足不出户，收获健康</div>
+    <div class="hc-sub">Book a licensed TCM Physician home visit, enjoy wellness without leaving home</div>
 
     <div id="instantCtaArea"></div>
     <div class="hc-steps" id="hcSteps"></div>
@@ -235,7 +235,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       <span>I have read and agree to the above</span>
     </label>
     <div class="hc-field-error" id="consentError" style="text-align:left;margin-top:4px;">Please check the agreement first to continue Submit Booking</div>
-    <button type="button" class="hc-next-btn" id="consentAgreeBtn" style="margin-top:16px;">同意并Submit</button>
+    <button type="button" class="hc-next-btn" id="consentAgreeBtn" style="margin-top:16px;">Agree & Submit</button>
     <div class="hc-back-link" id="consentCancelBtn" style="margin-top:10px;">Cancel</div>
   </div>
 </div>
@@ -256,7 +256,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     <div class="hc-modal-title" id="resultTitle"></div>
     <div class="hc-modal-text" id="resultText"></div>
     <div class="hc-modal-summary" id="resultSummary"></div>
-    <button class="hc-modal-close-btn" id="trackBookingBtn" style="margin-bottom:10px;">查询此预约</button>
+    <button class="hc-modal-close-btn" id="trackBookingBtn" style="margin-bottom:10px;">Check This Booking</button>
     <div class="hc-back-link" id="resultCloseBtn">Complete</div>
   </div>
 </div>
@@ -658,13 +658,13 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     if(hasJourney && hasTags){
       html += '<div class="hc-stage-hint">我们看到您在浏览时关注的内容，一并带来了：</div>'
         + '<div class="hc-context-card">'
-        + '<div class="hc-context-row"><span class="cl">旅程</span><span>'+ctxJourney+'</span></div>'
+        + '<div class="hc-context-row"><span class="cl">Journeys</span><span>'+ctxJourney+'</span></div>'
         + '<div class="hc-context-row"><span class="cl">症状</span><span>'+ctxTags.map(function(t){ return '<span class="hc-tag-chip">'+t+'</span>'; }).join('')+'</span></div>'
         + '</div>'
         + '<div class="hc-field"><label>还有其他需要补充的吗？（选填）</label><textarea id="needsInput" placeholder="例如：症状持续Time、既往调理经历等">'+form.supplement+'</textarea></div>';
     } else if(hasJourney){
       html += '<div class="hc-stage-hint">我们看到您在浏览「'+ctxJourney+'」，方便的话请再具体说说想调理的方向：</div>'
-        + '<div class="hc-context-card"><div class="hc-context-row"><span class="cl">旅程</span><span>'+ctxJourney+'</span></div></div>'
+        + '<div class="hc-context-card"><div class="hc-context-row"><span class="cl">Journeys</span><span>'+ctxJourney+'</span></div></div>'
         + '<div class="hc-field"><label>Your Situation</label><textarea id="needsInput" placeholder="例如：最近容易疲劳、睡眠浅、想调理体质…">'+form.needs+'</textarea></div>';
     } else {
       html += '<div class="hc-stage-hint">Please briefly describe your discomfort symptoms, or the direction you want to regulate, to help the Physician understand Your Situation in advance.</div>'
@@ -1204,7 +1204,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 <div class="vh-chat-panel" id="vhChatPanel">
   <div class="vh-chat-hd">
     <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
-    <div class="vh-chat-hd-sub" id="vhChatSub">正在与 龚诗宏Physician 对话</div>
+    <div class="vh-chat-hd-sub" id="vhChatSub">Chatting with Dr. Gong Shihong</div>
     <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
   </div>
   <div class="vh-chat-body" id="vhChatBody"></div>
