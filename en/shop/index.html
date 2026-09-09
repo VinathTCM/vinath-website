@@ -684,7 +684,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   function renderGroups(list){
     if(!list.length){
-      document.getElementById('prodGroups').innerHTML = '<div class="prod-empty">没有找到符合的商品</div>';
+      document.getElementById('prodGroups').innerHTML = '<div class="prod-empty">No matching products found</div>';
       return;
     }
     document.getElementById('prodGroups').innerHTML = '<div class="prod-grid">' + list.map(renderProductCard).join('') + '</div>';
@@ -753,7 +753,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     openType = 'ALL';
     catScroll.querySelectorAll('.cat-card').forEach(function(c){ c.classList.remove('on'); });
     currentTypeList = PRODUCTS.filter(function(p){ return p.active; });
-    ehTitle.textContent = 'Search结果';
+    ehTitle.textContent = 'Search Results';
     ehSearch.value = q;
     applyFilters();
     expandZone.classList.add('open');
@@ -825,7 +825,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         + '<div class="feat-body'+(hasImg?'':' feat-body-plain')+'"><div class="feat-name">'+p.name+'</div><div class="feat-price">MYR '+p.trial+' 起</div></div>'
         + '</div>';
     });
-    featGrid.innerHTML = html || '<div class="prod-empty">暂无精选商品</div>';
+    featGrid.innerHTML = html || '<div class="prod-empty">No featured products yet</div>';
     featGrid.querySelectorAll('.feat-card').forEach(function(c){
       c.addEventListener('click', function(){ openQuickView(this.getAttribute('data-id')); });
     });
@@ -957,7 +957,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     };
     qvName.textContent = p.name;
     qvDesc.textContent = p.desc;
-    qvOosMsg.innerHTML = p.inStock ? '' : '<div class="qv-oos">这款Out of Stock，补货后会自动恢复上架。</div>';
+    qvOosMsg.innerHTML = p.inStock ? '' : '<div class="qv-oos">This item is out of stock and will be relisted automatically once restocked.</div>';
     qvVariants.innerHTML =
       '<div class="qv-variant on" data-v="full"><div class="vv-lbl">Full Size</div><div class="vv-price">MYR '+p.price+'</div></div>'
       + '<div class="qv-variant" data-v="trial"><div class="vv-lbl">Trial Size</div><div class="vv-price">MYR '+p.trial+'</div></div>';

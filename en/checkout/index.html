@@ -580,7 +580,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     return SHIP_FEE[STATE_BY_CODE[addressForm.state].region];
   }
 
-  var DISCLAIMER_HTML = '我已阅读并理解以下说明，Confirm购买：<b>本店Products由执业TCM师团队调配，选用药食同源材料，不添加防腐剂及化学药物成分。TCM强调syndrome differentiation论治、因人而异，固定配方仅供日常wellness参考，未必完全贴合每pcs人的constitution与情况。</b>如需更精准的pcs性化方案，建议通过「Meet Now」预约一对一咨询。';
+  var DISCLAIMER_HTML = 'I have read and understood the following statement and confirm my purchase: <b>Products in this store are blended by a team of licensed TCM practitioners using medicinal-food ingredients, with no preservatives or chemical drugs added. TCM emphasizes syndrome differentiation and individualized care; fixed formulas are for daily wellness reference only and may not fully suit every person\'s constitution and condition.</b> For a more precise personalized plan, book a one-to-one consultation via 「Meet Now」.';
 
   function unitPrice(item){ return item.variant === 'trial' ? item.product.trial : item.product.price; }
   function variantLabel(item){ return item.variant === 'trial' ? 'Trial Size' : 'Full Size'; }
@@ -616,7 +616,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       cart = parseCart();
       saveCartIdsToStorage(cart);
     } catch(e){
-      console.error('连接后端失败，请Confirm后端服务是否已启动:', e);
+      console.error('Failed to connect to the backend. Please confirm whether the backend service is running: ', e);
       showToast('Unable to connect to the server. Please retry later.');
     }
     render();
@@ -679,10 +679,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     return 'VN' + ymd + rand;
   }
 
-  // [stated] 之前这里是模拟的Credit Card/Touch 'n Go/DuitNow扫码支付表单——填的卡号、扫的二维码
-  // 都是假的，点"Confirm支付"不会真的划走任何钱，也没有真实的支付网关在背后处理。现在改成
-  // 不依赖任何第三方支付服务商的方式：客户看到的是公司自己配置的Bank账户/DuitNow收款码，
-  // 自己完成转账/扫码后，把付款截图上传上来作为凭证，订单会标记为"待核实付款"，
+  // [stated] 之前这里是模拟的Credit Card/Touch 'n Go/DuitNowScan to Pay表单——填的卡号、扫的二维码
+  // 都是假的，点"ConfirmPayment"不会真的划走任何钱，也没有真实的Payment网关在背后处理。现在改成
+  // 不依赖任何第三方Payment服务商的方式：客户看到的是公司自己配置的Bank账户/DuitNow收款码，
+  // 自己完成转账/扫码后，把付款截图上传上来作为凭证，订单会标记为"Payment Pending Verification"，
   // 需要人工核对截图Confirm款项到账后再处理发货，不是系统自动Confirm的。
   function getActivePaymentMethods(){
     return cachedPaymentMethods;
@@ -815,7 +815,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="pay-methods">';
     methods.forEach(function(m){
       var label = m.type==='bank_transfer' ? 'Bank Transfer' : m.type==='duitnow' ? 'DuitNow' : (m.accountName || 'Other Methods');
-      var sub = m.type==='bank_transfer' ? m.bankName : m.type==='duitnow' ? (m.accountName || '扫码支付') : '点击View付款方式';
+      var sub = m.type==='bank_transfer' ? m.bankName : m.type==='duitnow' ? (m.accountName || 'Scan to Pay') : 'Click to view payment methods';
       var icon = m.type==='bank_transfer'
         ? '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="8" width="19" height="12" rx="1.5"/><path d="M2.5 8l9.5-5 9.5 5"/><line x1="6" y1="12" x2="6" y2="16"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="18" y1="12" x2="18" y2="16"/></svg>'
         : '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/></svg>';
@@ -826,7 +826,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     });
     html += '</div><div id="paymentFormArea" class="pay-form-area"></div>'
       + '<button class="checkout-btn" id="confirmPayBtn" disabled>SubmitPayment Proof · MYR '+pendingOrder.total+'</button>'
-      + '<div style="font-size:12px;color:var(--ink-soft,#7A6F60);text-align:center;margin-top:10px;">After submission, the order will be marked as"待核实付款"，我们核对到账后会尽快为您安排发货</div>'
+      + '<div style="font-size:12px;color:var(--ink-soft,#7A6F60);text-align:center;margin-top:10px;">After submission, the order will be marked as"Payment Pending Verification"，我们核对到账后会尽快为您安排发货</div>'
       + '<div class="os-back" id="backToCartBtn">← BackShopping Cart</div>'
       + '</div>';
     document.getElementById('mainArea').innerHTML = html;
@@ -889,8 +889,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   function render(){
     saveCartIdsToStorage(cart);
     var titleEl = document.querySelector('.co-title');
-    if(completedOrder){ titleEl.textContent = '订单完成'; renderOrderSuccess(); return; }
-    if(pendingOrder){ titleEl.textContent = '支付'; renderPayment(); return; }
+    if(completedOrder){ titleEl.textContent = 'Order Completed'; renderOrderSuccess(); return; }
+    if(pendingOrder){ titleEl.textContent = 'Payment'; renderPayment(); return; }
     titleEl.textContent = 'Checkout';
     if(!cart.length){ renderEmpty(); updateCartBadge(); return; }
 
@@ -939,7 +939,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="coupon-error" id="couponError"></div>'
       + '<div class="summary-row"><span>Selected Products</span><span>'+checkedCount+' items</span></div>'
       + (couponSavings > 0 ? '<div class="summary-row coupon-discount-row"><span>Discount Code</span><span>− MYR '+couponSavings.toFixed(2)+'</span></div>' : '')
-      + '<div class="summary-row"><span>Shipping</span><span>'+(addressForm.state ? 'MYR '+ship : '请选择Address') +'</span></div>'
+      + '<div class="summary-row"><span>Shipping</span><span>'+(addressForm.state ? 'MYR '+ship : 'Please select an address') +'</span></div>'
       + '<div class="summary-row total"><span>Total</span><span class="sr-price">MYR '+grandTotal.toFixed(2)+'</span></div>'
       + '</div>';
 
@@ -988,7 +988,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var contactTouched = contactValue.trim().length > 0;
     var contactOk = isContactValid();
     html += '<div class="field-error'+(contactTouched && !contactOk ? ' show':'')+'" id="contactError">'
-      + (contactMode==='phone' ? '请输入正确的MalaysiaMobile Number（0开头，10-11位数字）' : '请输入正确的EmailAddress')
+      + (contactMode==='phone' ? 'Please enter a valid Malaysian mobile number (starting with 0, 10-11 digits)' : 'Please enter a valid email address')
       + '</div>';
     html += '</div>';
 
@@ -1104,7 +1104,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         var idx = Number(this.getAttribute('data-remove'));
         var name = cart[idx].product.name;
         cart.splice(idx, 1);
-        showToast('已Remove：'+name);
+        showToast('Removed: '+name);
         render();
       });
     });
@@ -1202,7 +1202,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
   vhAcctMenu.addEventListener('click', function(e){ e.stopPropagation(); });
   document.getElementById('cartBtn').addEventListener('click', function(){
-    showToast(cart.length > 0 ? '当前在Checkout页' : 'Your shopping cart is empty');
+    showToast(cart.length > 0 ? 'Currently on the Checkout page' : 'Your shopping cart is empty');
   });
 
   initFromBackend();

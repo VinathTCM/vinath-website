@@ -404,7 +404,7 @@
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="VINATH TCM - Modern TCM · Home Consultation">
-<meta name="twitter:description" content="MalaysiaJohor专业TCM诊所，提供Home Consultation、AcupunctureTui Na、Herbal Medicine调理等服务。">
+<meta name="twitter:description" content="A professional TCM clinic in Johor, Malaysia, offering Home Consultation, Acupuncture, Tui Na, Herbal Medicine and other wellness services.">
 <meta name="twitter:image" content="https://www.vinathtcm.com/favicon.webp">
 
 <!-- 本地化 -->
@@ -1094,10 +1094,10 @@
     'Pain Soothing': 'Free movement, comfortable every day.',
     'Quality Sleep': 'Sleep deeper, wake lighter.'
   };
-  // [stated bug fix] Home的导航下拉和这pcsJourneys卡pieces板块，之前完全是写死的HTML，跟内容管理后台
+  // [stated bug fix] Home的导航下拉和这pcsJourneys卡pieces板块，之前完全是写死的HTML，跟Content Management后台
   // 的Journeys数据毫无关系——关掉一pcsJourneys只会影响详情页轮播，这里完全不受影响；新增Journeys也不会自动
   // 出现在这两处。现在改成跟细节页模板一样，从共享数据里读取、按active过滤，同时保留跟其他页面
-  // 一致的"版本化种子"逻辑（内容管理没被手动编辑过的Journeys，未来文案更新还是能正常刷新过来）。
+  // 一致的"版本化种子"逻辑（Content Management没被手动编辑过的Journeys，未来文案更新还是能正常刷新过来）。
   (async function(){
     var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
     var journeysData;

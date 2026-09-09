@@ -368,7 +368,7 @@ body{
     }
   ];
 
-  // [stated bug fix] 内容管理 后台每pcsJourneys卡pieces上的开关（active字段）之前完全没有地方读取它——
+  // [stated bug fix] Content Management 后台每pcsJourneys卡pieces上的开关（active字段）之前完全没有地方读取它——
   // 开关本身能点、能变灰，但轮播这边压根不知道这items事，所以关掉哪pcsJourneys，Home/这pcs轮播页都还是
   // 照常显示。现在改成会去读那份数据，把标记为"关闭"的Journeys从轮播里过滤掉。注意：这只影响"轮播
   // 里出不出现"（也就是能不能通过Home逛过去被看到）——如果客户手上有Journeys细节页的直接链接，还是
@@ -389,7 +389,7 @@ body{
         var entry = key ? journeysData[key] : null;
         if(entry && entry.active === false) JOURNEYS.splice(i, 1);
       }
-      // 按内容管理里拖拽出来的顺序排列——没有对应数据的（理论上不会发生，因为JOURNEYS就这6pcs）排最后
+      // 按Content Management里拖拽出来的顺序排列——没有对应数据的（理论上不会发生，因为JOURNEYS就这6pcs）排最后
       JOURNEYS.sort(function(a, b){
         var ka = JOURNEY_KEY_BY_TITLE[a.title], kb = JOURNEY_KEY_BY_TITLE[b.title];
         var oa = (ka && journeysData[ka] && typeof journeysData[ka].order==='number') ? journeysData[ka].order : 999;
@@ -624,11 +624,11 @@ body{
       var raw = localStorage.getItem('vinath_business_info');
       if(raw){ var info = JSON.parse(raw); if(info.whatsapp) return info.whatsapp; }
     } catch(e){}
-    return '60138092888'; // fallback if 内容管理's 基本信息 tab has never been opened yet
+    return '60138092888'; // fallback if Content Management's 基本信息 tab has never been opened yet
   }
   var WHATSAPP_NUMBER = getWhatsappNumber();
   // [fix] journeys 页面原来只从 localStorage 读 WhatsApp，读不到就回退旧号 60138092888；
-  // 这里从后端 /site-settings/business_info 拉取后台内容管理里设置的正确号码，
+  // 这里从后端 /site-settings/business_info 拉取后台Content Management里设置的正确号码，
   // 同时更新 localStorage 缓存和页面上已生成的 wa.me 链接，后续动态生成的链接也用新号码。
   (function(){
     var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
