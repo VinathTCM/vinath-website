@@ -1479,7 +1479,7 @@
 .vh-chat-hd-title{ font-size:14px; font-weight:700; }
 .vh-chat-hd-sub{ font-size:11.5px; opacity:.8; margin-top:2px; }
 .vh-chat-close{ position:absolute; top:14px; right:14px; cursor:pointer; opacity:.75; }
-.vh-chat-body{ flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px; background:#FAF7F1; }
+.vh-chat-body{overflow-x:hidden; flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px; background:#FAF7F1; }
 .vh-chat-msg{ max-width:78%; padding:9px 12px; border-radius:14px; font-size:13px; line-height:1.5; }
 .vh-chat-msg.customer{ align-self:flex-end; background:var(--forest,#26362B); color:#fff; border-bottom-right-radius:4px; }
 .vh-chat-msg.admin{ align-self:flex-start; background:#fff; color:#222; border:1px solid #E6E1D6; border-bottom-left-radius:4px; }
@@ -1625,7 +1625,7 @@
   .whatsapp-float {
     position: fixed;
     bottom: 24px;
-    right: 24px;
+    left: 24px;
     width: 56px;
     height: 56px;
     background: #25D366;
@@ -1651,7 +1651,7 @@
   .whatsapp-tooltip {
     position: fixed;
     bottom: 38px;
-    right: 92px;
+    left: 92px;
     background: #201D19;
     color: #FAF7F1;
     padding: 10px 16px;
@@ -1675,7 +1675,7 @@
     100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
   }
   @media (max-width: 768px) {
-    .whatsapp-float { bottom: 16px; right: 16px; width: 50px; height: 50px; }
+    .whatsapp-float { bottom: 16px; left: 16px; width: 50px; height: 50px; }
     .whatsapp-float svg { width: 26px; height: 26px; }
     .whatsapp-tooltip { display: none; }
   }

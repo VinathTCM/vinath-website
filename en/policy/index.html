@@ -426,7 +426,7 @@ VINATH TCM HEALTH CARE（下称"我们"）尊重并重视你的个人数据。�
 6. **数据完整性原则**：采取合理措施确保个人数据准确、完整且不过时。
 7. **访问原则**：你有权查阅和更正我们持有的你的个人数据。
 
-具体用途包括：处理并配送订单；安排/确认/提醒居家会诊预约；回应你的查询与客服请求；履行法律、税务、会计方面的义务（如开具收据/发票）。我们不会将你的个人数据出售给第三方。
+具体用途包括：处理并配送订单；安排/确认/提醒居家会诊预约；回应你的Account与客服请求；履行法律、税务、会计方面的义务（如开具收据/发票）。我们不会将你的个人数据出售给第三方。
 
 ### 四、数据保留期限
 
@@ -477,7 +477,7 @@ VINATH TCM HEALTH CARE（下称"我们"）尊重并重视你的个人数据。�
 ### 十一、你的权利
 
 依据 PDPA，你享有以下权利：
-1. **查询权**：查询我们持有的你的个人数据；
+1. **Account权**：Account我们持有的你的个人数据；
 2. **更正权**：要求更正不准确或不完整的个人数据；
 3. **删除权**：要求删除你的个人数据（受限于法律要求保留的记录，如财务记录需保留7年）；
 4. **撤回同意权**：撤回此前给予的处理同意；
@@ -488,7 +488,7 @@ VINATH TCM HEALTH CARE（下称"我们"）尊重并重视你的个人数据。�
 - 客服 WhatsApp：+6011-4579 9499
 - 邮箱：vinathtcm@outlook.com
 
-我们将在收到请求后 21 个工作日内回复。查询或更正请求可能收取合理的行政费用（如需）。
+我们将在收到请求后 21 个工作日内回复。Account或更正请求可能收取合理的行政费用（如需）。
 
 ### 十二、本Policies的变更
 
@@ -701,7 +701,7 @@ Last Updated日期：2026年9月9日
 本网站用于：
 1. 展示并销售中医调理相关产品；
 2. 提供居家中医会诊预约服务；
-3. 提供订单与预约查询及客服支持。
+3. 提供订单与预约Account及客服支持。
 
 本网站内容仅供参考，不构成医疗诊断或治疗建议——如有明确疾病症状，请优先咨询注册医师或前往医院就诊。
 
@@ -716,9 +716,9 @@ Last Updated日期：2026年9月9日
 - 我们通过系统确认（订单编号/预约编号生成）或实际发货/确认预约，构成承诺（acceptance），合同正式成立；
 - 合同成立后，双方均受本条款及相关销售Policies约束。
 
-### 五、账号与查询
+### 五、账号与Account
 
-本网站不设会员账号系统，通过"订单编号/预约编号 + 联系方式"查询状态。请妥善保管你的编号，我们不对编号遗失或泄露导致的信息查阅承担责任。
+本网站不设会员账号系统，通过"订单编号/预约编号 + 联系方式"Account状态。请妥善保管你的编号，我们不对编号遗失或泄露导致的信息查阅承担责任。
 
 ### 六、用户行为规范
 
@@ -1442,7 +1442,7 @@ Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.
 - 居家会诊（预约上门问诊）
 - About Us我们（品牌故事、执业中医师团队）
 
-### 查询
+### Account
 - Track Order
 - Track Booking
 
@@ -1567,7 +1567,7 @@ Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.
   </div>
   <div class="vh-chat-body" id="vhChatBody"></div>
   <div class="vh-chat-input-row">
-    <input type="text" id="vhChatInput" placeholder="输入消息…" maxlength="300">
+    <input type="text" id="vhChatInput" placeholder="Type a message…" maxlength="300">
     <button type="button" id="vhChatSend"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
   </div>
 </div>
@@ -1606,7 +1606,7 @@ Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.
       currentThread = data.thread;
       currentMessages = data.messages;
       return currentThread;
-    } catch(e){ console.error('聊天初始化失败:', e); return null; }
+    } catch(e){ console.error('Chat init failed:', e); return null; }
   }
   async function refreshMyThread(){
     try {
@@ -1623,14 +1623,14 @@ Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.
     var body = document.getElementById('vhChatBody');
     var sub = document.getElementById('vhChatSub');
     if(!currentThread || !currentMessages.length){
-      body.innerHTML = '<div class="vh-chat-empty">您好，有任何问题都可以在这里留言，我们会尽快回复您。</div>';
+      body.innerHTML = '<div class="vh-chat-empty">Hello, feel free to leave a message here and we will reply as soon as possible.</div>';
     } else {
       body.innerHTML = currentMessages.map(function(m){
         return '<div class="vh-chat-msg '+m.from+'">'+escapeHtml(m.text)+'</div>';
       }).join('');
       body.scrollTop = body.scrollHeight;
     }
-    if(currentThread) sub.textContent = '正在与 ' + currentThread.assignedToName + ' 对话';
+    if(currentThread) sub.textContent = 'Chatting with ' + currentThread.assignedToName + '';
     updateBadge();
   }
   function updateBadge(){
@@ -1668,7 +1668,7 @@ Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.
       });
       await refreshMyThread();
       renderMessages();
-    } catch(e){ console.error('发送失败:', e); }
+    } catch(e){ console.error('Send failed:', e); }
     input.disabled = false;
     input.focus();
   }
