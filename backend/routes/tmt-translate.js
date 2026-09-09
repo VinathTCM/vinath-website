@@ -113,7 +113,7 @@ function callTMT(text, source, target) {
         'X-TC-Action': 'TextTranslate',
         'X-TC-Timestamp': timestamp.toString(),
         'X-TC-Version': '2018-03-21',
-        'X-TC-Region': 'ap-guangzhou',
+        'X-TC-Region': 'ap-singapore',
         'Content-Length': Buffer.byteLength(payload)
       }
     };
