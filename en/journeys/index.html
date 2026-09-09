@@ -160,7 +160,7 @@ body{
 
 
 <style>
-  /* English versionTitle use  Poppins Black */
+  /* 英文版标题Apply Poppins Black */
   h1, h2, h3, h4, h5, h6,
   .hero-title, .section-title, .page-title,
   .eyebrow, .cta-title,
@@ -169,23 +169,23 @@ body{
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
   }
   
-  /* 大Title use  Black 900 */
+  /* 大标题Apply Black 900 */
   h1, .hero-title, .section-title, .page-title {
     font-weight: 900 !important;
     letter-spacing: -0.02em;
   }
   
-  /* 二级Title use  ExtraBold 800 */
+  /* 二级标题Apply ExtraBold 800 */
   h2, .process-step-title, .journey-card-title, .footer-title {
     font-weight: 800 !important;
   }
   
-  /* 三级Title use  Bold 700 */
+  /* 三级标题Apply Bold 700 */
   h3, h4 {
     font-weight: 700 !important;
   }
   
-  /* 小Tag use  SemiBold 600 */
+  /* 小标签Apply SemiBold 600 */
   .eyebrow, .cta-title {
     font-weight: 600 !important;
     letter-spacing: 0.05em;
@@ -258,7 +258,7 @@ body{
     var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
     fetch(API_BASE + '/analytics/pageview', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ page: 'JourneysDetails页' })
+      body: JSON.stringify({ page: 'Journeys详情页' })
     }).catch(function(){});
   })();
 
@@ -307,73 +307,73 @@ body{
   var JOURNEYS = [
     {
       full:true, art:ART_BALANCE, title:"Women's Health", en:'FEMININE BALANCE',
-      intro:"Women's bodies face different challenges at different stages — from menstruation and pregnancy preparation to menopause. TCM, through syndrome differentiation and internal-externalwellness care, accompanies you to understand and care for every stage.",
+      intro:"Women's bodies face different challenges at different stages — from menstruation and pregnancy preparation to menopause. TCM, through syndrome differentiation and internal-external调理, accompanies you to understand and care for every stage.",
       conditions:[
-        {icon:'droplet', name:'menstruation problem ', scope:'Menstrual pain, irregular menstruation, abnormal flow and other cycle concerns', tcm:'Starting from qi, blood, and organ syndrome differentiation, helping the cycle return to regularity'},
+        {icon:'droplet', name:'Menstruation问题', scope:'Menstrual pain, irregular menstruation, abnormal flow and other cycle concerns', tcm:'Starting from qi, blood, and organ syndrome differentiation, helping the cycle return to regularity'},
         {icon:'ripple', name:'Abnormal Discharge', scope:'Abnormal discharge volume, color, texture, recurring discomfort', tcm:'Strengthening the spleen and removing dampness, helping restore natural balance'},
-        {icon:'sprout', name:'TCM备孕', scope:'Not only needed when having difficulty conceiving, daily constitutionwellness care is equally important', tcm:'Regulating qi and blood, improving constitution, laying a good foundation for healthy pregnancy'},
-        {icon:'shield', name:'妇科肿块', scope:'Common masses in the uterus and ovarian area (benign growths)', tcm:'As daily auxiliarywellness care beyond medical follow-up, recommended to配合 regular check-ups'},
-        {icon:'hourglass', name:'更年期', scope:'Hot flashes, night sweats, insomnia, mood swings and other common changes', tcm:'Nourishing yin and harmonizing, helping smoothly pass through this stage'}
+        {icon:'sprout', name:'TCM Pre-pregnancy Care', scope:'Not only needed when having difficulty conceiving, daily constitution调理 is equally important', tcm:'Regulating qi and blood, improving constitution, laying a good foundation for healthy pregnancy'},
+        {icon:'shield', name:'妇科肿块', scope:'Common masses in the uterus and ovarian area (benign growths)', tcm:'As daily auxiliary调理 beyond medical follow-up, recommended to配合 regular check-ups'},
+        {icon:'hourglass', name:'Menopause', scope:'Hot flashes, night sweats, insomnia, mood swings and other common changes', tcm:'Nourishing yin and harmonizing, helping smoothly pass through this stage'}
       ]
     },
     {
       full:true, art:ART_SCULPT, title:'Body Shaping', en:'BODY SCULPTING',
-      intro:'Changes in weight and body shape are often closely related to constitution and metabolism. TCM, throughwellness care the spleen and stomach, lifestyle habits, diet structure, exercise routine, and疏通 meridians, helps the body regain a light state.',
+      intro:'Changes in weight and body shape are often closely related to constitution and metabolism. TCM, through调理 the spleen and stomach, lifestyle habits, diet structure, exercise routine, and疏通 meridians, helps the body regain a light state.',
       conditions:[
-        {icon:'bowl', name:'饮食wellness care', scope:"Want to lose fat but don't know how to搭配 diet, no direction for daily eating", tcm:'Customized diet advice by constitution, helping the body become light starting from eating right'},
-        {icon:'motion', name:'运动 refer to 导', scope:'Wrong exercise method, hard to坚持, results always discounted', tcm:'结合constitution give 出运动 suggest ， let 调养 and 运动相辅相成'},
-        {icon:'nest', name:'产后塑形', scope:'产后qi and blood亏虚、身形松弛 Restore期wellness care', tcm:'温 and 调tonify qi and blood，陪伴身体 slowly Restore'},
-        {icon:'flame', name:'代谢偏慢', scope:'怕冷、易疲劳 etc.代谢偏慢 constitution perform ', tcm:'温阳strengthen the spleen，帮助 promote 身体代谢活力'}
+        {icon:'bowl', name:'饮食调理', scope:"Want to lose fat but don't know how to搭配 diet, no direction for daily eating", tcm:'Customized diet advice by constitution, helping the body become light starting from eating right'},
+        {icon:'motion', name:'运动指导', scope:'Wrong exercise method, hard to坚持, results always discounted', tcm:'结合constitution给出运动建议，让调养和运动相辅相成'},
+        {icon:'nest', name:'产后塑形', scope:'产后qi and blood亏虚、身形松弛的恢复期调理', tcm:'温和调补qi and blood，陪伴身体慢慢恢复'},
+        {icon:'flame', name:'代谢偏慢', scope:'怕冷、易疲劳等代谢偏慢的constitution表现', tcm:'温阳健脾，帮助提升身体代谢活力'}
       ]
     },
     {
       full:true, art:ART_BEAUTY, title:'Beauty & Skincare', en:'BEAUTY & RADIANCE',
-      intro:'肌肤 state Yes身体 by 内而外 写照。TCM讲究qi and blood调 and ， from 根源呵护，帮助肌肤 preserve 自然 光彩。',
+      intro:'肌肤状态是身体由内而外的写照。TCM讲究qi and blood调和，从根源呵护，帮助肌肤维持自然的光彩。',
       conditions:[
-        {icon:'sparkle', name:'面色暗沉', scope:'Qi and Blood Deficiency导致 肤色暗淡、缺乏光泽', tcm:'补气养血， by 内而外提亮肤色'},
-        {icon:'lift', name:'皮肤松弛', scope:'胶原流失、皮肤弹性下降 初老 perform ', tcm:'BeautyAcupuncture配合面部Tui Na，刺激qi and blood循环，帮助 promote 肌肤紧致度'},
-        {icon:'spots', name:'痘痘反复', scope:'内热、湿气导致 痘痘反复、毛孔粗大', tcm:'clear heatdispel dampness，帮助Restore肌肤平衡'},
-        {icon:'face', name:'面部轮廓', scope:'面部浮肿、轮廓不清晰 etc.困扰', tcm:' via acupoint按摩 and 经络疏通，帮助修饰面部线条'}
+        {icon:'sparkle', name:'面色暗沉', scope:'Qi and Blood Deficiency导致的dull complexion lacking radiance', tcm:'补气养血，由内而外提亮肤色'},
+        {icon:'lift', name:'皮肤松弛', scope:'胶原流失、皮肤弹性下降的初老表现', tcm:'美容针灸配合面部Tui Na，刺激qi and bloodcirculation，帮助提升肌肤firmness'},
+        {icon:'spots', name:'痘痘反复', scope:'内热、湿气导致的痘痘反复、毛孔粗大', tcm:'清热祛湿，帮助恢复肌肤平衡'},
+        {icon:'face', name:'面部轮廓', scope:'面部浮肿、轮廓不清晰等困扰', tcm:'通过穴位按摩与经络疏通，帮助修饰面部线条'}
       ]
     },
     {
       full:true, art:ART_WELLNESS, title:'Daily Wellness', en:'DAILY WELLNESS',
-      intro:'养生不Yes etc.生病 才Open始，而Yes融入日常 点滴习惯。TCM陪伴你 based on 自己 constitution，找 to  suitable  调养 method 。',
+      intro:'养生不是等生病了才开始，而是融入日常的点滴习惯。TCM陪伴你根据自己的constitution，找到适合的调养方式。',
       conditions:[
-        {icon:'battery', name:'亚健康', scope:'容易疲劳、精神不振 etc.说不清 不适', tcm:'辨识constitution， from 根本wellness care身体 state '},
-        {icon:'climate', name:'气候调养', scope:'damp-heat气候、旱雨交替，身体容易感 to 闷重不适', tcm:'顺应当地气候变化，调整Daily Wellness method '},
-        {icon:'stomach', name:'肠胃wellness care', scope:'食欲不振、消化不畅、便秘 etc.日常肠胃困扰', tcm:'strengthen the spleen and 胃、润肠通便，帮助Restore正常运化'},
-        {icon:'heart', name:'情绪舒缓', scope:'压力大、情绪紧绷 when  身心调适', tcm:'soothe liver and regulate qi，帮助放松身心'}
+        {icon:'battery', name:'亚健康', scope:'容易疲劳、精神不振等说不清的不适', tcm:'辨识constitution，从根本调理身体状态'},
+        {icon:'climate', name:'气候调养', scope:'湿热气候、旱雨交替，身体容易感到闷重不适', tcm:'顺应当地气候变化，调整Daily Wellness方式'},
+        {icon:'stomach', name:'肠胃调理', scope:'食欲不振、消化不畅、constipation等日常肠胃困扰', tcm:'健脾和胃、润肠通便，帮助恢复正常运化'},
+        {icon:'heart', name:'情绪舒缓', scope:'压力大、情绪紧绷时的身心调适', tcm:'疏肝理气，帮助放松身心'}
       ]
     },
     {
       full:true, art:ART_PAIN, title:'Pain Soothing', en:'PAIN SOOTHING',
-      intro:'身体 酸痛紧绷，很多 when 候Yesqi and blood不畅 信号。TCM via Tui Na、Acupuncture etc. method ，帮助疏通经络、relieve不适。',
+      intro:'身体的酸痛紧绷，很多时候是qi and blood不畅的信号。TCM通过Tui Na、针灸等方式，帮助疏通经络、缓解不适。',
       conditions:[
-        {icon:'muscle', name:'颈肩腰背', scope:'久坐、姿势不良带来 颈肩腰背紧绷', tcm:'Tui Na理筋，帮助疏通qi and blood、放松肌肉'},
-        {icon:'joint', name:'关节不适', scope:'关节部位 酸胀、活动不利', tcm:'温经通络，帮助relieve关节不适'},
-        {icon:'layers', name:'运动损伤', scope:'运动 or 劳损后 Muscle Soreness', tcm:'invigorate blood and resolve stasis，帮助加速Restore'},
-        {icon:'fatigue', name:'疲劳性疼痛', scope:'长期疲劳积累引起 weeks身酸痛', tcm:'wellness careqi and blood， from 根本 enhance 疲劳 state '}
+        {icon:'muscle', name:'颈肩腰背', scope:'久坐、姿势不良带来的颈肩腰背紧绷', tcm:'Tui Na理筋，帮助疏通qi and blood、放松肌肉'},
+        {icon:'joint', name:'关节不适', scope:'关节部位的酸胀、活动不利', tcm:'温经通络，帮助缓解关节不适'},
+        {icon:'layers', name:'运动损伤', scope:'运动或劳损后的Muscle Soreness', tcm:'活血化瘀，帮助加速恢复'},
+        {icon:'fatigue', name:'疲劳性疼痛', scope:'长期疲劳积累引起的generalized body aches', tcm:'调理qi and blood，从根本改善疲劳状态'}
       ]
     },
     {
       full:true, art:ART_SLEEP, title:'Quality Sleep', en:'QUALITY SLEEP',
-      intro:'睡不好，往往牵动着白days 精神 and 情绪。TCM from 调 and 脏腑、calm the spirit定志入手，陪伴你找回好眠。',
+      intro:'睡不好，往往牵动着白天的精神和情绪。TCM从调和脏腑、安神定志入手，陪伴你找回好眠。',
       conditions:[
-        {icon:'moon', name:'Difficulty Falling Asleep', scope:'躺下后难以入睡、思绪难停', tcm:'calm the spirit定志，帮助放松身心、更快入睡'},
-        {icon:'clock', name:'睡眠浅易醒', scope:'夜间容易醒、睡眠质量不高', tcm:'调 and 脏腑，帮助 extend 深睡 time '},
-        {icon:'dream', name:'多梦', scope:'整夜多梦、醒来仍感疲惫', tcm:'养心calm the spirit，帮助 enhance 睡眠质量'},
-        {icon:'sunrise', name:'晨起疲惫', scope:'睡 很久却依然精神不振', tcm:'wellness careqi and blood运Row，帮助Restore清醒活力'}
+        {icon:'moon', name:'Difficulty Falling Asleep', scope:'躺下后难以入睡、思绪难停', tcm:'安神定志，帮助放松身心、更快入睡'},
+        {icon:'clock', name:'睡眠浅易醒', scope:'夜间容易醒、睡眠质量不高', tcm:'调和脏腑，帮助延长深睡时间'},
+        {icon:'dream', name:'多梦', scope:'整夜多梦、醒来仍感疲惫', tcm:'养心安神，帮助改善睡眠质量'},
+        {icon:'sunrise', name:'晨起疲惫', scope:'睡了很久却依然精神不振', tcm:'调理qi and blood运行，帮助恢复清醒活力'}
       ]
     }
   ];
 
-  // [stated bug fix]  content  manage  后台 each Journeys卡片上 Open关（active字段）之前完全没 has 地方读取它——
-  // Open关本身能点、能变灰，但轮播这边压根不知道这件事， so 关掉哪个Journeys，Home/这个轮播页都还Yes
-  // 照常Show。现 at 改成会去读那份 data ， 标记 for "Close" Journeys from 轮播里 filter 掉。注意：这只影响"轮播
-  // 里出不appear"（也就Yes能不能 via Home逛过去 看 to ）—— if Customer手上 has Journeys细节页 直接链接，还Yes
-  // 能Open， because  here 没 has 改动细节页本身 逻辑，也没 has 做真正  access  permission  control （这个还Yes要接入真后端
-  // 才能做 to "直接链接也打不Open"）。
+  // [stated bug fix] 内容管理 后台每pcsJourneys卡pieces上的开关（active字段）之前完全没有地方读取它——
+  // 开关本身能点、能变灰，但轮播这边压根不知道这items事，所以关掉哪pcsJourneys，Home/这pcs轮播页都还是
+  // 照常显示。现在改成会去读那份数据，把标记为"关闭"的Journeys从轮播里过滤掉。注意：这只影响"轮播
+  // 里出不出现"（也就是能不能通过Home逛过去被看到）——如果客户手上有Journeys细节页的直接链接，还是
+  // 能打开，因为这里没有改动细节页本身的逻辑，也没有做真正的访问权限控制（这pcs还是要接入真后端
+  // 才能做到"直接链接也打不开"）。
   var JOURNEY_KEY_BY_TITLE = {"Women's Health":'women','Body Shaping':'sculpt','Beauty & Skincare':'beauty','Daily Wellness':'wellness','Pain Soothing':'pain','Quality Sleep':'sleep'};
   (function(){
     try {
@@ -389,14 +389,14 @@ body{
         var entry = key ? journeysData[key] : null;
         if(entry && entry.active === false) JOURNEYS.splice(i, 1);
       }
-      // 按 content  manage 里拖拽出来 顺序排Column——没 has  for 应 data  （理论上不会发生， because JOURNEYS就这6个）排 finally 
+      // 按内容管理里拖拽出来的顺序排列——没有对应数据的（理论上不会发生，因为JOURNEYS就这6pcs）排最后
       JOURNEYS.sort(function(a, b){
         var ka = JOURNEY_KEY_BY_TITLE[a.title], kb = JOURNEY_KEY_BY_TITLE[b.title];
         var oa = (ka && journeysData[ka] && typeof journeysData[ka].order==='number') ? journeysData[ka].order : 999;
         var ob = (kb && journeysData[kb] && typeof journeysData[kb].order==='number') ? journeysData[kb].order : 999;
         return oa - ob;
       });
-    } catch(e){ console.error('拉取Wellness JourneysFailed:', e); }
+    } catch(e){ console.error('拉取Wellness Journeys失败:', e); }
   })();
 
   var N = JOURNEYS.length, idx = 0;
@@ -444,9 +444,9 @@ body{
   function contentHTML(j){
     if(!j.full){
       return '<div class="j-inner ph-state">'
-        + '<div class="j-title">敬Please 期待</div>'
+        + '<div class="j-title">Coming Soon</div>'
         + '<div class="j-en">COMING SOON</div>'
-        + '<p class="j-intro ph-msg">这个Journeys currently 筹备中，稍后 for 你 present 。</p>'
+        + '<p class="j-intro ph-msg">这pcsJourneys正在筹备中，稍后为你呈现。</p>'
         + '</div>';
     }
     var out = '<div class="j-inner">';
@@ -458,11 +458,11 @@ body{
     out += '</div>';
     out += '<div class="act-row">'
       + '<div class="act-card" id="yueBtn"><span class="aico">'+ICON.cal+'</span><span class="albl">Meet Now</span><span class="achev">'+ICON.chev+'</span></div>'
-      + '<div class="act-card" id="shopBtn"><span class="aico">'+ICON.bag+'</span><span class="albl">Shop</span></div>'
+      + '<div class="act-card" id="shopBtn"><span class="aico">'+ICON.bag+'</span><span class="albl">商店</span></div>'
       + '</div>';
     out += '<div class="act-expand" id="yueExpand">'
       + '<a class="act-expand-item" id="waLinkOv" data-lbl="Personalized" rel="noopener"><span class="eico">'+ICON.tune+'</span>Personalized</a>'
-      + '<div class="act-expand-item" data-lbl="Home Consultation"><span class="eico">'+ICON.home+'</span>Home Consultation</div>'
+      + '<div class="act-expand-item" data-lbl="居家会诊"><span class="eico">'+ICON.home+'</span>居家会诊</div>'
       + '</div>';
     out += '</div>';
     return out;
@@ -494,11 +494,11 @@ body{
       subs[i].addEventListener('click', function(){
         var lbl = this.getAttribute('data-lbl');
         if(lbl === 'Personalized') return; // native <a href> handles navigation now
-        if(lbl === 'Home Consultation'){
+        if(lbl === '居家会诊'){
           window.location.href = withCart('/consult/?journey=' + encodeURIComponent(JOURNEYS[idx].title), cartItems);
           return;
         }
-        showToast(' jump 至「'+lbl+'」 page ');
+        showToast('跳转至「'+lbl+'」页面');
       });
     }
     updateWaLinkOv();
@@ -506,7 +506,7 @@ body{
   function updateWaLinkOv(){
     var link = document.getElementById('waLinkOv');
     if(!link) return;
-    var msg = '您好，我想咨询「'+JOURNEYS[idx].title+'」 related  Wellness Plan。';
+    var msg = '您好，我想咨询「'+JOURNEYS[idx].title+'」相关的Wellness Plan。';
     link.setAttribute('href', 'https://wa.me/'+WHATSAPP_NUMBER+'?text='+encodeURIComponent(msg));
   }
 
@@ -624,12 +624,12 @@ body{
       var raw = localStorage.getItem('vinath_business_info');
       if(raw){ var info = JSON.parse(raw); if(info.whatsapp) return info.whatsapp; }
     } catch(e){}
-    return '60138092888'; // fallback if  content  manage 's 基本 info  tab has never been opened yet
+    return '60138092888'; // fallback if 内容管理's 基本信息 tab has never been opened yet
   }
   var WHATSAPP_NUMBER = getWhatsappNumber();
-  // [fix] journeys  page 原来只 from  localStorage 读 WhatsApp，读不 to 就回退旧号 60138092888；
-  //  here  from 后端 /site-settings/business_info 拉取后台 content  manage 里Settings 正确号码，
-  //  meanwhile Update localStorage 缓存 and  page 上已生成  wa.me 链接，后续动态生成 链接也用新号码。
+  // [fix] journeys 页面原来只从 localStorage 读 WhatsApp，读不到就回退旧号 60138092888；
+  // 这里从后端 /site-settings/business_info 拉取后台内容管理里设置的正确号码，
+  // 同时更新 localStorage 缓存和页面上已生成的 wa.me 链接，后续动态生成的链接也用新号码。
   (function(){
     var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
     fetch(API_BASE + '/site-settings/business_info').then(function(res){ return res.ok ? res.json() : null; }).then(function(info){
@@ -740,8 +740,8 @@ body{
 <script>
 (function(){
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  // ChatMessageYes any anonymous visitor都能Submit  content ， manage 员Open for  when 会看 to ——不转义就直接拼进innerHTML
-  //  ，访客 can  at Message里塞HTML/脚本， at  manage 员已Login  browse 里执Row（ storage 型XSS）。
+  // 聊天消息是任何匿名访客都能提交的内容，管理员打开对话时会看到——不转义就直接拼进innerHTML
+  // 的话，访客可以在消息里塞HTML/脚本，在管理员已登录的浏览器里执行（存储型XSS）。
   function escapeHtml(s){
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
@@ -759,7 +759,7 @@ body{
       return id;
     } catch(e){ return 'cust_temp'; }
   }
-  // Customer端第一次OpenChat面板 when 调用——后端会自动 process "这 personal Yes不Yes第一次来"、要不要插入欢迎语，
+  // 客户端第一次打开聊天面板时调用——后端会自动处理"这pcs人是不是第一次来"、要不要插入欢迎语，
   // 前端不用再自己判断这些
   async function ensureMyThread(){
     try {
@@ -843,7 +843,7 @@ body{
 
   // poll for admin replies / handoff changes while the widget is on screen
   pollTimer = setInterval(async function(){
-    if(!currentThread) return; // 还没Open过Chat面板，没 necessary 轮询
+    if(!currentThread) return; // 还没打开过聊天面板，没必要轮询
     await refreshMyThread();
     renderMessages();
   }, 4000);

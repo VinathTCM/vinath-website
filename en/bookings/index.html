@@ -130,7 +130,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
 
 <style>
-  /* English versionTitle use  Poppins Black */
+  /* 英文版标题Apply Poppins Black */
   h1, h2, h3, h4, h5, h6,
   .hero-title, .section-title, .page-title,
   .eyebrow, .cta-title,
@@ -139,23 +139,23 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
   }
   
-  /* 大Title use  Black 900 */
+  /* 大标题Apply Black 900 */
   h1, .hero-title, .section-title, .page-title {
     font-weight: 900 !important;
     letter-spacing: -0.02em;
   }
   
-  /* 二级Title use  ExtraBold 800 */
+  /* 二级标题Apply ExtraBold 800 */
   h2, .process-step-title, .journey-card-title, .footer-title {
     font-weight: 800 !important;
   }
   
-  /* 三级Title use  Bold 700 */
+  /* 三级标题Apply Bold 700 */
   h3, h4 {
     font-weight: 700 !important;
   }
   
-  /* 小Tag use  SemiBold 600 */
+  /* 小标签Apply SemiBold 600 */
   .eyebrow, .cta-title {
     font-weight: 600 !important;
     letter-spacing: 0.05em;
@@ -274,7 +274,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     return {allowed:true};
   }
 
-  // ---- ServiceReview: only for completed, non-cancelled bookings — one review per booking number. ----
+  // ---- 服务评价: only for completed, non-cancelled bookings — one review per booking number. ----
   async function findReview(bookingNo){
     try {
       var res = await fetch(API_BASE + '/reviews/' + encodeURIComponent(bookingNo));
@@ -328,13 +328,13 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     });
   }
 
-  var RX_STATUS_LABELS = { awaiting_pharmacy:'Awaiting Pharmacy Acceptance', brewing:'Decocting', shipping:'Out for Delivery', delivered:'已送达' };
+  var RX_STATUS_LABELS = { awaiting_pharmacy:'待药房接单', brewing:'煎药中', shipping:'配送中', delivered:'Delivered' };
   var RX_FLOW = ['awaiting_pharmacy','brewing','shipping','delivered'];
   var DISPENSE_LABELS = { decoct_pickup:'Decocted & Self-Pickup', decoct_delivery:'Decocted & Delivered', herb_delivery:'Herbal Medicine Delivery', herb_pickup:'Herbal Medicine Self-Pickup' };
 
-  // Herbal Medicine Progress卡：Sync药房制备/Delivery进度 + 运单号；无处方 when 不渲染
+  // Herbal Medicine Progress卡：同步药房制备/配送进度 + 运单号；无处方时不渲染
   function renderHerbProgress(rx){
-    var label = (DISPENSE_LABELS[rx.dispenseMode] || rx.dispenseMode || 'Herbal Medicine');
+    var label = (DISPENSE_LABELS[rx.dispenseMode] || rx.dispenseMode || '中药');
     var idx = RX_FLOW.indexOf(rx.status || 'awaiting_pharmacy');
     if(idx < 0) idx = 0;
     var html = '<div class="oq-items-card herb-progress" style="margin-top:12px;">'
@@ -361,7 +361,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="oq-result-hd"><div class="oq-order-no">Booking ID '+booking.bookingNo+'</div><div class="oq-order-date">Submission Date '+booking.date+'</div></div>';
 
     if(booking.cancelled){
-      html += '<div class="oq-cancelled-banner"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>This booking has been cancelled</div>';
+      html += '<div class="oq-cancelled-banner"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>该预约Cancelled</div>';
     } else {
       html += '<div class="stepper-wrap">';
       STATUS_LABELS.forEach(function(label, i){
@@ -429,7 +429,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
             booking.cancelled = true;
             renderResult(booking);
           } catch(e){
-            area.innerHTML = '<div class="oq-cancel-blocked">Unable to connect to the server. Please try again later.</div>';
+            area.innerHTML = '<div class="oq-cancel-blocked">暂时无法连接服务器，Please Try Again Later。</div>';
           }
         });
       });
@@ -439,7 +439,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   function renderNotFound(){
     document.getElementById('resultArea').innerHTML =
       '<div class="not-found-box"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>'
-      + '<p>No matching booking found. Please confirm your Booking ID and contact information.</p></div>';
+      + '<p>No matching booking found，请ConfirmBooking ID和Contact Information。</p></div>';
   }
 
   var orderInput = document.getElementById('orderInput');
@@ -450,7 +450,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var bookingNo = orderInput.value.trim();
     var contact = contactInput.value.trim();
     if(!bookingNo || !contact){
-      errorEl.textContent = 'Please fill in your Booking ID and contact information.';
+      errorEl.textContent = '请填写Booking ID和Contact Information。';
       errorEl.classList.add('show');
       document.getElementById('resultArea').innerHTML = '';
       return;
@@ -469,7 +469,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         document.getElementById('resultArea').innerHTML = '';
       }
     } catch(e){
-      errorEl.textContent = 'Unable to connect to the server. Please try again later.';
+      errorEl.textContent = '暂时无法连接服务器，Please Try Again Later。';
       errorEl.classList.add('show');
     }
     btn.disabled = false;
@@ -522,7 +522,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     window.location.href = withCart('/orders/', cartItems);
   });
   document.getElementById('vhamBooking').addEventListener('click', function(){
-    showToast('Currently on the Booking Tracking page');
+    showToast('当前就在Booking Tracking页');
     vhAcctMenu.classList.remove('open');
   });
   document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
@@ -572,8 +572,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 <script>
 (function(){
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  // ChatMessageYes any anonymous visitor都能Submit  content ， manage 员Open for  when 会看 to ——不转义就直接拼进innerHTML
-  //  ，访客 can  at Message里塞HTML/脚本， at  manage 员已Login  browse 里执Row（ storage 型XSS）。
+  // 聊天消息Yes任何匿名访客都能Submit的内容，管理员Open对话时会看到——不转义就直接拼进innerHTML
+  // 的话，访客可以在消息里塞HTML/脚本，在管理员已Login的浏览器里执行（存储型XSS）。
   function escapeHtml(s){
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
@@ -591,7 +591,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       return id;
     } catch(e){ return 'cust_temp'; }
   }
-  // Customer端第一次OpenChat面板 when 调用——后端会自动 process "这 personal Yes不Yes第一次来"、要不要插入欢迎语，
+  // 客户端第一次Open聊天面板时调用——后端会自动处理"这pcs人Yes不Yes第一次来"、要不要插入欢迎语，
   // 前端不用再自己判断这些
   async function ensureMyThread(){
     try {
@@ -675,7 +675,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   // poll for admin replies / handoff changes while the widget is on screen
   pollTimer = setInterval(async function(){
-    if(!currentThread) return; // 还没Open过Chat面板，没 necessary 轮询
+    if(!currentThread) return; // 还没Open过聊天面板，没必要轮询
     await refreshMyThread();
     renderMessages();
   }, 4000);
