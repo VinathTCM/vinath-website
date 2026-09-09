@@ -74,7 +74,7 @@ app.use('/api', require('./routes/settings'));
 app.use('/api', require('./routes/staff-chat'));
 app.use('/api', require('./routes/reviews'));
 app.use('/api', require('./routes/audit'));
-app.use('/api', require('./routes/tmt-translate')); // 腾讯TMT机器翻译中转接口
+// tmt-translate 路由已停用（国际版无免费额度，改用MyMemory免费API）
 
 app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
 
