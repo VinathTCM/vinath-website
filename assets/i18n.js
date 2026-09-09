@@ -1293,4 +1293,7 @@
     dict: I18N,
     refresh: function() { scheduleAutoTranslate(); }
   };
+  
+  // 暴露t函数为全局函数，方便页面内联JavaScript直接调用
+  window.t = t;
 })();
