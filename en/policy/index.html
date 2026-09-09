@@ -605,7 +605,7 @@ If you have any questions about this legal notice, please contact us via:
     try {
       var res = await fetch(API_BASE + '/site-settings/policy_pages');
       var saved = res.ok ? await res.json() : null;
-      POLICY_DOCS.forEach(function(key){ merged[key] = (saved && saved[key]) || POLICY_DEFAULTS[key]; });
+      POLICY_DOCS.forEach(function(key){ var sv=saved&&saved[key]; if(sv&&/[\u4e00-\u9fff]/.test((sv.title||'')+(sv.content||''))) sv=null; merged[key] = sv || POLICY_DEFAULTS[key]; });
     } catch(e){
       POLICY_DOCS.forEach(function(key){ merged[key] = POLICY_DEFAULTS[key]; });
     }

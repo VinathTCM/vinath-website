@@ -368,6 +368,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       return [{state:'', cities:SERVICE_AREAS_FALLBACK}];
     }
   }
+  // 英文版：下拉 value 保留后台原始地名(用于和医师 regions 精确匹配)，仅把显示文本里的中文去掉
+  function enAreaName(a){ return (a||'').replace(/[\u4e00-\u9fff]/g,'').replace(/\s+/g,' ').trim(); }
 
   // ---- Instant Booking (instant match): a separate lightweight mini-flow, not part of the scheduled
   // 4-stage booking above. Prototype only — see .hc-proto-note in the UI itself; the "auto-match
@@ -468,7 +470,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         + '<div class="hc-field"><label>Your Area</label>'
         + '<select id="instantAreaInput"><option value="">Please select your area</option>'
         + getActiveServiceAreaGroups().map(function(g){
-            var opts = g.cities.map(function(a){ return '<option value="'+a+'"'+(instantForm.area===a?' selected':'')+'>'+a+'</option>'; }).join('');
+            var opts = g.cities.map(function(a){ return '<option value="'+a+'"'+(instantForm.area===a?' selected':'')+'>'+enAreaName(a)+'</option>'; }).join('');
             return g.state ? '<optgroup label="'+g.state+'">'+opts+'</optgroup>' : opts;
           }).join('')
         + '</select></div>'
@@ -708,7 +710,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     html += '<div class="hc-field"><label>Your Service Area</label>'
       + '<select id="areaInput"><option value="">Please select your area</option>'
       + getActiveServiceAreaGroups().map(function(g){
-          var opts = g.cities.map(function(a){ return '<option value="'+a+'"'+(form.area===a?' selected':'')+'>'+a+'</option>'; }).join('');
+          var opts = g.cities.map(function(a){ return '<option value="'+a+'"'+(form.area===a?' selected':'')+'>'+enAreaName(a)+'</option>'; }).join('');
           return g.state ? '<optgroup label="'+g.state+'">'+opts+'</optgroup>' : opts;
         }).join('')
       + '</select>'
@@ -832,10 +834,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     }
     var practitioners = getPractitionersForArea(form.area, form.phone);
     var html = '<div class="hc-stage-title">Choose the physician you wish to book</div>'
-      + '<div class="hc-stage-hint">The following licensed physicians are available for "'+form.area+'" available licensed physicians.</div>';
+      + '<div class="hc-stage-hint">The following licensed physicians are available for "'+enAreaName(form.area)+'" available licensed physicians.</div>';
     if(!practitioners.length){
       html += '<div class="hc-match-result"><div class="icon unmatched"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16" x2="12" y2="16.01"/></svg></div>'
-        + '<h3>No physicians available in this area</h3><p>「'+form.area+'" currently has no scheduled home-visit physicians. You may go back and choose another area, or contact us via "Instant Booking" to see if a temporary arrangement is possible.</p></div>';
+        + '<h3>No physicians available in this area</h3><p>「'+enAreaName(form.area)+'" currently has no scheduled home-visit physicians. You may go back and choose another area, or contact us via "Instant Booking" to see if a temporary arrangement is possible.</p></div>';
       html += '<div class="hc-back-link" id="backLink">← BackPrevious</div>';
       document.getElementById('stageArea').innerHTML = html;
       document.getElementById('backLink').addEventListener('click', function(){ stage = 1; render(); });
@@ -976,7 +978,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var html = '<div class="hc-stage-title">Detailed Address</div>'
       + '<div class="hc-stage-hint">This helps the physician verify the address during the home visit.</div>'
       + '<div class="hc-field"><label>Contact Information</label><div class="hc-context-card"><div class="hc-context-row"><span class="cl">Name</span><span>'+form.name+'</span></div><div class="hc-context-row"><span class="cl">Phone Number</span><span>+60'+form.phone+'</span></div></div></div>'
-      + '<div class="hc-field"><label>Service Area</label><div class="hc-context-card"><div class="hc-context-row"><span class="cl">Area</span><span>'+form.area+'</span></div></div></div>'
+      + '<div class="hc-field"><label>Service Area</label><div class="hc-context-card"><div class="hc-context-row"><span class="cl">Area</span><span>'+enAreaName(form.area)+'</span></div></div></div>'
       + '<div class="hc-field"><label>Detailed Address</label><textarea id="addrInput" placeholder="House number, street, postcode, etc. detailed Address">'+form.addressDetail+'</textarea></div>'
       + '<button class="hc-next-btn" id="submitBtn" disabled>Submit Booking</button>'
       + '<div class="hc-back-link" id="backLink">← BackPrevious</div>';
