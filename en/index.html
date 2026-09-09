@@ -1159,15 +1159,14 @@
   (async function(){
     var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
     var seed = [
-      {text:'Free shipping for West Malaysia orders over RM100', enabled:true},
-      {text:'"Xiaoxia Mask" is being restocked, expected back by end of July', enabled:true},
-      {text:'Home consultation is now open for booking. Welcome to "Meet Now" for enquiries', enabled:true}
+      {text:'Free shipping for West Malaysia orders over RM150', enabled:true},
+      {text:'Home consultation is now open for booking. Welcome to enquire via "Meet Now"', enabled:true}
     ];
     var list = seed;
     try {
       var res = await fetch(API_BASE + '/site-settings/announcements');
       var data = res.ok ? await res.json() : null;
-      if(data) list = data;
+      if(data && !data.some(function(a){return /[\u4e00-\u9fff]/.test(a.text||'');})) list = data;
     } catch(e){}
     var active = list.filter(function(a){ return a.enabled && a.text && a.text.trim(); });
     var wrap = document.getElementById('announceTextWrap');
