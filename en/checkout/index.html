@@ -329,134 +329,134 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   var CHECK_SVG = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
 
   var PRODUCTS = [
-    {id:1, name:'月舒贴', type:'plaster', journeys:['女性调理'], tags:['痛经'], price:9, trial:4, desc:'经期腰腹冷痛时敷一敷，温感慢慢散开。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'延胡索', amt:'10g'},{herb:'肉桂', amt:'5g'},{herb:'乌药', amt:'8g'},{herb:'香附', amt:'6g'}], usage:'研末，黄酒或温水调糊，敷关元、气海穴，经前3天开始每日1次，每次4-6小时。'},
-    {id:2, name:'迟汐茶', type:'tea', journeys:['女性调理'], tags:['月经过长'], price:45, trial:16, desc:'经期拖得久、淋漓不净时，喝它帮身体把节奏收一收。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'仙鹤草', amt:'15g'},{herb:'茜草', amt:'6g'},{herb:'乌梅', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'沸水焖泡15分钟或轻煎10分钟，经期第3天起连饮至经净，每日1剂。'},
-    {id:3, name:'满汐茶', type:'tea', journeys:['女性调理'], tags:['经量过多'], price:45, trial:16, desc:'经量偏多的日子，喝一杯，安心一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'15g'},{herb:'煅龙骨（先煎）', amt:'10g'},{herb:'棕榈炭', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'龙骨先煎15分钟，下其余药材再煎10分钟，经期第1-3天每日1剂。'},
-    {id:4, name:'浅汐茶', type:'tea', journeys:['女性调理'], tags:['经量过少'], price:45, trial:16, desc:'经量偏少、颜色偏淡，日常养一养气血。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'当归', amt:'6g'},{herb:'黄精', amt:'10g'},{herb:'白芍', amt:'8g'},{herb:'红枣', amt:'3枚'}], usage:'焖泡或轻煎，经净后连饮1-2周，每日1剂。'},
-    {id:5, name:'弦月茶', type:'tea', journeys:['女性调理'], tags:['周期紊乱'], price:45, trial:16, desc:'周期忽早忽晚没个准，帮身体找回自己的节奏。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'柴胡', amt:'5g'},{herb:'香附', amt:'8g'},{herb:'益母草', amt:'10g'},{herb:'玫瑰花', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'焖泡代茶，非经期每日1剂，连饮2-3周为一周期。'},
-    {id:6, name:'月隙茶', type:'tea', journeys:['女性调理'], tags:['经间点滴'], price:45, trial:16, desc:'两次月经之间偶有点滴，滋阴凉血，静静调理。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'女贞子', amt:'10g'},{herb:'墨旱莲', amt:'10g'},{herb:'生地', amt:'8g'},{herb:'茜草', amt:'5g'}], usage:'轻煎15分钟，排卵期前后（周期第12-16天）每日1剂。'},
-    {id:7, name:'望汐茶', type:'tea', journeys:['女性调理'], tags:['月经过长','经量过多'], price:45, trial:16, desc:'经期又长又多的日子，一杯茶帮忙稳住。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'15g'},{herb:'仙鹤草', amt:'12g'},{herb:'山萸肉', amt:'8g'},{herb:'藕节', amt:'10g'},{herb:'乌梅', amt:'5g'}], usage:'轻煎15分钟，经期第1-4天每日1剂，量多时可加至一剂半。'},
-    {id:8, name:'盈月茶', type:'tea', journeys:['女性调理'], tags:['周期紊乱','经量过少'], price:45, trial:16, desc:'量少又乱的周期，慢慢养、慢慢盈满。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'当归', amt:'8g'},{herb:'黄精', amt:'10g'},{herb:'白芍', amt:'8g'},{herb:'玫瑰花', amt:'4g'},{herb:'红枣', amt:'3枚'}], usage:'焖泡，经净后连饮2周，每日1剂。'},
-    {id:9, name:'云净茶', type:'tea', journeys:['女性调理'], tags:['量多'], price:45, trial:16, desc:'白带量多时，健脾祛湿，清清爽爽。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'白术', amt:'10g'},{herb:'山药', amt:'10g'},{herb:'芡实', amt:'8g'},{herb:'白扁豆', amt:'8g'},{herb:'陈皮', amt:'3g'}], usage:'轻煎15分钟，连饮2周，每日1剂。'},
-    {id:10, name:'素雅茶', type:'tea', journeys:['女性调理'], tags:['颜色异常'], price:45, trial:16, desc:'颜色不对劲但不严重，日常清养一下。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯苓', amt:'10g'},{herb:'黄柏', amt:'4g'},{herb:'薏苡仁', amt:'12g'},{herb:'甘草', amt:'3g'}], usage:'轻煎10分钟，连饮1-2周，每日1剂。'},
-    {id:11, name:'芷兰茶', type:'tea', journeys:['女性调理'], tags:['伴有异味'], price:45, trial:16, desc:'伴有异味时，清热祛湿，找回清爽。', active:true, inStock:false, featured:false, imgs:[], form:'茶', herbs:[{herb:'蒲公英', amt:'10g'},{herb:'土茯苓', amt:'12g'},{herb:'车前子（包煎）', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'车前子包煎，余药同煎15分钟，连饮1-2周，每日1剂。'},
-    {id:12, name:'兰汤坐浴包', type:'soak', journeys:['女性调理'], tags:['反复瘙痒'], price:25, trial:10, desc:'反复瘙痒不适，煮一煮，泡个安心的热水澡。', active:true, inStock:true, featured:false, imgs:[], form:'外用坐浴', herbs:[{herb:'苦参', amt:'15g'},{herb:'蛇床子', amt:'12g'},{herb:'黄柏', amt:'10g'},{herb:'花椒', amt:'5g'},{herb:'艾叶', amt:'10g'}], usage:'布袋包好，加水2000ml煮沸15分钟，待温（约40°C）坐浴15分钟，每晚1次，连用5-7天，经期停用。'},
-    {id:13, name:'澄澈茶', type:'tea', journeys:['女性调理'], tags:['伴有异味','颜色异常'], price:45, trial:16, desc:'颜色和异味同时出现，双管齐下清一清。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄柏', amt:'5g'},{herb:'车前子（包煎）', amt:'10g'},{herb:'薏苡仁', amt:'12g'},{herb:'蒲公英', amt:'8g'},{herb:'土茯苓', amt:'10g'}], usage:'车前子包煎，余药同煎15分钟，连饮2周，每日1剂，症状明显时每日一剂半。'},
-    {id:14, name:'芷澄茶', type:'tea', journeys:['女性调理'], tags:['伴有异味','量多','颜色异常'], price:45, trial:16, desc:'量多、颜色、异味都有的日子，全面清养。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'山药', amt:'15g'},{herb:'芡实', amt:'10g'},{herb:'黄柏', amt:'5g'},{herb:'苍术', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'轻煎10-15分钟，连饮2-3周，量多色黄味重时每日一剂半。'},
-    {id:15, name:'月序茶', type:'tea', journeys:['女性调理'], tags:['周期不稳定'], price:45, trial:16, desc:'备孕期间周期总不稳，疏肝理气帮忙调顺。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'柴胡', amt:'5g'},{herb:'香附', amt:'8g'},{herb:'当归', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'焖泡，经净后开始连饮2周，经期停用。'},
-    {id:16, name:'煦暖贴', type:'plaster', journeys:['女性调理'], tags:['体质偏寒'], price:9, trial:4, desc:'体质偏寒手脚凉，敷一敷，暖到心里。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'肉桂', amt:'6g'},{herb:'艾叶', amt:'10g'},{herb:'小茴香', amt:'8g'},{herb:'干姜', amt:'6g'}], usage:'研末姜汁调糊，敷关元、命门穴，每周3-4次，每次4-6小时，经期停用。'},
-    {id:17, name:'绿萼茶', type:'tea', journeys:['女性调理'], tags:['情绪压力'], price:45, trial:16, desc:'备孕路上压力大，喝一杯，松一口气。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'合欢花', amt:'6g'},{herb:'绿萼梅', amt:'5g'},{herb:'茯苓', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'焖泡代茶饮，情绪紧张期每日1剂。'},
-    {id:18, name:'兰馨茶', type:'tea', journeys:['女性调理'], tags:['备孕调理'], price:45, trial:16, desc:'日常备孕体质调养，平补肝肾打基础。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'菟丝子', amt:'12g'},{herb:'覆盆子', amt:'10g'},{herb:'枸杞子', amt:'10g'},{herb:'桑葚', amt:'8g'}], usage:'轻煎15分钟，日常保健每周4-5次，每次1剂。'},
-    {id:19, name:'梅悦茶', type:'tea', journeys:['女性调理'], tags:['周期不稳定','情绪压力'], price:45, trial:16, desc:'周期不稳又心情烦躁，疏肝养血一起来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'柴胡', amt:'5g'},{herb:'白芍', amt:'10g'},{herb:'合欢花', amt:'5g'},{herb:'绿萼梅', amt:'4g'},{herb:'茯苓', amt:'10g'}], usage:'焖泡，非经期每日1剂，连饮2-3周。'},
-    {id:20, name:'兰序茶', type:'tea', journeys:['女性调理'], tags:['周期不稳定','备孕调理','情绪压力'], price:45, trial:16, desc:'备孕期间周期、情绪都需要照顾时的全面调理茶。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'菟丝子', amt:'12g'},{herb:'白芍', amt:'10g'},{herb:'枸杞子', amt:'10g'},{herb:'柴胡', amt:'4g'},{herb:'合欢花', amt:'5g'},{herb:'红枣', amt:'3枚'}], usage:'经净后开始每日1剂，连饮约2周，情绪紧张期可加至一剂半，经期停用。确认怀孕后停用并咨询医师。'},
-    {id:21, name:'静玉贴', type:'plaster', journeys:['女性调理'], tags:['体检提示增生'], price:9, trial:4, desc:'体检提示有增生，日常辅助调理，请配合定期复查。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'三棱', amt:'6g'},{herb:'莪术', amt:'6g'},{herb:'皂角刺', amt:'8g'},{herb:'桂枝', amt:'5g'}], usage:'研末醋调糊，敷小腹部（避开经期），每周3次，每次4小时。需配合定期复查，孕期禁用。'},
-    {id:22, name:'和风茶', type:'tea', journeys:['女性调理'], tags:['小腹坠胀'], price:45, trial:16, desc:'小腹总是坠胀，理气化开那股闷闷的感觉。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'乌药', amt:'6g'},{herb:'佛手', amt:'6g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'焖泡代茶，日常不适时每日1剂。'},
-    {id:23, name:'绛华茶', type:'tea', journeys:['女性调理'], tags:['经期不适加重'], price:45, trial:16, desc:'经期这几天特别不舒服，活血化开那股滞涩。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'益母草', amt:'10g'},{herb:'香附', amt:'8g'},{herb:'山楂', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，经期前3天开始每日1剂至经净。'},
-    {id:24, name:'暖溪茶', type:'tea', journeys:['女性调理'], tags:['小腹坠胀','经期不适加重'], price:45, trial:16, desc:'坠胀加上经期加重，一起温柔化开。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'益母草', amt:'10g'},{herb:'乌药', amt:'8g'},{herb:'佛手', amt:'6g'},{herb:'山楂', amt:'8g'},{herb:'月季花', amt:'4g'}], usage:'轻煎15分钟，经期前3天至经期第3天每日1剂。'},
-    {id:25, name:'清露茶', type:'tea', journeys:['女性调理'], tags:['潮热盗汗'], price:45, trial:16, desc:'潮热盗汗睡不安稳，滋阴敛汗清清爽爽。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'浮小麦', amt:'12g'},{herb:'地骨皮', amt:'8g'},{herb:'桑叶', amt:'6g'},{herb:'麦冬', amt:'8g'},{herb:'五味子', amt:'5g'}], usage:'轻煎15分钟，午后饮用尤宜，连饮2-4周。'},
-    {id:26, name:'月枕贴', type:'plaster', journeys:['女性调理'], tags:['失眠'], price:9, trial:4, desc:'翻来覆去睡不着，睡前敷一敷涌泉穴。', active:true, inStock:true, featured:false, imgs:[], form:'贴，涌泉穴外用', herbs:[{herb:'酸枣仁', amt:'15g'},{herb:'首乌藤', amt:'15g'},{herb:'远志', amt:'8g'},{herb:'吴茱萸', amt:'6g'}], usage:'研末醋调糊，睡前敷双侧涌泉穴，胶布固定，次晨取下，连用1-2周。'},
-    {id:27, name:'兰心茶', type:'tea', journeys:['女性调理'], tags:['情绪波动'], price:45, trial:16, desc:'情绪忽上忽下，喝一杯，静下来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'淮小麦', amt:'20g'},{herb:'大枣', amt:'6枚'},{herb:'甘草', amt:'5g'},{herb:'合欢皮', amt:'8g'},{herb:'郁金', amt:'6g'}], usage:'轻煎15-20分钟，情绪波动期每日1剂。'},
-    {id:28, name:'静澜茶', type:'tea', journeys:['女性调理'], tags:['心悸'], price:45, trial:16, desc:'心跳总不安稳，清心宁悸，慢慢平复。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'丹参', amt:'10g'},{herb:'茯神', amt:'12g'},{herb:'柏子仁', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'焖泡或轻煎，心悸明显时每日1剂，连饮1-2周。'},
-    {id:29, name:'素月贴', type:'plaster', journeys:['女性调理'], tags:['失眠','心悸'], price:9, trial:4, desc:'又睡不好又心悸，睡前敷一敷，双重安顿。', active:true, inStock:true, featured:false, imgs:[], form:'贴，涌泉穴外用', herbs:[{herb:'酸枣仁', amt:'10g'},{herb:'首乌藤', amt:'10g'},{herb:'远志', amt:'6g'},{herb:'丹参', amt:'8g'},{herb:'吴茱萸', amt:'5g'}], usage:'研末醋调糊，睡前敷涌泉穴，次晨取下，连用1-2周。'},
-    {id:30, name:'静好茶', type:'tea', journeys:['女性调理'], tags:['失眠','心悸','情绪波动','潮热盗汗'], price:49, trial:18, desc:'更年期诸多不适一起来，一杯茶陪你稳稳走过。', active:true, inStock:true, featured:true, imgs:[], form:'茶', herbs:[{herb:'女贞子', amt:'12g'},{herb:'酸枣仁', amt:'15g'},{herb:'淮小麦', amt:'20g'},{herb:'麦冬', amt:'10g'},{herb:'丹参', amt:'10g'},{herb:'五味子', amt:'5g'}], usage:'焖泡或轻煎，午后至睡前饮用，连饮2-4周，症状明显时可每日一剂半。'},
-    {id:31, name:'晨谷茶', type:'tea', journeys:['中医塑体'], tags:['进食不规律'], price:45, trial:16, desc:'三餐没规律，健脾和胃，找回吃饭的节奏。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'白术', amt:'10g'},{herb:'陈皮', amt:'6g'},{herb:'山楂', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，早餐后饮用，连续2周。'},
-    {id:32, name:'岚隐茶', type:'tea', journeys:['中医塑体'], tags:['嗜甜嗜油'], price:45, trial:16, desc:'爱吃甜爱吃油，化痰祛湿，给身体减减负。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'陈皮', amt:'8g'},{herb:'茯苓', amt:'10g'},{herb:'荷叶', amt:'6g'},{herb:'山楂', amt:'8g'}], usage:'焖泡，餐后饮用，每日1剂。'},
-    {id:33, name:'家膳茶', type:'tea', journeys:['中医塑体'], tags:['外食频繁'], price:45, trial:16, desc:'外食吃多了，清养脾胃，清清爽爽。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'薏苡仁', amt:'15g'},{herb:'绿豆衣', amt:'8g'},{herb:'麦芽', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，外食较多的日子饮用。'},
-    {id:34, name:'晨序茶', type:'tea', journeys:['中医塑体'], tags:['饮食无规划'], price:45, trial:16, desc:'饮食毫无规划，健脾益气，打好基础再谈其他。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'党参', amt:'10g'},{herb:'白术', amt:'8g'},{herb:'茯苓', amt:'8g'},{herb:'陈皮', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，每周4-5次。'},
-    {id:35, name:'云隐茶', type:'tea', journeys:['中医塑体'], tags:['嗜甜嗜油','饮食无规划'], price:45, trial:16, desc:'嗜甜嗜油又没规划，双重化浊，轻装上阵。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'荷叶', amt:'8g'},{herb:'决明子', amt:'8g'},{herb:'山楂', amt:'10g'},{herb:'陈皮', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'焖泡，餐后饮用，连续2-3周。'},
-    {id:36, name:'晴川茶', type:'tea', journeys:['中医塑体'], tags:['久坐少动'], price:45, trial:16, desc:'久坐不动，理气活血，让气血重新流动起来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'陈皮', amt:'6g'},{herb:'丹参', amt:'8g'},{herb:'薏苡仁', amt:'12g'},{herb:'甘草', amt:'3g'}], usage:'焖泡，久坐后饮用。'},
-    {id:37, name:'鹤姿茶', type:'tea', journeys:['中医塑体'], tags:['运动方式不当'], price:45, trial:16, desc:'运动方式不太对，养血舒筋，动作更从容。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'当归', amt:'8g'},{herb:'木瓜', amt:'8g'},{herb:'伸筋草', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，运动前后饮用。'},
-    {id:38, name:'恒晨茶', type:'tea', journeys:['中医塑体'], tags:['难以坚持'], price:45, trial:16, desc:'三天打鱼两天晒网，益气健脾，慢慢养出坚持的底气。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'白术', amt:'8g'},{herb:'陈皮', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用，连续调理。'},
-    {id:39, name:'暮川茶', type:'tea', journeys:['中医塑体'], tags:['运动后恢复慢'], price:45, trial:16, desc:'运动完总是很难恢复，益气养血，加速回血。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'当归', amt:'6g'},{herb:'桂枝', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'运动后饮用。'},
-    {id:40, name:'鹤川茶', type:'tea', journeys:['中医塑体'], tags:['久坐少动','运动方式不当'], price:45, trial:16, desc:'久坐又运动姿势不对，一起舒展开来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'丹参', amt:'10g'},{herb:'当归', amt:'8g'},{herb:'木瓜', amt:'6g'},{herb:'陈皮', amt:'4g'}], usage:'轻煎，每日1剂。'},
-    {id:41, name:'恒川茶', type:'tea', journeys:['中医塑体'], tags:['运动后恢复慢','难以坚持'], price:45, trial:16, desc:'难坚持又恢复慢，气血双补撑住状态。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'15g'},{herb:'白术', amt:'8g'},{herb:'当归', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'晨起或运动后饮用。'},
-    {id:42, name:'初曦贴', type:'plaster', journeys:['中医塑体'], tags:['产后气血虚'], price:9, trial:4, desc:'产后气血两虚，温和敷一敷，慢慢补回来。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'当归', amt:'10g'},{herb:'黄芪', amt:'12g'},{herb:'熟地', amt:'8g'}], usage:'姜汁调糊，敷神阙穴，每周3次，每次4-6小时。'},
-    {id:43, name:'晓月贴', type:'plaster', journeys:['中医塑体'], tags:['腹部松弛'], price:9, trial:4, desc:'腹部松弛没力气，敷一敷帮忙提一提。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'黄芪', amt:'15g'},{herb:'升麻', amt:'6g'},{herb:'枳壳', amt:'8g'}], usage:'姜汁调糊，敷腹部，每周3-4次。'},
-    {id:44, name:'暮归茶', type:'tea', journeys:['中医塑体'], tags:['体力恢复慢'], price:45, trial:16, desc:'产后体力恢复得慢，气血双补陪你慢慢来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'当归', amt:'8g'},{herb:'熟地', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'产后2周起，每日1剂。'},
-    {id:45, name:'甘露茶', type:'tea', journeys:['中医塑体'], tags:['哺乳期调理'], price:45, trial:16, desc:'哺乳期需要更多气血支持，温和滋养。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'王不留行', amt:'8g'},{herb:'黄芪', amt:'10g'},{herb:'当归', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'哺乳期每日1剂。'},
-    {id:46, name:'产后元气贴', type:'plaster', journeys:['中医塑体'], tags:['产后气血虚','体力恢复慢'], price:9, trial:4, desc:'产后气血虚又恢复慢，加强版一起养回来。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'黄芪', amt:'15g'},{herb:'当归', amt:'10g'},{herb:'熟地', amt:'8g'},{herb:'白术', amt:'6g'}], usage:'姜汁调糊，敷神阙穴，每周3-4次。'},
-    {id:47, name:'暖阳贴', type:'plaster', journeys:['中医塑体'], tags:['怕冷'], price:9, trial:4, desc:'手脚怕冷，温阳散寒，敷一敷暖起来。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'肉桂', amt:'8g'},{herb:'干姜', amt:'10g'},{herb:'小茴香', amt:'8g'},{herb:'艾叶', amt:'10g'}], usage:'姜汁调糊，敷关元穴，每周3次。'},
-    {id:48, name:'晴曦茶', type:'tea', journeys:['中医塑体'], tags:['易疲劳'], price:45, trial:16, desc:'总是提不起劲，益气健脾，找回精神。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'党参', amt:'10g'},{herb:'黄芪', amt:'8g'},{herb:'陈皮', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
-    {id:49, name:'云澈茶', type:'tea', journeys:['中医塑体'], tags:['水肿'], price:45, trial:16, desc:'身体水肿沉重，健脾利水，轻盈一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯苓', amt:'12g'},{herb:'泽泻', amt:'8g'},{herb:'冬瓜皮', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，每日1剂。'},
-    {id:50, name:'轻盈茶', type:'tea', journeys:['中医塑体'], tags:['体重难下降'], price:45, trial:16, desc:'体重总卡关，化湿健脾，帮忙松动一下代谢。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'荷叶', amt:'8g'},{herb:'白术', amt:'8g'},{herb:'泽泻', amt:'8g'},{herb:'陈皮', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'餐后饮用。'},
-    {id:51, name:'暖身茶', type:'tea', journeys:['中医塑体'], tags:['怕冷','易疲劳'], price:45, trial:16, desc:'又怕冷又疲劳，温阳益气一起来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'肉桂', amt:'6g'},{herb:'党参', amt:'8g'},{herb:'干姜', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
-    {id:52, name:'岚澈茶', type:'tea', journeys:['中医塑体'], tags:['体重难下降','水肿'], price:45, trial:16, desc:'水肿又体重难降，双重祛湿消肿。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯苓', amt:'12g'},{herb:'薏苡仁', amt:'15g'},{herb:'泽泻', amt:'8g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，每日1剂。'},
-    {id:53, name:'晨颜茶', type:'tea', journeys:['美容养颜'], tags:['气色发黄'], price:45, trial:16, desc:'气色发黄没精神，益气养血，慢慢透出红润。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'8g'},{herb:'当归', amt:'6g'},{herb:'白术', amt:'6g'},{herb:'红枣', amt:'3枚'}], usage:'晨起饮用。'},
-    {id:54, name:'玉泽茶', type:'tea', journeys:['美容养颜'], tags:['缺乏光泽'], price:45, trial:16, desc:'皮肤缺水没光泽，滋阴润燥，养出水润感。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'玉竹', amt:'8g'},{herb:'麦冬', amt:'8g'},{herb:'枸杞子', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'焖泡，每日1剂。'},
-    {id:55, name:'霞光茶', type:'tea', journeys:['美容养颜'], tags:['疲惫暗沉'], price:45, trial:16, desc:'疲惫写在脸上，气血双补，找回气色。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'当归', amt:'6g'},{herb:'枸杞子', amt:'8g'},{herb:'陈皮', amt:'3g'}], usage:'晨起饮用。'},
-    {id:56, name:'曦辉贴', type:'plaster', journeys:['美容养颜'], tags:['气色发黄','疲惫暗沉'], price:9, trial:4, desc:'气色差又疲惫，敷一敷双重提气色。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'黄芪', amt:'12g'},{herb:'当归', amt:'10g'},{herb:'红花', amt:'3g'}], usage:'姜汁调糊，敷相关穴位，每周2-3次。'},
-    {id:57, name:'凝脂茶', type:'tea', journeys:['美容养颜'], tags:['弹性下降'], price:45, trial:16, desc:'皮肤弹性下降，益气养阴，帮肌肤找回紧实感。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'山药', amt:'10g'},{herb:'枸杞子', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
-    {id:58, name:'霜华茶', type:'tea', journeys:['美容养颜'], tags:['初显细纹'], price:45, trial:16, desc:'细纹开始出现，滋阴润肤，抚平初显的痕迹。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'玉竹', amt:'10g'},{herb:'白芍', amt:'8g'},{herb:'当归', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
-    {id:59, name:'晚霞贴', type:'plaster', journeys:['美容养颜'], tags:['面颊松垮'], price:9, trial:4, desc:'面颊有点松垮，敷一敷帮忙提一提。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'黄芪', amt:'10g'},{herb:'升麻', amt:'5g'},{herb:'当归', amt:'6g'}], usage:'姜汁调糊，敷面部相关穴位，每周2-3次。'},
-    {id:60, name:'凝脂贴', type:'plaster', journeys:['美容养颜'], tags:['初显细纹','弹性下降','面颊松垮'], price:9, trial:4, desc:'松弛、细纹、垮脸一起出现，全面提升方案。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'黄芪', amt:'12g'},{herb:'升麻', amt:'6g'},{herb:'当归', amt:'10g'},{herb:'白芍', amt:'8g'}], usage:'姜汁调糊，敷相关穴位，每周3次。'},
-    {id:61, name:'翠萼茶', type:'tea', journeys:['美容养颜'], tags:['反复冒痘'], price:45, trial:16, desc:'痘痘反反复复，清热祛湿，慢慢调理体质。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'蒲公英', amt:'8g'},{herb:'连翘', amt:'6g'},{herb:'薏苡仁', amt:'12g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
-    {id:62, name:'玉肌茶', type:'tea', journeys:['美容养颜'], tags:['毛孔粗大'], price:45, trial:16, desc:'毛孔粗大，健脾渗湿，肌肤更细腻。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'薏苡仁', amt:'12g'},{herb:'茯苓', amt:'10g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
-    {id:63, name:'芷若茶', type:'tea', journeys:['美容养颜'], tags:['泛红刺痛'], price:45, trial:16, desc:'泛红刺痛，凉血清热，舒缓敏感状态。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'生地', amt:'8g'},{herb:'牡丹皮', amt:'6g'},{herb:'金银花', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
-    {id:64, name:'青荷茶', type:'tea', journeys:['美容养颜'], tags:['油光满面'], price:45, trial:16, desc:'满脸油光，清热祛湿，控油更清爽。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄柏', amt:'4g'},{herb:'薏苡仁', amt:'12g'},{herb:'茯苓', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
-    {id:65, name:'翠荷茶', type:'tea', journeys:['美容养颜'], tags:['反复冒痘','油光满面'], price:45, trial:16, desc:'痘痘加油光一起来，双重清热祛湿。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'蒲公英', amt:'10g'},{herb:'黄柏', amt:'5g'},{herb:'薏苡仁', amt:'15g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂，连饮2-3周。'},
-    {id:66, name:'轻颜茶', type:'tea', journeys:['美容养颜'], tags:['面部浮肿'], price:45, trial:16, desc:'脸部有点浮肿，健脾利水，消消肿。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯苓', amt:'10g'},{herb:'冬瓜皮', amt:'8g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
-    {id:67, name:'月轮茶', type:'tea', journeys:['美容养颜'], tags:['轮廓模糊'], price:45, trial:16, desc:'轮廓不够清晰，益气养血，帮忙找回线条。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'8g'},{herb:'当归', amt:'6g'},{herb:'陈皮', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
-    {id:68, name:'云颔茶', type:'tea', journeys:['美容养颜'], tags:['双下巴'], price:45, trial:16, desc:'双下巴困扰，化痰祛湿，帮忙化开。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'陈皮', amt:'8g'},{herb:'茯苓', amt:'10g'},{herb:'浙贝母', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
-    {id:69, name:'月澈茶', type:'tea', journeys:['美容养颜'], tags:['双下巴','面部浮肿'], price:45, trial:16, desc:'浮肿加双下巴，一起消一消。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯苓', amt:'12g'},{herb:'陈皮', amt:'8g'},{herb:'冬瓜皮', amt:'8g'},{herb:'浙贝母', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂，连饮2周。'},
-    {id:70, name:'晨露茶', type:'tea', journeys:['日常养生'], tags:['容易疲劳'], price:45, trial:16, desc:'总是很疲惫，益气健脾，找回精神头。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'党参', amt:'10g'},{herb:'黄芪', amt:'8g'},{herb:'陈皮', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
-    {id:71, name:'朝晖茶', type:'tea', journeys:['日常养生'], tags:['精神不振'], price:45, trial:16, desc:'精神不振提不起劲，升阳益气，唤醒活力。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'升麻', amt:'4g'},{herb:'柴胡', amt:'3g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
-    {id:72, name:'松风茶', type:'tea', journeys:['日常养生'], tags:['注意力难集中'], price:45, trial:16, desc:'注意力很难集中，开窍宁神，思路更清晰。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'远志', amt:'6g'},{herb:'石菖蒲', amt:'6g'},{herb:'茯苓', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'上午饮用。'},
-    {id:73, name:'屏山茶', type:'tea', journeys:['日常养生'], tags:['免疫力偏弱'], price:45, trial:16, desc:'容易生病抵抗力弱，益气固表，加固防护力。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'白术', amt:'8g'},{herb:'防风', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂，连续调理。'},
-    {id:74, name:'朝阳茶', type:'tea', journeys:['日常养生'], tags:['容易疲劳','精神不振'], price:45, trial:16, desc:'疲惫又没精神，双重益气升阳。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'党参', amt:'10g'},{herb:'升麻', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
-    {id:75, name:'岚雾茶', type:'tea', journeys:['日常养生'], tags:['湿气重'], price:45, trial:16, desc:'湿气重身体沉，健脾祛湿，轻盈一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'苍术', amt:'8g'},{herb:'茯苓', amt:'10g'},{herb:'薏苡仁', amt:'12g'},{herb:'陈皮', amt:'4g'}], usage:'每日1剂。'},
-    {id:76, name:'荷露茶', type:'tea', journeys:['日常养生'], tags:['怕热易出汗'], price:45, trial:16, desc:'一动就一身汗，敛汗益气，收一收。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'浮小麦', amt:'12g'},{herb:'五味子', amt:'5g'},{herb:'麦冬', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
-    {id:77, name:'四时茶', type:'tea', journeys:['日常养生'], tags:['换季不适应'], price:45, trial:16, desc:'换季总不适应，调和营卫，帮身体更快适应变化。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'桂枝', amt:'5g'},{herb:'白芍', amt:'6g'},{herb:'黄芪', amt:'8g'},{herb:'炙甘草', amt:'3g'},{herb:'生姜', amt:'3片'},{herb:'大枣', amt:'2枚'}], usage:'换季前后每日1剂。'},
-    {id:78, name:'谷芽茶', type:'tea', journeys:['日常养生'], tags:['食欲不振'], price:45, trial:16, desc:'没什么胃口，健胃消食，找回食欲。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'山楂', amt:'8g'},{herb:'麦芽', amt:'10g'},{herb:'鸡内金', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'餐前饮用。'},
-    {id:79, name:'晚膳茶', type:'tea', journeys:['日常养生'], tags:['消化不良'], price:45, trial:16, desc:'消化总是慢半拍，消食和胃，饭后更舒服。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'山楂', amt:'10g'},{herb:'神曲', amt:'8g'},{herb:'莱菔子', amt:'6g'},{herb:'陈皮', amt:'5g'}], usage:'餐后饮用。'},
-    {id:80, name:'暖芝茶', type:'tea', journeys:['日常养生'], tags:['便秘'], price:45, trial:16, desc:'排便不太顺畅，润肠通便，温和调理。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'火麻仁', amt:'10g'},{herb:'郁李仁', amt:'8g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
-    {id:81, name:'晚风茶', type:'tea', journeys:['日常养生'], tags:['腹胀'], price:45, trial:16, desc:'肚子总是胀胀的，理气消胀，舒服一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'陈皮', amt:'8g'},{herb:'枳壳', amt:'6g'},{herb:'厚朴', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'餐后饮用。'},
-    {id:82, name:'谷雨茶', type:'tea', journeys:['日常养生'], tags:['消化不良','腹胀'], price:45, trial:16, desc:'消化不良又腹胀，一起理顺。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'山楂', amt:'10g'},{herb:'枳实', amt:'6g'},{herb:'莱菔子', amt:'8g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'餐后饮用。'},
-    {id:83, name:'谷序茶', type:'tea', journeys:['日常养生'], tags:['便秘','消化不良','腹胀','食欲不振'], price:45, trial:16, desc:'胃口、消化、排便、腹胀全都不太顺，整体调一调。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'党参', amt:'10g'},{herb:'白术', amt:'8g'},{herb:'陈皮', amt:'6g'},{herb:'枳壳', amt:'6g'},{herb:'山楂', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂，连续调理。'},
-    {id:84, name:'松岚茶', type:'tea', journeys:['日常养生'], tags:['压力大'], price:45, trial:16, desc:'压力山大，疏肝理气，松一口气。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'柴胡', amt:'5g'},{herb:'香附', amt:'8g'},{herb:'佛手', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
-    {id:85, name:'竹韵茶', type:'tea', journeys:['日常养生'], tags:['易烦躁'], price:45, trial:16, desc:'容易心浮气躁，清心除烦，静一静。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'栀子', amt:'5g'},{herb:'淡竹叶', amt:'6g'},{herb:'合欢皮', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
-    {id:86, name:'竹影茶', type:'tea', journeys:['日常养生'], tags:['情绪紧绷'], price:45, trial:16, desc:'情绪总是紧绷，疏肝解郁，放松下来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'合欢皮', amt:'8g'},{herb:'郁金', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
-    {id:87, name:'夜合茶', type:'tea', journeys:['日常养生'], tags:['睡前思虑多'], price:45, trial:16, desc:'睡前脑子停不下来，养心安神，帮忙放空。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯神', amt:'10g'},{herb:'酸枣仁', amt:'10g'},{herb:'龙眼肉', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
-    {id:88, name:'竹松茶', type:'tea', journeys:['日常养生'], tags:['压力大','易烦躁'], price:45, trial:16, desc:'压力大又烦躁，双重疏肝清心。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'柴胡', amt:'6g'},{herb:'栀子', amt:'5g'},{herb:'白芍', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
-    {id:89, name:'忘忧茶', type:'tea', journeys:['日常养生'], tags:['情绪紧绷','睡前思虑多'], price:45, trial:16, desc:'情绪紧绷又思虑重，一杯茶，把忧愁放一放。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'淮小麦', amt:'20g'},{herb:'大枣', amt:'6枚'},{herb:'合欢皮', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
-    {id:90, name:'松节贴', type:'plaster', journeys:['舒缓疼痛'], tags:['久坐僵硬'], price:9, trial:4, desc:'久坐后脖子肩膀僵硬，敷一敷松一松。', active:true, inStock:true, featured:true, imgs:[], form:'贴，外用', herbs:[{herb:'伸筋草', amt:'12g'},{herb:'透骨草', amt:'10g'},{herb:'红花', amt:'5g'}], usage:'姜汁调糊，敷颈肩部，每日1次。'},
-    {id:91, name:'葛悠贴', type:'plaster', journeys:['舒缓疼痛'], tags:['落枕'], price:9, trial:4, desc:'落枕转不了头，敷一敷解肌舒筋。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'葛根', amt:'10g'},{herb:'羌活', amt:'8g'},{herb:'桂枝', amt:'6g'}], usage:'姜汁调糊，敷患处，每日1-2次。'},
-    {id:92, name:'山岳贴', type:'plaster', journeys:['舒缓疼痛'], tags:['腰酸背痛'], price:9, trial:4, desc:'腰酸背痛，敷一敷补肝肾、强腰背。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'杜仲', amt:'12g'},{herb:'续断', amt:'10g'},{herb:'桑寄生', amt:'8g'}], usage:'姜汁调糊，敷腰部，每日1次。'},
-    {id:93, name:'云肩贴', type:'plaster', journeys:['舒缓疼痛'], tags:['肩颈酸胀'], price:9, trial:4, desc:'肩颈酸胀不适，敷一敷活血通络。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'姜黄', amt:'10g'},{herb:'桑枝', amt:'10g'},{herb:'红花', amt:'5g'}], usage:'姜汁调糊，敷肩颈部，每日1次。'},
-    {id:94, name:'云松贴', type:'plaster', journeys:['舒缓疼痛'], tags:['久坐僵硬','肩颈酸胀'], price:9, trial:4, desc:'久坐又肩颈酸胀，一起舒缓。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'姜黄', amt:'10g'},{herb:'伸筋草', amt:'10g'},{herb:'桑枝', amt:'8g'},{herb:'红花', amt:'4g'}], usage:'姜汁调糊，敷患处，每日1次。'},
-    {id:95, name:'暖节贴', type:'plaster', journeys:['舒缓疼痛'], tags:['关节酸胀'], price:9, trial:4, desc:'关节酸胀不适，敷一敷祛湿通络。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'独活', amt:'10g'},{herb:'薏苡仁', amt:'10g'},{herb:'防风', amt:'6g'}], usage:'姜汁调糊，敷关节处，每日1次。'},
-    {id:96, name:'晴岚贴', type:'plaster', journeys:['舒缓疼痛'], tags:['遇冷加重'], price:9, trial:4, desc:'一遇冷就加重，敷一敷温经散寒。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'羌活', amt:'10g'},{herb:'桂枝', amt:'8g'},{herb:'艾叶', amt:'8g'}], usage:'姜汁调糊，敷患处，注意保暖。'},
-    {id:97, name:'展翼贴', type:'plaster', journeys:['舒缓疼痛'], tags:['活动受限'], price:9, trial:4, desc:'活动起来不太利索，敷一敷舒筋活络。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'木瓜', amt:'10g'},{herb:'伸筋草', amt:'10g'},{herb:'牛膝', amt:'8g'}], usage:'姜汁调糊，敷患处，每日1次。'},
-    {id:98, name:'暖岚贴', type:'plaster', journeys:['舒缓疼痛'], tags:['关节酸胀','遇冷加重'], price:9, trial:4, desc:'关节又酸又怕冷，双重驱寒祛湿。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'羌活', amt:'8g'},{herb:'独活', amt:'8g'},{herb:'桂枝', amt:'6g'},{herb:'艾叶', amt:'6g'}], usage:'姜汁调糊，敷患处，每日1次。'},
-    {id:99, name:'赤霞贴', type:'plaster', journeys:['舒缓疼痛'], tags:['肌肉拉伤'], price:9, trial:4, desc:'肌肉拉伤了，敷一敷活血舒缓。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'三七', amt:'6g'},{herb:'红花', amt:'5g'},{herb:'乳香', amt:'4g'}], usage:'姜汁调糊，敷患处（急性肿胀期建议48小时后使用）。'},
-    {id:100, name:'紫云贴', type:'plaster', journeys:['舒缓疼痛'], tags:['扭伤淤青'], price:9, trial:4, desc:'扭伤淤青，敷一敷化瘀消肿。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'桃仁', amt:'6g'},{herb:'红花', amt:'5g'},{herb:'当归尾', amt:'6g'}], usage:'姜汁调糊，敷患处，每日1次。'},
-    {id:101, name:'暮筋茶', type:'tea', journeys:['舒缓疼痛'], tags:['运动后酸痛'], price:45, trial:16, desc:'运动完浑身酸痛，喝一杯养血活血。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'当归', amt:'8g'},{herb:'鸡血藤', amt:'10g'},{herb:'丹参', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'运动后饮用。'},
-    {id:102, name:'霞云贴', type:'plaster', journeys:['舒缓疼痛'], tags:['扭伤淤青','肌肉拉伤'], price:9, trial:4, desc:'拉伤又淤青，一起活血化瘀。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'三七', amt:'10g'},{herb:'桃仁', amt:'8g'},{herb:'红花', amt:'6g'},{herb:'乳香', amt:'5g'}], usage:'姜汁调糊，敷患处，每日1次。'},
-    {id:103, name:'川野茶', type:'tea', journeys:['舒缓疼痛'], tags:['周身酸痛'], price:45, trial:16, desc:'浑身酸痛没劲，气血双补，慢慢缓解。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'当归', amt:'8g'},{herb:'鸡血藤', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
-    {id:104, name:'晚立贴', type:'plaster', journeys:['舒缓疼痛'], tags:['久站久坐不适'], price:9, trial:4, desc:'站久坐久都不舒服，敷一敷舒筋活络。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'伸筋草', amt:'10g'},{herb:'透骨草', amt:'8g'},{herb:'红花', amt:'4g'}], usage:'姜汁调糊，敷酸痛部位。'},
-    {id:105, name:'隐山茶', type:'tea', journeys:['舒缓疼痛'], tags:['反复隐痛'], price:45, trial:16, desc:'疼痛反反复复，养血通络，慢慢调理。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'鸡血藤', amt:'12g'},{herb:'当归', amt:'8g'},{herb:'丹参', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂，连续调理。'},
-    {id:106, name:'川隐茶', type:'tea', journeys:['舒缓疼痛'], tags:['反复隐痛','周身酸痛'], price:45, trial:16, desc:'浑身酸痛又反复隐痛，双重气血通络。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'当归', amt:'10g'},{herb:'鸡血藤', amt:'12g'},{herb:'丹参', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
-    {id:107, name:'暮合贴', type:'plaster', journeys:['优质睡眠'], tags:['躺下清醒'], price:9, trial:4, desc:'一躺下就很清醒，睡前敷一敷涌泉穴。', active:true, inStock:true, featured:false, imgs:[], form:'贴，涌泉穴外用', herbs:[{herb:'酸枣仁', amt:'10g'},{herb:'肉桂', amt:'3g'},{herb:'吴茱萸', amt:'5g'}], usage:'研末醋调糊，睡前敷涌泉穴，次晨取下。'},
-    {id:108, name:'星语茶', type:'tea', journeys:['优质睡眠'], tags:['思绪停不下来'], price:45, trial:16, desc:'脑子里的念头停不下来，养心安神，帮忙静下来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'淮小麦', amt:'15g'},{herb:'合欢皮', amt:'8g'},{herb:'郁金', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
-    {id:109, name:'夜阑茶', type:'tea', journeys:['优质睡眠'], tags:['入睡耗时长'], price:45, trial:16, desc:'入睡总要很久，养心安神，帮忙更快入睡。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'酸枣仁', amt:'12g'},{herb:'柏子仁', amt:'8g'},{herb:'茯神', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
-    {id:110, name:'星阑茶', type:'tea', journeys:['优质睡眠'], tags:['入睡耗时长','思绪停不下来'], price:45, trial:16, desc:'思绪多又难入睡，双重安神助眠。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'酸枣仁', amt:'12g'},{herb:'淮小麦', amt:'15g'},{herb:'合欢皮', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
-    {id:111, name:'暮霭茶', type:'tea', journeys:['优质睡眠'], tags:['夜间易醒'], price:45, trial:16, desc:'夜里总醒，养心益气，睡得更沉一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯神', amt:'10g'},{herb:'酸枣仁', amt:'10g'},{herb:'黄芪', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
-    {id:112, name:'月阑贴', type:'plaster', journeys:['优质睡眠'], tags:['醒后难再入睡'], price:9, trial:4, desc:'醒了就很难再睡着，睡前敷一敷帮忙回笼。', active:true, inStock:true, featured:false, imgs:[], form:'贴，涌泉穴外用', herbs:[{herb:'酸枣仁', amt:'10g'},{herb:'首乌藤', amt:'10g'},{herb:'五味子', amt:'5g'}], usage:'研末醋调糊，睡前敷涌泉穴，次晨取下。'},
-    {id:113, name:'静巷茶', type:'tea', journeys:['优质睡眠'], tags:['对声音敏感'], price:45, trial:16, desc:'一点动静就醒，宁心安神，睡得更安稳。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯神', amt:'10g'},{herb:'远志', amt:'6g'},{herb:'柏子仁', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
-    {id:114, name:'霭月茶', type:'tea', journeys:['优质睡眠'], tags:['夜间易醒','醒后难再入睡'], price:45, trial:16, desc:'易醒又难再入睡，双重安神稳睡。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯神', amt:'10g'},{herb:'酸枣仁', amt:'12g'},{herb:'首乌藤', amt:'10g'},{herb:'五味子', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
-    {id:115, name:'蝶梦茶', type:'tea', journeys:['优质睡眠'], tags:['梦境频繁'], price:45, trial:16, desc:'晚上梦特别多，养心安神，睡得更踏实。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'龙眼肉', amt:'8g'},{herb:'酸枣仁', amt:'10g'},{herb:'茯神', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
-    {id:116, name:'子夜茶', type:'tea', journeys:['优质睡眠'], tags:['睡眠质量差'], price:45, trial:16, desc:'整体睡眠质量不好，养心安神，慢慢改善。', active:false, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯苓', amt:'10g'},{herb:'酸枣仁', amt:'10g'},{herb:'合欢皮', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
-    {id:117, name:'蝶影茶', type:'tea', journeys:['优质睡眠'], tags:['梦境频繁','睡眠质量差'], price:45, trial:16, desc:'多梦又睡不安稳，双重养心安神。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'龙眼肉', amt:'10g'},{herb:'酸枣仁', amt:'12g'},{herb:'茯神', amt:'10g'},{herb:'合欢皮', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
-    {id:118, name:'晓岚茶', type:'tea', journeys:['优质睡眠'], tags:['睡醒仍困倦'], price:45, trial:16, desc:'醒来还是很困，益气升阳，唤醒清醒感。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'8g'},{herb:'升麻', amt:'4g'},{herb:'石菖蒲', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
-    {id:119, name:'卯时茶', type:'tea', journeys:['优质睡眠'], tags:['起床困难'], price:45, trial:16, desc:'起床特别困难，温阳益气，帮忙醒过来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'肉桂', amt:'3g'},{herb:'升麻', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
-    {id:120, name:'午昼茶', type:'tea', journeys:['优质睡眠'], tags:['日间嗜睡'], price:45, trial:16, desc:'白天总是犯困，健脾升阳，提振精神。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'苍术', amt:'8g'},{herb:'升麻', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'上午饮用。'},
-    {id:121, name:'晨曦茶', type:'tea', journeys:['优质睡眠'], tags:['日间嗜睡','起床困难'], price:45, trial:16, desc:'起床难又犯困，双重升阳醒神。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'肉桂', amt:'4g'},{herb:'升麻', amt:'5g'},{herb:'苍术', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
+    {id:1, name:'月舒贴', type:'plaster', journeys:['Women's Health'], tags:['痛经'], price:9, trial:4, desc:'经期腰腹冷痛时敷一敷，温感慢慢散开。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'延胡索', amt:'10g'},{herb:'肉桂', amt:'5g'},{herb:'乌药', amt:'8g'},{herb:'香附', amt:'6g'}], usage:'研末，黄酒或温水调糊，敷关元、气海穴，经前3天开始每日1次，每次4-6小时。'},
+    {id:2, name:'迟汐茶', type:'tea', journeys:['Women's Health'], tags:['月经过长'], price:45, trial:16, desc:'经期拖得久、淋漓不净时，喝它帮身体把节奏收一收。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'仙鹤草', amt:'15g'},{herb:'茜草', amt:'6g'},{herb:'乌梅', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'沸水焖泡15分钟或轻煎10分钟，经期第3天起连饮至经净，每日1剂。'},
+    {id:3, name:'满汐茶', type:'tea', journeys:['Women's Health'], tags:['经量过多'], price:45, trial:16, desc:'经量偏多的日子，喝一杯，安心一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'15g'},{herb:'煅龙骨（先煎）', amt:'10g'},{herb:'棕榈炭', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'龙骨先煎15分钟，下其余药材再煎10分钟，经期第1-3天每日1剂。'},
+    {id:4, name:'浅汐茶', type:'tea', journeys:['Women's Health'], tags:['经量过少'], price:45, trial:16, desc:'经量偏少、颜色偏淡，日常养一养气血。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'当归', amt:'6g'},{herb:'黄精', amt:'10g'},{herb:'白芍', amt:'8g'},{herb:'红枣', amt:'3枚'}], usage:'焖泡或轻煎，经净后连饮1-2周，每日1剂。'},
+    {id:5, name:'弦月茶', type:'tea', journeys:['Women's Health'], tags:['周期紊乱'], price:45, trial:16, desc:'周期忽早忽晚没个准，帮身体找回自己的节奏。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'柴胡', amt:'5g'},{herb:'香附', amt:'8g'},{herb:'益母草', amt:'10g'},{herb:'玫瑰花', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'焖泡代茶，非经期每日1剂，连饮2-3周为一周期。'},
+    {id:6, name:'月隙茶', type:'tea', journeys:['Women's Health'], tags:['经间点滴'], price:45, trial:16, desc:'两次月经之间偶有点滴，滋阴凉血，静静调理。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'女贞子', amt:'10g'},{herb:'墨旱莲', amt:'10g'},{herb:'生地', amt:'8g'},{herb:'茜草', amt:'5g'}], usage:'轻煎15分钟，排卵期前后（周期第12-16天）每日1剂。'},
+    {id:7, name:'望汐茶', type:'tea', journeys:['Women's Health'], tags:['月经过长','经量过多'], price:45, trial:16, desc:'经期又长又多的日子，一杯茶帮忙稳住。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'15g'},{herb:'仙鹤草', amt:'12g'},{herb:'山萸肉', amt:'8g'},{herb:'藕节', amt:'10g'},{herb:'乌梅', amt:'5g'}], usage:'轻煎15分钟，经期第1-4天每日1剂，量多时可加至一剂半。'},
+    {id:8, name:'盈月茶', type:'tea', journeys:['Women's Health'], tags:['周期紊乱','经量过少'], price:45, trial:16, desc:'量少又乱的周期，慢慢养、慢慢盈满。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'当归', amt:'8g'},{herb:'黄精', amt:'10g'},{herb:'白芍', amt:'8g'},{herb:'玫瑰花', amt:'4g'},{herb:'红枣', amt:'3枚'}], usage:'焖泡，经净后连饮2周，每日1剂。'},
+    {id:9, name:'云净茶', type:'tea', journeys:['Women's Health'], tags:['量多'], price:45, trial:16, desc:'白带量多时，健脾祛湿，清清爽爽。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'白术', amt:'10g'},{herb:'山药', amt:'10g'},{herb:'芡实', amt:'8g'},{herb:'白扁豆', amt:'8g'},{herb:'陈皮', amt:'3g'}], usage:'轻煎15分钟，连饮2周，每日1剂。'},
+    {id:10, name:'素雅茶', type:'tea', journeys:['Women's Health'], tags:['颜色异常'], price:45, trial:16, desc:'颜色不对劲但不严重，日常清养一下。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯苓', amt:'10g'},{herb:'黄柏', amt:'4g'},{herb:'薏苡仁', amt:'12g'},{herb:'甘草', amt:'3g'}], usage:'轻煎10分钟，连饮1-2周，每日1剂。'},
+    {id:11, name:'芷兰茶', type:'tea', journeys:['Women's Health'], tags:['伴有异味'], price:45, trial:16, desc:'伴有异味时，清热祛湿，找回清爽。', active:true, inStock:false, featured:false, imgs:[], form:'茶', herbs:[{herb:'蒲公英', amt:'10g'},{herb:'土茯苓', amt:'12g'},{herb:'车前子（包煎）', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'车前子包煎，余药同煎15分钟，连饮1-2周，每日1剂。'},
+    {id:12, name:'兰汤坐浴包', type:'soak', journeys:['Women's Health'], tags:['反复瘙痒'], price:25, trial:10, desc:'反复瘙痒不适，煮一煮，泡个安心的热水澡。', active:true, inStock:true, featured:false, imgs:[], form:'外用坐浴', herbs:[{herb:'苦参', amt:'15g'},{herb:'蛇床子', amt:'12g'},{herb:'黄柏', amt:'10g'},{herb:'花椒', amt:'5g'},{herb:'艾叶', amt:'10g'}], usage:'布袋包好，加水2000ml煮沸15分钟，待温（约40°C）坐浴15分钟，每晚1次，连用5-7天，经期停用。'},
+    {id:13, name:'澄澈茶', type:'tea', journeys:['Women's Health'], tags:['伴有异味','颜色异常'], price:45, trial:16, desc:'颜色和异味同时出现，双管齐下清一清。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄柏', amt:'5g'},{herb:'车前子（包煎）', amt:'10g'},{herb:'薏苡仁', amt:'12g'},{herb:'蒲公英', amt:'8g'},{herb:'土茯苓', amt:'10g'}], usage:'车前子包煎，余药同煎15分钟，连饮2周，每日1剂，症状明显时每日一剂半。'},
+    {id:14, name:'芷澄茶', type:'tea', journeys:['Women's Health'], tags:['伴有异味','量多','颜色异常'], price:45, trial:16, desc:'量多、颜色、异味都有的日子，全面清养。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'山药', amt:'15g'},{herb:'芡实', amt:'10g'},{herb:'黄柏', amt:'5g'},{herb:'苍术', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'轻煎10-15分钟，连饮2-3周，量多色黄味重时每日一剂半。'},
+    {id:15, name:'月序茶', type:'tea', journeys:['Women's Health'], tags:['周期不稳定'], price:45, trial:16, desc:'备孕期间周期总不稳，疏肝理气帮忙调顺。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'柴胡', amt:'5g'},{herb:'香附', amt:'8g'},{herb:'当归', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'焖泡，经净后开始连饮2周，经期停用。'},
+    {id:16, name:'煦暖贴', type:'plaster', journeys:['Women's Health'], tags:['体质偏寒'], price:9, trial:4, desc:'体质偏寒手脚凉，敷一敷，暖到心里。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'肉桂', amt:'6g'},{herb:'艾叶', amt:'10g'},{herb:'小茴香', amt:'8g'},{herb:'干姜', amt:'6g'}], usage:'研末姜汁调糊，敷关元、命门穴，每周3-4次，每次4-6小时，经期停用。'},
+    {id:17, name:'绿萼茶', type:'tea', journeys:['Women's Health'], tags:['情绪压力'], price:45, trial:16, desc:'备孕路上压力大，喝一杯，松一口气。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'合欢花', amt:'6g'},{herb:'绿萼梅', amt:'5g'},{herb:'茯苓', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'焖泡代茶饮，情绪紧张期每日1剂。'},
+    {id:18, name:'兰馨茶', type:'tea', journeys:['Women's Health'], tags:['备孕调理'], price:45, trial:16, desc:'日常备孕体质调养，平补肝肾打基础。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'菟丝子', amt:'12g'},{herb:'覆盆子', amt:'10g'},{herb:'枸杞子', amt:'10g'},{herb:'桑葚', amt:'8g'}], usage:'轻煎15分钟，日常保健每周4-5次，每次1剂。'},
+    {id:19, name:'梅悦茶', type:'tea', journeys:['Women's Health'], tags:['周期不稳定','情绪压力'], price:45, trial:16, desc:'周期不稳又心情烦躁，疏肝养血一起来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'柴胡', amt:'5g'},{herb:'白芍', amt:'10g'},{herb:'合欢花', amt:'5g'},{herb:'绿萼梅', amt:'4g'},{herb:'茯苓', amt:'10g'}], usage:'焖泡，非经期每日1剂，连饮2-3周。'},
+    {id:20, name:'兰序茶', type:'tea', journeys:['Women's Health'], tags:['周期不稳定','备孕调理','情绪压力'], price:45, trial:16, desc:'备孕期间周期、情绪都需要照顾时的全面调理茶。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'菟丝子', amt:'12g'},{herb:'白芍', amt:'10g'},{herb:'枸杞子', amt:'10g'},{herb:'柴胡', amt:'4g'},{herb:'合欢花', amt:'5g'},{herb:'红枣', amt:'3枚'}], usage:'经净后开始每日1剂，连饮约2周，情绪紧张期可加至一剂半，经期停用。Confirm怀孕后停用并咨询医师。'},
+    {id:21, name:'静玉贴', type:'plaster', journeys:['Women's Health'], tags:['体检提示增生'], price:9, trial:4, desc:'体检提示有增生，日常辅助调理，请配合定期复查。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'三棱', amt:'6g'},{herb:'莪术', amt:'6g'},{herb:'皂角刺', amt:'8g'},{herb:'桂枝', amt:'5g'}], usage:'研末醋调糊，敷小腹部（避开经期），每周3次，每次4小时。需配合定期复查，孕期禁用。'},
+    {id:22, name:'和风茶', type:'tea', journeys:['Women's Health'], tags:['小腹坠胀'], price:45, trial:16, desc:'小腹总是坠胀，理气化开那股闷闷的感觉。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'乌药', amt:'6g'},{herb:'佛手', amt:'6g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'焖泡代茶，日常不适时每日1剂。'},
+    {id:23, name:'绛华茶', type:'tea', journeys:['Women's Health'], tags:['经期不适加重'], price:45, trial:16, desc:'经期这几天特别不舒服，活血化开那股滞涩。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'益母草', amt:'10g'},{herb:'香附', amt:'8g'},{herb:'山楂', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，经期前3天开始每日1剂至经净。'},
+    {id:24, name:'暖溪茶', type:'tea', journeys:['Women's Health'], tags:['小腹坠胀','经期不适加重'], price:45, trial:16, desc:'坠胀加上经期加重，一起温柔化开。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'益母草', amt:'10g'},{herb:'乌药', amt:'8g'},{herb:'佛手', amt:'6g'},{herb:'山楂', amt:'8g'},{herb:'月季花', amt:'4g'}], usage:'轻煎15分钟，经期前3天至经期第3天每日1剂。'},
+    {id:25, name:'清露茶', type:'tea', journeys:['Women's Health'], tags:['潮热盗汗'], price:45, trial:16, desc:'潮热盗汗睡不安稳，滋阴敛汗清清爽爽。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'浮小麦', amt:'12g'},{herb:'地骨皮', amt:'8g'},{herb:'桑叶', amt:'6g'},{herb:'麦冬', amt:'8g'},{herb:'五味子', amt:'5g'}], usage:'轻煎15分钟，午后饮用尤宜，连饮2-4周。'},
+    {id:26, name:'月枕贴', type:'plaster', journeys:['Women's Health'], tags:['失眠'], price:9, trial:4, desc:'翻来覆去睡不着，睡前敷一敷涌泉穴。', active:true, inStock:true, featured:false, imgs:[], form:'贴，涌泉穴外用', herbs:[{herb:'酸枣仁', amt:'15g'},{herb:'首乌藤', amt:'15g'},{herb:'远志', amt:'8g'},{herb:'吴茱萸', amt:'6g'}], usage:'研末醋调糊，睡前敷双侧涌泉穴，胶布固定，次晨取下，连用1-2周。'},
+    {id:27, name:'兰心茶', type:'tea', journeys:['Women's Health'], tags:['情绪波动'], price:45, trial:16, desc:'情绪忽上忽下，喝一杯，静下来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'淮小麦', amt:'20g'},{herb:'大枣', amt:'6枚'},{herb:'甘草', amt:'5g'},{herb:'合欢皮', amt:'8g'},{herb:'郁金', amt:'6g'}], usage:'轻煎15-20分钟，情绪波动期每日1剂。'},
+    {id:28, name:'静澜茶', type:'tea', journeys:['Women's Health'], tags:['心悸'], price:45, trial:16, desc:'心跳总不安稳，清心宁悸，慢慢平复。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'丹参', amt:'10g'},{herb:'茯神', amt:'12g'},{herb:'柏子仁', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'焖泡或轻煎，心悸明显时每日1剂，连饮1-2周。'},
+    {id:29, name:'素月贴', type:'plaster', journeys:['Women's Health'], tags:['失眠','心悸'], price:9, trial:4, desc:'又睡不好又心悸，睡前敷一敷，双重安顿。', active:true, inStock:true, featured:false, imgs:[], form:'贴，涌泉穴外用', herbs:[{herb:'酸枣仁', amt:'10g'},{herb:'首乌藤', amt:'10g'},{herb:'远志', amt:'6g'},{herb:'丹参', amt:'8g'},{herb:'吴茱萸', amt:'5g'}], usage:'研末醋调糊，睡前敷涌泉穴，次晨取下，连用1-2周。'},
+    {id:30, name:'静好茶', type:'tea', journeys:['Women's Health'], tags:['失眠','心悸','情绪波动','潮热盗汗'], price:49, trial:18, desc:'更年期诸多不适一起来，一杯茶陪你稳稳走过。', active:true, inStock:true, featured:true, imgs:[], form:'茶', herbs:[{herb:'女贞子', amt:'12g'},{herb:'酸枣仁', amt:'15g'},{herb:'淮小麦', amt:'20g'},{herb:'麦冬', amt:'10g'},{herb:'丹参', amt:'10g'},{herb:'五味子', amt:'5g'}], usage:'焖泡或轻煎，午后至睡前饮用，连饮2-4周，症状明显时可每日一剂半。'},
+    {id:31, name:'晨谷茶', type:'tea', journeys:['Body Sculpting'], tags:['进食不规律'], price:45, trial:16, desc:'三餐没规律，健脾和胃，找回吃饭的节奏。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'白术', amt:'10g'},{herb:'陈皮', amt:'6g'},{herb:'山楂', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，早餐后饮用，连续2周。'},
+    {id:32, name:'岚隐茶', type:'tea', journeys:['Body Sculpting'], tags:['嗜甜嗜油'], price:45, trial:16, desc:'爱吃甜爱吃油，化痰祛湿，给身体减减负。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'陈皮', amt:'8g'},{herb:'茯苓', amt:'10g'},{herb:'荷叶', amt:'6g'},{herb:'山楂', amt:'8g'}], usage:'焖泡，餐后饮用，每日1剂。'},
+    {id:33, name:'家膳茶', type:'tea', journeys:['Body Sculpting'], tags:['外食频繁'], price:45, trial:16, desc:'外食吃多了，清养脾胃，清清爽爽。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'薏苡仁', amt:'15g'},{herb:'绿豆衣', amt:'8g'},{herb:'麦芽', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，外食较多的日子饮用。'},
+    {id:34, name:'晨序茶', type:'tea', journeys:['Body Sculpting'], tags:['饮食无规划'], price:45, trial:16, desc:'饮食毫无规划，健脾益气，打好基础再谈其他。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'党参', amt:'10g'},{herb:'白术', amt:'8g'},{herb:'茯苓', amt:'8g'},{herb:'陈皮', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，每周4-5次。'},
+    {id:35, name:'云隐茶', type:'tea', journeys:['Body Sculpting'], tags:['嗜甜嗜油','饮食无规划'], price:45, trial:16, desc:'嗜甜嗜油又没规划，双重化浊，轻装上阵。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'荷叶', amt:'8g'},{herb:'决明子', amt:'8g'},{herb:'山楂', amt:'10g'},{herb:'陈皮', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'焖泡，餐后饮用，连续2-3周。'},
+    {id:36, name:'晴川茶', type:'tea', journeys:['Body Sculpting'], tags:['久坐少动'], price:45, trial:16, desc:'久坐不动，理气活血，让气血重新流动起来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'陈皮', amt:'6g'},{herb:'丹参', amt:'8g'},{herb:'薏苡仁', amt:'12g'},{herb:'甘草', amt:'3g'}], usage:'焖泡，久坐后饮用。'},
+    {id:37, name:'鹤姿茶', type:'tea', journeys:['Body Sculpting'], tags:['运动方式不当'], price:45, trial:16, desc:'运动方式不太对，养血舒筋，动作更从容。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'当归', amt:'8g'},{herb:'木瓜', amt:'8g'},{herb:'伸筋草', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，运动前后饮用。'},
+    {id:38, name:'恒晨茶', type:'tea', journeys:['Body Sculpting'], tags:['难以坚持'], price:45, trial:16, desc:'三天打鱼两天晒网，益气健脾，慢慢养出坚持的底气。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'白术', amt:'8g'},{herb:'陈皮', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用，连续调理。'},
+    {id:39, name:'暮川茶', type:'tea', journeys:['Body Sculpting'], tags:['运动后恢复慢'], price:45, trial:16, desc:'运动完总是很难恢复，益气养血，加速回血。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'当归', amt:'6g'},{herb:'桂枝', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'运动后饮用。'},
+    {id:40, name:'鹤川茶', type:'tea', journeys:['Body Sculpting'], tags:['久坐少动','运动方式不当'], price:45, trial:16, desc:'久坐又运动姿势不对，一起舒Expand来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'丹参', amt:'10g'},{herb:'当归', amt:'8g'},{herb:'木瓜', amt:'6g'},{herb:'陈皮', amt:'4g'}], usage:'轻煎，每日1剂。'},
+    {id:41, name:'恒川茶', type:'tea', journeys:['Body Sculpting'], tags:['运动后恢复慢','难以坚持'], price:45, trial:16, desc:'难坚持又恢复慢，气血双补撑住状态。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'15g'},{herb:'白术', amt:'8g'},{herb:'当归', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'晨起或运动后饮用。'},
+    {id:42, name:'初曦贴', type:'plaster', journeys:['Body Sculpting'], tags:['产后气血虚'], price:9, trial:4, desc:'产后气血两虚，温和敷一敷，慢慢补回来。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'当归', amt:'10g'},{herb:'黄芪', amt:'12g'},{herb:'熟地', amt:'8g'}], usage:'姜汁调糊，敷神阙穴，每周3次，每次4-6小时。'},
+    {id:43, name:'晓月贴', type:'plaster', journeys:['Body Sculpting'], tags:['腹部松弛'], price:9, trial:4, desc:'腹部松弛没力气，敷一敷帮忙提一提。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'黄芪', amt:'15g'},{herb:'升麻', amt:'6g'},{herb:'枳壳', amt:'8g'}], usage:'姜汁调糊，敷腹部，每周3-4次。'},
+    {id:44, name:'暮归茶', type:'tea', journeys:['Body Sculpting'], tags:['体力恢复慢'], price:45, trial:16, desc:'产后体力恢复得慢，气血双补陪你慢慢来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'当归', amt:'8g'},{herb:'熟地', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'产后2周起，每日1剂。'},
+    {id:45, name:'甘露茶', type:'tea', journeys:['Body Sculpting'], tags:['哺乳期调理'], price:45, trial:16, desc:'哺乳期需要More气血支持，温和滋养。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'王不留行', amt:'8g'},{herb:'黄芪', amt:'10g'},{herb:'当归', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'哺乳期每日1剂。'},
+    {id:46, name:'产后元气贴', type:'plaster', journeys:['Body Sculpting'], tags:['产后气血虚','体力恢复慢'], price:9, trial:4, desc:'产后气血虚又恢复慢，加强版一起养回来。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'黄芪', amt:'15g'},{herb:'当归', amt:'10g'},{herb:'熟地', amt:'8g'},{herb:'白术', amt:'6g'}], usage:'姜汁调糊，敷神阙穴，每周3-4次。'},
+    {id:47, name:'暖阳贴', type:'plaster', journeys:['Body Sculpting'], tags:['怕冷'], price:9, trial:4, desc:'手脚怕冷，温阳散寒，敷一敷暖起来。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'肉桂', amt:'8g'},{herb:'干姜', amt:'10g'},{herb:'小茴香', amt:'8g'},{herb:'艾叶', amt:'10g'}], usage:'姜汁调糊，敷关元穴，每周3次。'},
+    {id:48, name:'晴曦茶', type:'tea', journeys:['Body Sculpting'], tags:['易疲劳'], price:45, trial:16, desc:'总是提不起劲，益气健脾，找回精神。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'党参', amt:'10g'},{herb:'黄芪', amt:'8g'},{herb:'陈皮', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
+    {id:49, name:'云澈茶', type:'tea', journeys:['Body Sculpting'], tags:['水肿'], price:45, trial:16, desc:'身体水肿沉重，健脾利水，轻盈一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯苓', amt:'12g'},{herb:'泽泻', amt:'8g'},{herb:'冬瓜皮', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，每日1剂。'},
+    {id:50, name:'轻盈茶', type:'tea', journeys:['Body Sculpting'], tags:['体重难下降'], price:45, trial:16, desc:'体重总卡关，化湿健脾，帮忙松动一下代谢。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'荷叶', amt:'8g'},{herb:'白术', amt:'8g'},{herb:'泽泻', amt:'8g'},{herb:'陈皮', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'餐后饮用。'},
+    {id:51, name:'暖身茶', type:'tea', journeys:['Body Sculpting'], tags:['怕冷','易疲劳'], price:45, trial:16, desc:'又怕冷又疲劳，温阳益气一起来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'肉桂', amt:'6g'},{herb:'党参', amt:'8g'},{herb:'干姜', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
+    {id:52, name:'岚澈茶', type:'tea', journeys:['Body Sculpting'], tags:['体重难下降','水肿'], price:45, trial:16, desc:'水肿又体重难降，双重祛湿消肿。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯苓', amt:'12g'},{herb:'薏苡仁', amt:'15g'},{herb:'泽泻', amt:'8g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'轻煎，每日1剂。'},
+    {id:53, name:'晨颜茶', type:'tea', journeys:['Beauty & Radiance'], tags:['气色发黄'], price:45, trial:16, desc:'气色发黄没精神，益气养血，慢慢透出红润。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'8g'},{herb:'当归', amt:'6g'},{herb:'白术', amt:'6g'},{herb:'红枣', amt:'3枚'}], usage:'晨起饮用。'},
+    {id:54, name:'玉泽茶', type:'tea', journeys:['Beauty & Radiance'], tags:['缺乏光泽'], price:45, trial:16, desc:'皮肤缺水没光泽，滋阴润燥，养出水润感。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'玉竹', amt:'8g'},{herb:'麦冬', amt:'8g'},{herb:'枸杞子', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'焖泡，每日1剂。'},
+    {id:55, name:'霞光茶', type:'tea', journeys:['Beauty & Radiance'], tags:['疲惫暗沉'], price:45, trial:16, desc:'疲惫写在脸上，气血双补，找回气色。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'当归', amt:'6g'},{herb:'枸杞子', amt:'8g'},{herb:'陈皮', amt:'3g'}], usage:'晨起饮用。'},
+    {id:56, name:'曦辉贴', type:'plaster', journeys:['Beauty & Radiance'], tags:['气色发黄','疲惫暗沉'], price:9, trial:4, desc:'气色差又疲惫，敷一敷双重提气色。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'黄芪', amt:'12g'},{herb:'当归', amt:'10g'},{herb:'红花', amt:'3g'}], usage:'姜汁调糊，敷相关穴位，每周2-3次。'},
+    {id:57, name:'凝脂茶', type:'tea', journeys:['Beauty & Radiance'], tags:['弹性下降'], price:45, trial:16, desc:'皮肤弹性下降，益气养阴，帮肌肤找回紧实感。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'山药', amt:'10g'},{herb:'枸杞子', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:58, name:'霜华茶', type:'tea', journeys:['Beauty & Radiance'], tags:['初显细纹'], price:45, trial:16, desc:'细纹开始出现，滋阴润肤，抚平初显的痕迹。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'玉竹', amt:'10g'},{herb:'白芍', amt:'8g'},{herb:'当归', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:59, name:'晚霞贴', type:'plaster', journeys:['Beauty & Radiance'], tags:['面颊松垮'], price:9, trial:4, desc:'面颊有点松垮，敷一敷帮忙提一提。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'黄芪', amt:'10g'},{herb:'升麻', amt:'5g'},{herb:'当归', amt:'6g'}], usage:'姜汁调糊，敷面部相关穴位，每周2-3次。'},
+    {id:60, name:'凝脂贴', type:'plaster', journeys:['Beauty & Radiance'], tags:['初显细纹','弹性下降','面颊松垮'], price:9, trial:4, desc:'松弛、细纹、垮脸一起出现，全面提升方案。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'黄芪', amt:'12g'},{herb:'升麻', amt:'6g'},{herb:'当归', amt:'10g'},{herb:'白芍', amt:'8g'}], usage:'姜汁调糊，敷相关穴位，每周3次。'},
+    {id:61, name:'翠萼茶', type:'tea', journeys:['Beauty & Radiance'], tags:['反复冒痘'], price:45, trial:16, desc:'痘痘反反复复，清热祛湿，慢慢调理体质。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'蒲公英', amt:'8g'},{herb:'连翘', amt:'6g'},{herb:'薏苡仁', amt:'12g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:62, name:'玉肌茶', type:'tea', journeys:['Beauty & Radiance'], tags:['毛孔粗大'], price:45, trial:16, desc:'毛孔粗大，健脾渗湿，肌肤更细腻。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'薏苡仁', amt:'12g'},{herb:'茯苓', amt:'10g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:63, name:'芷若茶', type:'tea', journeys:['Beauty & Radiance'], tags:['泛红刺痛'], price:45, trial:16, desc:'泛红刺痛，凉血清热，舒缓敏感状态。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'生地', amt:'8g'},{herb:'牡丹皮', amt:'6g'},{herb:'金银花', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:64, name:'青荷茶', type:'tea', journeys:['Beauty & Radiance'], tags:['油光满面'], price:45, trial:16, desc:'满脸油光，清热祛湿，控油更清爽。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄柏', amt:'4g'},{herb:'薏苡仁', amt:'12g'},{herb:'茯苓', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:65, name:'翠荷茶', type:'tea', journeys:['Beauty & Radiance'], tags:['反复冒痘','油光满面'], price:45, trial:16, desc:'痘痘加油光一起来，双重清热祛湿。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'蒲公英', amt:'10g'},{herb:'黄柏', amt:'5g'},{herb:'薏苡仁', amt:'15g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂，连饮2-3周。'},
+    {id:66, name:'轻颜茶', type:'tea', journeys:['Beauty & Radiance'], tags:['面部浮肿'], price:45, trial:16, desc:'脸部有点浮肿，健脾利水，消消肿。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯苓', amt:'10g'},{herb:'冬瓜皮', amt:'8g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:67, name:'月轮茶', type:'tea', journeys:['Beauty & Radiance'], tags:['轮廓模糊'], price:45, trial:16, desc:'轮廓不够清晰，益气养血，帮忙找回线条。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'8g'},{herb:'当归', amt:'6g'},{herb:'陈皮', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:68, name:'云颔茶', type:'tea', journeys:['Beauty & Radiance'], tags:['双下巴'], price:45, trial:16, desc:'双下巴困扰，化痰祛湿，帮忙化开。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'陈皮', amt:'8g'},{herb:'茯苓', amt:'10g'},{herb:'浙贝母', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:69, name:'月澈茶', type:'tea', journeys:['Beauty & Radiance'], tags:['双下巴','面部浮肿'], price:45, trial:16, desc:'浮肿加双下巴，一起消一消。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯苓', amt:'12g'},{herb:'陈皮', amt:'8g'},{herb:'冬瓜皮', amt:'8g'},{herb:'浙贝母', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂，连饮2周。'},
+    {id:70, name:'晨露茶', type:'tea', journeys:['Daily Wellness'], tags:['容易疲劳'], price:45, trial:16, desc:'总是很疲惫，益气健脾，找回精神头。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'党参', amt:'10g'},{herb:'黄芪', amt:'8g'},{herb:'陈皮', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
+    {id:71, name:'朝晖茶', type:'tea', journeys:['Daily Wellness'], tags:['精神不振'], price:45, trial:16, desc:'精神不振提不起劲，升阳益气，唤醒活力。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'升麻', amt:'4g'},{herb:'柴胡', amt:'3g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
+    {id:72, name:'松风茶', type:'tea', journeys:['Daily Wellness'], tags:['注意力难集中'], price:45, trial:16, desc:'注意力很难集中，开窍宁神，思路更清晰。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'远志', amt:'6g'},{herb:'石菖蒲', amt:'6g'},{herb:'茯苓', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'上午饮用。'},
+    {id:73, name:'屏山茶', type:'tea', journeys:['Daily Wellness'], tags:['免疫力偏弱'], price:45, trial:16, desc:'容易生病抵抗力弱，益气固表，加固防护力。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'白术', amt:'8g'},{herb:'防风', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂，连续调理。'},
+    {id:74, name:'朝阳茶', type:'tea', journeys:['Daily Wellness'], tags:['容易疲劳','精神不振'], price:45, trial:16, desc:'疲惫又没精神，双重益气升阳。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'党参', amt:'10g'},{herb:'升麻', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
+    {id:75, name:'岚雾茶', type:'tea', journeys:['Daily Wellness'], tags:['湿气重'], price:45, trial:16, desc:'湿气重身体沉，健脾祛湿，轻盈一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'苍术', amt:'8g'},{herb:'茯苓', amt:'10g'},{herb:'薏苡仁', amt:'12g'},{herb:'陈皮', amt:'4g'}], usage:'每日1剂。'},
+    {id:76, name:'荷露茶', type:'tea', journeys:['Daily Wellness'], tags:['怕热易出汗'], price:45, trial:16, desc:'一动就一身汗，敛汗益气，收一收。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'浮小麦', amt:'12g'},{herb:'五味子', amt:'5g'},{herb:'麦冬', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:77, name:'四时茶', type:'tea', journeys:['Daily Wellness'], tags:['换季不适应'], price:45, trial:16, desc:'换季总不适应，调和营卫，帮身体更快适应变化。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'桂枝', amt:'5g'},{herb:'白芍', amt:'6g'},{herb:'黄芪', amt:'8g'},{herb:'炙甘草', amt:'3g'},{herb:'生姜', amt:'3片'},{herb:'大枣', amt:'2枚'}], usage:'换季前后每日1剂。'},
+    {id:78, name:'谷芽茶', type:'tea', journeys:['Daily Wellness'], tags:['食欲不振'], price:45, trial:16, desc:'没什么胃口，健胃消食，找回食欲。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'山楂', amt:'8g'},{herb:'麦芽', amt:'10g'},{herb:'鸡内金', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'餐前饮用。'},
+    {id:79, name:'晚膳茶', type:'tea', journeys:['Daily Wellness'], tags:['消化不良'], price:45, trial:16, desc:'消化总是慢半拍，消食和胃，饭后更舒服。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'山楂', amt:'10g'},{herb:'神曲', amt:'8g'},{herb:'莱菔子', amt:'6g'},{herb:'陈皮', amt:'5g'}], usage:'餐后饮用。'},
+    {id:80, name:'暖芝茶', type:'tea', journeys:['Daily Wellness'], tags:['便秘'], price:45, trial:16, desc:'排便不太顺畅，润肠通便，温和调理。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'火麻仁', amt:'10g'},{herb:'郁李仁', amt:'8g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:81, name:'晚风茶', type:'tea', journeys:['Daily Wellness'], tags:['腹胀'], price:45, trial:16, desc:'肚子总是胀胀的，理气消胀，舒服一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'陈皮', amt:'8g'},{herb:'枳壳', amt:'6g'},{herb:'厚朴', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'餐后饮用。'},
+    {id:82, name:'谷雨茶', type:'tea', journeys:['Daily Wellness'], tags:['消化不良','腹胀'], price:45, trial:16, desc:'消化不良又腹胀，一起理顺。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'山楂', amt:'10g'},{herb:'枳实', amt:'6g'},{herb:'莱菔子', amt:'8g'},{herb:'陈皮', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'餐后饮用。'},
+    {id:83, name:'谷序茶', type:'tea', journeys:['Daily Wellness'], tags:['便秘','消化不良','腹胀','食欲不振'], price:45, trial:16, desc:'胃口、消化、排便、腹胀全都不太顺，整体调一调。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'党参', amt:'10g'},{herb:'白术', amt:'8g'},{herb:'陈皮', amt:'6g'},{herb:'枳壳', amt:'6g'},{herb:'山楂', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂，连续调理。'},
+    {id:84, name:'松岚茶', type:'tea', journeys:['Daily Wellness'], tags:['压力大'], price:45, trial:16, desc:'压力山大，疏肝理气，松一口气。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'柴胡', amt:'5g'},{herb:'香附', amt:'8g'},{herb:'佛手', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:85, name:'竹韵茶', type:'tea', journeys:['Daily Wellness'], tags:['易烦躁'], price:45, trial:16, desc:'容易心浮气躁，清心除烦，静一静。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'栀子', amt:'5g'},{herb:'淡竹叶', amt:'6g'},{herb:'合欢皮', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:86, name:'竹影茶', type:'tea', journeys:['Daily Wellness'], tags:['情绪紧绷'], price:45, trial:16, desc:'情绪总是紧绷，疏肝解郁，放松下来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'合欢皮', amt:'8g'},{herb:'郁金', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:87, name:'夜合茶', type:'tea', journeys:['Daily Wellness'], tags:['睡前思虑多'], price:45, trial:16, desc:'睡前脑子停不下来，养心安神，帮忙放空。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯神', amt:'10g'},{herb:'酸枣仁', amt:'10g'},{herb:'龙眼肉', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:88, name:'竹松茶', type:'tea', journeys:['Daily Wellness'], tags:['压力大','易烦躁'], price:45, trial:16, desc:'压力大又烦躁，双重疏肝清心。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'柴胡', amt:'6g'},{herb:'栀子', amt:'5g'},{herb:'白芍', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:89, name:'忘忧茶', type:'tea', journeys:['Daily Wellness'], tags:['情绪紧绷','睡前思虑多'], price:45, trial:16, desc:'情绪紧绷又思虑重，一杯茶，把忧愁放一放。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'淮小麦', amt:'20g'},{herb:'大枣', amt:'6枚'},{herb:'合欢皮', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:90, name:'松节贴', type:'plaster', journeys:['Pain Soothing'], tags:['久坐僵硬'], price:9, trial:4, desc:'久坐后脖子肩膀僵硬，敷一敷松一松。', active:true, inStock:true, featured:true, imgs:[], form:'贴，外用', herbs:[{herb:'伸筋草', amt:'12g'},{herb:'透骨草', amt:'10g'},{herb:'红花', amt:'5g'}], usage:'姜汁调糊，敷颈肩部，每日1次。'},
+    {id:91, name:'葛悠贴', type:'plaster', journeys:['Pain Soothing'], tags:['落枕'], price:9, trial:4, desc:'落枕转不了头，敷一敷解肌舒筋。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'葛根', amt:'10g'},{herb:'羌活', amt:'8g'},{herb:'桂枝', amt:'6g'}], usage:'姜汁调糊，敷患处，每日1-2次。'},
+    {id:92, name:'山岳贴', type:'plaster', journeys:['Pain Soothing'], tags:['腰酸背痛'], price:9, trial:4, desc:'腰酸背痛，敷一敷补肝肾、强腰背。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'杜仲', amt:'12g'},{herb:'续断', amt:'10g'},{herb:'桑寄生', amt:'8g'}], usage:'姜汁调糊，敷腰部，每日1次。'},
+    {id:93, name:'云肩贴', type:'plaster', journeys:['Pain Soothing'], tags:['肩颈酸胀'], price:9, trial:4, desc:'肩颈酸胀不适，敷一敷活血通络。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'姜黄', amt:'10g'},{herb:'桑枝', amt:'10g'},{herb:'红花', amt:'5g'}], usage:'姜汁调糊，敷肩颈部，每日1次。'},
+    {id:94, name:'云松贴', type:'plaster', journeys:['Pain Soothing'], tags:['久坐僵硬','肩颈酸胀'], price:9, trial:4, desc:'久坐又肩颈酸胀，一起舒缓。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'姜黄', amt:'10g'},{herb:'伸筋草', amt:'10g'},{herb:'桑枝', amt:'8g'},{herb:'红花', amt:'4g'}], usage:'姜汁调糊，敷患处，每日1次。'},
+    {id:95, name:'暖节贴', type:'plaster', journeys:['Pain Soothing'], tags:['关节酸胀'], price:9, trial:4, desc:'关节酸胀不适，敷一敷祛湿通络。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'独活', amt:'10g'},{herb:'薏苡仁', amt:'10g'},{herb:'防风', amt:'6g'}], usage:'姜汁调糊，敷关节处，每日1次。'},
+    {id:96, name:'晴岚贴', type:'plaster', journeys:['Pain Soothing'], tags:['遇冷加重'], price:9, trial:4, desc:'一遇冷就加重，敷一敷温经散寒。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'羌活', amt:'10g'},{herb:'桂枝', amt:'8g'},{herb:'艾叶', amt:'8g'}], usage:'姜汁调糊，敷患处，注意保暖。'},
+    {id:97, name:'展翼贴', type:'plaster', journeys:['Pain Soothing'], tags:['活动受限'], price:9, trial:4, desc:'活动起来不太利索，敷一敷舒筋活络。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'木瓜', amt:'10g'},{herb:'伸筋草', amt:'10g'},{herb:'牛膝', amt:'8g'}], usage:'姜汁调糊，敷患处，每日1次。'},
+    {id:98, name:'暖岚贴', type:'plaster', journeys:['Pain Soothing'], tags:['关节酸胀','遇冷加重'], price:9, trial:4, desc:'关节又酸又怕冷，双重驱寒祛湿。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'羌活', amt:'8g'},{herb:'独活', amt:'8g'},{herb:'桂枝', amt:'6g'},{herb:'艾叶', amt:'6g'}], usage:'姜汁调糊，敷患处，每日1次。'},
+    {id:99, name:'赤霞贴', type:'plaster', journeys:['Pain Soothing'], tags:['肌肉拉伤'], price:9, trial:4, desc:'肌肉拉伤了，敷一敷活血舒缓。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'三七', amt:'6g'},{herb:'红花', amt:'5g'},{herb:'乳香', amt:'4g'}], usage:'姜汁调糊，敷患处（急性肿胀期建议48小时后使用）。'},
+    {id:100, name:'紫云贴', type:'plaster', journeys:['Pain Soothing'], tags:['扭伤淤青'], price:9, trial:4, desc:'扭伤淤青，敷一敷化瘀消肿。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'桃仁', amt:'6g'},{herb:'红花', amt:'5g'},{herb:'当归尾', amt:'6g'}], usage:'姜汁调糊，敷患处，每日1次。'},
+    {id:101, name:'暮筋茶', type:'tea', journeys:['Pain Soothing'], tags:['运动后酸痛'], price:45, trial:16, desc:'运动完浑身酸痛，喝一杯养血活血。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'当归', amt:'8g'},{herb:'鸡血藤', amt:'10g'},{herb:'丹参', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'运动后饮用。'},
+    {id:102, name:'霞云贴', type:'plaster', journeys:['Pain Soothing'], tags:['扭伤淤青','肌肉拉伤'], price:9, trial:4, desc:'拉伤又淤青，一起活血化瘀。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'三七', amt:'10g'},{herb:'桃仁', amt:'8g'},{herb:'红花', amt:'6g'},{herb:'乳香', amt:'5g'}], usage:'姜汁调糊，敷患处，每日1次。'},
+    {id:103, name:'川野茶', type:'tea', journeys:['Pain Soothing'], tags:['周身酸痛'], price:45, trial:16, desc:'浑身酸痛没劲，气血双补，慢慢缓解。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'当归', amt:'8g'},{herb:'鸡血藤', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:104, name:'晚立贴', type:'plaster', journeys:['Pain Soothing'], tags:['久站久坐不适'], price:9, trial:4, desc:'站久坐久都不舒服，敷一敷舒筋活络。', active:true, inStock:true, featured:false, imgs:[], form:'贴，外用', herbs:[{herb:'伸筋草', amt:'10g'},{herb:'透骨草', amt:'8g'},{herb:'红花', amt:'4g'}], usage:'姜汁调糊，敷酸痛部位。'},
+    {id:105, name:'隐山茶', type:'tea', journeys:['Pain Soothing'], tags:['反复隐痛'], price:45, trial:16, desc:'疼痛反反复复，养血通络，慢慢调理。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'鸡血藤', amt:'12g'},{herb:'当归', amt:'8g'},{herb:'丹参', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂，连续调理。'},
+    {id:106, name:'川隐茶', type:'tea', journeys:['Pain Soothing'], tags:['反复隐痛','周身酸痛'], price:45, trial:16, desc:'浑身酸痛又反复隐痛，双重气血通络。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'当归', amt:'10g'},{herb:'鸡血藤', amt:'12g'},{herb:'丹参', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'每日1剂。'},
+    {id:107, name:'暮合贴', type:'plaster', journeys:['Quality Sleep'], tags:['躺下清醒'], price:9, trial:4, desc:'一躺下就很清醒，睡前敷一敷涌泉穴。', active:true, inStock:true, featured:false, imgs:[], form:'贴，涌泉穴外用', herbs:[{herb:'酸枣仁', amt:'10g'},{herb:'肉桂', amt:'3g'},{herb:'吴茱萸', amt:'5g'}], usage:'研末醋调糊，睡前敷涌泉穴，次晨取下。'},
+    {id:108, name:'星语茶', type:'tea', journeys:['Quality Sleep'], tags:['思绪停不下来'], price:45, trial:16, desc:'脑子里的念头停不下来，养心安神，帮忙静下来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'淮小麦', amt:'15g'},{herb:'合欢皮', amt:'8g'},{herb:'郁金', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:109, name:'夜阑茶', type:'tea', journeys:['Quality Sleep'], tags:['入睡耗时长'], price:45, trial:16, desc:'入睡总要很久，养心安神，帮忙更快入睡。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'酸枣仁', amt:'12g'},{herb:'柏子仁', amt:'8g'},{herb:'茯神', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:110, name:'星阑茶', type:'tea', journeys:['Quality Sleep'], tags:['入睡耗时长','思绪停不下来'], price:45, trial:16, desc:'思绪多又难入睡，双重安神助眠。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'酸枣仁', amt:'12g'},{herb:'淮小麦', amt:'15g'},{herb:'合欢皮', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:111, name:'暮霭茶', type:'tea', journeys:['Quality Sleep'], tags:['夜间易醒'], price:45, trial:16, desc:'夜里总醒，养心益气，睡得更沉一点。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯神', amt:'10g'},{herb:'酸枣仁', amt:'10g'},{herb:'黄芪', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:112, name:'月阑贴', type:'plaster', journeys:['Quality Sleep'], tags:['醒后难再入睡'], price:9, trial:4, desc:'醒了就很难再睡着，睡前敷一敷帮忙回笼。', active:true, inStock:true, featured:false, imgs:[], form:'贴，涌泉穴外用', herbs:[{herb:'酸枣仁', amt:'10g'},{herb:'首乌藤', amt:'10g'},{herb:'五味子', amt:'5g'}], usage:'研末醋调糊，睡前敷涌泉穴，次晨取下。'},
+    {id:113, name:'静巷茶', type:'tea', journeys:['Quality Sleep'], tags:['对声音敏感'], price:45, trial:16, desc:'一点动静就醒，宁心安神，睡得更安稳。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯神', amt:'10g'},{herb:'远志', amt:'6g'},{herb:'柏子仁', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:114, name:'霭月茶', type:'tea', journeys:['Quality Sleep'], tags:['夜间易醒','醒后难再入睡'], price:45, trial:16, desc:'易醒又难再入睡，双重安神稳睡。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯神', amt:'10g'},{herb:'酸枣仁', amt:'12g'},{herb:'首乌藤', amt:'10g'},{herb:'五味子', amt:'5g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:115, name:'蝶梦茶', type:'tea', journeys:['Quality Sleep'], tags:['梦境频繁'], price:45, trial:16, desc:'晚上梦特别多，养心安神，睡得更踏实。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'龙眼肉', amt:'8g'},{herb:'酸枣仁', amt:'10g'},{herb:'茯神', amt:'8g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:116, name:'子夜茶', type:'tea', journeys:['Quality Sleep'], tags:['睡眠质量差'], price:45, trial:16, desc:'整体睡眠质量不好，养心安神，慢慢改善。', active:false, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'茯苓', amt:'10g'},{herb:'酸枣仁', amt:'10g'},{herb:'合欢皮', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:117, name:'蝶影茶', type:'tea', journeys:['Quality Sleep'], tags:['梦境频繁','睡眠质量差'], price:45, trial:16, desc:'多梦又睡不安稳，双重养心安神。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'龙眼肉', amt:'10g'},{herb:'酸枣仁', amt:'12g'},{herb:'茯神', amt:'10g'},{herb:'合欢皮', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'睡前1小时饮用。'},
+    {id:118, name:'晓岚茶', type:'tea', journeys:['Quality Sleep'], tags:['睡醒仍困倦'], price:45, trial:16, desc:'醒来还是很困，益气升阳，唤醒清醒感。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'8g'},{herb:'升麻', amt:'4g'},{herb:'石菖蒲', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
+    {id:119, name:'卯时茶', type:'tea', journeys:['Quality Sleep'], tags:['起床困难'], price:45, trial:16, desc:'起床特别困难，温阳益气，帮忙醒过来。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'肉桂', amt:'3g'},{herb:'升麻', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
+    {id:120, name:'午昼茶', type:'tea', journeys:['Quality Sleep'], tags:['日间嗜睡'], price:45, trial:16, desc:'白天总是犯困，健脾升阳，提振精神。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'10g'},{herb:'苍术', amt:'8g'},{herb:'升麻', amt:'4g'},{herb:'甘草', amt:'3g'}], usage:'上午饮用。'},
+    {id:121, name:'晨曦茶', type:'tea', journeys:['Quality Sleep'], tags:['日间嗜睡','起床困难'], price:45, trial:16, desc:'起床难又犯困，双重升阳醒神。', active:true, inStock:true, featured:false, imgs:[], form:'茶', herbs:[{herb:'黄芪', amt:'12g'},{herb:'肉桂', amt:'4g'},{herb:'升麻', amt:'5g'},{herb:'苍术', amt:'6g'},{herb:'甘草', amt:'3g'}], usage:'晨起饮用。'},
     {id:122, name:'晓霞膜', type:'mask', journeys:[], tags:[], price:39, trial:15, desc:'不针对特定症状，日常美白提亮，周末宠爱自己的仪式感。', active:true, inStock:true, featured:true, imgs:[], form:'外用面膜', herbs:[{herb:'白芷', amt:'8g'},{herb:'白及', amt:'6g'},{herb:'绿豆粉', amt:'10g'},{herb:'甘草', amt:'3g'}], usage:'研极细粉，加蜂蜜或温水调成糊状，敷面15-20分钟后温水洗净，每周2-3次。'},
   ];
   var PRODUCTS_BY_ID = {};
 
   // parse ?cart=id:variant:qty,id:variant:qty,...
-  // [stated bug fix] 这个文件末尾聊天组件那部分是另一个独立的IIFE，那边定义的escapeHtml
-  // 这个作用域访问不到——两个IIFE互不相通，之前想当然以为"文件里已经有这个函数了"就直接
+  // [stated bug fix] 这个文items末尾聊天组items那部分是另一个独立的IIFE，那边定义的escapeHtml
+  // 这个作用域访问不到——两个IIFE互不相通，之前想当然以为"文items里已经有这个函数了"就直接
   // 调用，结果是"escapeHtml is not defined"，这里的函数要单独定义一份。
   function escapeHtml(s){
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
@@ -580,12 +580,12 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     return SHIP_FEE[STATE_BY_CODE[addressForm.state].region];
   }
 
-  var DISCLAIMER_HTML = '我已阅读并理解以下说明，确认购买：<b>本店Products由执业中医师团队调配，选用药食同源材料，不添加防腐剂及化学药物成分。中医强调辨证论治、因人而异，固定配方仅供日常调理参考，未必完全贴合每个人的体质与情况。</b>如需更精准的个性化方案，建议通过「Meet Now」预约一对一咨询。';
+  var DISCLAIMER_HTML = '我已阅读并理解以下说明，Confirm购买：<b>本店Products由执业中医师团队调配，选用药食同源材料，不添加防腐剂及化学药物成分。中医强调辨证论治、因人而异，固定配方仅供日常调理参考，未必完全贴合每个人的体质与情况。</b>如需更精准的个性化方案，建议通过「Meet Now」预约一对一咨询。';
 
   function unitPrice(item){ return item.variant === 'trial' ? item.product.trial : item.product.price; }
   function variantLabel(item){ return item.variant === 'trial' ? '试用装' : '正装'; }
 
-  // ---- 优惠码: reads the shared product catalog (for each product's pre-computed coupon price,
+  // ---- Discount码: reads the shared product catalog (for each product's pre-computed coupon price,
   // published by Products管理 based on its 定价规则) and the admin roster (senior + junior, each with
   // their own code) from 订单预约管理. Same-browser-only like everything else without a backend —
   // a code created on the admin's device won't validate on a customer's own device. ----
@@ -616,8 +616,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       cart = parseCart();
       saveCartIdsToStorage(cart);
     } catch(e){
-      console.error('连接后端失败，请确认后端服务是否已启动:', e);
-      showToast('暂时无法连接服务器，请稍后重试');
+      console.error('连接后端失败，请Confirm后端服务是否已启动:', e);
+      showToast('暂时无法连接服务器，请稍后Retry');
     }
     render();
   }
@@ -642,11 +642,11 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       var res = await fetch(API_BASE + '/auth/coupon-codes');
       var codes = res.ok ? await res.json() : [];
       var match = codes.find(function(c){ return c.code === code; });
-      if(!match) return {ok:false, msg:'优惠码无效，请检查后重试'};
+      if(!match) return {ok:false, msg:'Discount码无效，请检查后Retry'};
       appliedCoupon = match;
       return {ok:true};
     } catch(e){
-      return {ok:false, msg:'暂时无法连接服务器，请稍后重试'};
+      return {ok:false, msg:'暂时无法连接服务器，请稍后Retry'};
     }
   }
 
@@ -680,10 +680,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   }
 
   // [stated] 之前这里是模拟的Credit Card/Touch 'n Go/DuitNow扫码支付表单——填的卡号、扫的二维码
-  // 都是假的，点"确认支付"不会真的划走任何钱，也没有真实的支付网关在背后处理。现在改成
+  // 都是假的，点"Confirm支付"不会真的划走任何钱，也没有真实的支付网关在背后处理。现在改成
   // 不依赖任何第三方支付服务商的方式：客户看到的是公司自己配置的银行账户/DuitNow收款码，
   // 自己完成转账/扫码后，把付款截图上传上来作为凭证，订单会标记为"待核实付款"，
-  // 需要人工核对截图确认款项到账后再处理发货，不是系统自动确认的。
+  // 需要人工核对截图Confirm款项到账后再处理发货，不是系统自动Confirm的。
   function getActivePaymentMethods(){
     return cachedPaymentMethods;
   }
@@ -733,7 +733,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   }
 
   // [stated] 订单跟预约一样，也会收集Name、手机号、Address（付款方式是Bank Transfer/DuitNow的话还有
-  // 上传的截图），提交前同样需要一个明确的同意步骤，不能只有预约流程有、订单流程没有。
+  // 上传的截图），Submit前同样需要一个明确的同意步骤，不能只有预约流程有、订单流程没有。
   var orderConsentPendingAction = null;
   function openOrderConsentModal(onAgree){
     orderConsentPendingAction = onAgree;
@@ -767,7 +767,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       return { productId: it.product.id, qty: it.qty, isTrial: it.variant==='trial' };
     });
     var confirmBtn = document.getElementById('confirmPayBtn');
-    if(confirmBtn){ confirmBtn.disabled = true; confirmBtn.textContent = '提交中…'; }
+    if(confirmBtn){ confirmBtn.disabled = true; confirmBtn.textContent = 'Submit中…'; }
     try {
       var res = await fetch(API_BASE + '/orders', {
         method: 'POST',
@@ -783,8 +783,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       });
       if(!res.ok){
         var err = await res.json();
-        showToast(err.error || '下单失败，请重试');
-        if(confirmBtn){ confirmBtn.disabled = false; confirmBtn.textContent = '提交付款凭证 · MYR '+pendingOrder.total; }
+        showToast(err.error || '下单失败，请Retry');
+        if(confirmBtn){ confirmBtn.disabled = false; confirmBtn.textContent = 'Submit付款凭证 · MYR '+pendingOrder.total; }
         return;
       }
       var savedOrder = await res.json();
@@ -794,7 +794,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     } catch(e){
       console.error(e);
       showToast('Cannot connect to server, please check network and retry');
-      if(confirmBtn){ confirmBtn.disabled = false; confirmBtn.textContent = '提交付款凭证 · MYR '+pendingOrder.total; }
+      if(confirmBtn){ confirmBtn.disabled = false; confirmBtn.textContent = 'Submit付款凭证 · MYR '+pendingOrder.total; }
     }
   }
 
@@ -804,7 +804,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       document.getElementById('mainArea').innerHTML = '<div class="payment-view">'
         + '<div class="pay-summary">应付金额<span class="pay-total">MYR '+pendingOrder.total+'</span></div>'
         + '<div class="empty-state" style="padding:30px 0;">暂时还没有可用的付款方式，请通过「Meet Now」联系我们完成付款安排。</div>'
-        + '<div class="os-back" id="backToCartBtn">← 返回Shopping Cart</div></div>';
+        + '<div class="os-back" id="backToCartBtn">← BackShopping Cart</div></div>';
       document.getElementById('backToCartBtn').addEventListener('click', function(){ pendingOrder = null; render(); });
       return;
     }
@@ -815,7 +815,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="pay-methods">';
     methods.forEach(function(m){
       var label = m.type==='bank_transfer' ? 'Bank Transfer' : m.type==='duitnow' ? 'DuitNow' : (m.accountName || '其他方式');
-      var sub = m.type==='bank_transfer' ? m.bankName : m.type==='duitnow' ? (m.accountName || '扫码支付') : '点击查看付款方式';
+      var sub = m.type==='bank_transfer' ? m.bankName : m.type==='duitnow' ? (m.accountName || '扫码支付') : '点击View付款方式';
       var icon = m.type==='bank_transfer'
         ? '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="8" width="19" height="12" rx="1.5"/><path d="M2.5 8l9.5-5 9.5 5"/><line x1="6" y1="12" x2="6" y2="16"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="18" y1="12" x2="18" y2="16"/></svg>'
         : '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/></svg>';
@@ -825,9 +825,9 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         + '<span class="pm-radio"></span></div>';
     });
     html += '</div><div id="paymentFormArea" class="pay-form-area"></div>'
-      + '<button class="checkout-btn" id="confirmPayBtn" disabled>提交付款凭证 · MYR '+pendingOrder.total+'</button>'
-      + '<div style="font-size:12px;color:var(--ink-soft,#7A6F60);text-align:center;margin-top:10px;">提交后订单会标记为"待核实付款"，我们核对到账后会尽快为您安排发货</div>'
-      + '<div class="os-back" id="backToCartBtn">← 返回Shopping Cart</div>'
+      + '<button class="checkout-btn" id="confirmPayBtn" disabled>Submit付款凭证 · MYR '+pendingOrder.total+'</button>'
+      + '<div style="font-size:12px;color:var(--ink-soft,#7A6F60);text-align:center;margin-top:10px;">Submit后订单会标记为"待核实付款"，我们核对到账后会尽快为您安排发货</div>'
+      + '<div class="os-back" id="backToCartBtn">← BackShopping Cart</div>'
       + '</div>';
     document.getElementById('mainArea').innerHTML = html;
     renderPaymentForm();
@@ -897,12 +897,12 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var allChecked = cart.every(function(it){ return it.checked; });
     var html = '<div class="select-all-row">'
       + '<span class="item-checkbox'+(allChecked?' on':'')+'" id="selectAllBox">'+CHECK_SVG+'</span>'
-      + '<span>全选（'+cart.length+' 件Products）</span></div>';
+      + '<span>全选（'+cart.length+' itemsProducts）</span></div>';
 
     cart.forEach(function(item, idx){
       var p = item.product;
       var hasImg = p.imgs && p.imgs[0];
-      var oos = !p.inStock ? '<div class="item-oos">暂时缺货，无法Checkout此项</div>' : '';
+      var oos = !p.inStock ? '<div class="item-oos">Out of Stock，无法Checkout此项</div>' : '';
       var origPrice = unitPrice(item);
       var effPrice = effectiveUnitPrice(item);
       var priceHtml = effPrice < origPrice
@@ -913,7 +913,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         + '<div class="item-thumb">' + (hasImg ? '<img src="'+p.imgs[0]+'" alt="'+p.name+'">' : '<div class="pt-icon">'+ICON[p.type]+'</div>') + '</div>'
         + '<div class="item-body">'
           + '<div class="item-top"><div class="item-name">'+p.name+'</div><span class="item-remove" data-remove="'+idx+'">移除</span></div>'
-          + '<div class="item-variant">'+variantLabel(item)+' · '+priceHtml+' / 件</div>'
+          + '<div class="item-variant">'+variantLabel(item)+' · '+priceHtml+' / items</div>'
           + oos
           + '<div class="item-bottom">'
             + '<div class="item-stepper"><div class="item-step-btn" data-minus="'+idx+'">－</div><div class="item-qty-num">'+item.qty+'</div><div class="item-step-btn" data-plus="'+idx+'">＋</div></div>'
@@ -933,12 +933,12 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     html += '<div class="summary-card">'
       + '<div class="coupon-row">'
       + (appliedCoupon
-          ? '<div class="coupon-applied"><span>已使用优惠码 <b>'+appliedCoupon.code+'</b>（'+appliedCoupon.name+'）</span><span class="coupon-remove" id="couponRemoveBtn">移除</span></div>'
-          : '<input type="text" id="couponInput" placeholder="输入优惠码"><button type="button" id="couponApplyBtn">使用</button>')
+          ? '<div class="coupon-applied"><span>已使用Discount码 <b>'+appliedCoupon.code+'</b>（'+appliedCoupon.name+'）</span><span class="coupon-remove" id="couponRemoveBtn">移除</span></div>'
+          : '<input type="text" id="couponInput" placeholder="输入Discount码"><button type="button" id="couponApplyBtn">使用</button>')
       + '</div>'
       + '<div class="coupon-error" id="couponError"></div>'
-      + '<div class="summary-row"><span>已选Products</span><span>'+checkedCount+' 件</span></div>'
-      + (couponSavings > 0 ? '<div class="summary-row coupon-discount-row"><span>优惠码折扣</span><span>− MYR '+couponSavings.toFixed(2)+'</span></div>' : '')
+      + '<div class="summary-row"><span>已选Products</span><span>'+checkedCount+' items</span></div>'
+      + (couponSavings > 0 ? '<div class="summary-row coupon-discount-row"><span>Discount码折扣</span><span>− MYR '+couponSavings.toFixed(2)+'</span></div>' : '')
       + '<div class="summary-row"><span>Shipping</span><span>'+(addressForm.state ? 'MYR '+ship : '请选择Address') +'</span></div>'
       + '<div class="summary-row total"><span>合计</span><span class="sr-price">MYR '+grandTotal.toFixed(2)+'</span></div>'
       + '</div>';
@@ -949,15 +949,15 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       var st = STATE_BY_CODE[addressForm.state];
       html += '<div class="saved-addr-card">'
         + '<div class="sa-text"><b>'+addressForm.name+'</b><br>'+addressForm.line+'，'+addressForm.city+' '+addressForm.postcode+'，'+st.name+(st.region==='east'?' <span class="sa-tag">东马</span>':' <span class="sa-tag west">西马</span>')+'</div>'
-        + '<span class="sa-edit" id="editAddrBtn">编辑</span>'
+        + '<span class="sa-edit" id="editAddrBtn">Edit</span>'
         + '</div>';
     } else {
       html += '<div class="addr-form">'
-        + '<input type="text" id="addrName" placeholder="收件人Name" value="'+addressForm.name+'">'
+        + '<input type="text" id="addrName" placeholder="收items人Name" value="'+addressForm.name+'">'
         + '<input type="text" id="addrLine" placeholder="详细Address（门牌号、街道）" value="'+addressForm.line+'">'
         + '<div class="two-col">'
           + '<input type="text" id="addrCity" placeholder="City" value="'+addressForm.city+'">'
-          + '<input type="text" id="addrPostcode" placeholder="邮政编码" maxlength="5" value="'+addressForm.postcode+'">'
+          + '<input type="text" id="addrPostcode" placeholder="Postcode" maxlength="5" value="'+addressForm.postcode+'">'
         + '</div>'
         + '<select id="addrState">'
           + '<option value="">选择State属</option>'
@@ -1007,7 +1007,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     } else if(!disclaimerChecked){
       html += '<div class="checkout-hint">请先阅读并勾选上方说明</div>';
     } else if(checkedItems.length === 0){
-      html += '<div class="checkout-hint">请至少选择一件Products</div>';
+      html += '<div class="checkout-hint">请至少选择一itemsProducts</div>';
     }
 
     document.getElementById('mainArea').innerHTML = html;
@@ -1025,7 +1025,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var hintText = !addrOk ? '请填写完整的收货Address'
       : !contactOk ? '请填写正确的联系方式'
       : !disclaimerChecked ? '请先阅读并勾选上方说明'
-      : checkedItems.length===0 ? '请至少选择一件Products'
+      : checkedItems.length===0 ? '请至少选择一itemsProducts'
       : null;
     var hintEl = document.querySelector('.checkout-hint');
     if(hintText){
@@ -1247,7 +1247,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 <script>
 (function(){
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  // 聊天消息是任何匿名访客都能提交的内容，管理员打开对话时会看到——不转义就直接拼进innerHTML
+  // 聊天消息是任何匿名访客都能Submit的内容，管理员打开对话时会看到——不转义就直接拼进innerHTML
   // 的话，访客可以在消息里塞HTML/脚本，在管理员已登录的浏览器里执行（存储型XSS）。
   function escapeHtml(s){
     return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
