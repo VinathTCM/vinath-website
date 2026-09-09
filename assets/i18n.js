@@ -309,7 +309,7 @@
       'common.optional': 'Optional',
       // Language
       'lang.label': 'Language',
-      'lang.zh': '中',
+      'lang.zh': '中文',
       'lang.en': 'EN',
       'lang.bm': 'BM',
       // Home
@@ -555,7 +555,7 @@
       'common.optional': 'Pilihan',
       // Language
       'lang.label': 'Bahasa',
-      'lang.zh': '中',
+      'lang.zh': '中文',
       'lang.en': 'EN',
       'lang.bm': 'BM',
       // Home
