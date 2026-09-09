@@ -200,11 +200,11 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     <div class="oq-form">
       <div class="oq-field">
         <label>Booking ID</label>
-        <input type="text" id="orderInput" placeholder="例如：BK20260720001">
+        <input type="text" id="orderInput" placeholder="e.g., BK20260720001">
       </div>
       <div class="oq-field">
         <label>Phone Number</label>
-        <input type="text" id="contactInput" placeholder="预约时留的Phone Number">
+        <input type="text" id="contactInput" placeholder="Phone Number used for booking">
       </div>
       <div class="oq-error" id="oqError">No matching booking found. Please verify your Booking ID and contact information.</div>
       <button class="oq-btn" id="lookupBtn">Track Booking</button>
@@ -237,7 +237,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   })();
 
 (function(){
-  var STATUS_LABELS = ['待确认','已确认','已完成'];
+  var STATUS_LABELS = ['Pending Confirmation','Confirmed','Completed'];
 
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
 
@@ -246,7 +246,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     if(!res.ok) return null;
     var b = await res.json();
     return { bookingNo:b.booking_no, contact:contact, status:b.status, date:(b.created_at||'').slice(0,10),
-      doctor:b.practitioner_name, apptDate:b.appt_date, slot:(!b.slot||b.slot==='ASAP'?'尽快上门（即时预约）':b.slot), area:b.area, method:'whatsapp', cancelled:b.cancelled, prescription:b.prescription || null };
+      doctor:b.practitioner_name, apptDate:b.appt_date, slot:(!b.slot||b.slot==='ASAP'?'As soon as possible (Instant Booking)':b.slot), area:b.area, method:'whatsapp', cancelled:b.cancelled, prescription:b.prescription || null };
   }
 
   var currentContact = '';
@@ -361,7 +361,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="oq-result-hd"><div class="oq-order-no">Booking ID '+booking.bookingNo+'</div><div class="oq-order-date">提交日期 '+booking.date+'</div></div>';
 
     if(booking.cancelled){
-      html += '<div class="oq-cancelled-banner"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>该预约已取消</div>';
+      html += '<div class="oq-cancelled-banner"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>该预约Cancelled</div>';
     } else {
       html += '<div class="stepper-wrap">';
       STATUS_LABELS.forEach(function(label, i){
@@ -373,9 +373,9 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
     html += '<div class="oq-items-card'+(booking.cancelled?' cancelled':'')+'">'
       + '<div class="oq-item"><span>预约医师</span><span>'+booking.doctor+'</span></div>'
-      + '<div class="oq-item"><span>预约时间</span><span>'+booking.apptDate+' '+booking.slot+'</span></div>'
+      + '<div class="oq-item"><span>Booking Time</span><span>'+booking.apptDate+' '+booking.slot+'</span></div>'
       + '<div class="oq-item"><span>服务区域</span><span>'+booking.area+'</span></div>'
-      + '<div class="oq-item"><span>联系方式</span><span>'+(booking.method==='call'?'电话':'WhatsApp')+'</span></div>'
+      + '<div class="oq-item"><span>Contact Information</span><span>'+(booking.method==='call'?'电话':'WhatsApp')+'</span></div>'
       + '</div>';
 
     if(!booking.cancelled && booking.prescription){
@@ -402,14 +402,14 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         var area = document.getElementById('cancelArea');
         if(!limit.allowed){
           var msg = limit.reason === 'week'
-            ? '您本周（近7天内）已取消过一次预约。如有紧急情况需要调整，请通过 WhatsApp 联系我们协助处理。'
+            ? '您本周（近7天内）Cancelled过一次预约。如有紧急情况需要调整，请通过 WhatsApp 联系我们协助处理。'
             : '您本月（近30天内）的取消次数已达到上限（3次）。如有紧急情况需要调整，请通过 WhatsApp 联系我们协助处理。';
           area.innerHTML = '<div class="oq-cancel-blocked">'+msg+'</div>';
           return;
         }
         area.innerHTML = '<div class="oq-cancel-confirm">'
-          + '<div class="oq-cancel-confirm-text">确定要取消这个预约吗？</div>'
-          + '<div class="oq-cancel-confirm-btns"><button class="oq-cancel-back" id="cancelBack">再想想</button><button class="oq-cancel-yes" id="cancelYes">确认取消</button></div>'
+          + '<div class="oq-cancel-confirm-text">Are you sure you want to cancel this booking?</div>'
+          + '<div class="oq-cancel-confirm-btns"><button class="oq-cancel-back" id="cancelBack">再想想</button><button class="oq-cancel-yes" id="cancelYes">Confirm Cancel</button></div>'
           + '</div>';
         document.getElementById('cancelBack').addEventListener('click', function(){ renderResult(booking); });
         document.getElementById('cancelYes').addEventListener('click', async function(){
@@ -439,7 +439,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   function renderNotFound(){
     document.getElementById('resultArea').innerHTML =
       '<div class="not-found-box"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>'
-      + '<p>没有找到匹配的预约，请确认Booking ID和联系方式。</p></div>';
+      + '<p>No matching booking found，请确认Booking ID和Contact Information。</p></div>';
   }
 
   var orderInput = document.getElementById('orderInput');
@@ -450,7 +450,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var bookingNo = orderInput.value.trim();
     var contact = contactInput.value.trim();
     if(!bookingNo || !contact){
-      errorEl.textContent = '请填写Booking ID和联系方式。';
+      errorEl.textContent = '请填写Booking ID和Contact Information。';
       errorEl.classList.add('show');
       document.getElementById('resultArea').innerHTML = '';
       return;

@@ -369,7 +369,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     }
   }
 
-  // ---- 立即预约 (instant match): a separate lightweight mini-flow, not part of the scheduled
+  // ---- Instant Booking (instant match): a separate lightweight mini-flow, not part of the scheduled
   // 4-stage booking above. Prototype only — see .hc-proto-note in the UI itself; the "auto-match
   // to the right 小管理员" part reads 订单预约管理's admin-created junior-admin list from
   // localStorage, but nothing here can actually notify a real device on the other end without a
@@ -439,7 +439,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     } catch(e){ return null; }
   }
   function renderInstantCta(){
-    document.getElementById('instantCtaArea').innerHTML = '<div class="hc-instant-cta"><div class="txt"><b>Want to book now?</b><span>Instantly match nearby licensed TCM physicians, no need to wait for an appointment date</span></div><button type="button" id="instantCtaBtn">立即预约</button></div>';
+    document.getElementById('instantCtaArea').innerHTML = '<div class="hc-instant-cta"><div class="txt"><b>Want to book now?</b><span>Instantly match nearby licensed TCM physicians, no need to wait for an appointment date</span></div><button type="button" id="instantCtaBtn">Instant Booking</button></div>';
     document.getElementById('instantCtaBtn').addEventListener('click', startInstant);
   }
   function startInstant(){
@@ -462,10 +462,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   function renderInstantFlow(){
     var html = '<div class="hc-instant-back" id="instantBackBtn">← Back</div>';
     if(instantStep === 1){
-      html += '<div class="hc-stage-title">立即预约</div>'
-        + '<div class="hc-stage-hint">简单填写，我们马上为您匹配附近的执业中Physician。</div>'
-        + '<div class="hc-field"><label>Your Situation</label><textarea id="instantNeeds" placeholder="例如：突发腰痛，希望今天上门…">'+instantForm.needs+'</textarea></div>'
-        + '<div class="hc-field"><label>您所在的区域</label>'
+      html += '<div class="hc-stage-title">Instant Booking</div>'
+        + '<div class="hc-stage-hint">Simply fill in, and we will immediately match you with a licensed TCM Physician nearby.</div>'
+        + '<div class="hc-field"><label>Your Situation</label><textarea id="instantNeeds" placeholder="e.g., sudden back pain, hope for home visit today…">'+instantForm.needs+'</textarea></div>'
+        + '<div class="hc-field"><label>Your Area</label>'
         + '<select id="instantAreaInput"><option value="">Please select your area</option>'
         + getActiveServiceAreaGroups().map(function(g){
             var opts = g.cities.map(function(a){ return '<option value="'+a+'"'+(instantForm.area===a?' selected':'')+'>'+a+'</option>'; }).join('');
@@ -490,7 +490,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       // 联系方式先收集，再派单——不再是"看到匹配结果后才填资料"
       html += '<div class="hc-stage-title">您的联系方式</div>'
         + '<div class="hc-stage-hint">填好后我们才会把请求派给「'+instantForm.area+'」附近的执业中Physician。</div>'
-        + '<div class="hc-field"><label>称呼</label><input type="text" id="instantNameInput" placeholder="如何称呼您" value="'+instantForm.name+'"></div>'
+        + '<div class="hc-field"><label>称呼</label><input type="text" id="instantNameInput" placeholder="How should we address you" value="'+instantForm.name+'"></div>'
         + '<div class="hc-field"><label>手机号</label><div class="hc-phone-row"><span class="hc-phone-prefix">+60</span><input type="text" id="instantPhoneInput" inputmode="numeric" placeholder="0123456789" value="'+instantForm.phone+'"></div>'
         + '<div class="hc-field-error" id="instantPhoneError">Please enter a valid phone number (starting with 0, 10-11 digits)</div></div>'
         + '<button class="hc-next-btn" id="instantSubmitBtn" disabled>Submit并匹配</button>';
@@ -569,7 +569,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       var matchedName = req.accepted_by || 'Physician';
       stageArea.innerHTML = backHtml
         + '<div class="hc-match-result"><div class="icon"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>'
-        + '<h3>已Confirm！'+matchedName+' 将尽快上门</h3>'
+        + '<h3>已Confirm！'+matchedName+' 将As soon as possible</h3>'
         + '<p>'+matchedName+' 已接单，将尽快通过 +60'+req.customer_contact+' 联系您Confirm上门Time。</p></div>'
         + '<button class="hc-next-btn" id="instantDoneBtn">Complete</button>';
       document.getElementById('instantDoneBtn').addEventListener('click', exitInstant);
@@ -696,14 +696,14 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         + '<div class="hc-context-row"><span class="cl">Journeys</span><span>'+ctxJourney+'</span></div>'
         + '<div class="hc-context-row"><span class="cl">症状</span><span>'+ctxTags.map(function(t){ return '<span class="hc-tag-chip">'+t+'</span>'; }).join('')+'</span></div>'
         + '</div>'
-        + '<div class="hc-field"><label>还有其他需要补充的吗？（选填）</label><textarea id="needsInput" placeholder="例如：症状持续Time、既往调理经历等">'+form.supplement+'</textarea></div>';
+        + '<div class="hc-field"><label>还有其他需要补充的吗？（选填）</label><textarea id="needsInput" placeholder="e.g., symptom duration, past wellness experience, etc.">'+form.supplement+'</textarea></div>';
     } else if(hasJourney){
       html += '<div class="hc-stage-hint">我们看到您在浏览「'+ctxJourney+'」，方便的话请再具体说说想调理的方向：</div>'
         + '<div class="hc-context-card"><div class="hc-context-row"><span class="cl">Journeys</span><span>'+ctxJourney+'</span></div></div>'
-        + '<div class="hc-field"><label>Your Situation</label><textarea id="needsInput" placeholder="例如：最近容易疲劳、睡眠浅、想调理体质…">'+form.needs+'</textarea></div>';
+        + '<div class="hc-field"><label>Your Situation</label><textarea id="needsInput" placeholder="e.g., easily fatigued, light sleep, want to improve constitution…">'+form.needs+'</textarea></div>';
     } else {
       html += '<div class="hc-stage-hint">Please briefly describe your discomfort symptoms, or the direction you want to regulate, to help the Physician understand Your Situation in advance.</div>'
-        + '<div class="hc-field"><label>Your Situation</label><textarea id="needsInput" placeholder="例如：最近容易疲劳、睡眠浅、想调理体质…">'+form.needs+'</textarea></div>';
+        + '<div class="hc-field"><label>Your Situation</label><textarea id="needsInput" placeholder="e.g., easily fatigued, light sleep, want to improve constitution…">'+form.needs+'</textarea></div>';
     }
     html += '<div class="hc-field"><label>Your Service Area</label>'
       + '<select id="areaInput"><option value="">Please select your area</option>'
@@ -717,7 +717,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     // Submit时才可能发现这位Physician因为黑名单原因不能预约，走了大半流程才被拒绝。挪到这里、放在选
     // Physician之前，这样选Physician那一步就能提前把冲突的Physician从列表里排除掉，客户根本不会走到"选了又
     // 被拒"这一步。
-    html += '<div class="hc-field"><label>称呼</label><input type="text" id="nameInput" placeholder="如何称呼您" value="'+form.name+'"></div>'
+    html += '<div class="hc-field"><label>称呼</label><input type="text" id="nameInput" placeholder="How should we address you" value="'+form.name+'"></div>'
       + '<div class="hc-field"><label>手机号</label>'
       + '<div class="hc-phone-row"><span class="hc-phone-prefix">+60</span><input type="text" id="phoneInput" inputmode="numeric" placeholder="0123456789" value="'+form.phone+'"></div>'
       + '<div class="hc-field-error" id="phoneError">Please enter a valid phone number (starting with 0, 10-11 digits)</div></div>';
@@ -835,7 +835,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="hc-stage-hint">以下是「'+form.area+'」可预约的执业中Physician。</div>';
     if(!practitioners.length){
       html += '<div class="hc-match-result"><div class="icon unmatched"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="12" y1="16" x2="12" y2="16.01"/></svg></div>'
-        + '<h3>该区域暂无可预约Physician</h3><p>「'+form.area+'」目前暂时没有安排Physician上门，您可以Back改选其他区域，或通过「立即预约」联系我们看是否能临时安排。</p></div>';
+        + '<h3>该区域暂无可预约Physician</h3><p>「'+form.area+'」目前暂时没有安排Physician上门，您可以Back改选其他区域，或通过「Instant Booking」联系我们看是否能临时安排。</p></div>';
       html += '<div class="hc-back-link" id="backLink">← BackPrevious</div>';
       document.getElementById('stageArea').innerHTML = html;
       document.getElementById('backLink').addEventListener('click', function(){ stage = 1; render(); });
@@ -977,7 +977,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="hc-stage-hint">方便Physician上门时核对Address。</div>'
       + '<div class="hc-field"><label>联系方式</label><div class="hc-context-card"><div class="hc-context-row"><span class="cl">称呼</span><span>'+form.name+'</span></div><div class="hc-context-row"><span class="cl">手机号</span><span>+60'+form.phone+'</span></div></div></div>'
       + '<div class="hc-field"><label>服务区域</label><div class="hc-context-card"><div class="hc-context-row"><span class="cl">区域</span><span>'+form.area+'</span></div></div></div>'
-      + '<div class="hc-field"><label>详细Address</label><textarea id="addrInput" placeholder="门牌号、街道、邮编等详细Address">'+form.addressDetail+'</textarea></div>'
+      + '<div class="hc-field"><label>详细Address</label><textarea id="addrInput" placeholder="House number, street, postcode, etc. detailed Address">'+form.addressDetail+'</textarea></div>'
       + '<button class="hc-next-btn" id="submitBtn" disabled>Submit Booking</button>'
       + '<div class="hc-back-link" id="backLink">← BackPrevious</div>';
     document.getElementById('stageArea').innerHTML = html;
@@ -1089,7 +1089,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         icon.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
         title.textContent = 'Booking Successful';
         text.textContent = '我们已收到您的预约，会通过'+(method==='call'?'电话':'WhatsApp')+'与您Confirm详情。';
-        summary.innerHTML = '<div><b>预约编号：</b>'+bookingNo+'</div>'
+        summary.innerHTML = '<div><b>Booking Number：</b>'+bookingNo+'</div>'
           + '<div><b>Physician：</b>'+docName+'</div>'
           + '<div><b>Time：</b>'+apptDateStr+' '+slotLabel+'</div>'
           + '<div><b>Address：</b>'+form.area+'</div>'
