@@ -689,6 +689,154 @@
     }
   }
 
+  // ========== API 自动翻译（MyMemory，免费无需密钥） ==========
+  var translationCache = {};
+  var CACHE_KEY = 'vinath_translation_cache';
+  var apiQueue = [];
+  var apiRunning = false;
+  var API_CONCURRENCY = 2;
+  var API_DELAY = 600;
+
+  // 加载缓存
+  try {
+    var cached = localStorage.getItem(CACHE_KEY);
+    if (cached) translationCache = JSON.parse(cached);
+  } catch(e) {}
+
+  function saveCache() {
+    try {
+      // 只保存最近1000条
+      var keys = Object.keys(translationCache);
+      if (keys.length > 1000) {
+        var sorted = keys.sort(function(a,b) {
+          return (translationCache[b].time || 0) - (translationCache[a].time || 0);
+        });
+        for (var i = 1000; i < sorted.length; i++) {
+          delete translationCache[sorted[i]];
+        }
+      }
+      localStorage.setItem(CACHE_KEY, JSON.stringify(translationCache));
+    } catch(e) {}
+  }
+
+  function getCacheKey(text, lang) {
+    return lang + ':' + text;
+  }
+
+  function translateWithAPI(text, targetLang, callback) {
+    var cacheKey = getCacheKey(text, targetLang);
+    if (translationCache[cacheKey]) {
+      callback(translationCache[cacheKey].text);
+      return;
+    }
+
+    // MyMemory API 语言代码
+    var langMap = { 'en': 'en', 'bm': 'ms' };
+    var apiLang = langMap[targetLang] || targetLang;
+
+    apiQueue.push({ text: text, targetLang: targetLang, apiLang: apiLang, callback: callback });
+    if (!apiRunning) processApiQueue();
+  }
+
+  function processApiQueue() {
+    if (apiQueue.length === 0) { apiRunning = false; return; }
+    apiRunning = true;
+
+    var batch = apiQueue.splice(0, API_CONCURRENCY);
+    var completed = 0;
+
+    batch.forEach(function(item, idx) {
+      setTimeout(function() {
+        var url = 'https://api.mymemory.translated.net/get?q=' +
+                  encodeURIComponent(item.text) +
+                  '&langpair=zh|' + item.apiLang;
+
+        fetch(url)
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            var translated = '';
+            if (data && data.responseData && data.responseData.translatedText) {
+              translated = data.responseData.translatedText;
+              // 修复常见翻译问题
+              translated = translated.replace(/&amp;/g, '&');
+              translated = translated.replace(/&quot;/g, '"');
+              translated = translated.replace(/&#39;/g, "'");
+            }
+            if (translated) {
+              translationCache[getCacheKey(item.text, item.targetLang)] = {
+                text: translated,
+                time: Date.now()
+              };
+              saveCache();
+              item.callback(translated);
+            }
+          })
+          .catch(function() {})
+          .finally(function() {
+            completed++;
+            if (completed === batch.length) {
+              setTimeout(processApiQueue, API_DELAY);
+            }
+          });
+      }, idx * API_DELAY);
+    });
+  }
+
+  // 扩展 autoTranslate：不在字典中的中文文本，调用API翻译
+  var originalAutoTranslate = autoTranslate;
+  autoTranslate = function() {
+    if (currentLang === 'zh') {
+      // 恢复被API翻译的元素
+      document.querySelectorAll('[data-i18n-api]').forEach(function(el) {
+        var original = el.getAttribute('data-i18n-original');
+        if (original) el.textContent = original;
+        el.removeAttribute('data-i18n-api');
+        el.removeAttribute('data-i18n-original');
+      });
+      originalAutoTranslate();
+      return;
+    }
+
+    originalAutoTranslate();
+
+    // 对剩余的中文文本调用API翻译
+    setTimeout(function() {
+      var allElements = document.querySelectorAll(
+        'body *:not(script):not(style):not([data-i18n]):not([data-i18n-auto]):not([data-i18n-api])'
+      );
+      var toTranslate = [];
+
+      for (var i = 0; i < allElements.length; i++) {
+        var el = allElements[i];
+        if (el.children.length > 0) continue;
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'OPTION') continue;
+        if (el.classList && el.classList.contains('vinath-lang-btn')) continue;
+
+        var text = el.textContent.trim();
+        if (!text || text.length > 200 || text.length < 2) continue;
+        // 只翻译包含中文的文本
+        if (!/[\u4e00-\u9fa5]/.test(text)) continue;
+        // 跳过纯数字、纯符号
+        if (/^[\d\s\-\+\*\/\.\,\:\;\!\?\(\)\[\]\{\}]+$/.test(text)) continue;
+
+        toTranslate.push({ el: el, text: text });
+      }
+
+      // 限制每次最多翻译30个元素
+      toTranslate = toTranslate.slice(0, 30);
+
+      toTranslate.forEach(function(item) {
+        translateWithAPI(item.text, currentLang, function(translated) {
+          if (translated && translated !== item.text) {
+            item.el.setAttribute('data-i18n-original', item.text);
+            item.el.setAttribute('data-i18n-api', 'true');
+            item.el.textContent = translated;
+          }
+        });
+      });
+    }, 500);
+  };
+
   function setLang(lang) {
     if (LANGS.indexOf(lang) === -1) return;
     currentLang = lang;
