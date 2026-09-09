@@ -549,8 +549,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
                                 // 为了不让还在引用这两个字段的代码报错，不影响实际显示
         };
       });
-      PRODUCTS.length = 0;
-      mapped.forEach(function(p){ PRODUCTS.push(p); });
+      if(mapped && mapped.length){ PRODUCTS.length = 0;
+      mapped.forEach(function(p){ PRODUCTS.push(p); }); }
     } catch(e){
       console.error('连接后端失败:', e);
       showToast('暂时无法连接服务器，请稍后重试');

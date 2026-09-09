@@ -394,11 +394,15 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   var GENERIC_CAT_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="13" rx="2"/><path d="M4 11h16"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2"/></svg>';
   var TYPE_ART_BY_KEY = {plaster:ART_PLASTER, tea:ART_TEA, soak:ART_SOAK, mask:ART_MASK};
   function getShopCategoriesLocal(){
+    var EN_CAT_NAMES={plaster:'Plaster Series',tea:'Tea Series',soak:'Herbal Soup Series',mask:'Topical Series'};
+    var list=null;
     try {
       var raw = localStorage.getItem('vinath_shop_categories');
-      if(raw) return JSON.parse(raw);
+      if(raw) list=JSON.parse(raw);
     } catch(e){}
-    return [{key:'plaster',name:'Plaster Series'},{key:'tea',name:'Tea Series'},{key:'soak',name:'Herbal Soup Series'},{key:'mask',name:'Topical Series'}];
+    if(!list || !list.length) list=[{key:'plaster',name:'Plaster Series'},{key:'tea',name:'Tea Series'},{key:'soak',name:'Herbal Soup Series'},{key:'mask',name:'Topical Series'}];
+    list.forEach(function(cat){ if(EN_CAT_NAMES[cat.key]) cat.name=EN_CAT_NAMES[cat.key]; });
+    return list;
   }
   var SHOP_CATEGORIES = getShopCategoriesLocal();
   var TYPE_META = {};
@@ -589,8 +593,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
                                 // 为了不让还在引用这两pcs字段的代码报错，不影响实际显示
         };
       });
-      PRODUCTS.length = 0;
-      mapped.forEach(function(p){ PRODUCTS.push(p); });
+      if(mapped && mapped.length){ PRODUCTS.length = 0;
+      mapped.forEach(function(p){ PRODUCTS.push(p); }); }
     } catch(e){
       console.error('Failed to connect to backend: ', e);
       showToast('Unable to connect to the server. Please retry later.');
