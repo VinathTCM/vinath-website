@@ -12,12 +12,12 @@ html{ -webkit-text-size-adjust:100%; }
 body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC","PingFang SC",sans-serif; color:#3B2E22; }
 
 :root{
-  --tan:#C9A876; --tan-deep:#A07A45; --espresso:#3B2E22; --espresso-soft:#6E5F4E;
-  --clay:#BC6E4E; --white-warm:#FFFDF9; --cream:#F7F3EC; --line:rgba(59,46,34,.10); --shadow:rgba(59,46,34,.13);
-  --amber:#B8863C; --amber-soft:rgba(184,134,60,.13); --sage:#8C9B7A;
-  --font-serif:"Noto Serif SC","Songti SC","STSong",serif;
-  --font-en:"Cormorant Garamond",Georgia,serif;
-  --pad: clamp(18px, 4.5vw, 44px);
+ --tan:#C9A876; --tan-deep:#A07A45; --espresso:#3B2E22; --espresso-soft:#6E5F4E;
+ --clay:#BC6E4E; --white-warm:#FFFDF9; --cream:#F7F3EC; --line:rgba(59,46,34,.10); --shadow:rgba(59,46,34,.13);
+ --amber:#B8863C; --amber-soft:rgba(184,134,60,.13); --sage:#8C9B7A;
+ --font-serif:"Noto Serif SC","Songti SC","STSong",serif;
+ --font-en:"Cormorant Garamond",Georgia,serif;
+ --pad: clamp(18px, 4.5vw, 44px);
 }
 
 .page{ max-width:760px; margin:0 auto; position:relative; }
@@ -39,7 +39,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .cart-badge{ position:absolute; top:-7px; right:-9px; background:var(--clay); color:#fff; font-size:10px; font-weight:700; min-width:16px; height:16px; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:0 4px; }
 .vh-acct-wrap{ position:relative; display:flex; }
 .vh-acct-menu{ position:absolute; top:calc(100% + 12px); right:-6px; background:var(--white-warm); border-radius:14px; box-shadow:0 14px 34px rgba(59,46,34,.18);
-  padding:8px; min-width:140px; opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:60; }
+ padding:8px; min-width:140px; opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:60; }
 .vh-acct-menu.open{ opacity:1; pointer-events:auto; }
 .vham-item{ padding:11px 14px; font-size:14px; border-radius:9px; cursor:pointer; color:var(--espresso); white-space:nowrap; }
 .vham-item:hover{ background:var(--cream); }
@@ -119,418 +119,418 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .not-found-box svg{ color:var(--tan); margin-bottom:14px; }
 
 .vh-toast{ position:fixed; left:50%; bottom:22px; transform:translate(-50%,10px); background:rgba(40,31,22,.94); color:#FDF8F0; font-size:15px; padding:11px 20px;
-  border-radius:20px; opacity:0; transition:opacity .25s, transform .25s; pointer-events:none; z-index:70; max-width:88vw; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+ border-radius:20px; opacity:0; transition:opacity .25s, transform .25s; pointer-events:none; z-index:70; max-width:88vw; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .vh-toast.show{ opacity:1; transform:translate(-50%,0); }
 </style>
-  <link rel="icon" type="image/webp" href="/favicon.webp">
+ <link rel="icon" type="image/webp" href="/favicon.webp">
 
 <script>
-  window.VINATH_PAGE_LANG = 'en';
+ window.VINATH_PAGE_LANG = 'en';
 </script>
 
 
 <style>
-  /* 英文版标题Apply Poppins Black */
-  h1, h2, h3, h4, h5, h6,
-  .hero-title, .section-title, .page-title,
-  .eyebrow, .cta-title,
-  .process-step-title, .journey-card-title,
-  .footer-title, .nav-link {
-    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
-  }
-  
-  /* 大标题Apply Black 900 */
-  h1, .hero-title, .section-title, .page-title {
-    font-weight: 900 !important;
-    letter-spacing: -0.02em;
-  }
-  
-  /* 二级标题Apply ExtraBold 800 */
-  h2, .process-step-title, .journey-card-title, .footer-title {
-    font-weight: 800 !important;
-  }
-  
-  /* 三级标题Apply Bold 700 */
-  h3, h4 {
-    font-weight: 700 !important;
-  }
-  
-  /* 小标签Apply SemiBold 600 */
-  .eyebrow, .cta-title {
-    font-weight: 600 !important;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
+ /* 英文版标题Apply Poppins Black */
+ h1, h2, h3, h4, h5, h6,
+ .hero-title, .section-title, .page-title,
+ .eyebrow, .cta-title,
+ .process-step-title, .journey-card-title,
+ .footer-title, .nav-link {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+ }
+ 
+ /* 大标题Apply Black 900 */
+ h1, .hero-title, .section-title, .page-title {
+  font-weight: 900 !important;
+  letter-spacing: -0.02em;
+ }
+ 
+ /* 二级标题Apply ExtraBold 800 */
+ h2, .process-step-title, .journey-card-title, .footer-title {
+  font-weight: 800 !important;
+ }
+ 
+ /* 三级标题Apply Bold 700 */
+ h3, h4 {
+  font-weight: 700 !important;
+ }
+ 
+ /* 小标签Apply SemiBold 600 */
+ .eyebrow, .cta-title {
+  font-weight: 600 !important;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+ }
 </style>
 
 </head>
 <body>
 
 <div class="page">
-  <div class="vh-header">
-    <div class="side">
-      <div class="vh-brand" id="brandBtn">VINATH<span class="vh-tm">™</span></div>
+ <div class="vh-header">
+  <div class="side">
+   <div class="vh-brand" id="brandBtn">VINATH<span class="vh-tm">™</span></div>
+  </div>
+  <div class="vh-icons">
+   <div class="vh-ibtn" id="searchBtn" aria-label="Search">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10.3" cy="10.3" r="6.3"/><line x1="19.5" y1="19.5" x2="15" y2="15"/></svg>
+   </div>
+   <span class="vh-acct-wrap">
+    <div class="vh-ibtn" id="acctBtn" aria-label="Search">
+     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 19.5c1.2-3.8 3.9-5.7 7-5.7s5.8 1.9 7 5.7"/></svg>
     </div>
-    <div class="vh-icons">
-      <div class="vh-ibtn" id="searchBtn" aria-label="Search">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10.3" cy="10.3" r="6.3"/><line x1="19.5" y1="19.5" x2="15" y2="15"/></svg>
-      </div>
-      <span class="vh-acct-wrap">
-        <div class="vh-ibtn" id="acctBtn" aria-label="Search">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 19.5c1.2-3.8 3.9-5.7 7-5.7s5.8 1.9 7 5.7"/></svg>
-        </div>
-        <div class="vh-acct-menu" id="vhAcctMenu">
-          <div class="vham-item" id="vhamOrder">Track Order</div>
-          <div class="vham-item" id="vhamBooking">Track Booking</div>
-        </div>
-      </span>
-      <div class="vh-ibtn" id="cartBtn" aria-label="Cart">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
-        <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
-      </div>
+    <div class="vh-acct-menu" id="vhAcctMenu">
+     <div class="vham-item" id="vhamOrder">Track Order</div>
+     <div class="vham-item" id="vhamBooking">Track Booking</div>
     </div>
+   </span>
+   <div class="vh-ibtn" id="cartBtn" aria-label="Cart">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+    <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
+   </div>
+  </div>
+ </div>
+
+ <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-current">Booking Tracking</span></div>
+
+ <div class="content">
+  <h1 class="oq-title">Booking Tracking</h1>
+  <p class="oq-sub">No registration required. Enter your Booking ID and contact information to view your booking status.</p>
+
+  <div class="oq-form">
+   <div class="oq-field">
+    <label>Booking ID</label>
+    <input type="text" id="orderInput" placeholder="e.g., BK20260720001">
+   </div>
+   <div class="oq-field">
+    <label>Phone Number</label>
+    <input type="text" id="contactInput" placeholder="Phone Number used for booking">
+   </div>
+   <div class="oq-error" id="oqError">No matching booking found. Please verify your Booking ID and contact information.</div>
+   <button class="oq-btn" id="lookupBtn">Track Booking</button>
+   <div class="oq-hint-examples" id="demoHint"></div>
   </div>
 
-  <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-current">Booking Tracking</span></div>
-
-  <div class="content">
-    <h1 class="oq-title">Booking Tracking</h1>
-    <p class="oq-sub">No registration required. Enter your Booking ID and contact information to view your booking status.</p>
-
-    <div class="oq-form">
-      <div class="oq-field">
-        <label>Booking ID</label>
-        <input type="text" id="orderInput" placeholder="e.g., BK20260720001">
-      </div>
-      <div class="oq-field">
-        <label>Phone Number</label>
-        <input type="text" id="contactInput" placeholder="Phone Number used for booking">
-      </div>
-      <div class="oq-error" id="oqError">No matching booking found. Please verify your Booking ID and contact information.</div>
-      <button class="oq-btn" id="lookupBtn">Track Booking</button>
-      <div class="oq-hint-examples" id="demoHint"></div>
-    </div>
-
-    <div id="resultArea"></div>
-  </div>
+  <div id="resultArea"></div>
+ </div>
 </div>
 
 <div class="vh-footer">
-  <div class="vh-footer-top">
-    <div class="vh-footer-brand">VINATH<span class="vh-tm">™</span></div>
-  </div>
-  <div class="vh-footer-bottom">
-    <span>Copyright &copy; 2026 VINATH TCM HEALTH CARE. All rights reserved.</span>
-    <span class="vh-footer-my">Malaysia</span>
-  </div>
+ <div class="vh-footer-top">
+  <div class="vh-footer-brand">VINATH<span class="vh-tm">™</span></div>
+ </div>
+ <div class="vh-footer-bottom">
+  <span>Copyright &copy; 2026 VINATH TCM HEALTH CARE. All rights reserved.</span>
+  <span class="vh-footer-my">Malaysia</span>
+ </div>
 </div>
 
 <div class="vh-toast" id="toast"></div>
 
 <script>
-  (function(){
-    var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-    fetch(API_BASE + '/analytics/pageview', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ page: 'Booking Tracking' })
-    }).catch(function(){});
-  })();
+ (function(){
+  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+  fetch(API_BASE + '/analytics/pageview', {
+   method: 'POST', headers: { 'Content-Type': 'application/json' },
+   body: JSON.stringify({ page: 'Booking Tracking' })
+  }).catch(function(){});
+ })();
 
 (function(){
-  var STATUS_LABELS = ['Pending Confirmation','Confirmed','Completed'];
+ var STATUS_LABELS = ['Pending Confirmation','Confirmed','Completed'];
 
-  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+ var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
 
-  async function findBooking(bookingNo, contact){
-    var res = await fetch(API_BASE + '/bookings/lookup?bookingNo=' + encodeURIComponent(bookingNo) + '&phone=' + encodeURIComponent(contact));
-    if(!res.ok) return null;
-    var b = await res.json();
-    return { bookingNo:b.booking_no, contact:contact, status:b.status, date:(b.created_at||'').slice(0,10),
-      doctor:b.practitioner_name, apptDate:b.appt_date, slot:(!b.slot||b.slot==='ASAP'?'As soon as possible (Instant Booking)':b.slot), area:b.area, method:'whatsapp', cancelled:b.cancelled, prescription:b.prescription || null };
-  }
+ async function findBooking(bookingNo, contact){
+  var res = await fetch(API_BASE + '/bookings/lookup?bookingNo=' + encodeURIComponent(bookingNo) + '&phone=' + encodeURIComponent(contact));
+  if(!res.ok) return null;
+  var b = await res.json();
+  return { bookingNo:b.booking_no, contact:contact, status:b.status, date:(b.created_at||'').slice(0,10),
+   doctor:b.practitioner_name, apptDate:b.appt_date, slot:(!b.slot||b.slot==='ASAP'?'As soon as possible (Instant Booking)':b.slot), area:b.area, method:'whatsapp', cancelled:b.cancelled, prescription:b.prescription || null };
+ }
 
-  var currentContact = '';
-  function cancellationKey(contact){ return 'vinath_cancellations_' + contact.trim().toLowerCase(); }
-  function getCancellationHistory(contact){
-    try {
-      var raw = localStorage.getItem(cancellationKey(contact));
-      return raw ? JSON.parse(raw) : [];
-    } catch(e) { return []; }
-  }
-  function recordCancellation(contact){
-    var history = getCancellationHistory(contact);
-    history.push(Date.now());
-    try { localStorage.setItem(cancellationKey(contact), JSON.stringify(history)); } catch(e){}
-  }
-  function checkCancellationLimit(contact){
-    var history = getCancellationHistory(contact);
-    var now = Date.now();
-    var weekAgo = now - 7*24*60*60*1000;
-    var monthAgo = now - 30*24*60*60*1000;
-    var thisWeek = history.filter(function(t){ return t > weekAgo; }).length;
-    var thisMonth = history.filter(function(t){ return t > monthAgo; }).length;
-    if(thisWeek >= 1) return {allowed:false, reason:'week'};
-    if(thisMonth >= 3) return {allowed:false, reason:'month'};
-    return {allowed:true};
-  }
+ var currentContact = '';
+ function cancellationKey(contact){ return 'vinath_cancellations_' + contact.trim().toLowerCase(); }
+ function getCancellationHistory(contact){
+  try {
+   var raw = localStorage.getItem(cancellationKey(contact));
+   return raw ? JSON.parse(raw) : [];
+  } catch(e) { return []; }
+ }
+ function recordCancellation(contact){
+  var history = getCancellationHistory(contact);
+  history.push(Date.now());
+  try { localStorage.setItem(cancellationKey(contact), JSON.stringify(history)); } catch(e){}
+ }
+ function checkCancellationLimit(contact){
+  var history = getCancellationHistory(contact);
+  var now = Date.now();
+  var weekAgo = now - 7*24*60*60*1000;
+  var monthAgo = now - 30*24*60*60*1000;
+  var thisWeek = history.filter(function(t){ return t > weekAgo; }).length;
+  var thisMonth = history.filter(function(t){ return t > monthAgo; }).length;
+  if(thisWeek >= 1) return {allowed:false, reason:'week'};
+  if(thisMonth >= 3) return {allowed:false, reason:'month'};
+  return {allowed:true};
+ }
 
-  // ---- 服务评价: only for completed, non-cancelled bookings — one review per booking number. ----
-  async function findReview(bookingNo){
-    try {
-      var res = await fetch(API_BASE + '/reviews/' + encodeURIComponent(bookingNo));
-      return res.ok ? await res.json() : null;
-    } catch(e){ return null; }
+ // ---- 服务评价: only for completed, non-cancelled bookings — one review per booking number. ----
+ async function findReview(bookingNo){
+  try {
+   var res = await fetch(API_BASE + '/reviews/' + encodeURIComponent(bookingNo));
+   return res.ok ? await res.json() : null;
+  } catch(e){ return null; }
+ }
+ async function renderReviewSection(booking){
+  var existing = await findReview(booking.bookingNo);
+  var area = document.getElementById('reviewArea');
+  if(existing){
+   area.innerHTML = '<div class="oq-review-card"><div class="oq-review-title">Thank you for your review</div>'
+    + '<div class="oq-review-done"><div class="stars-display">'+'★'.repeat(existing.rating)+'☆'.repeat(5-existing.rating)+'</div>'
+    + (existing.comment ? '<div class="cmt">"'+existing.comment+'"</div>' : '')
+    + '</div></div>';
+   return;
   }
-  async function renderReviewSection(booking){
-    var existing = await findReview(booking.bookingNo);
-    var area = document.getElementById('reviewArea');
-    if(existing){
-      area.innerHTML = '<div class="oq-review-card"><div class="oq-review-title">Thank you for your review</div>'
-        + '<div class="oq-review-done"><div class="stars-display">'+'★'.repeat(existing.rating)+'☆'.repeat(5-existing.rating)+'</div>'
-        + (existing.comment ? '<div class="cmt">"'+existing.comment+'"</div>' : '')
-        + '</div></div>';
-      return;
-    }
-    area.innerHTML = '<div class="oq-review-card"><div class="oq-review-title">Rate this service</div>'
-      + '<div class="oq-review-hint">Was the physician punctual and professional? How was the home visit experience? Your feedback helps us improve.</div>'
-      + '<div class="oq-star-row" id="starRow">'
-      + [1,2,3,4,5].map(function(i){ return '<span class="oq-star" data-v="'+i+'">★</span>'; }).join('')
-      + '</div>'
-      + '<textarea id="reviewComment" placeholder="Additional comments (optional)"></textarea>'
-      + '<button class="oq-review-submit" id="reviewSubmitBtn" disabled>Submit Review</button></div>';
-    var rating = 0;
-    var stars = document.querySelectorAll('#starRow .oq-star');
-    stars.forEach(function(star){
-      star.addEventListener('click', function(){
-        rating = Number(this.getAttribute('data-v'));
-        stars.forEach(function(s){ s.classList.toggle('on', Number(s.getAttribute('data-v'))<=rating); });
-        document.getElementById('reviewSubmitBtn').disabled = false;
-      });
+  area.innerHTML = '<div class="oq-review-card"><div class="oq-review-title">Rate this service</div>'
+   + '<div class="oq-review-hint">Was the physician punctual and professional? How was the home visit experience? Your feedback helps us improve.</div>'
+   + '<div class="oq-star-row" id="starRow">'
+   + [1,2,3,4,5].map(function(i){ return '<span class="oq-star" data-v="'+i+'">★</span>'; }).join('')
+   + '</div>'
+   + '<textarea id="reviewComment" placeholder="Additional comments (optional)"></textarea>'
+   + '<button class="oq-review-submit" id="reviewSubmitBtn" disabled>Submit Review</button></div>';
+  var rating = 0;
+  var stars = document.querySelectorAll('#starRow .oq-star');
+  stars.forEach(function(star){
+   star.addEventListener('click', function(){
+    rating = Number(this.getAttribute('data-v'));
+    stars.forEach(function(s){ s.classList.toggle('on', Number(s.getAttribute('data-v'))<=rating); });
+    document.getElementById('reviewSubmitBtn').disabled = false;
+   });
+  });
+  document.getElementById('reviewSubmitBtn').addEventListener('click', async function(){
+   if(!rating) return;
+   var btn = this;
+   btn.disabled = true;
+   try {
+    var res = await fetch(API_BASE + '/reviews', {
+     method: 'POST', headers: { 'Content-Type': 'application/json' },
+     body: JSON.stringify({
+      bookingNo: booking.bookingNo, doctor: booking.doctor, area: booking.area,
+      rating: rating, comment: document.getElementById('reviewComment').value.trim()
+     })
     });
-    document.getElementById('reviewSubmitBtn').addEventListener('click', async function(){
-      if(!rating) return;
-      var btn = this;
-      btn.disabled = true;
-      try {
-        var res = await fetch(API_BASE + '/reviews', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            bookingNo: booking.bookingNo, doctor: booking.doctor, area: booking.area,
-            rating: rating, comment: document.getElementById('reviewComment').value.trim()
-          })
-        });
-        if(!res.ok){ var err = await res.json(); alert(err.error || 'Submit failed, please retry'); btn.disabled = false; return; }
-        renderReviewSection(booking);
-      } catch(e){
-        alert('Cannot connect to server, please check network and retry');
-        btn.disabled = false;
-      }
-    });
-  }
-
-  var RX_STATUS_LABELS = { awaiting_pharmacy:'Awaiting Pharmacy Acceptance', brewing:'Decocting', shipping:'Out for Delivery', delivered:'Delivered' };
-  var RX_FLOW = ['awaiting_pharmacy','brewing','shipping','delivered'];
-  var DISPENSE_LABELS = { decoct_pickup:'Decocted & Self-Pickup', decoct_delivery:'Decocted & Delivered', herb_delivery:'Herbal Medicine Delivery', herb_pickup:'Herbal Medicine Self-Pickup' };
-
-  // Herbal Medicine Progress卡：同步药房制备/配送进度 + 运单号；无处方时不渲染
-  function renderHerbProgress(rx){
-    var label = (DISPENSE_LABELS[rx.dispenseMode] || rx.dispenseMode || 'Herbal Medicine');
-    var idx = RX_FLOW.indexOf(rx.status || 'awaiting_pharmacy');
-    if(idx < 0) idx = 0;
-    var html = '<div class="oq-items-card herb-progress" style="margin-top:12px;">'
-      + '<div class="oq-item" style="font-weight:600;"><span>Herbal Medicine Progress</span><span>'+label+' · '+(rx.doses||1)+' doses</span></div>';
-    html += '<div class="stepper-wrap" style="margin-top:10px;">';
-    RX_FLOW.forEach(function(st, i){
-      var cls = i < idx ? 'done' : i === idx ? 'current' : '';
-      html += '<div class="step '+cls+'"><div class="step-line"></div><div class="step-dot">'+(i<idx?'✓':(i+1))+'</div><div class="step-label">'+RX_STATUS_LABELS[st]+'</div></div>';
-    });
-    html += '</div>';
-    if(rx.status === 'shipping' && (rx.logisticsProvider || rx.trackingId)){
-      html += '<div class="oq-item" style="margin-top:10px;"><span>Delivery Method</span><span>'+(rx.logisticsProvider||'')+(rx.trackingId?' · Tracking Number: '+rx.trackingId:'')+'</span></div>';
-    }
-    if(rx.items && rx.items.length){
-      var herbs = rx.items.filter(function(it){ return it.herbName; }).map(function(it){ return it.herbName+(it.dosageGrams?' '+it.dosageGrams+'g':''); }).join('、');
-      if(herbs) html += '<div class="oq-item"><span>Herbs</span><span>'+herbs+'</span></div>';
-    }
-    html += '</div>';
-    return html;
-  }
-
-  function renderResult(booking){
-    var html = '<div class="oq-result">'
-      + '<div class="oq-result-hd"><div class="oq-order-no">Booking ID '+booking.bookingNo+'</div><div class="oq-order-date">Submission Date '+booking.date+'</div></div>';
-
-    if(booking.cancelled){
-      html += '<div class="oq-cancelled-banner"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>This booking has been cancelled</div>';
-    } else {
-      html += '<div class="stepper-wrap">';
-      STATUS_LABELS.forEach(function(label, i){
-        var cls = i < booking.status ? 'done' : i === booking.status ? 'current' : '';
-        html += '<div class="step '+cls+'"><div class="step-line"></div><div class="step-dot">'+(i<booking.status?'✓':(i+1))+'</div><div class="step-label">'+label+'</div></div>';
-      });
-      html += '</div>';
-    }
-
-    html += '<div class="oq-items-card'+(booking.cancelled?' cancelled':'')+'">'
-      + '<div class="oq-item"><span>Assigned Physician</span><span>'+booking.doctor+'</span></div>'
-      + '<div class="oq-item"><span>Booking Time</span><span>'+booking.apptDate+' '+booking.slot+'</span></div>'
-      + '<div class="oq-item"><span>Service Area</span><span>'+booking.area+'</span></div>'
-      + '<div class="oq-item"><span>Contact Information</span><span>'+(booking.method==='call'?'Phone':'WhatsApp')+'</span></div>'
-      + '</div>';
-
-    if(!booking.cancelled && booking.prescription){
-      html += renderHerbProgress(booking.prescription);
-    }
-
-    if(!booking.cancelled && booking.status < 2){
-      html += '<div id="cancelArea"><button class="oq-cancel-btn" id="cancelBtn">Cancel This Booking</button>'
-        + '<div class="oq-cancel-note">To ensure quality service for all customers, the same Phone Number can cancel at most 1 time per week and 3 times per month.</div></div>';
-    }
-    html += '</div>';
-    if(!booking.cancelled && booking.status === 2){
-      html += '<div id="reviewArea"></div>';
-    }
-    document.getElementById('resultArea').innerHTML = html;
-    if(!booking.cancelled && booking.status === 2){
-      renderReviewSection(booking);
-    }
-
-    var cancelBtn = document.getElementById('cancelBtn');
-    if(cancelBtn){
-      cancelBtn.addEventListener('click', function(){
-        var limit = checkCancellationLimit(currentContact);
-        var area = document.getElementById('cancelArea');
-        if(!limit.allowed){
-          var msg = limit.reason === 'week'
-            ? 'You have cancelled one booking this week (within the last 7 days). If you need to adjust due to an emergency, please contact us via WhatsApp for assistance.'
-            : 'You have reached the cancellation limit (3 times) this month (within the last 30 days). If you need to adjust due to an emergency, please contact us via WhatsApp for assistance.';
-          area.innerHTML = '<div class="oq-cancel-blocked">'+msg+'</div>';
-          return;
-        }
-        area.innerHTML = '<div class="oq-cancel-confirm">'
-          + '<div class="oq-cancel-confirm-text">Are you sure you want to cancel this booking?</div>'
-          + '<div class="oq-cancel-confirm-btns"><button class="oq-cancel-back" id="cancelBack">Think Again</button><button class="oq-cancel-yes" id="cancelYes">Confirm Cancel</button></div>'
-          + '</div>';
-        document.getElementById('cancelBack').addEventListener('click', function(){ renderResult(booking); });
-        document.getElementById('cancelYes').addEventListener('click', async function(){
-          var yesBtn = this;
-          yesBtn.disabled = true;
-          try {
-            var res = await fetch(API_BASE + '/bookings/' + encodeURIComponent(booking.bookingNo) + '/cancel', {
-              method: 'PUT', headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ phone: currentContact })
-            });
-            if(!res.ok){
-              var err = await res.json();
-              area.innerHTML = '<div class="oq-cancel-blocked">'+(err.error||'Cancellation failed, please try again later')+'</div>';
-              return;
-            }
-            recordCancellation(currentContact);
-            booking.cancelled = true;
-            renderResult(booking);
-          } catch(e){
-            area.innerHTML = '<div class="oq-cancel-blocked">Unable to connect to the server. Please try again later.</div>';
-          }
-        });
-      });
-    }
-  }
-
-  function renderNotFound(){
-    document.getElementById('resultArea').innerHTML =
-      '<div class="not-found-box"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>'
-      + '<p>No matching booking found，Please confirm your Booking ID and contact information.</p></div>';
-  }
-
-  var orderInput = document.getElementById('orderInput');
-  var contactInput = document.getElementById('contactInput');
-  var errorEl = document.getElementById('oqError');
-
-  document.getElementById('lookupBtn').addEventListener('click', async function(){
-    var bookingNo = orderInput.value.trim();
-    var contact = contactInput.value.trim();
-    if(!bookingNo || !contact){
-      errorEl.textContent = 'Please fill in your Booking ID and contact information.';
-      errorEl.classList.add('show');
-      document.getElementById('resultArea').innerHTML = '';
-      return;
-    }
-    var btn = this;
-    btn.disabled = true;
-    try {
-      var booking = await findBooking(bookingNo, contact);
-      if(booking){
-        errorEl.classList.remove('show');
-        currentContact = contact;
-        renderResult(booking);
-      } else {
-        errorEl.textContent = 'No matching booking found. Please verify your Booking ID and contact information.';
-        errorEl.classList.add('show');
-        document.getElementById('resultArea').innerHTML = '';
-      }
-    } catch(e){
-      errorEl.textContent = 'Unable to connect to the server. Please try again later.';
-      errorEl.classList.add('show');
-    }
+    if(!res.ok){ var err = await res.json(); alert(err.error || 'Submit failed, please retry'); btn.disabled = false; return; }
+    renderReviewSection(booking);
+   } catch(e){
+    alert('Cannot connect to server, please check network and retry');
     btn.disabled = false;
+   }
   });
+ }
 
-  function cartFromURL(){
-    var raw = new URLSearchParams(window.location.search).get('cart');
-    if(!raw) return [];
-    return raw.split(',').map(function(chunk){
-      var parts = chunk.split(':'); var id = Number(parts[0]);
-      return id ? {id:id, variant:(parts[1]==='t'?'trial':'full'), qty:Number(parts[2])||1} : null;
-    }).filter(Boolean);
-  }
-  function cartToParam(items){ return items.map(function(it){ return it.id+':'+(it.variant==='trial'?'t':'f')+':'+it.qty; }).join(','); }
-  function withCart(url, items){
-    var cartStr = cartToParam(items);
-    if(!cartStr) return url;
-    var hashIdx = url.indexOf('#');
-    var hash = hashIdx === -1 ? '' : url.slice(hashIdx);
-    var base = hashIdx === -1 ? url : url.slice(0, hashIdx);
-    return base + (base.indexOf('?')===-1 ? '?' : '&') + 'cart=' + encodeURIComponent(cartStr) + hash;
-  }
-  var cartItems = cartFromURL();
-  function updateCartBadge(){
-    var total = cartItems.reduce(function(s,it){ return s+it.qty; }, 0);
-    var badge = document.getElementById('cartBadge');
-    badge.textContent = total;
-    badge.style.display = total > 0 ? 'flex' : 'none';
-  }
-  updateCartBadge();
+ var RX_STATUS_LABELS = { awaiting_pharmacy:'Awaiting Pharmacy Acceptance', brewing:'Decocting', shipping:'Out for Delivery', delivered:'Delivered' };
+ var RX_FLOW = ['awaiting_pharmacy','brewing','shipping','delivered'];
+ var DISPENSE_LABELS = { decoct_pickup:'Decocted & Self-Pickup', decoct_delivery:'Decocted & Delivered', herb_delivery:'Herbal Medicine Delivery', herb_pickup:'Herbal Medicine Self-Pickup' };
 
-  var toast = document.getElementById('toast');
-  var toastTimer = null;
-  function showToast(msg){
-    toast.textContent = msg;
-    toast.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2000);
+ // Herbal Medicine Progress卡:同步药房制备/配送进度 + 运单号;无处方时不渲染
+ function renderHerbProgress(rx){
+  var label = (DISPENSE_LABELS[rx.dispenseMode] || rx.dispenseMode || 'Herbal Medicine');
+  var idx = RX_FLOW.indexOf(rx.status || 'awaiting_pharmacy');
+  if(idx < 0) idx = 0;
+  var html = '<div class="oq-items-card herb-progress" style="margin-top:12px;">'
+   + '<div class="oq-item" style="font-weight:600;"><span>Herbal Medicine Progress</span><span>'+label+' · '+(rx.doses||1)+' doses</span></div>';
+  html += '<div class="stepper-wrap" style="margin-top:10px;">';
+  RX_FLOW.forEach(function(st, i){
+   var cls = i < idx ? 'done' : i === idx ? 'current' : '';
+   html += '<div class="step '+cls+'"><div class="step-line"></div><div class="step-dot">'+(i<idx?'✓':(i+1))+'</div><div class="step-label">'+RX_STATUS_LABELS[st]+'</div></div>';
+  });
+  html += '</div>';
+  if(rx.status === 'shipping' && (rx.logisticsProvider || rx.trackingId)){
+   html += '<div class="oq-item" style="margin-top:10px;"><span>Delivery Method</span><span>'+(rx.logisticsProvider||'')+(rx.trackingId?' · Tracking Number: '+rx.trackingId:'')+'</span></div>';
+  }
+  if(rx.items && rx.items.length){
+   var herbs = rx.items.filter(function(it){ return it.herbName; }).map(function(it){ return it.herbName+(it.dosageGrams?' '+it.dosageGrams+'g':''); }).join(', ');
+   if(herbs) html += '<div class="oq-item"><span>Herbs</span><span>'+herbs+'</span></div>';
+  }
+  html += '</div>';
+  return html;
+ }
+
+ function renderResult(booking){
+  var html = '<div class="oq-result">'
+   + '<div class="oq-result-hd"><div class="oq-order-no">Booking ID '+booking.bookingNo+'</div><div class="oq-order-date">Submission Date '+booking.date+'</div></div>';
+
+  if(booking.cancelled){
+   html += '<div class="oq-cancelled-banner"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>This booking has been cancelled</div>';
+  } else {
+   html += '<div class="stepper-wrap">';
+   STATUS_LABELS.forEach(function(label, i){
+    var cls = i < booking.status ? 'done' : i === booking.status ? 'current' : '';
+    html += '<div class="step '+cls+'"><div class="step-line"></div><div class="step-dot">'+(i<booking.status?'✓':(i+1))+'</div><div class="step-label">'+label+'</div></div>';
+   });
+   html += '</div>';
   }
 
-  document.getElementById('brandBtn').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
-  document.getElementById('bcHome').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
-  document.getElementById('searchBtn').addEventListener('click', function(){ showToast('Search · Feature Coming Soon'); });
-  var vhAcctMenu = document.getElementById('vhAcctMenu');
-  document.getElementById('acctBtn').addEventListener('click', function(e){
-    e.stopPropagation();
-    vhAcctMenu.classList.toggle('open');
-  });
-  document.getElementById('vhamOrder').addEventListener('click', function(){
-    window.location.href = withCart('/orders/', cartItems);
-  });
-  document.getElementById('vhamBooking').addEventListener('click', function(){
-    showToast('Currently on the Booking Tracking page');
-    vhAcctMenu.classList.remove('open');
-  });
-  document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
-  vhAcctMenu.addEventListener('click', function(e){ e.stopPropagation(); });
-  document.getElementById('cartBtn').addEventListener('click', function(){
-    if(!cartItems.length){ showToast('Cart is empty'); return; }
-    window.location.href = withCart('/checkout/', cartItems);
-  });
+  html += '<div class="oq-items-card'+(booking.cancelled?' cancelled':'')+'">'
+   + '<div class="oq-item"><span>Assigned Physician</span><span>'+booking.doctor+'</span></div>'
+   + '<div class="oq-item"><span>Booking Time</span><span>'+booking.apptDate+' '+booking.slot+'</span></div>'
+   + '<div class="oq-item"><span>Service Area</span><span>'+booking.area+'</span></div>'
+   + '<div class="oq-item"><span>Contact Information</span><span>'+(booking.method==='call'?'Phone':'WhatsApp')+'</span></div>'
+   + '</div>';
+
+  if(!booking.cancelled && booking.prescription){
+   html += renderHerbProgress(booking.prescription);
+  }
+
+  if(!booking.cancelled && booking.status < 2){
+   html += '<div id="cancelArea"><button class="oq-cancel-btn" id="cancelBtn">Cancel This Booking</button>'
+    + '<div class="oq-cancel-note">To ensure quality service for all customers, the same Phone Number can cancel at most 1 time per week and 3 times per month.</div></div>';
+  }
+  html += '</div>';
+  if(!booking.cancelled && booking.status === 2){
+   html += '<div id="reviewArea"></div>';
+  }
+  document.getElementById('resultArea').innerHTML = html;
+  if(!booking.cancelled && booking.status === 2){
+   renderReviewSection(booking);
+  }
+
+  var cancelBtn = document.getElementById('cancelBtn');
+  if(cancelBtn){
+   cancelBtn.addEventListener('click', function(){
+    var limit = checkCancellationLimit(currentContact);
+    var area = document.getElementById('cancelArea');
+    if(!limit.allowed){
+     var msg = limit.reason === 'week'
+      ? 'You have cancelled one booking this week (within the last 7 days). If you need to adjust due to an emergency, please contact us via WhatsApp for assistance.'
+      : 'You have reached the cancellation limit (3 times) this month (within the last 30 days). If you need to adjust due to an emergency, please contact us via WhatsApp for assistance.';
+     area.innerHTML = '<div class="oq-cancel-blocked">'+msg+'</div>';
+     return;
+    }
+    area.innerHTML = '<div class="oq-cancel-confirm">'
+     + '<div class="oq-cancel-confirm-text">Are you sure you want to cancel this booking?</div>'
+     + '<div class="oq-cancel-confirm-btns"><button class="oq-cancel-back" id="cancelBack">Think Again</button><button class="oq-cancel-yes" id="cancelYes">Confirm Cancel</button></div>'
+     + '</div>';
+    document.getElementById('cancelBack').addEventListener('click', function(){ renderResult(booking); });
+    document.getElementById('cancelYes').addEventListener('click', async function(){
+     var yesBtn = this;
+     yesBtn.disabled = true;
+     try {
+      var res = await fetch(API_BASE + '/bookings/' + encodeURIComponent(booking.bookingNo) + '/cancel', {
+       method: 'PUT', headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({ phone: currentContact })
+      });
+      if(!res.ok){
+       var err = await res.json();
+       area.innerHTML = '<div class="oq-cancel-blocked">'+(err.error||'Cancellation failed, please try again later')+'</div>';
+       return;
+      }
+      recordCancellation(currentContact);
+      booking.cancelled = true;
+      renderResult(booking);
+     } catch(e){
+      area.innerHTML = '<div class="oq-cancel-blocked">Unable to connect to the server. Please try again later.</div>';
+     }
+    });
+   });
+  }
+ }
+
+ function renderNotFound(){
+  document.getElementById('resultArea').innerHTML =
+   '<div class="not-found-box"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>'
+   + '<p>No matching booking found, Please confirm your Booking ID and contact information.</p></div>';
+ }
+
+ var orderInput = document.getElementById('orderInput');
+ var contactInput = document.getElementById('contactInput');
+ var errorEl = document.getElementById('oqError');
+
+ document.getElementById('lookupBtn').addEventListener('click', async function(){
+  var bookingNo = orderInput.value.trim();
+  var contact = contactInput.value.trim();
+  if(!bookingNo || !contact){
+   errorEl.textContent = 'Please fill in your Booking ID and contact information.';
+   errorEl.classList.add('show');
+   document.getElementById('resultArea').innerHTML = '';
+   return;
+  }
+  var btn = this;
+  btn.disabled = true;
+  try {
+   var booking = await findBooking(bookingNo, contact);
+   if(booking){
+    errorEl.classList.remove('show');
+    currentContact = contact;
+    renderResult(booking);
+   } else {
+    errorEl.textContent = 'No matching booking found. Please verify your Booking ID and contact information.';
+    errorEl.classList.add('show');
+    document.getElementById('resultArea').innerHTML = '';
+   }
+  } catch(e){
+   errorEl.textContent = 'Unable to connect to the server. Please try again later.';
+   errorEl.classList.add('show');
+  }
+  btn.disabled = false;
+ });
+
+ function cartFromURL(){
+  var raw = new URLSearchParams(window.location.search).get('cart');
+  if(!raw) return [];
+  return raw.split(',').map(function(chunk){
+   var parts = chunk.split(':'); var id = Number(parts[0]);
+   return id ? {id:id, variant:(parts[1]==='t'?'trial':'full'), qty:Number(parts[2])||1} : null;
+  }).filter(Boolean);
+ }
+ function cartToParam(items){ return items.map(function(it){ return it.id+':'+(it.variant==='trial'?'t':'f')+':'+it.qty; }).join(','); }
+ function withCart(url, items){
+  var cartStr = cartToParam(items);
+  if(!cartStr) return url;
+  var hashIdx = url.indexOf('#');
+  var hash = hashIdx === -1 ? '' : url.slice(hashIdx);
+  var base = hashIdx === -1 ? url : url.slice(0, hashIdx);
+  return base + (base.indexOf('?')===-1 ? '?' : '&') + 'cart=' + encodeURIComponent(cartStr) + hash;
+ }
+ var cartItems = cartFromURL();
+ function updateCartBadge(){
+  var total = cartItems.reduce(function(s,it){ return s+it.qty; }, 0);
+  var badge = document.getElementById('cartBadge');
+  badge.textContent = total;
+  badge.style.display = total > 0 ? 'flex' : 'none';
+ }
+ updateCartBadge();
+
+ var toast = document.getElementById('toast');
+ var toastTimer = null;
+ function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2000);
+ }
+
+ document.getElementById('brandBtn').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
+ document.getElementById('bcHome').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
+ document.getElementById('searchBtn').addEventListener('click', function(){ showToast('Search · Feature Coming Soon'); });
+ var vhAcctMenu = document.getElementById('vhAcctMenu');
+ document.getElementById('acctBtn').addEventListener('click', function(e){
+  e.stopPropagation();
+  vhAcctMenu.classList.toggle('open');
+ });
+ document.getElementById('vhamOrder').addEventListener('click', function(){
+  window.location.href = withCart('/orders/', cartItems);
+ });
+ document.getElementById('vhamBooking').addEventListener('click', function(){
+  showToast('Currently on the Booking Tracking page');
+  vhAcctMenu.classList.remove('open');
+ });
+ document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
+ vhAcctMenu.addEventListener('click', function(e){ e.stopPropagation(); });
+ document.getElementById('cartBtn').addEventListener('click', function(){
+  if(!cartItems.length){ showToast('Cart is empty'); return; }
+  window.location.href = withCart('/checkout/', cartItems);
+ });
 })();
 </script>
 <style>
@@ -554,134 +554,134 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .vh-chat-input-row button{ flex:none; width:36px; height:36px; border-radius:50%; background:var(--forest,#26362B); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; }
 </style>
 <div class="vh-chat-fab" id="vhChatFab">
-  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
-  <span class="vh-chat-badge" id="vhChatBadge"></span>
+ <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+ <span class="vh-chat-badge" id="vhChatBadge"></span>
 </div>
 <div class="vh-chat-panel" id="vhChatPanel">
-  <div class="vh-chat-hd">
-    <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
-    <div class="vh-chat-hd-sub" id="vhChatSub">Chatting with Dr. Gong Shihong</div>
-    <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
-  </div>
-  <div class="vh-chat-body" id="vhChatBody"></div>
-  <div class="vh-chat-input-row">
-    <input type="text" id="vhChatInput" placeholder="Type a message…" maxlength="300">
-    <button type="button" id="vhChatSend"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
-  </div>
+ <div class="vh-chat-hd">
+  <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
+  <div class="vh-chat-hd-sub" id="vhChatSub">Chatting with Dr. Gong Shihong</div>
+  <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
+ </div>
+ <div class="vh-chat-body" id="vhChatBody"></div>
+ <div class="vh-chat-input-row">
+  <input type="text" id="vhChatInput" placeholder="Type a message…" maxlength="300">
+  <button type="button" id="vhChatSend"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+ </div>
 </div>
 <script>
 (function(){
-  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  // 聊天消息Yes任何匿名访客都能Submit的内容，管理员Open对话时会看到——不转义就直接拼进innerHTML
-  // 的话，访客可以在消息里塞HTML/脚本，在管理员已Login的Browse器里执行（存储型XSS）。
-  function escapeHtml(s){
-    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
-    });
-  }
-  var CUSTOMER_ID_KEY = 'vinath_customer_chat_id';
-  var pollTimer = null;
-  var currentThread = null;
-  var currentMessages = [];
-
-  function getCustomerId(){
-    try {
-      var id = localStorage.getItem(CUSTOMER_ID_KEY);
-      if(!id){ id = 'cust_' + Date.now() + '_' + Math.random().toString(36).slice(2,8); localStorage.setItem(CUSTOMER_ID_KEY, id); }
-      return id;
-    } catch(e){ return 'cust_temp'; }
-  }
-  // 客户端第一次Open聊天面板时调用——后端会自动处理"这pcs人Yes不Yes第一次来"、要不要插入欢迎语，
-  // 前端不用再自己判断这些
-  async function ensureMyThread(){
-    try {
-      var res = await fetch(API_BASE + '/chat/ensure-thread', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customerId: getCustomerId() })
-      });
-      if(!res.ok) return null;
-      var data = await res.json();
-      currentThread = data.thread;
-      currentMessages = data.messages;
-      return currentThread;
-    } catch(e){ console.error('Chat init failed:', e); return null; }
-  }
-  async function refreshMyThread(){
-    try {
-      var res = await fetch(API_BASE + '/chat/threads/' + getCustomerId());
-      if(!res.ok) return null;
-      var data = await res.json();
-      currentThread = data.thread;
-      currentMessages = data.messages;
-      return currentThread;
-    } catch(e){ return null; }
-  }
-
-  function renderMessages(){
-    var body = document.getElementById('vhChatBody');
-    var sub = document.getElementById('vhChatSub');
-    if(!currentThread || !currentMessages.length){
-      body.innerHTML = '<div class="vh-chat-empty">Hello, feel free to leave a message here and we will reply as soon as possible.</div>';
-    } else {
-      body.innerHTML = currentMessages.map(function(m){
-        return '<div class="vh-chat-msg '+m.from+'">'+escapeHtml(m.text)+'</div>';
-      }).join('');
-      body.scrollTop = body.scrollHeight;
-    }
-    if(currentThread) sub.textContent = 'Chatting with ' + currentThread.assignedToName + '';
-    updateBadge();
-  }
-  function updateBadge(){
-    var badge = document.getElementById('vhChatBadge');
-    var panelOpen = document.getElementById('vhChatPanel').classList.contains('open');
-    if(currentThread && currentThread.unreadForCustomer && !panelOpen){
-      badge.style.display = 'flex'; badge.textContent = '1';
-    } else {
-      badge.style.display = 'none';
-    }
-  }
-
-  document.getElementById('vhChatFab').addEventListener('click', async function(){
-    var panel = document.getElementById('vhChatPanel');
-    panel.classList.toggle('open');
-    if(panel.classList.contains('open')){
-      await ensureMyThread();
-      renderMessages();
-    }
-    updateBadge();
+ var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+ // 聊天消息Yes任何匿名访客都能Submit的内容, 管理员Open对话时会看到——不转义就直接拼进innerHTML
+ // 的话, 访客可以在消息里塞HTML/脚本, 在管理员已Login的Browse器里执行(存储型XSS).
+ function escapeHtml(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+   return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
   });
-  document.getElementById('vhChatClose').addEventListener('click', function(){
-    document.getElementById('vhChatPanel').classList.remove('open');
-  });
-  async function sendMsg(){
-    var input = document.getElementById('vhChatInput');
-    var text = input.value.trim();
-    if(!text) return;
-    input.value = '';
-    input.disabled = true;
-    try {
-      await fetch(API_BASE + '/chat/threads/' + getCustomerId() + '/messages', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: text })
-      });
-      await refreshMyThread();
-      renderMessages();
-    } catch(e){ console.error('Send failed:', e); }
-    input.disabled = false;
-    input.focus();
-  }
-  document.getElementById('vhChatSend').addEventListener('click', sendMsg);
-  document.getElementById('vhChatInput').addEventListener('keydown', function(e){ if(e.key==='Enter') sendMsg(); });
+ }
+ var CUSTOMER_ID_KEY = 'vinath_customer_chat_id';
+ var pollTimer = null;
+ var currentThread = null;
+ var currentMessages = [];
 
-  // poll for admin replies / handoff changes while the widget is on screen
-  pollTimer = setInterval(async function(){
-    if(!currentThread) return; // 还没Open过聊天面板，没必要轮询
-    await refreshMyThread();
-    renderMessages();
-  }, 4000);
+ function getCustomerId(){
+  try {
+   var id = localStorage.getItem(CUSTOMER_ID_KEY);
+   if(!id){ id = 'cust_' + Date.now() + '_' + Math.random().toString(36).slice(2,8); localStorage.setItem(CUSTOMER_ID_KEY, id); }
+   return id;
+  } catch(e){ return 'cust_temp'; }
+ }
+ // 客户端第一次Open聊天面板时调用——后端会自动处理"这pcs人Yes不Yes第一次来", 要不要插入欢迎语, 
+ // 前端不用再自己判断这些
+ async function ensureMyThread(){
+  try {
+   var res = await fetch(API_BASE + '/chat/ensure-thread', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ customerId: getCustomerId() })
+   });
+   if(!res.ok) return null;
+   var data = await res.json();
+   currentThread = data.thread;
+   currentMessages = data.messages;
+   return currentThread;
+  } catch(e){ console.error('Chat init failed:', e); return null; }
+ }
+ async function refreshMyThread(){
+  try {
+   var res = await fetch(API_BASE + '/chat/threads/' + getCustomerId());
+   if(!res.ok) return null;
+   var data = await res.json();
+   currentThread = data.thread;
+   currentMessages = data.messages;
+   return currentThread;
+  } catch(e){ return null; }
+ }
+
+ function renderMessages(){
+  var body = document.getElementById('vhChatBody');
+  var sub = document.getElementById('vhChatSub');
+  if(!currentThread || !currentMessages.length){
+   body.innerHTML = '<div class="vh-chat-empty">Hello, feel free to leave a message here and we will reply as soon as possible.</div>';
+  } else {
+   body.innerHTML = currentMessages.map(function(m){
+    return '<div class="vh-chat-msg '+m.from+'">'+escapeHtml(m.text)+'</div>';
+   }).join('');
+   body.scrollTop = body.scrollHeight;
+  }
+  if(currentThread) sub.textContent = 'Chatting with ' + currentThread.assignedToName + '';
+  updateBadge();
+ }
+ function updateBadge(){
+  var badge = document.getElementById('vhChatBadge');
+  var panelOpen = document.getElementById('vhChatPanel').classList.contains('open');
+  if(currentThread && currentThread.unreadForCustomer && !panelOpen){
+   badge.style.display = 'flex'; badge.textContent = '1';
+  } else {
+   badge.style.display = 'none';
+  }
+ }
+
+ document.getElementById('vhChatFab').addEventListener('click', async function(){
+  var panel = document.getElementById('vhChatPanel');
+  panel.classList.toggle('open');
+  if(panel.classList.contains('open')){
+   await ensureMyThread();
+   renderMessages();
+  }
+  updateBadge();
+ });
+ document.getElementById('vhChatClose').addEventListener('click', function(){
+  document.getElementById('vhChatPanel').classList.remove('open');
+ });
+ async function sendMsg(){
+  var input = document.getElementById('vhChatInput');
+  var text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+  input.disabled = true;
+  try {
+   await fetch(API_BASE + '/chat/threads/' + getCustomerId() + '/messages', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: text })
+   });
+   await refreshMyThread();
+   renderMessages();
+  } catch(e){ console.error('Send failed:', e); }
+  input.disabled = false;
+  input.focus();
+ }
+ document.getElementById('vhChatSend').addEventListener('click', sendMsg);
+ document.getElementById('vhChatInput').addEventListener('keydown', function(e){ if(e.key==='Enter') sendMsg(); });
+
+ // poll for admin replies / handoff changes while the widget is on screen
+ pollTimer = setInterval(async function(){
+  if(!currentThread) return; // 还没Open过聊天面板, 没必要轮询
+  await refreshMyThread();
+  renderMessages();
+ }, 4000);
 })();
 </script>
 
-  <script src="/assets/i18n.js?v=20260909z"></script>
+ <script src="/assets/i18n.js?v=20260909z"></script>
 </body>
 </html>

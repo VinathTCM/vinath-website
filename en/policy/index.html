@@ -8,141 +8,141 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --warm-white: #FAF7F1;
-    --warm-black: #201D19;
-    --forest: #26362B;
-    --forest-light: #34483A;
-    --sage: #AEBBA0;
-    --sage-light: #DEE4D4;
-    --sage-mist: #F1F3EC;
-    --beige: #E9E0CD;
-    --gold: #A9824C;
-    --font-display: 'Space Grotesk', 'Noto Serif SC', serif;
-    --font-body: 'Manrope', 'Noto Sans SC', sans-serif;
-    --font-mono: 'Space Mono', 'Noto Sans SC', monospace;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  html { scroll-behavior:smooth; }
-  body { background:var(--warm-white); color:var(--warm-black); font-family:var(--font-body); -webkit-font-smoothing:antialiased; }
+ :root {
+  --warm-white: #FAF7F1;
+  --warm-black: #201D19;
+  --forest: #26362B;
+  --forest-light: #34483A;
+  --sage: #AEBBA0;
+  --sage-light: #DEE4D4;
+  --sage-mist: #F1F3EC;
+  --beige: #E9E0CD;
+  --gold: #A9824C;
+  --font-display: 'Space Grotesk', 'Noto Serif SC', serif;
+  --font-body: 'Manrope', 'Noto Sans SC', sans-serif;
+  --font-mono: 'Space Mono', 'Noto Sans SC', monospace;
+ }
+ * { margin:0; padding:0; box-sizing:border-box; }
+ html { scroll-behavior:smooth; }
+ body { background:var(--warm-white); color:var(--warm-black); font-family:var(--font-body); -webkit-font-smoothing:antialiased; }
 
-  .top-nav { display:flex; align-items:center; justify-content:space-between; padding:32px 5%; max-width:1400px; margin:0 auto; }
-  .logo { font-family:'Cormorant Garamond', serif; font-size:19px; font-weight:600; letter-spacing:4px; color:inherit; text-decoration:none; }
-  .logo .nav-tm { font-size:10px; vertical-align:super; letter-spacing:0; opacity:.7; margin-left:1px; }
-  .back-link { font-size:14px; color:var(--warm-black); opacity:.6; text-decoration:none; }
-  .back-link:hover { opacity:1; }
+ .top-nav { display:flex; align-items:center; justify-content:space-between; padding:32px 5%; max-width:1400px; margin:0 auto; }
+ .logo { font-family:'Cormorant Garamond', serif; font-size:19px; font-weight:600; letter-spacing:4px; color:inherit; text-decoration:none; }
+ .logo .nav-tm { font-size:10px; vertical-align:super; letter-spacing:0; opacity:.7; margin-left:1px; }
+ .back-link { font-size:14px; color:var(--warm-black); opacity:.6; text-decoration:none; }
+ .back-link:hover { opacity:1; }
 
-  .policy-wrap { max-width:900px; margin:0 auto; padding:20px 5% 100px; }
-  .policy-tabs { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:48px; border-bottom:1px solid rgba(32,29,25,.1); padding-bottom:20px; }
-  .policy-tab { font-size:14px; padding:8px 16px; border-radius:100px; background:var(--sage-mist); color:var(--warm-black); opacity:.7; text-decoration:none; transition:.2s; }
-  .policy-tab:hover { opacity:1; }
-  .policy-tab.active { background:var(--forest); color:var(--warm-white); opacity:1; }
+ .policy-wrap { max-width:900px; margin:0 auto; padding:20px 5% 100px; }
+ .policy-tabs { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:48px; border-bottom:1px solid rgba(32,29,25,.1); padding-bottom:20px; }
+ .policy-tab { font-size:14px; padding:8px 16px; border-radius:100px; background:var(--sage-mist); color:var(--warm-black); opacity:.7; text-decoration:none; transition:.2s; }
+ .policy-tab:hover { opacity:1; }
+ .policy-tab.active { background:var(--forest); color:var(--warm-white); opacity:1; }
 
-  .policy-doc { display:none; }
-  .policy-doc.active { display:block; }
-  .policy-doc h1 { font-family:'Noto Serif SC', serif; font-weight:600; font-size:clamp(28px,4vw,40px); margin-bottom:8px; }
-  .policy-updated { font-family:var(--font-mono); font-size:12px; opacity:.5; margin-bottom:36px; }
-  .policy-doc h3 { font-family:'Noto Serif SC', serif; font-weight:600; font-size:19px; margin:32px 0 12px; color:var(--forest); }
-  .policy-doc p { font-size:15.5px; line-height:1.9; opacity:.82; margin-bottom:14px; white-space:pre-line; text-align:justify; text-justify:inter-ideograph; }
+ .policy-doc { display:none; }
+ .policy-doc.active { display:block; }
+ .policy-doc h1 { font-family:'Noto Serif SC', serif; font-weight:600; font-size:clamp(28px,4vw,40px); margin-bottom:8px; }
+ .policy-updated { font-family:var(--font-mono); font-size:12px; opacity:.5; margin-bottom:36px; }
+ .policy-doc h3 { font-family:'Noto Serif SC', serif; font-weight:600; font-size:19px; margin:32px 0 12px; color:var(--forest); }
+ .policy-doc p { font-size:15.5px; line-height:1.9; opacity:.82; margin-bottom:14px; white-space:pre-line; text-align:justify; text-justify:inter-ideograph; }
 
-  footer { padding:60px 5% 40px; max-width:1400px; margin:80px auto 0; }
-  .footer-top { display:flex; justify-content:space-between; align-items:flex-start; gap:24px; flex-wrap:wrap; padding-bottom:28px; border-top:1px solid rgba(32,29,25,.1); padding-top:44px; }
-  .footer-brand p { font-size:15px; opacity:.55; margin-top:6px; }
-  .footer-links { display:flex; flex-wrap:wrap; gap:8px 26px; }
-  .footer-links a { color:var(--warm-black); opacity:.6; text-decoration:none; font-size:14px; transition:opacity .2s ease; }
-  .footer-links a:hover, .footer-links a.active { opacity:1; }
-  .footer-bottom { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; padding-top:22px; font-family:var(--font-body); font-size:13px; opacity:.5; letter-spacing:.01em; }
-  .footer-bottom .footer-my { font-weight:700; letter-spacing:.04em; white-space:nowrap; }
-  @media (max-width:600px){
-    .footer-top { flex-direction:column; gap:20px; align-items:flex-start; }
-    .footer-bottom { flex-direction:column; align-items:flex-start; gap:6px; }
-  }
+ footer { padding:60px 5% 40px; max-width:1400px; margin:80px auto 0; }
+ .footer-top { display:flex; justify-content:space-between; align-items:flex-start; gap:24px; flex-wrap:wrap; padding-bottom:28px; border-top:1px solid rgba(32,29,25,.1); padding-top:44px; }
+ .footer-brand p { font-size:15px; opacity:.55; margin-top:6px; }
+ .footer-links { display:flex; flex-wrap:wrap; gap:8px 26px; }
+ .footer-links a { color:var(--warm-black); opacity:.6; text-decoration:none; font-size:14px; transition:opacity .2s ease; }
+ .footer-links a:hover, .footer-links a.active { opacity:1; }
+ .footer-bottom { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; padding-top:22px; font-family:var(--font-body); font-size:13px; opacity:.5; letter-spacing:.01em; }
+ .footer-bottom .footer-my { font-weight:700; letter-spacing:.04em; white-space:nowrap; }
+ @media (max-width:600px){
+  .footer-top { flex-direction:column; gap:20px; align-items:flex-start; }
+  .footer-bottom { flex-direction:column; align-items:flex-start; gap:6px; }
+ }
 </style>
-  <link rel="icon" type="image/webp" href="/favicon.webp">
+ <link rel="icon" type="image/webp" href="/favicon.webp">
 
 <script>
-  window.VINATH_PAGE_LANG = 'en';
+ window.VINATH_PAGE_LANG = 'en';
 </script>
 
 
 <style>
-  /* 英文版标题Apply Poppins Black */
-  h1, h2, h3, h4, h5, h6,
-  .hero-title, .section-title, .page-title,
-  .eyebrow, .cta-title,
-  .process-step-title, .journey-card-title,
-  .footer-title, .nav-link {
-    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
-  }
-  
-  /* 大标题Apply Black 900 */
-  h1, .hero-title, .section-title, .page-title {
-    font-weight: 900 !important;
-    letter-spacing: -0.02em;
-  }
-  
-  /* 二级标题Apply ExtraBold 800 */
-  h2, .process-step-title, .journey-card-title, .footer-title {
-    font-weight: 800 !important;
-  }
-  
-  /* 三级标题Apply Bold 700 */
-  h3, h4 {
-    font-weight: 700 !important;
-  }
-  
-  /* 小标签Apply SemiBold 600 */
-  .eyebrow, .cta-title {
-    font-weight: 600 !important;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
+ /* 英文版标题Apply Poppins Black */
+ h1, h2, h3, h4, h5, h6,
+ .hero-title, .section-title, .page-title,
+ .eyebrow, .cta-title,
+ .process-step-title, .journey-card-title,
+ .footer-title, .nav-link {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+ }
+ 
+ /* 大标题Apply Black 900 */
+ h1, .hero-title, .section-title, .page-title {
+  font-weight: 900 !important;
+  letter-spacing: -0.02em;
+ }
+ 
+ /* 二级标题Apply ExtraBold 800 */
+ h2, .process-step-title, .journey-card-title, .footer-title {
+  font-weight: 800 !important;
+ }
+ 
+ /* 三级标题Apply Bold 700 */
+ h3, h4 {
+  font-weight: 700 !important;
+ }
+ 
+ /* 小标签Apply SemiBold 600 */
+ .eyebrow, .cta-title {
+  font-weight: 600 !important;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+ }
 </style>
 
 </head>
 <body>
 
 <div class="top-nav">
-  <a href="/en/" class="logo">VINATH<span class="nav-tm">™</span></a>
-  <a href="/en/" class="back-link">← Back to Home</a>
+ <a href="/en/" class="logo">VINATH<span class="nav-tm">™</span></a>
+ <a href="/en/" class="back-link">← Back to Home</a>
 </div>
 
 <div class="policy-wrap">
-  <nav class="policy-tabs" id="policyTabs"></nav>
-  <div id="policyDocs"></div>
+ <nav class="policy-tabs" id="policyTabs"></nav>
+ <div id="policyDocs"></div>
 </div>
 
 <footer>
-  <div class="footer-top">
-    <div class="footer-brand">
-      <div class="logo">VINATH<span class="nav-tm">™</span></div>
-      <p>Health, Should Be Simple · Easy Health</p>
-    </div>
-    <nav class="footer-links" id="footerLinks"></nav>
+ <div class="footer-top">
+  <div class="footer-brand">
+   <div class="logo">VINATH<span class="nav-tm">™</span></div>
+   <p>Health, Should Be Simple · Easy Health</p>
   </div>
-  <div class="footer-bottom">
-    <span>Copyright &copy; 2026 VINATH TCM HEALTH CARE. All rights reserved.</span>
-    <span class="footer-my">Malaysia</span>
-  </div>
+  <nav class="footer-links" id="footerLinks"></nav>
+ </div>
+ <div class="footer-bottom">
+  <span>Copyright &copy; 2026 VINATH TCM HEALTH CARE. All rights reserved.</span>
+  <span class="footer-my">Malaysia</span>
+ </div>
 </footer>
 
 <script>
-  (function(){
-    var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-    fetch(API_BASE + '/analytics/pageview', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ page: 'Policies page' })
-    }).catch(function(){});
-  })();
+ (function(){
+  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+  fetch(API_BASE + '/analytics/pageview', {
+   method: 'POST', headers: { 'Content-Type': 'application/json' },
+   body: JSON.stringify({ page: 'Policies page' })
+  }).catch(function(){});
+ })();
 
 (async function(){
-  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  var POLICY_DOCS = ['privacy','terms','sales','legal','sitemap'];
-  var POLICY_LABELS = {privacy:'Privacy Policy', terms:'Terms of Use', sales:'Sales & Refund Policy', legal:'Legal Notice', sitemap:'Sitemap'};
-  // same defaults as the admin tool ships with, so this page still shows something sensible
-  // even before the admin side has ever been opened/saved
-  var POLICY_DEFAULTS = {
-    privacy: { title:'Privacy Policy', content:
+ var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+ var POLICY_DOCS = ['privacy','terms','sales','legal','sitemap'];
+ var POLICY_LABELS = {privacy:'Privacy Policy', terms:'Terms of Use', sales:'Sales & Refund Policy', legal:'Legal Notice', sitemap:'Sitemap'};
+ // same defaults as the admin tool ships with, so this page still shows something sensible
+ // even before the admin side has ever been opened/saved
+ var POLICY_DEFAULTS = {
+  privacy: { title:'Privacy Policy', content:
 `## Privacy Policy — English Version
 
 Last updated: 9 September 2026
@@ -265,8 +265,8 @@ If you have any questions about this Privacy Policy, or wish to lodge a complain
 
 
 `
-    },
-    terms: { title:'Terms of Use', content:
+  },
+  terms: { title:'Terms of Use', content:
 `## Terms of Use — English Version
 
 Last updated: 9 September 2026
@@ -355,8 +355,8 @@ If you have any questions about these Terms, please contact us via WhatsApp +601
 
 
 `
-    },
-    sales: { title:'Sales & Refund Policy', content:
+  },
+  sales: { title:'Sales & Refund Policy', content:
 `## Sales & Refund Policy — English Version
 
 Last updated: 9 September 2026
@@ -485,8 +485,8 @@ Email: vinathtcm@outlook.com
 
 
 `
-    },
-    legal: { title:'Legal Notice', content:
+  },
+  legal: { title:'Legal Notice', content:
 `## Legal Notice — English Version
 
 Last updated: 9 September 2026
@@ -547,8 +547,8 @@ If you have any questions about this legal notice, please contact us via:
 
 
 `
-    },
-    sitemap: { title:'Sitemap', content:
+  },
+  sitemap: { title:'Sitemap', content:
 `## Sitemap — English Version
 
 ### Home
@@ -597,74 +597,74 @@ If you have any questions about this legal notice, please contact us via:
 
 
 `
-    }
-  };;
-
-  async function getPolicyDocs(){
-    var merged = {};
-    try {
-      var res = await fetch(API_BASE + '/site-settings/policy_pages');
-      var saved = res.ok ? await res.json() : null;
-      POLICY_DOCS.forEach(function(key){ var sv=saved&&saved[key]; if(sv&&/[\u4e00-\u9fff]/.test((sv.title||'')+(sv.content||''))) sv=null; merged[key] = sv || POLICY_DEFAULTS[key]; });
-    } catch(e){
-      POLICY_DOCS.forEach(function(key){ merged[key] = POLICY_DEFAULTS[key]; });
-    }
-    return merged;
   }
+ };;
 
-  // very small "markdown-lite" renderer matching the admin editor's own convention:
-  // blank line = paragraph break, a line starting with "## " = a sub-heading
-  function renderContent(text){
-    var lines = text.replace(/\r\n/g,'\n').split('\n');
-    var html = '';
-    var para = [];
-    function flush(){
-      if(para.length){ html += '<p>'+para.join('\n')+'</p>'; para = []; }
-    }
-    lines.forEach(function(line){
-      if(line.trim()===''){ flush(); }
-      else if(line.indexOf('## ')===0){ flush(); html += '<h3>'+line.slice(3)+'</h3>'; }
-      else { para.push(line); }
-    });
-    flush();
-    return html;
+ async function getPolicyDocs(){
+  var merged = {};
+  try {
+   var res = await fetch(API_BASE + '/site-settings/policy_pages');
+   var saved = res.ok ? await res.json() : null;
+   POLICY_DOCS.forEach(function(key){ var sv=saved&&saved[key]; if(sv&&/[\u4e00-\u9fff]/.test((sv.title||'')+(sv.content||''))) sv=null; merged[key] = sv || POLICY_DEFAULTS[key]; });
+  } catch(e){
+   POLICY_DOCS.forEach(function(key){ merged[key] = POLICY_DEFAULTS[key]; });
   }
+  return merged;
+ }
 
-  function escapeHtml(s){
-    var d = document.createElement('div'); d.textContent = s; return d.innerHTML;
+ // very small "markdown-lite" renderer matching the admin editor's own convention:
+ // blank line = paragraph break, a line starting with "## " = a sub-heading
+ function renderContent(text){
+  var lines = text.replace(/\r\n/g,'\n').split('\n');
+  var html = '';
+  var para = [];
+  function flush(){
+   if(para.length){ html += '<p>'+para.join('\n')+'</p>'; para = []; }
   }
-
-  var docs = await getPolicyDocs();
-
-  document.getElementById('policyTabs').innerHTML = POLICY_DOCS.map(function(key){
-    return '<a href="#'+key+'" class="policy-tab" data-doc="'+key+'">'+escapeHtml(docs[key].title)+'</a>';
-  }).join('');
-  document.getElementById('footerLinks').innerHTML = POLICY_DOCS.map(function(key){
-    return '<a href="#'+key+'" data-doc="'+key+'">'+escapeHtml(docs[key].title)+'</a>';
-  }).join('');
-  document.getElementById('policyDocs').innerHTML = POLICY_DOCS.map(function(key){
-    var doc = docs[key];
-    return '<article class="policy-doc" id="doc-'+key+'">'
-      + '<h1>'+escapeHtml(doc.title)+'</h1>'
-      + renderContent(doc.content)
-      + '</article>';
-  }).join('');
-
-  function showDoc(key){
-    if(POLICY_DOCS.indexOf(key)===-1) key = POLICY_DOCS[0];
-    document.querySelectorAll('.policy-doc').forEach(function(el){ el.classList.toggle('active', el.id==='doc-'+key); });
-    document.querySelectorAll('[data-doc]').forEach(function(el){ el.classList.toggle('active', el.getAttribute('data-doc')===key); });
-    window.scrollTo({top:0, behavior:'instant'});
-  }
-  document.querySelectorAll('[data-doc]').forEach(function(el){
-    el.addEventListener('click', function(e){
-      e.preventDefault();
-      var key = this.getAttribute('data-doc');
-      history.replaceState(null, '', '#'+key);
-      showDoc(key);
-    });
+  lines.forEach(function(line){
+   if(line.trim()===''){ flush(); }
+   else if(line.indexOf('## ')===0){ flush(); html += '<h3>'+line.slice(3)+'</h3>'; }
+   else { para.push(line); }
   });
-  showDoc(window.location.hash ? window.location.hash.slice(1) : POLICY_DOCS[0]);
+  flush();
+  return html;
+ }
+
+ function escapeHtml(s){
+  var d = document.createElement('div'); d.textContent = s; return d.innerHTML;
+ }
+
+ var docs = await getPolicyDocs();
+
+ document.getElementById('policyTabs').innerHTML = POLICY_DOCS.map(function(key){
+  return '<a href="#'+key+'" class="policy-tab" data-doc="'+key+'">'+escapeHtml(docs[key].title)+'</a>';
+ }).join('');
+ document.getElementById('footerLinks').innerHTML = POLICY_DOCS.map(function(key){
+  return '<a href="#'+key+'" data-doc="'+key+'">'+escapeHtml(docs[key].title)+'</a>';
+ }).join('');
+ document.getElementById('policyDocs').innerHTML = POLICY_DOCS.map(function(key){
+  var doc = docs[key];
+  return '<article class="policy-doc" id="doc-'+key+'">'
+   + '<h1>'+escapeHtml(doc.title)+'</h1>'
+   + renderContent(doc.content)
+   + '</article>';
+ }).join('');
+
+ function showDoc(key){
+  if(POLICY_DOCS.indexOf(key)===-1) key = POLICY_DOCS[0];
+  document.querySelectorAll('.policy-doc').forEach(function(el){ el.classList.toggle('active', el.id==='doc-'+key); });
+  document.querySelectorAll('[data-doc]').forEach(function(el){ el.classList.toggle('active', el.getAttribute('data-doc')===key); });
+  window.scrollTo({top:0, behavior:'instant'});
+ }
+ document.querySelectorAll('[data-doc]').forEach(function(el){
+  el.addEventListener('click', function(e){
+   e.preventDefault();
+   var key = this.getAttribute('data-doc');
+   history.replaceState(null, '', '#'+key);
+   showDoc(key);
+  });
+ });
+ showDoc(window.location.hash ? window.location.hash.slice(1) : POLICY_DOCS[0]);
 })();
 </script>
 
@@ -689,134 +689,134 @@ If you have any questions about this legal notice, please contact us via:
 .vh-chat-input-row button{ flex:none; width:36px; height:36px; border-radius:50%; background:var(--forest,#26362B); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; }
 </style>
 <div class="vh-chat-fab" id="vhChatFab">
-  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
-  <span class="vh-chat-badge" id="vhChatBadge"></span>
+ <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+ <span class="vh-chat-badge" id="vhChatBadge"></span>
 </div>
 <div class="vh-chat-panel" id="vhChatPanel">
-  <div class="vh-chat-hd">
-    <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
-    <div class="vh-chat-hd-sub" id="vhChatSub">Chatting with Dr. Gong Shihong</div>
-    <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
-  </div>
-  <div class="vh-chat-body" id="vhChatBody"></div>
-  <div class="vh-chat-input-row">
-    <input type="text" id="vhChatInput" placeholder="Type a message…" maxlength="300">
-    <button type="button" id="vhChatSend"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
-  </div>
+ <div class="vh-chat-hd">
+  <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
+  <div class="vh-chat-hd-sub" id="vhChatSub">Chatting with Dr. Gong Shihong</div>
+  <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
+ </div>
+ <div class="vh-chat-body" id="vhChatBody"></div>
+ <div class="vh-chat-input-row">
+  <input type="text" id="vhChatInput" placeholder="Type a message…" maxlength="300">
+  <button type="button" id="vhChatSend"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+ </div>
 </div>
 <script>
 (function(){
-  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  // 聊天消息Yes任何匿名访客都能Submit的内容，管理员Open对话时会看到——不转义就直接拼进innerHTML
-  // 的话，访客可以在消息里塞HTML/脚本，在管理员已Login的Browse器里执行（存储型XSS).
-  function escapeHtml(s){
-    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
-    });
-  }
-  var CUSTOMER_ID_KEY = 'vinath_customer_chat_id';
-  var pollTimer = null;
-  var currentThread = null;
-  var currentMessages = [];
-
-  function getCustomerId(){
-    try {
-      var id = localStorage.getItem(CUSTOMER_ID_KEY);
-      if(!id){ id = 'cust_' + Date.now() + '_' + Math.random().toString(36).slice(2,8); localStorage.setItem(CUSTOMER_ID_KEY, id); }
-      return id;
-    } catch(e){ return 'cust_temp'; }
-  }
-  // 客户端第一次Open聊天面板时调用——后端会自动处理"这pcs人Yes不Yes第一次来"、要不要插入欢迎语，
-  // 前端不用再自己判断这些
-  async function ensureMyThread(){
-    try {
-      var res = await fetch(API_BASE + '/chat/ensure-thread', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customerId: getCustomerId() })
-      });
-      if(!res.ok) return null;
-      var data = await res.json();
-      currentThread = data.thread;
-      currentMessages = data.messages;
-      return currentThread;
-    } catch(e){ console.error('Chat init failed:', e); return null; }
-  }
-  async function refreshMyThread(){
-    try {
-      var res = await fetch(API_BASE + '/chat/threads/' + getCustomerId());
-      if(!res.ok) return null;
-      var data = await res.json();
-      currentThread = data.thread;
-      currentMessages = data.messages;
-      return currentThread;
-    } catch(e){ return null; }
-  }
-
-  function renderMessages(){
-    var body = document.getElementById('vhChatBody');
-    var sub = document.getElementById('vhChatSub');
-    if(!currentThread || !currentMessages.length){
-      body.innerHTML = '<div class="vh-chat-empty">Hello, feel free to leave a message here and we will reply as soon as possible.</div>';
-    } else {
-      body.innerHTML = currentMessages.map(function(m){
-        return '<div class="vh-chat-msg '+m.from+'">'+escapeHtml(m.text)+'</div>';
-      }).join('');
-      body.scrollTop = body.scrollHeight;
-    }
-    if(currentThread) sub.textContent = 'Chatting with ' + currentThread.assignedToName + '';
-    updateBadge();
-  }
-  function updateBadge(){
-    var badge = document.getElementById('vhChatBadge');
-    var panelOpen = document.getElementById('vhChatPanel').classList.contains('open');
-    if(currentThread && currentThread.unreadForCustomer && !panelOpen){
-      badge.style.display = 'flex'; badge.textContent = '1';
-    } else {
-      badge.style.display = 'none';
-    }
-  }
-
-  document.getElementById('vhChatFab').addEventListener('click', async function(){
-    var panel = document.getElementById('vhChatPanel');
-    panel.classList.toggle('open');
-    if(panel.classList.contains('open')){
-      await ensureMyThread();
-      renderMessages();
-    }
-    updateBadge();
+ var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+ // 聊天消息Yes任何匿名访客都能Submit的内容, 管理员Open对话时会看到——不转义就直接拼进innerHTML
+ // 的话, 访客可以在消息里塞HTML/脚本, 在管理员已Login的Browse器里执行(存储型XSS).
+ function escapeHtml(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+   return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
   });
-  document.getElementById('vhChatClose').addEventListener('click', function(){
-    document.getElementById('vhChatPanel').classList.remove('open');
-  });
-  async function sendMsg(){
-    var input = document.getElementById('vhChatInput');
-    var text = input.value.trim();
-    if(!text) return;
-    input.value = '';
-    input.disabled = true;
-    try {
-      await fetch(API_BASE + '/chat/threads/' + getCustomerId() + '/messages', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: text })
-      });
-      await refreshMyThread();
-      renderMessages();
-    } catch(e){ console.error('Send failed:', e); }
-    input.disabled = false;
-    input.focus();
-  }
-  document.getElementById('vhChatSend').addEventListener('click', sendMsg);
-  document.getElementById('vhChatInput').addEventListener('keydown', function(e){ if(e.key==='Enter') sendMsg(); });
+ }
+ var CUSTOMER_ID_KEY = 'vinath_customer_chat_id';
+ var pollTimer = null;
+ var currentThread = null;
+ var currentMessages = [];
 
-  // poll for admin replies / handoff changes while the widget is on screen
-  pollTimer = setInterval(async function(){
-    if(!currentThread) return; // 还没Open过聊天面板，没必要轮询
-    await refreshMyThread();
-    renderMessages();
-  }, 4000);
+ function getCustomerId(){
+  try {
+   var id = localStorage.getItem(CUSTOMER_ID_KEY);
+   if(!id){ id = 'cust_' + Date.now() + '_' + Math.random().toString(36).slice(2,8); localStorage.setItem(CUSTOMER_ID_KEY, id); }
+   return id;
+  } catch(e){ return 'cust_temp'; }
+ }
+ // 客户端第一次Open聊天面板时调用——后端会自动处理"这pcs人Yes不Yes第一次来", 要不要插入欢迎语, 
+ // 前端不用再自己判断这些
+ async function ensureMyThread(){
+  try {
+   var res = await fetch(API_BASE + '/chat/ensure-thread', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ customerId: getCustomerId() })
+   });
+   if(!res.ok) return null;
+   var data = await res.json();
+   currentThread = data.thread;
+   currentMessages = data.messages;
+   return currentThread;
+  } catch(e){ console.error('Chat init failed:', e); return null; }
+ }
+ async function refreshMyThread(){
+  try {
+   var res = await fetch(API_BASE + '/chat/threads/' + getCustomerId());
+   if(!res.ok) return null;
+   var data = await res.json();
+   currentThread = data.thread;
+   currentMessages = data.messages;
+   return currentThread;
+  } catch(e){ return null; }
+ }
+
+ function renderMessages(){
+  var body = document.getElementById('vhChatBody');
+  var sub = document.getElementById('vhChatSub');
+  if(!currentThread || !currentMessages.length){
+   body.innerHTML = '<div class="vh-chat-empty">Hello, feel free to leave a message here and we will reply as soon as possible.</div>';
+  } else {
+   body.innerHTML = currentMessages.map(function(m){
+    return '<div class="vh-chat-msg '+m.from+'">'+escapeHtml(m.text)+'</div>';
+   }).join('');
+   body.scrollTop = body.scrollHeight;
+  }
+  if(currentThread) sub.textContent = 'Chatting with ' + currentThread.assignedToName + '';
+  updateBadge();
+ }
+ function updateBadge(){
+  var badge = document.getElementById('vhChatBadge');
+  var panelOpen = document.getElementById('vhChatPanel').classList.contains('open');
+  if(currentThread && currentThread.unreadForCustomer && !panelOpen){
+   badge.style.display = 'flex'; badge.textContent = '1';
+  } else {
+   badge.style.display = 'none';
+  }
+ }
+
+ document.getElementById('vhChatFab').addEventListener('click', async function(){
+  var panel = document.getElementById('vhChatPanel');
+  panel.classList.toggle('open');
+  if(panel.classList.contains('open')){
+   await ensureMyThread();
+   renderMessages();
+  }
+  updateBadge();
+ });
+ document.getElementById('vhChatClose').addEventListener('click', function(){
+  document.getElementById('vhChatPanel').classList.remove('open');
+ });
+ async function sendMsg(){
+  var input = document.getElementById('vhChatInput');
+  var text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+  input.disabled = true;
+  try {
+   await fetch(API_BASE + '/chat/threads/' + getCustomerId() + '/messages', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: text })
+   });
+   await refreshMyThread();
+   renderMessages();
+  } catch(e){ console.error('Send failed:', e); }
+  input.disabled = false;
+  input.focus();
+ }
+ document.getElementById('vhChatSend').addEventListener('click', sendMsg);
+ document.getElementById('vhChatInput').addEventListener('keydown', function(e){ if(e.key==='Enter') sendMsg(); });
+
+ // poll for admin replies / handoff changes while the widget is on screen
+ pollTimer = setInterval(async function(){
+  if(!currentThread) return; // 还没Open过聊天面板, 没必要轮询
+  await refreshMyThread();
+  renderMessages();
+ }, 4000);
 })();
 </script>
 
-  <script src="/assets/i18n.js?v=20260909z"></script>
+ <script src="/assets/i18n.js?v=20260909z"></script>
 </body>
 </html>

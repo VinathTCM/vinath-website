@@ -12,12 +12,12 @@ html{ -webkit-text-size-adjust:100%; }
 body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC","PingFang SC",sans-serif; color:#3B2E22; }
 
 :root{
-  --tan:#C9A876; --tan-deep:#A07A45; --espresso:#3B2E22; --espresso-soft:#6E5F4E;
-  --clay:#BC6E4E; --white-warm:#FFFDF9; --cream:#F7F3EC; --line:rgba(59,46,34,.10); --shadow:rgba(59,46,34,.13);
-  --amber:#B8863C; --amber-soft:rgba(184,134,60,.13); --sage:#8C9B7A;
-  --font-serif:"Noto Serif SC","Songti SC","STSong",serif;
-  --font-en:"Cormorant Garamond",Georgia,serif;
-  --pad: clamp(18px, 4.5vw, 44px);
+ --tan:#C9A876; --tan-deep:#A07A45; --espresso:#3B2E22; --espresso-soft:#6E5F4E;
+ --clay:#BC6E4E; --white-warm:#FFFDF9; --cream:#F7F3EC; --line:rgba(59,46,34,.10); --shadow:rgba(59,46,34,.13);
+ --amber:#B8863C; --amber-soft:rgba(184,134,60,.13); --sage:#8C9B7A;
+ --font-serif:"Noto Serif SC","Songti SC","STSong",serif;
+ --font-en:"Cormorant Garamond",Georgia,serif;
+ --pad: clamp(18px, 4.5vw, 44px);
 }
 
 .page{ max-width:760px; margin:0 auto; position:relative; }
@@ -39,7 +39,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .cart-badge{ position:absolute; top:-7px; right:-9px; background:var(--clay); color:#fff; font-size:10px; font-weight:700; min-width:16px; height:16px; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:0 4px; }
 .vh-acct-wrap{ position:relative; display:flex; }
 .vh-acct-menu{ position:absolute; top:calc(100% + 12px); right:-6px; background:var(--white-warm); border-radius:14px; box-shadow:0 14px 34px rgba(59,46,34,.18);
-  padding:8px; min-width:140px; opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:60; }
+ padding:8px; min-width:140px; opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:60; }
 .vh-acct-menu.open{ opacity:1; pointer-events:auto; }
 .vham-item{ padding:11px 14px; font-size:14px; border-radius:9px; cursor:pointer; color:var(--espresso); white-space:nowrap; }
 .vham-item:hover{ background:var(--cream); }
@@ -94,380 +94,380 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .not-found-box svg{ color:var(--tan); margin-bottom:14px; }
 
 .vh-toast{ position:fixed; left:50%; bottom:22px; transform:translate(-50%,10px); background:rgba(40,31,22,.94); color:#FDF8F0; font-size:15px; padding:11px 20px;
-  border-radius:20px; opacity:0; transition:opacity .25s, transform .25s; pointer-events:none; z-index:70; max-width:88vw; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+ border-radius:20px; opacity:0; transition:opacity .25s, transform .25s; pointer-events:none; z-index:70; max-width:88vw; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .vh-toast.show{ opacity:1; transform:translate(-50%,0); }
 </style>
-  <link rel="icon" type="image/webp" href="/favicon.webp">
+ <link rel="icon" type="image/webp" href="/favicon.webp">
 
 <script>
-  window.VINATH_PAGE_LANG = 'en';
+ window.VINATH_PAGE_LANG = 'en';
 </script>
 
 
 <style>
-  /* 英文版标题Apply Poppins Black */
-  h1, h2, h3, h4, h5, h6,
-  .hero-title, .section-title, .page-title,
-  .eyebrow, .cta-title,
-  .process-step-title, .journey-card-title,
-  .footer-title, .nav-link {
-    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
-  }
-  
-  /* 大标题Apply Black 900 */
-  h1, .hero-title, .section-title, .page-title {
-    font-weight: 900 !important;
-    letter-spacing: -0.02em;
-  }
-  
-  /* 二级标题Apply ExtraBold 800 */
-  h2, .process-step-title, .journey-card-title, .footer-title {
-    font-weight: 800 !important;
-  }
-  
-  /* 三级标题Apply Bold 700 */
-  h3, h4 {
-    font-weight: 700 !important;
-  }
-  
-  /* 小标签Apply SemiBold 600 */
-  .eyebrow, .cta-title {
-    font-weight: 600 !important;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
+ /* 英文版标题Apply Poppins Black */
+ h1, h2, h3, h4, h5, h6,
+ .hero-title, .section-title, .page-title,
+ .eyebrow, .cta-title,
+ .process-step-title, .journey-card-title,
+ .footer-title, .nav-link {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+ }
+ 
+ /* 大标题Apply Black 900 */
+ h1, .hero-title, .section-title, .page-title {
+  font-weight: 900 !important;
+  letter-spacing: -0.02em;
+ }
+ 
+ /* 二级标题Apply ExtraBold 800 */
+ h2, .process-step-title, .journey-card-title, .footer-title {
+  font-weight: 800 !important;
+ }
+ 
+ /* 三级标题Apply Bold 700 */
+ h3, h4 {
+  font-weight: 700 !important;
+ }
+ 
+ /* 小标签Apply SemiBold 600 */
+ .eyebrow, .cta-title {
+  font-weight: 600 !important;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+ }
 </style>
 
 </head>
 <body>
 
 <div class="page">
-  <div class="vh-header">
-    <div class="side">
-      <div class="vh-brand" id="brandBtn">VINATH<span class="vh-tm">™</span></div>
+ <div class="vh-header">
+  <div class="side">
+   <div class="vh-brand" id="brandBtn">VINATH<span class="vh-tm">™</span></div>
+  </div>
+  <div class="vh-icons">
+   <div class="vh-ibtn" id="searchBtn" aria-label="Search">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10.3" cy="10.3" r="6.3"/><line x1="19.5" y1="19.5" x2="15" y2="15"/></svg>
+   </div>
+   <span class="vh-acct-wrap">
+    <div class="vh-ibtn" id="acctBtn" aria-label="Search">
+     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 19.5c1.2-3.8 3.9-5.7 7-5.7s5.8 1.9 7 5.7"/></svg>
     </div>
-    <div class="vh-icons">
-      <div class="vh-ibtn" id="searchBtn" aria-label="Search">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10.3" cy="10.3" r="6.3"/><line x1="19.5" y1="19.5" x2="15" y2="15"/></svg>
-      </div>
-      <span class="vh-acct-wrap">
-        <div class="vh-ibtn" id="acctBtn" aria-label="Search">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 19.5c1.2-3.8 3.9-5.7 7-5.7s5.8 1.9 7 5.7"/></svg>
-        </div>
-        <div class="vh-acct-menu" id="vhAcctMenu">
-          <div class="vham-item" id="vhamOrder">Track Order</div>
-          <div class="vham-item" id="vhamBooking">Track Booking</div>
-        </div>
-      </span>
-      <div class="vh-ibtn" id="cartBtn" aria-label="Cart">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
-        <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
-      </div>
+    <div class="vh-acct-menu" id="vhAcctMenu">
+     <div class="vham-item" id="vhamOrder">Track Order</div>
+     <div class="vham-item" id="vhamBooking">Track Booking</div>
     </div>
+   </span>
+   <div class="vh-ibtn" id="cartBtn" aria-label="Cart">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+    <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
+   </div>
+  </div>
+ </div>
+
+ <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-current">Order Tracking</span></div>
+
+ <div class="content">
+  <h1 class="oq-title">Order Tracking</h1>
+  <p class="oq-sub">No registration required. Enter your order number and contact information to view your order status.</p>
+
+  <div class="oq-form">
+   <div class="oq-field">
+    <label>Order Number</label>
+    <input type="text" id="orderInput" placeholder="e.g., VN20260715001">
+   </div>
+   <div class="oq-field">
+    <label>Contact Information</label>
+    <input type="text" id="contactInput" placeholder="Email or phone number used for ordering">
+   </div>
+   <div class="oq-error" id="oqError">No matching order found. Please verify your order number and contact information.</div>
+   <button class="oq-btn" id="lookupBtn">Track Order</button>
+   <div class="oq-hint-examples" id="demoHint"></div>
   </div>
 
-  <div class="breadcrumb"><span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-current">Order Tracking</span></div>
-
-  <div class="content">
-    <h1 class="oq-title">Order Tracking</h1>
-    <p class="oq-sub">No registration required. Enter your order number and contact information to view your order status.</p>
-
-    <div class="oq-form">
-      <div class="oq-field">
-        <label>Order Number</label>
-        <input type="text" id="orderInput" placeholder="e.g., VN20260715001">
-      </div>
-      <div class="oq-field">
-        <label>Contact Information</label>
-        <input type="text" id="contactInput" placeholder="Email or phone number used for ordering">
-      </div>
-      <div class="oq-error" id="oqError">No matching order found. Please verify your order number and contact information.</div>
-      <button class="oq-btn" id="lookupBtn">Track Order</button>
-      <div class="oq-hint-examples" id="demoHint"></div>
-    </div>
-
-    <div id="resultArea"></div>
-  </div>
+  <div id="resultArea"></div>
+ </div>
 </div>
 
 <div class="vh-footer">
-  <div class="vh-footer-top">
-    <div class="vh-footer-brand">VINATH<span class="vh-tm">™</span></div>
-  </div>
-  <div class="vh-footer-bottom">
-    <span>Copyright &copy; 2026 VINATH TCM HEALTH CARE. All rights reserved.</span>
-    <span class="vh-footer-my">Malaysia</span>
-  </div>
+ <div class="vh-footer-top">
+  <div class="vh-footer-brand">VINATH<span class="vh-tm">™</span></div>
+ </div>
+ <div class="vh-footer-bottom">
+  <span>Copyright &copy; 2026 VINATH TCM HEALTH CARE. All rights reserved.</span>
+  <span class="vh-footer-my">Malaysia</span>
+ </div>
 </div>
 
 <div class="vh-toast" id="toast"></div>
 
 <script>
-  (function(){
-    var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-    fetch(API_BASE + '/analytics/pageview', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ page: 'Order Tracking' })
-    }).catch(function(){});
-  })();
+ (function(){
+  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+  fetch(API_BASE + '/analytics/pageview', {
+   method: 'POST', headers: { 'Content-Type': 'application/json' },
+   body: JSON.stringify({ page: 'Order Tracking' })
+  }).catch(function(){});
+ })();
 
 (function(){
-  var STATUS_LABELS = ['Order Submitted','Preparing Stock','Shipped','Delivered'];
+ var STATUS_LABELS = ['Order Submitted','Preparing Stock','Shipped','Delivered'];
 
-  var PRODUCTS = [
-    {id:1, name:'Yue Shu Patch', type:'plaster', journeys:["Women's Health"], tags:['Menstrual Pain'], price:9, trial:4, desc:'Apply during menstrual period for cold pain in waist and abdomen, the warmth slowly spreads.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:2, name:'Chi Xi Tea', type:'tea', journeys:["Women's Health"], tags:['Prolonged Period'], price:45, trial:16, desc:'When menstruation lasts too long or is spotty, drink it to help the body regulate its rhythm.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:3, name:'Man Xi Tea', type:'tea', journeys:["Women's Health"], tags:['heavy menstrual flow'], price:45, trial:16, desc:'On days with heavier flow, drink a cup for peace of mind.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:4, name:'Qian Xi Tea', type:'tea', journeys:["Women's Health"], tags:['scanty menstrual flow'], price:45, trial:16, desc:'Light and scanty periods, nourish qi and blood daily.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:5, name:'Xian Yue Tea', type:'tea', journeys:["Women's Health"], tags:['cycledisordered'], price:45, trial:16, desc:'Irregular cycles, help the body find its own rhythm.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:6, name:'Yue Xi Tea', type:'tea', journeys:["Women's Health"], tags:['Spotting'], price:45, trial:16, desc:'Occasional spotting between periods, nourish yin and cool blood, gentlewellness.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:7, name:'Wang Xi Tea', type:'tea', journeys:["Women's Health"], tags:['Prolonged Period','heavy menstrual flow'], price:45, trial:16, desc:'On days with long and heavy periods, a cup of tea helps stabilize.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:8, name:'Ying Yue Tea', type:'tea', journeys:["Women's Health"], tags:['cycledisordered','scanty menstrual flow'], price:45, trial:16, desc:'Scanty and irregular cycles, slowly nourish and replenish.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:9, name:'Yun Jing Tea', type:'tea', journeys:["Women's Health"], tags:['Heavy Flow'], price:45, trial:16, desc:'Excessive leucorrhea, strengthen spleen and remove dampness, feel fresh and clean.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:10, name:'Su Ya Tea', type:'tea', journeys:["Women's Health"], tags:['Abnormal Color'], price:45, trial:16, desc:'Abnormal color but not severe, daily gentle cleansing.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:11, name:'Zhilan Tea', type:'tea', journeys:["Women's Health"], tags:['with odor'], price:45, trial:16, desc:'With odor, clear heat and remove dampness, regain freshness.', active:true, inStock:false, featured:false, imgs:[]},
-    {id:12, name:'Lantang Sitz Bath Pack', type:'soak', journeys:["Women's Health"], tags:['recurrent itching'], price:25, trial:10, desc:'Recurring itching and discomfort, boil and take a reassuring hot bath.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:13, name:'Chengche Tea', type:'tea', journeys:["Women's Health"], tags:['with odor','Abnormal Color'], price:45, trial:16, desc:'When abnormal color and odor appear together, this clears them on two fronts.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:14, name:'Zhicheng Tea', type:'tea', journeys:["Women's Health"], tags:['with odor','Heavy Flow','Abnormal Color'], price:45, trial:16, desc:'For days with heavy flow, abnormal color and odor — comprehensive clearing and nourishing.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:15, name:'Yuexu Tea', type:'tea', journeys:["Women's Health"], tags:['cycleirregular'], price:45, trial:16, desc:'When the cycle stays irregular during pre-pregnancy, this soothes the liver and regulates qi to restore balance.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:16, name:'Xunuan Patch', type:'plaster', journeys:["Women's Health"], tags:['cold constitution'], price:9, trial:4, desc:'For cold constitution with cold hands and feet, apply this warm compress for deep inner warmth.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:17, name:'Lüe Tea', type:'tea', journeys:["Women's Health"], tags:['moodstress'], price:45, trial:16, desc:'When pre-pregnancy feels stressful, a cup helps you breathe easier.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:18, name:'Lanxin Tea', type:'tea', journeys:["Women's Health"], tags:['Pre-pregnancywellness'], price:45, trial:16, desc:'Daily pre-pregnancy constitution care, gently tonifying the liver and kidney to build a foundation.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:19, name:'Meiyue Tea', type:'tea', journeys:["Women's Health"], tags:['cycleirregular','moodstress'], price:45, trial:16, desc:'For irregular cycles with irritability, this soothes the liver and nourishes the blood together.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:20, name:'Lanxu Tea', type:'tea', journeys:["Women's Health"], tags:['cycleirregular','Pre-pregnancywellness','moodstress'], price:45, trial:16, desc:'A comprehensive wellness tea for when both cycle and mood need care during pre-pregnancy.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:21, name:'Jingyu Patch', type:'plaster', journeys:["Women's Health"], tags:['check-up indicates hyperplasia'], price:9, trial:4, desc:'If a check-up indicates hyperplasia, use as daily supportive wellness care alongside regular follow-ups.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:22, name:'Hefeng Tea', type:'tea', journeys:["Women's Health"], tags:['Lower-abdominal Heaviness'], price:45, trial:16, desc:'For persistent lower-abdominal heaviness, this regulates qi to release that stuck, uncomfortable sensation.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:23, name:'Jianghua Tea', type:'tea', journeys:["Women's Health"], tags:['discomfort worsens during menstrual period'], price:45, trial:16, desc:'For discomfort during menstrual days, this invigorates blood to release stagnation.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:24, name:'Nuanxi Tea', type:'tea', journeys:["Women's Health"], tags:['Lower-abdominal Heaviness','discomfort worsens during menstrual period'], price:45, trial:16, desc:'For heaviness that worsens during the menstrual period, this gently releases it.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:25, name:'Qinglu Tea', type:'tea', journeys:["Women's Health"], tags:['Hot Flashes & Night Sweats'], price:45, trial:16, desc:'For hot flashes, night sweats and restless sleep, this nourishes yin and consolidates sweating for a calmer feel.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:26, name:'Yuezhen Patch', type:'plaster', journeys:["Women's Health"], tags:['insomnia'], price:9, trial:4, desc:'For tossing and turning unable to sleep, apply to the Yongquan acupoint before bed.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:27, name:'Lanxin Tea', type:'tea', journeys:["Women's Health"], tags:['mood swings'], price:45, trial:16, desc:'When moods swing up and down, a cup helps you settle.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:28, name:'Jinglan Tea', type:'tea', journeys:["Women's Health"], tags:['Palpitations'], price:45, trial:16, desc:'For an unsettled, racing heart, this clears the heart and calms palpitations to gradually settle.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:29, name:'Suyue Patch', type:'plaster', journeys:["Women's Health"], tags:['insomnia','Palpitations'], price:9, trial:4, desc:'For poor sleep with palpitations, apply before bed for dual calming.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:30, name:'Jinghao Tea', type:'tea', journeys:["Women's Health"], tags:['insomnia','Palpitations','mood swings','Hot Flashes & Night Sweats'], price:49, trial:18, desc:'When menopause brings multiple discomforts at once, a cup of tea carries you steadily through.', active:true, inStock:true, featured:true, imgs:[]},
-    {id:31, name:'Chengu Tea', type:'tea', journeys:['Body Sculpting'], tags:['Irregular Meals'], price:45, trial:16, desc:'For irregular meals, this strengthens the spleen and harmonizes the stomach to restore eating rhythm.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:32, name:'Lanyin Tea', type:'tea', journeys:['Body Sculpting'], tags:['cravings for sweets and oily food'], price:45, trial:16, desc:"For sweet and oily food cravings, this resolves phlegm and dampness to lighten the body's load.", active:true, inStock:true, featured:false, imgs:[]},
-    {id:33, name:'Jiashan Tea', type:'tea', journeys:['Body Sculpting'], tags:['frequent eating out'], price:45, trial:16, desc:'After eating out too much, this clears and nourishes the spleen and stomach for a fresh feeling.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:34, name:'Chenxu Tea', type:'tea', journeys:['Body Sculpting'], tags:['Unplanned Diet'], price:45, trial:16, desc:'For an unplanned diet, this strengthens the spleen and boosts qi to build a foundation first.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:35, name:'Yunyin Tea', type:'tea', journeys:['Body Sculpting'], tags:['cravings for sweets and oily food','Unplanned Diet'], price:45, trial:16, desc:'For sweet and oily cravings without a plan — doubly resolves turbidity for a lighter start.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:36, name:'Qingchuan Tea', type:'tea', journeys:['Body Sculpting'], tags:['prolonged sitting, low activity'], price:45, trial:16, desc:'For prolonged sitting, this regulates qi and invigorates blood to get qi and blood flowing again.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:37, name:'Hezi Tea', type:'tea', journeys:['Body Sculpting'], tags:['Improper Exercise'], price:45, trial:16, desc:'For improper exercise form, this nourishes blood and relaxes the tendons for easier movement.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:38, name:'Hengchen Tea', type:'tea', journeys:['Body Sculpting'], tags:['Hard to Stay Consistent'], price:45, trial:16, desc:'For inconsistent routines, this boosts qi and strengthens the spleen to gradually build steady energy.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:39, name:'Muchuan Tea', type:'tea', journeys:['Body Sculpting'], tags:['Slow Post-exercise Recovery'], price:45, trial:16, desc:'For slow post-exercise recovery, this boosts qi and nourishes blood to speed recovery.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:40, name:'Hechuan Tea', type:'tea', journeys:['Body Sculpting'], tags:['prolonged sitting, low activity','Improper Exercise'], price:45, trial:16, desc:'For prolonged sitting and poor exercise posture — helps loosen and relax.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:41, name:'Hengchuan Tea', type:'tea', journeys:['Body Sculpting'], tags:['Slow Post-exercise Recovery','Hard to Stay Consistent'], price:45, trial:16, desc:'For inconsistency and slow recovery, dual qi and blood tonification sustains your state.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:42, name:'Chuxi Patch', type:'plaster', journeys:['Body Sculpting'], tags:['postpartum qi and blood deficiency'], price:9, trial:4, desc:'For postpartum qi and blood deficiency, gentle application to gradually rebuild.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:43, name:'Xiaoyue Patch', type:'plaster', journeys:['Body Sculpting'], tags:['abdominal sagging'], price:9, trial:4, desc:'For a sagging, weak abdomen, apply to help lift and tone.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:44, name:'Mugui Tea', type:'tea', journeys:['Body Sculpting'], tags:['slow recovery of energy'], price:45, trial:16, desc:'For slow postpartum recovery, dual qi and blood tonification supports you at a gentle pace.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:45, name:'Ganlu Tea', type:'tea', journeys:['Body Sculpting'], tags:['breastfeeding wellness'], price:45, trial:16, desc:'Breastfeeding needs extra qi and blood support — gentle nourishment.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:46, name:'Postpartum Vitality Patch', type:'plaster', journeys:['Body Sculpting'], tags:['postpartum qi and blood deficiency','slow recovery of energy'], price:9, trial:4, desc:'For postpartum qi and blood deficiency with slow recovery — an enhanced version to rebuild together.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:47, name:'Nuanyang Patch', type:'plaster', journeys:['Body Sculpting'], tags:['Cold Sensitivity'], price:9, trial:4, desc:'For cold hands and feet, this warms yang and dispels cold; apply to warm up.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:48, name:'Qingxi Tea', type:'tea', journeys:['Body Sculpting'], tags:['fatigue-prone'], price:45, trial:16, desc:'For persistent low energy, this boosts qi and strengthens the spleen to restore vitality.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:49, name:'Yunche Tea', type:'tea', journeys:['Body Sculpting'], tags:['Water Retention'], price:45, trial:16, desc:'When water retention weighs the body down, this strengthens the spleen and promotes diuresis for a lighter feel.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:50, name:'Qingying Tea', type:'tea', journeys:['Body Sculpting'], tags:['difficulty losing weight'], price:45, trial:16, desc:'When weight plateaus, this resolves dampness and strengthens the spleen to help stimulate metabolism.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:51, name:'Nuanshen Tea', type:'tea', journeys:['Body Sculpting'], tags:['Cold Sensitivity','fatigue-prone'], price:45, trial:16, desc:'For cold sensitivity with fatigue — warms yang and boosts qi together.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:52, name:'Lanche Tea', type:'tea', journeys:['Body Sculpting'], tags:['difficulty losing weight','Water Retention'], price:45, trial:16, desc:'For water retention with difficulty losing weight — doubly dispels dampness and reduces swelling.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:53, name:'Chenyan Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Sallow Complexion'], price:45, trial:16, desc:'For a sallow, low-energy complexion, this boosts qi and nourishes blood to gradually bring out a healthy glow.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:54, name:'Yuze Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Lacking Radiance'], price:45, trial:16, desc:'For dehydrated, lackluster skin, this nourishes yin and moistens dryness for a hydrated feel.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:55, name:'Xiaguang Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['fatigued dullness'], price:45, trial:16, desc:'When fatigue shows on the face, dual qi and blood tonification restores a healthy complexion.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:56, name:'Xihui Patch', type:'plaster', journeys:['Beauty & Radiance'], tags:['Sallow Complexion','fatigued dullness'], price:9, trial:4, desc:'For a poor complexion with fatigue, apply for dual complexion-brightening care.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:57, name:'Ningzhi Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Loss of Elasticity'], price:45, trial:16, desc:'For loss of skin elasticity, this boosts qi and nourishes yin to help skin regain firmness.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:58, name:'Shuanghua Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['early fine lines'], price:45, trial:16, desc:'When fine lines begin to appear, this nourishes yin and moistens the skin to soften early signs.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:59, name:'Wanxia Patch', type:'plaster', journeys:['Beauty & Radiance'], tags:['Sagging Cheeks'], price:9, trial:4, desc:'For slightly sagging cheeks, apply to help lift and tone.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:60, name:'Ningzhi Patch', type:'plaster', journeys:['Beauty & Radiance'], tags:['early fine lines','Loss of Elasticity','Sagging Cheeks'], price:9, trial:4, desc:'When sagging, fine lines and loss of facial tone appear together — a comprehensive lifting approach.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:61, name:'Cuie Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['recurrent breakouts'], price:45, trial:16, desc:'For recurrent acne, this clears heat and dispels dampness to gradually balance the constitution.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:62, name:'Yuji Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Enlarged Pores'], price:45, trial:16, desc:'For enlarged pores, this strengthens the spleen and seeps dampness for smoother skin.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:63, name:'Zhiruo Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Redness & Tingling'], price:45, trial:16, desc:'For redness and tingling, this cools the blood and clears heat to soothe sensitivity.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:64, name:'Qinghe Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Oily Skin'], price:45, trial:16, desc:'For an oily face, this clears heat and dispels dampness to control oil for a fresher feel.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:65, name:'Cuihe Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['recurrent breakouts','Oily Skin'], price:45, trial:16, desc:'When acne and oily shine appear together — doubly clears heat and dispels dampness.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:66, name:'Qingyan Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Facial Puffiness'], price:45, trial:16, desc:'For slightly puffy face, this strengthens the spleen and promotes diuresis to reduce swelling.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:67, name:'Yuelun Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Blurred Facial Contour'], price:45, trial:16, desc:'For a blurred facial contour, this boosts qi and nourishes blood to help restore definition.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:68, name:'Yunhan Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['double chin'], price:45, trial:16, desc:'For double-chin concerns, this resolves phlegm and dampness to help reduce it.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:69, name:'Yueche Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['double chin','Facial Puffiness'], price:45, trial:16, desc:'For puffiness with a double chin — helps reduce both.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:70, name:'Chenlu Tea', type:'tea', journeys:['Daily Wellness'], tags:['easily fatigued'], price:45, trial:16, desc:'For constant fatigue, this boosts qi and strengthens the spleen to restore energy.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:71, name:'Zhaohui Tea', type:'tea', journeys:['Daily Wellness'], tags:['Low Energy'], price:45, trial:16, desc:'For low energy and listlessness, this raises yang and boosts qi to awaken vitality.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:72, name:'Songfeng Tea', type:'tea', journeys:['Daily Wellness'], tags:['Difficulty Concentrating'], price:45, trial:16, desc:'For difficulty concentrating, this opens the orifices and calms the spirit for clearer thinking.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:73, name:'Pingshan Tea', type:'tea', journeys:['Daily Wellness'], tags:['weaker immunity'], price:45, trial:16, desc:'For frequent illness and weak resistance, this boosts qi and consolidates the exterior to strengthen defense.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:74, name:'Chaoyang Tea', type:'tea', journeys:['Daily Wellness'], tags:['easily fatigued','Low Energy'], price:45, trial:16, desc:'For fatigue and low spirits — dual qi-boosting and yang-raising care.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:75, name:'Lanwu Tea', type:'tea', journeys:['Daily Wellness'], tags:['Heavy Dampness'], price:45, trial:16, desc:'When heavy dampness weighs the body down, this strengthens the spleen and dispels dampness for a lighter feeling.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:76, name:'Helu Tea', type:'tea', journeys:['Daily Wellness'], tags:['Heat Intolerance & Easy Sweating'], price:45, trial:16, desc:'For sweating easily with movement, this consolidates sweating and boosts qi.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:77, name:'Sishi Tea', type:'tea', journeys:['Daily Wellness'], tags:['Seasonal Adjustment'], price:45, trial:16, desc:'For seasonal adjustment, this harmonizes the nutritive and defensive levels to help the body adapt faster.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:78, name:'Guya Tea', type:'tea', journeys:['Daily Wellness'], tags:['Poor Appetite'], price:45, trial:16, desc:'For poor appetite, this strengthens the stomach and aids digestion to restore appetite.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:79, name:'Wanshan Tea', type:'tea', journeys:['Daily Wellness'], tags:['Indigestion'], price:45, trial:16, desc:'For slow digestion, this aids digestion and harmonizes the stomach for comfort after meals.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:80, name:'Nuanzhi Tea', type:'tea', journeys:['Daily Wellness'], tags:['constipation'], price:45, trial:16, desc:'For sluggish bowel movements, this moistens the intestines for gentle regularity.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:81, name:'Wanfeng Tea', type:'tea', journeys:['Daily Wellness'], tags:['Abdominal Bloating'], price:45, trial:16, desc:'For persistent bloating, this regulates qi to ease distension for relief.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:82, name:'Guyu Tea', type:'tea', journeys:['Daily Wellness'], tags:['Indigestion','Abdominal Bloating'], price:45, trial:16, desc:'For indigestion with bloating — this helps smooth things out.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:83, name:'Guxu Tea', type:'tea', journeys:['Daily Wellness'], tags:['constipation','Indigestion','Abdominal Bloating','Poor Appetite'], price:45, trial:16, desc:'When appetite, digestion, bowel movements and bloating are all off — holistic regulation.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:84, name:'Songlan Tea', type:'tea', journeys:['Daily Wellness'], tags:['high stress'], price:45, trial:16, desc:'When stress feels overwhelming, this soothes the liver and regulates qi to help you unwind.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:85, name:'Zhuyun Tea', type:'tea', journeys:['Daily Wellness'], tags:['Irritability'], price:45, trial:16, desc:'For restlessness and irritability, this clears the heart and eliminates vexation to settle the mind.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:86, name:'Zhuying Tea', type:'tea', journeys:['Daily Wellness'], tags:['tense mood'], price:45, trial:16, desc:'When mood stays tense, this soothes the liver and releases stagnation to help you relax.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:87, name:'Yehe Tea', type:'tea', journeys:['Daily Wellness'], tags:['Bedtime Overthinking'], price:45, trial:16, desc:"For a mind that won't stop before bed, this nourishes the heart and calms the mind to help you let go.", active:true, inStock:true, featured:false, imgs:[]},
-    {id:88, name:'Zhusong Tea', type:'tea', journeys:['Daily Wellness'], tags:['high stress','Irritability'], price:45, trial:16, desc:'For high stress with irritability — doubly soothes the liver and clears the heart.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:89, name:'Wangyou Tea', type:'tea', journeys:['Daily Wellness'], tags:['tense mood','Bedtime Overthinking'], price:45, trial:16, desc:'For tense mood with heavy thoughts, a cup of tea lets the worries rest a while.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:90, name:'Songjie Patch', type:'plaster', journeys:['Pain Soothing'], tags:['stiffness from prolonged sitting'], price:9, trial:4, desc:'For stiff neck and shoulders after sitting long, apply to loosen and relax.', active:true, inStock:true, featured:true, imgs:[]},
-    {id:91, name:'Geyou Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Stiff Neck'], price:9, trial:4, desc:"For a stiff neck that won't turn, apply to release the muscles and relax the tendons.", active:true, inStock:true, featured:false, imgs:[]},
-    {id:92, name:'Shanyue Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Lower-back & Body Aches'], price:9, trial:4, desc:'For lower-back and body aches, apply to tonify the liver and kidney and strengthen the lower back.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:93, name:'Yunjian Patch', type:'plaster', journeys:['Pain Soothing'], tags:['aching neck and shoulders'], price:9, trial:4, desc:'For aching neck and shoulder discomfort, apply to invigorate blood and unblock the channels.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:94, name:'Yunsong Patch', type:'plaster', journeys:['Pain Soothing'], tags:['stiffness from prolonged sitting','aching neck and shoulders'], price:9, trial:4, desc:'For prolonged sitting with aching neck and shoulders — soothing relief.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:95, name:'Nuanjie Patch', type:'plaster', journeys:['Pain Soothing'], tags:['aching, heavy joints'], price:9, trial:4, desc:'For aching, heavy joint discomfort, apply to dispel dampness and unblock the channels.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:96, name:'Qinglan Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Worse with Cold'], price:9, trial:4, desc:'For symptoms that worsen with cold, apply to warm the meridians and dispel cold.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:97, name:'Zhanyi Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Limited Mobility'], price:9, trial:4, desc:'For stiff, awkward movement, apply to relax the tendons and unblock the collaterals.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:98, name:'Nuanlan Patch', type:'plaster', journeys:['Pain Soothing'], tags:['aching, heavy joints','Worse with Cold'], price:9, trial:4, desc:'For achy joints sensitive to cold — doubly dispels cold and dampness.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:99, name:'Chixia Patch', type:'plaster', journeys:['Pain Soothing'], tags:['muscle strain'], price:9, trial:4, desc:'For muscle strain, apply to invigorate blood and soothe discomfort.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:100, name:'Ziyun Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Sprains & Bruises'], price:9, trial:4, desc:'For sprains and bruises, apply to resolve stasis and reduce swelling.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:101, name:'Mujin Tea', type:'tea', journeys:['Pain Soothing'], tags:['Post-exercise Soreness'], price:45, trial:16, desc:'For post-exercise body aches, a cup nourishes and invigorates the blood.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:102, name:'Xiayun Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Sprains & Bruises','muscle strain'], price:9, trial:4, desc:'For strains with bruising — invigorates blood and resolves stasis together.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:103, name:'Chuanye Tea', type:'tea', journeys:['Pain Soothing'], tags:['generalized body aches'], price:45, trial:16, desc:'For generalized aching and weakness, dual qi and blood tonification gradually eases it.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:104, name:'Wanli Patch', type:'plaster', journeys:['Pain Soothing'], tags:['discomfort from long standing or sitting'], price:9, trial:4, desc:'For discomfort after long standing or sitting, apply to relax the tendons and unblock the collaterals.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:105, name:'Yinshan Tea', type:'tea', journeys:['Pain Soothing'], tags:['recurrent dull discomfort'], price:45, trial:16, desc:'For recurrent discomfort, this nourishes blood and unblocks the collaterals for gradual wellness.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:106, name:'Chuanyin Tea', type:'tea', journeys:['Pain Soothing'], tags:['recurrent dull discomfort','generalized body aches'], price:45, trial:16, desc:'For body aches with recurrent dull discomfort — dual qi and blood collateral-unblocking care.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:107, name:'Muhe Patch', type:'plaster', journeys:['Quality Sleep'], tags:['Wide Awake When Lying Down'], price:9, trial:4, desc:'For feeling wide awake on lying down, apply to the Yongquan acupoint before bed.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:108, name:'Xingyu Tea', type:'tea', journeys:['Quality Sleep'], tags:['Racing Thoughts'], price:45, trial:16, desc:'For a mind full of unstoppable thoughts, this nourishes the heart and calms the mind to help settle.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:109, name:'Yelan Tea', type:'tea', journeys:['Quality Sleep'], tags:['taking long to fall asleep'], price:45, trial:16, desc:'When falling asleep takes long, this nourishes the heart and calms the mind to help you drift off faster.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:110, name:'Xinglan Tea', type:'tea', journeys:['Quality Sleep'], tags:['taking long to fall asleep','Racing Thoughts'], price:45, trial:16, desc:'For racing thoughts and difficulty sleeping — dual mind-calming, sleep-supporting care.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:111, name:'Muai Tea', type:'tea', journeys:['Quality Sleep'], tags:['waking easily at night'], price:45, trial:16, desc:'For waking often at night, this nourishes the heart and boosts qi for deeper sleep.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:112, name:'Yuelan Patch', type:'plaster', journeys:['Quality Sleep'], tags:['Difficulty Returning to Sleep'], price:9, trial:4, desc:'For difficulty returning to sleep after waking, apply before bed to help you drift back.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:113, name:'Jingxiang Tea', type:'tea', journeys:['Quality Sleep'], tags:['sound sensitivity'], price:45, trial:16, desc:'For waking at the slightest sound, this calms the heart and mind for more restful sleep.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:114, name:'Aiyue Tea', type:'tea', journeys:['Quality Sleep'], tags:['waking easily at night','Difficulty Returning to Sleep'], price:45, trial:16, desc:'For waking easily and difficulty returning to sleep — dual mind-calming for steadier sleep.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:115, name:'Demeng Tea', type:'tea', journeys:['Quality Sleep'], tags:['Frequent Dreams'], price:45, trial:16, desc:'For excessive dreams at night, this nourishes the heart and calms the mind for more solid sleep.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:116, name:'Ziye Tea', type:'tea', journeys:['Quality Sleep'], tags:['poor sleep quality'], price:45, trial:16, desc:'For overall poor sleep quality, this nourishes the heart and calms the mind for gradual improvement.', active:false, inStock:true, featured:false, imgs:[]},
-    {id:117, name:'Dieying Tea', type:'tea', journeys:['Quality Sleep'], tags:['Frequent Dreams','poor sleep quality'], price:45, trial:16, desc:'For frequent dreams and restless sleep — doubly nourishes the heart and calms the mind.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:118, name:'Xiaolan Tea', type:'tea', journeys:['Quality Sleep'], tags:['Still Tired After Waking'], price:45, trial:16, desc:'For still feeling sleepy after waking, this boosts qi and raises yang to awaken alertness.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:119, name:'Maoshi Tea', type:'tea', journeys:['Quality Sleep'], tags:['Difficulty Getting Up'], price:45, trial:16, desc:'For great difficulty getting up, this warms yang and boosts qi to help you wake.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:120, name:'Wuzhou Tea', type:'tea', journeys:['Quality Sleep'], tags:['Daytime Drowsiness'], price:45, trial:16, desc:'For daytime drowsiness, this strengthens the spleen and raises yang to lift energy.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:121, name:'Chenxi Tea', type:'tea', journeys:['Quality Sleep'], tags:['Daytime Drowsiness','Difficulty Getting Up'], price:45, trial:16, desc:'For difficulty getting up with drowsiness — dual yang-raising, awakening care.', active:true, inStock:true, featured:false, imgs:[]},
-    {id:122, name:'Xiaoxia Mask', type:'mask', journeys:[], tags:[], price:39, trial:15, desc:'Not for a specific symptom — a daily brightening ritual and a weekend treat for yourself.', active:true, inStock:true, featured:true, imgs:[]},
-  ];
-  var PRODUCTS_BY_ID = {};
-  PRODUCTS.forEach(function(p){ PRODUCTS_BY_ID[p.id] = p; });
+ var PRODUCTS = [
+  {id:1, name:'Yue Shu Patch', type:'plaster', journeys:["Women's Health"], tags:['Menstrual Pain'], price:9, trial:4, desc:'Apply during menstrual period for cold pain in waist and abdomen, the warmth slowly spreads.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:2, name:'Chi Xi Tea', type:'tea', journeys:["Women's Health"], tags:['Prolonged Period'], price:45, trial:16, desc:'When menstruation lasts too long or is spotty, drink it to help the body regulate its rhythm.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:3, name:'Man Xi Tea', type:'tea', journeys:["Women's Health"], tags:['heavy menstrual flow'], price:45, trial:16, desc:'On days with heavier flow, drink a cup for peace of mind.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:4, name:'Qian Xi Tea', type:'tea', journeys:["Women's Health"], tags:['scanty menstrual flow'], price:45, trial:16, desc:'Light and scanty periods, nourish qi and blood daily.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:5, name:'Xian Yue Tea', type:'tea', journeys:["Women's Health"], tags:['cycledisordered'], price:45, trial:16, desc:'Irregular cycles, help the body find its own rhythm.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:6, name:'Yue Xi Tea', type:'tea', journeys:["Women's Health"], tags:['Spotting'], price:45, trial:16, desc:'Occasional spotting between periods, nourish yin and cool blood, gentlewellness.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:7, name:'Wang Xi Tea', type:'tea', journeys:["Women's Health"], tags:['Prolonged Period','heavy menstrual flow'], price:45, trial:16, desc:'On days with long and heavy periods, a cup of tea helps stabilize.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:8, name:'Ying Yue Tea', type:'tea', journeys:["Women's Health"], tags:['cycledisordered','scanty menstrual flow'], price:45, trial:16, desc:'Scanty and irregular cycles, slowly nourish and replenish.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:9, name:'Yun Jing Tea', type:'tea', journeys:["Women's Health"], tags:['Heavy Flow'], price:45, trial:16, desc:'Excessive leucorrhea, strengthen spleen and remove dampness, feel fresh and clean.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:10, name:'Su Ya Tea', type:'tea', journeys:["Women's Health"], tags:['Abnormal Color'], price:45, trial:16, desc:'Abnormal color but not severe, daily gentle cleansing.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:11, name:'Zhilan Tea', type:'tea', journeys:["Women's Health"], tags:['with odor'], price:45, trial:16, desc:'With odor, clear heat and remove dampness, regain freshness.', active:true, inStock:false, featured:false, imgs:[]},
+  {id:12, name:'Lantang Sitz Bath Pack', type:'soak', journeys:["Women's Health"], tags:['recurrent itching'], price:25, trial:10, desc:'Recurring itching and discomfort, boil and take a reassuring hot bath.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:13, name:'Chengche Tea', type:'tea', journeys:["Women's Health"], tags:['with odor','Abnormal Color'], price:45, trial:16, desc:'When abnormal color and odor appear together, this clears them on two fronts.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:14, name:'Zhicheng Tea', type:'tea', journeys:["Women's Health"], tags:['with odor','Heavy Flow','Abnormal Color'], price:45, trial:16, desc:'For days with heavy flow, abnormal color and odor — comprehensive clearing and nourishing.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:15, name:'Yuexu Tea', type:'tea', journeys:["Women's Health"], tags:['cycleirregular'], price:45, trial:16, desc:'When the cycle stays irregular during pre-pregnancy, this soothes the liver and regulates qi to restore balance.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:16, name:'Xunuan Patch', type:'plaster', journeys:["Women's Health"], tags:['cold constitution'], price:9, trial:4, desc:'For cold constitution with cold hands and feet, apply this warm compress for deep inner warmth.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:17, name:'Lüe Tea', type:'tea', journeys:["Women's Health"], tags:['moodstress'], price:45, trial:16, desc:'When pre-pregnancy feels stressful, a cup helps you breathe easier.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:18, name:'Lanxin Tea', type:'tea', journeys:["Women's Health"], tags:['Pre-pregnancywellness'], price:45, trial:16, desc:'Daily pre-pregnancy constitution care, gently tonifying the liver and kidney to build a foundation.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:19, name:'Meiyue Tea', type:'tea', journeys:["Women's Health"], tags:['cycleirregular','moodstress'], price:45, trial:16, desc:'For irregular cycles with irritability, this soothes the liver and nourishes the blood together.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:20, name:'Lanxu Tea', type:'tea', journeys:["Women's Health"], tags:['cycleirregular','Pre-pregnancywellness','moodstress'], price:45, trial:16, desc:'A comprehensive wellness tea for when both cycle and mood need care during pre-pregnancy.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:21, name:'Jingyu Patch', type:'plaster', journeys:["Women's Health"], tags:['check-up indicates hyperplasia'], price:9, trial:4, desc:'If a check-up indicates hyperplasia, use as daily supportive wellness care alongside regular follow-ups.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:22, name:'Hefeng Tea', type:'tea', journeys:["Women's Health"], tags:['Lower-abdominal Heaviness'], price:45, trial:16, desc:'For persistent lower-abdominal heaviness, this regulates qi to release that stuck, uncomfortable sensation.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:23, name:'Jianghua Tea', type:'tea', journeys:["Women's Health"], tags:['discomfort worsens during menstrual period'], price:45, trial:16, desc:'For discomfort during menstrual days, this invigorates blood to release stagnation.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:24, name:'Nuanxi Tea', type:'tea', journeys:["Women's Health"], tags:['Lower-abdominal Heaviness','discomfort worsens during menstrual period'], price:45, trial:16, desc:'For heaviness that worsens during the menstrual period, this gently releases it.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:25, name:'Qinglu Tea', type:'tea', journeys:["Women's Health"], tags:['Hot Flashes & Night Sweats'], price:45, trial:16, desc:'For hot flashes, night sweats and restless sleep, this nourishes yin and consolidates sweating for a calmer feel.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:26, name:'Yuezhen Patch', type:'plaster', journeys:["Women's Health"], tags:['insomnia'], price:9, trial:4, desc:'For tossing and turning unable to sleep, apply to the Yongquan acupoint before bed.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:27, name:'Lanxin Tea', type:'tea', journeys:["Women's Health"], tags:['mood swings'], price:45, trial:16, desc:'When moods swing up and down, a cup helps you settle.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:28, name:'Jinglan Tea', type:'tea', journeys:["Women's Health"], tags:['Palpitations'], price:45, trial:16, desc:'For an unsettled, racing heart, this clears the heart and calms palpitations to gradually settle.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:29, name:'Suyue Patch', type:'plaster', journeys:["Women's Health"], tags:['insomnia','Palpitations'], price:9, trial:4, desc:'For poor sleep with palpitations, apply before bed for dual calming.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:30, name:'Jinghao Tea', type:'tea', journeys:["Women's Health"], tags:['insomnia','Palpitations','mood swings','Hot Flashes & Night Sweats'], price:49, trial:18, desc:'When menopause brings multiple discomforts at once, a cup of tea carries you steadily through.', active:true, inStock:true, featured:true, imgs:[]},
+  {id:31, name:'Chengu Tea', type:'tea', journeys:['Body Sculpting'], tags:['Irregular Meals'], price:45, trial:16, desc:'For irregular meals, this strengthens the spleen and harmonizes the stomach to restore eating rhythm.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:32, name:'Lanyin Tea', type:'tea', journeys:['Body Sculpting'], tags:['cravings for sweets and oily food'], price:45, trial:16, desc:"For sweet and oily food cravings, this resolves phlegm and dampness to lighten the body's load.", active:true, inStock:true, featured:false, imgs:[]},
+  {id:33, name:'Jiashan Tea', type:'tea', journeys:['Body Sculpting'], tags:['frequent eating out'], price:45, trial:16, desc:'After eating out too much, this clears and nourishes the spleen and stomach for a fresh feeling.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:34, name:'Chenxu Tea', type:'tea', journeys:['Body Sculpting'], tags:['Unplanned Diet'], price:45, trial:16, desc:'For an unplanned diet, this strengthens the spleen and boosts qi to build a foundation first.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:35, name:'Yunyin Tea', type:'tea', journeys:['Body Sculpting'], tags:['cravings for sweets and oily food','Unplanned Diet'], price:45, trial:16, desc:'For sweet and oily cravings without a plan — doubly resolves turbidity for a lighter start.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:36, name:'Qingchuan Tea', type:'tea', journeys:['Body Sculpting'], tags:['prolonged sitting, low activity'], price:45, trial:16, desc:'For prolonged sitting, this regulates qi and invigorates blood to get qi and blood flowing again.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:37, name:'Hezi Tea', type:'tea', journeys:['Body Sculpting'], tags:['Improper Exercise'], price:45, trial:16, desc:'For improper exercise form, this nourishes blood and relaxes the tendons for easier movement.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:38, name:'Hengchen Tea', type:'tea', journeys:['Body Sculpting'], tags:['Hard to Stay Consistent'], price:45, trial:16, desc:'For inconsistent routines, this boosts qi and strengthens the spleen to gradually build steady energy.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:39, name:'Muchuan Tea', type:'tea', journeys:['Body Sculpting'], tags:['Slow Post-exercise Recovery'], price:45, trial:16, desc:'For slow post-exercise recovery, this boosts qi and nourishes blood to speed recovery.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:40, name:'Hechuan Tea', type:'tea', journeys:['Body Sculpting'], tags:['prolonged sitting, low activity','Improper Exercise'], price:45, trial:16, desc:'For prolonged sitting and poor exercise posture — helps loosen and relax.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:41, name:'Hengchuan Tea', type:'tea', journeys:['Body Sculpting'], tags:['Slow Post-exercise Recovery','Hard to Stay Consistent'], price:45, trial:16, desc:'For inconsistency and slow recovery, dual qi and blood tonification sustains your state.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:42, name:'Chuxi Patch', type:'plaster', journeys:['Body Sculpting'], tags:['postpartum qi and blood deficiency'], price:9, trial:4, desc:'For postpartum qi and blood deficiency, gentle application to gradually rebuild.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:43, name:'Xiaoyue Patch', type:'plaster', journeys:['Body Sculpting'], tags:['abdominal sagging'], price:9, trial:4, desc:'For a sagging, weak abdomen, apply to help lift and tone.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:44, name:'Mugui Tea', type:'tea', journeys:['Body Sculpting'], tags:['slow recovery of energy'], price:45, trial:16, desc:'For slow postpartum recovery, dual qi and blood tonification supports you at a gentle pace.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:45, name:'Ganlu Tea', type:'tea', journeys:['Body Sculpting'], tags:['breastfeeding wellness'], price:45, trial:16, desc:'Breastfeeding needs extra qi and blood support — gentle nourishment.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:46, name:'Postpartum Vitality Patch', type:'plaster', journeys:['Body Sculpting'], tags:['postpartum qi and blood deficiency','slow recovery of energy'], price:9, trial:4, desc:'For postpartum qi and blood deficiency with slow recovery — an enhanced version to rebuild together.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:47, name:'Nuanyang Patch', type:'plaster', journeys:['Body Sculpting'], tags:['Cold Sensitivity'], price:9, trial:4, desc:'For cold hands and feet, this warms yang and dispels cold; apply to warm up.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:48, name:'Qingxi Tea', type:'tea', journeys:['Body Sculpting'], tags:['fatigue-prone'], price:45, trial:16, desc:'For persistent low energy, this boosts qi and strengthens the spleen to restore vitality.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:49, name:'Yunche Tea', type:'tea', journeys:['Body Sculpting'], tags:['Water Retention'], price:45, trial:16, desc:'When water retention weighs the body down, this strengthens the spleen and promotes diuresis for a lighter feel.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:50, name:'Qingying Tea', type:'tea', journeys:['Body Sculpting'], tags:['difficulty losing weight'], price:45, trial:16, desc:'When weight plateaus, this resolves dampness and strengthens the spleen to help stimulate metabolism.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:51, name:'Nuanshen Tea', type:'tea', journeys:['Body Sculpting'], tags:['Cold Sensitivity','fatigue-prone'], price:45, trial:16, desc:'For cold sensitivity with fatigue — warms yang and boosts qi together.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:52, name:'Lanche Tea', type:'tea', journeys:['Body Sculpting'], tags:['difficulty losing weight','Water Retention'], price:45, trial:16, desc:'For water retention with difficulty losing weight — doubly dispels dampness and reduces swelling.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:53, name:'Chenyan Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Sallow Complexion'], price:45, trial:16, desc:'For a sallow, low-energy complexion, this boosts qi and nourishes blood to gradually bring out a healthy glow.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:54, name:'Yuze Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Lacking Radiance'], price:45, trial:16, desc:'For dehydrated, lackluster skin, this nourishes yin and moistens dryness for a hydrated feel.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:55, name:'Xiaguang Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['fatigued dullness'], price:45, trial:16, desc:'When fatigue shows on the face, dual qi and blood tonification restores a healthy complexion.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:56, name:'Xihui Patch', type:'plaster', journeys:['Beauty & Radiance'], tags:['Sallow Complexion','fatigued dullness'], price:9, trial:4, desc:'For a poor complexion with fatigue, apply for dual complexion-brightening care.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:57, name:'Ningzhi Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Loss of Elasticity'], price:45, trial:16, desc:'For loss of skin elasticity, this boosts qi and nourishes yin to help skin regain firmness.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:58, name:'Shuanghua Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['early fine lines'], price:45, trial:16, desc:'When fine lines begin to appear, this nourishes yin and moistens the skin to soften early signs.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:59, name:'Wanxia Patch', type:'plaster', journeys:['Beauty & Radiance'], tags:['Sagging Cheeks'], price:9, trial:4, desc:'For slightly sagging cheeks, apply to help lift and tone.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:60, name:'Ningzhi Patch', type:'plaster', journeys:['Beauty & Radiance'], tags:['early fine lines','Loss of Elasticity','Sagging Cheeks'], price:9, trial:4, desc:'When sagging, fine lines and loss of facial tone appear together — a comprehensive lifting approach.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:61, name:'Cuie Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['recurrent breakouts'], price:45, trial:16, desc:'For recurrent acne, this clears heat and dispels dampness to gradually balance the constitution.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:62, name:'Yuji Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Enlarged Pores'], price:45, trial:16, desc:'For enlarged pores, this strengthens the spleen and seeps dampness for smoother skin.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:63, name:'Zhiruo Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Redness & Tingling'], price:45, trial:16, desc:'For redness and tingling, this cools the blood and clears heat to soothe sensitivity.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:64, name:'Qinghe Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Oily Skin'], price:45, trial:16, desc:'For an oily face, this clears heat and dispels dampness to control oil for a fresher feel.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:65, name:'Cuihe Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['recurrent breakouts','Oily Skin'], price:45, trial:16, desc:'When acne and oily shine appear together — doubly clears heat and dispels dampness.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:66, name:'Qingyan Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Facial Puffiness'], price:45, trial:16, desc:'For slightly puffy face, this strengthens the spleen and promotes diuresis to reduce swelling.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:67, name:'Yuelun Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Blurred Facial Contour'], price:45, trial:16, desc:'For a blurred facial contour, this boosts qi and nourishes blood to help restore definition.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:68, name:'Yunhan Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['double chin'], price:45, trial:16, desc:'For double-chin concerns, this resolves phlegm and dampness to help reduce it.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:69, name:'Yueche Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['double chin','Facial Puffiness'], price:45, trial:16, desc:'For puffiness with a double chin — helps reduce both.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:70, name:'Chenlu Tea', type:'tea', journeys:['Daily Wellness'], tags:['easily fatigued'], price:45, trial:16, desc:'For constant fatigue, this boosts qi and strengthens the spleen to restore energy.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:71, name:'Zhaohui Tea', type:'tea', journeys:['Daily Wellness'], tags:['Low Energy'], price:45, trial:16, desc:'For low energy and listlessness, this raises yang and boosts qi to awaken vitality.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:72, name:'Songfeng Tea', type:'tea', journeys:['Daily Wellness'], tags:['Difficulty Concentrating'], price:45, trial:16, desc:'For difficulty concentrating, this opens the orifices and calms the spirit for clearer thinking.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:73, name:'Pingshan Tea', type:'tea', journeys:['Daily Wellness'], tags:['weaker immunity'], price:45, trial:16, desc:'For frequent illness and weak resistance, this boosts qi and consolidates the exterior to strengthen defense.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:74, name:'Chaoyang Tea', type:'tea', journeys:['Daily Wellness'], tags:['easily fatigued','Low Energy'], price:45, trial:16, desc:'For fatigue and low spirits — dual qi-boosting and yang-raising care.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:75, name:'Lanwu Tea', type:'tea', journeys:['Daily Wellness'], tags:['Heavy Dampness'], price:45, trial:16, desc:'When heavy dampness weighs the body down, this strengthens the spleen and dispels dampness for a lighter feeling.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:76, name:'Helu Tea', type:'tea', journeys:['Daily Wellness'], tags:['Heat Intolerance & Easy Sweating'], price:45, trial:16, desc:'For sweating easily with movement, this consolidates sweating and boosts qi.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:77, name:'Sishi Tea', type:'tea', journeys:['Daily Wellness'], tags:['Seasonal Adjustment'], price:45, trial:16, desc:'For seasonal adjustment, this harmonizes the nutritive and defensive levels to help the body adapt faster.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:78, name:'Guya Tea', type:'tea', journeys:['Daily Wellness'], tags:['Poor Appetite'], price:45, trial:16, desc:'For poor appetite, this strengthens the stomach and aids digestion to restore appetite.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:79, name:'Wanshan Tea', type:'tea', journeys:['Daily Wellness'], tags:['Indigestion'], price:45, trial:16, desc:'For slow digestion, this aids digestion and harmonizes the stomach for comfort after meals.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:80, name:'Nuanzhi Tea', type:'tea', journeys:['Daily Wellness'], tags:['constipation'], price:45, trial:16, desc:'For sluggish bowel movements, this moistens the intestines for gentle regularity.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:81, name:'Wanfeng Tea', type:'tea', journeys:['Daily Wellness'], tags:['Abdominal Bloating'], price:45, trial:16, desc:'For persistent bloating, this regulates qi to ease distension for relief.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:82, name:'Guyu Tea', type:'tea', journeys:['Daily Wellness'], tags:['Indigestion','Abdominal Bloating'], price:45, trial:16, desc:'For indigestion with bloating — this helps smooth things out.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:83, name:'Guxu Tea', type:'tea', journeys:['Daily Wellness'], tags:['constipation','Indigestion','Abdominal Bloating','Poor Appetite'], price:45, trial:16, desc:'When appetite, digestion, bowel movements and bloating are all off — holistic regulation.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:84, name:'Songlan Tea', type:'tea', journeys:['Daily Wellness'], tags:['high stress'], price:45, trial:16, desc:'When stress feels overwhelming, this soothes the liver and regulates qi to help you unwind.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:85, name:'Zhuyun Tea', type:'tea', journeys:['Daily Wellness'], tags:['Irritability'], price:45, trial:16, desc:'For restlessness and irritability, this clears the heart and eliminates vexation to settle the mind.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:86, name:'Zhuying Tea', type:'tea', journeys:['Daily Wellness'], tags:['tense mood'], price:45, trial:16, desc:'When mood stays tense, this soothes the liver and releases stagnation to help you relax.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:87, name:'Yehe Tea', type:'tea', journeys:['Daily Wellness'], tags:['Bedtime Overthinking'], price:45, trial:16, desc:"For a mind that won't stop before bed, this nourishes the heart and calms the mind to help you let go.", active:true, inStock:true, featured:false, imgs:[]},
+  {id:88, name:'Zhusong Tea', type:'tea', journeys:['Daily Wellness'], tags:['high stress','Irritability'], price:45, trial:16, desc:'For high stress with irritability — doubly soothes the liver and clears the heart.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:89, name:'Wangyou Tea', type:'tea', journeys:['Daily Wellness'], tags:['tense mood','Bedtime Overthinking'], price:45, trial:16, desc:'For tense mood with heavy thoughts, a cup of tea lets the worries rest a while.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:90, name:'Songjie Patch', type:'plaster', journeys:['Pain Soothing'], tags:['stiffness from prolonged sitting'], price:9, trial:4, desc:'For stiff neck and shoulders after sitting long, apply to loosen and relax.', active:true, inStock:true, featured:true, imgs:[]},
+  {id:91, name:'Geyou Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Stiff Neck'], price:9, trial:4, desc:"For a stiff neck that won't turn, apply to release the muscles and relax the tendons.", active:true, inStock:true, featured:false, imgs:[]},
+  {id:92, name:'Shanyue Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Lower-back & Body Aches'], price:9, trial:4, desc:'For lower-back and body aches, apply to tonify the liver and kidney and strengthen the lower back.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:93, name:'Yunjian Patch', type:'plaster', journeys:['Pain Soothing'], tags:['aching neck and shoulders'], price:9, trial:4, desc:'For aching neck and shoulder discomfort, apply to invigorate blood and unblock the channels.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:94, name:'Yunsong Patch', type:'plaster', journeys:['Pain Soothing'], tags:['stiffness from prolonged sitting','aching neck and shoulders'], price:9, trial:4, desc:'For prolonged sitting with aching neck and shoulders — soothing relief.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:95, name:'Nuanjie Patch', type:'plaster', journeys:['Pain Soothing'], tags:['aching, heavy joints'], price:9, trial:4, desc:'For aching, heavy joint discomfort, apply to dispel dampness and unblock the channels.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:96, name:'Qinglan Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Worse with Cold'], price:9, trial:4, desc:'For symptoms that worsen with cold, apply to warm the meridians and dispel cold.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:97, name:'Zhanyi Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Limited Mobility'], price:9, trial:4, desc:'For stiff, awkward movement, apply to relax the tendons and unblock the collaterals.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:98, name:'Nuanlan Patch', type:'plaster', journeys:['Pain Soothing'], tags:['aching, heavy joints','Worse with Cold'], price:9, trial:4, desc:'For achy joints sensitive to cold — doubly dispels cold and dampness.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:99, name:'Chixia Patch', type:'plaster', journeys:['Pain Soothing'], tags:['muscle strain'], price:9, trial:4, desc:'For muscle strain, apply to invigorate blood and soothe discomfort.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:100, name:'Ziyun Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Sprains & Bruises'], price:9, trial:4, desc:'For sprains and bruises, apply to resolve stasis and reduce swelling.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:101, name:'Mujin Tea', type:'tea', journeys:['Pain Soothing'], tags:['Post-exercise Soreness'], price:45, trial:16, desc:'For post-exercise body aches, a cup nourishes and invigorates the blood.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:102, name:'Xiayun Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Sprains & Bruises','muscle strain'], price:9, trial:4, desc:'For strains with bruising — invigorates blood and resolves stasis together.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:103, name:'Chuanye Tea', type:'tea', journeys:['Pain Soothing'], tags:['generalized body aches'], price:45, trial:16, desc:'For generalized aching and weakness, dual qi and blood tonification gradually eases it.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:104, name:'Wanli Patch', type:'plaster', journeys:['Pain Soothing'], tags:['discomfort from long standing or sitting'], price:9, trial:4, desc:'For discomfort after long standing or sitting, apply to relax the tendons and unblock the collaterals.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:105, name:'Yinshan Tea', type:'tea', journeys:['Pain Soothing'], tags:['recurrent dull discomfort'], price:45, trial:16, desc:'For recurrent discomfort, this nourishes blood and unblocks the collaterals for gradual wellness.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:106, name:'Chuanyin Tea', type:'tea', journeys:['Pain Soothing'], tags:['recurrent dull discomfort','generalized body aches'], price:45, trial:16, desc:'For body aches with recurrent dull discomfort — dual qi and blood collateral-unblocking care.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:107, name:'Muhe Patch', type:'plaster', journeys:['Quality Sleep'], tags:['Wide Awake When Lying Down'], price:9, trial:4, desc:'For feeling wide awake on lying down, apply to the Yongquan acupoint before bed.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:108, name:'Xingyu Tea', type:'tea', journeys:['Quality Sleep'], tags:['Racing Thoughts'], price:45, trial:16, desc:'For a mind full of unstoppable thoughts, this nourishes the heart and calms the mind to help settle.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:109, name:'Yelan Tea', type:'tea', journeys:['Quality Sleep'], tags:['taking long to fall asleep'], price:45, trial:16, desc:'When falling asleep takes long, this nourishes the heart and calms the mind to help you drift off faster.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:110, name:'Xinglan Tea', type:'tea', journeys:['Quality Sleep'], tags:['taking long to fall asleep','Racing Thoughts'], price:45, trial:16, desc:'For racing thoughts and difficulty sleeping — dual mind-calming, sleep-supporting care.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:111, name:'Muai Tea', type:'tea', journeys:['Quality Sleep'], tags:['waking easily at night'], price:45, trial:16, desc:'For waking often at night, this nourishes the heart and boosts qi for deeper sleep.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:112, name:'Yuelan Patch', type:'plaster', journeys:['Quality Sleep'], tags:['Difficulty Returning to Sleep'], price:9, trial:4, desc:'For difficulty returning to sleep after waking, apply before bed to help you drift back.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:113, name:'Jingxiang Tea', type:'tea', journeys:['Quality Sleep'], tags:['sound sensitivity'], price:45, trial:16, desc:'For waking at the slightest sound, this calms the heart and mind for more restful sleep.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:114, name:'Aiyue Tea', type:'tea', journeys:['Quality Sleep'], tags:['waking easily at night','Difficulty Returning to Sleep'], price:45, trial:16, desc:'For waking easily and difficulty returning to sleep — dual mind-calming for steadier sleep.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:115, name:'Demeng Tea', type:'tea', journeys:['Quality Sleep'], tags:['Frequent Dreams'], price:45, trial:16, desc:'For excessive dreams at night, this nourishes the heart and calms the mind for more solid sleep.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:116, name:'Ziye Tea', type:'tea', journeys:['Quality Sleep'], tags:['poor sleep quality'], price:45, trial:16, desc:'For overall poor sleep quality, this nourishes the heart and calms the mind for gradual improvement.', active:false, inStock:true, featured:false, imgs:[]},
+  {id:117, name:'Dieying Tea', type:'tea', journeys:['Quality Sleep'], tags:['Frequent Dreams','poor sleep quality'], price:45, trial:16, desc:'For frequent dreams and restless sleep — doubly nourishes the heart and calms the mind.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:118, name:'Xiaolan Tea', type:'tea', journeys:['Quality Sleep'], tags:['Still Tired After Waking'], price:45, trial:16, desc:'For still feeling sleepy after waking, this boosts qi and raises yang to awaken alertness.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:119, name:'Maoshi Tea', type:'tea', journeys:['Quality Sleep'], tags:['Difficulty Getting Up'], price:45, trial:16, desc:'For great difficulty getting up, this warms yang and boosts qi to help you wake.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:120, name:'Wuzhou Tea', type:'tea', journeys:['Quality Sleep'], tags:['Daytime Drowsiness'], price:45, trial:16, desc:'For daytime drowsiness, this strengthens the spleen and raises yang to lift energy.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:121, name:'Chenxi Tea', type:'tea', journeys:['Quality Sleep'], tags:['Daytime Drowsiness','Difficulty Getting Up'], price:45, trial:16, desc:'For difficulty getting up with drowsiness — dual yang-raising, awakening care.', active:true, inStock:true, featured:false, imgs:[]},
+  {id:122, name:'Xiaoxia Mask', type:'mask', journeys:[], tags:[], price:39, trial:15, desc:'Not for a specific symptom — a daily brightening ritual and a weekend treat for yourself.', active:true, inStock:true, featured:true, imgs:[]},
+ ];
+ var PRODUCTS_BY_ID = {};
+ PRODUCTS.forEach(function(p){ PRODUCTS_BY_ID[p.id] = p; });
 
-  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+ var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
 
-  async function findOrder(orderNo, contact){
-    var res = await fetch(API_BASE + '/orders/lookup?orderNo=' + encodeURIComponent(orderNo) + '&phone=' + encodeURIComponent(contact));
-    if(!res.ok) return null;
-    var o = await res.json();
-    var total = o.items.reduce(function(s,it){ return s+it.price*it.qty; }, 0) + (o.shipping||0);
-    return { orderNo:o.order_no, date:(o.created_at||'').slice(0,10), items:o.items, total:total, status:o.status };
-  }
+ async function findOrder(orderNo, contact){
+  var res = await fetch(API_BASE + '/orders/lookup?orderNo=' + encodeURIComponent(orderNo) + '&phone=' + encodeURIComponent(contact));
+  if(!res.ok) return null;
+  var o = await res.json();
+  var total = o.items.reduce(function(s,it){ return s+it.price*it.qty; }, 0) + (o.shipping||0);
+  return { orderNo:o.order_no, date:(o.created_at||'').slice(0,10), items:o.items, total:total, status:o.status };
+ }
 
-  function renderResult(order){
-    var html = '<div class="oq-result">'
-      + '<div class="oq-result-hd"><div class="oq-order-no">Order Number '+order.orderNo+'</div><div class="oq-order-date">Order Date '+order.date+'</div></div>';
+ function renderResult(order){
+  var html = '<div class="oq-result">'
+   + '<div class="oq-result-hd"><div class="oq-order-no">Order Number '+order.orderNo+'</div><div class="oq-order-date">Order Date '+order.date+'</div></div>';
 
-    html += '<div class="stepper-wrap">';
-    STATUS_LABELS.forEach(function(label, i){
-      var cls = i < order.status ? 'done' : i === order.status ? 'current' : '';
-      html += '<div class="step '+cls+'"><div class="step-line"></div><div class="step-dot">'+(i<order.status?'✓':(i+1))+'</div><div class="step-label">'+label+'</div></div>';
-    });
-    html += '</div>';
-
-    html += '<div class="oq-items-card">';
-    order.items.forEach(function(it){
-      html += '<div class="oq-item"><span>'+it.name+' × '+it.qty+'</span><span>MYR '+(it.price*it.qty)+'</span></div>';
-    });
-    html += '<div class="oq-item total"><span>Total</span><span>MYR '+order.total+'</span></div>'
-      + '</div>';
-
-    html += '</div>';
-    document.getElementById('resultArea').innerHTML = html;
-  }
-
-  function renderNotFound(){
-    document.getElementById('resultArea').innerHTML =
-      '<div class="not-found-box"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>'
-      + '<p>No matching order found. Please confirm your Order Number and contact information.</p></div>';
-  }
-
-  var orderInput = document.getElementById('orderInput');
-  var contactInput = document.getElementById('contactInput');
-  var errorEl = document.getElementById('oqError');
-
-  document.getElementById('lookupBtn').addEventListener('click', async function(){
-    var orderNo = orderInput.value.trim();
-    var contact = contactInput.value.trim();
-    if(!orderNo || !contact){
-      errorEl.textContent = 'Please fill in your Order Number and contact information.';
-      errorEl.classList.add('show');
-      document.getElementById('resultArea').innerHTML = '';
-      return;
-    }
-    var btn = this;
-    btn.disabled = true;
-    try {
-      var order = await findOrder(orderNo, contact);
-      if(order){
-        errorEl.classList.remove('show');
-        renderResult(order);
-      } else {
-        errorEl.textContent = 'No matching order found. Please verify your order number and contact information.';
-        errorEl.classList.add('show');
-        document.getElementById('resultArea').innerHTML = '';
-      }
-    } catch(e){
-      errorEl.textContent = 'Unable to connect to the server. Please retry later.';
-      errorEl.classList.add('show');
-    }
-    btn.disabled = false;
+  html += '<div class="stepper-wrap">';
+  STATUS_LABELS.forEach(function(label, i){
+   var cls = i < order.status ? 'done' : i === order.status ? 'current' : '';
+   html += '<div class="step '+cls+'"><div class="step-line"></div><div class="step-dot">'+(i<order.status?'✓':(i+1))+'</div><div class="step-label">'+label+'</div></div>';
   });
+  html += '</div>';
+
+  html += '<div class="oq-items-card">';
+  order.items.forEach(function(it){
+   html += '<div class="oq-item"><span>'+it.name+' × '+it.qty+'</span><span>MYR '+(it.price*it.qty)+'</span></div>';
+  });
+  html += '<div class="oq-item total"><span>Total</span><span>MYR '+order.total+'</span></div>'
+   + '</div>';
+
+  html += '</div>';
+  document.getElementById('resultArea').innerHTML = html;
+ }
+
+ function renderNotFound(){
+  document.getElementById('resultArea').innerHTML =
+   '<div class="not-found-box"><svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>'
+   + '<p>No matching order found. Please confirm your Order Number and contact information.</p></div>';
+ }
+
+ var orderInput = document.getElementById('orderInput');
+ var contactInput = document.getElementById('contactInput');
+ var errorEl = document.getElementById('oqError');
+
+ document.getElementById('lookupBtn').addEventListener('click', async function(){
+  var orderNo = orderInput.value.trim();
+  var contact = contactInput.value.trim();
+  if(!orderNo || !contact){
+   errorEl.textContent = 'Please fill in your Order Number and contact information.';
+   errorEl.classList.add('show');
+   document.getElementById('resultArea').innerHTML = '';
+   return;
+  }
+  var btn = this;
+  btn.disabled = true;
+  try {
+   var order = await findOrder(orderNo, contact);
+   if(order){
+    errorEl.classList.remove('show');
+    renderResult(order);
+   } else {
+    errorEl.textContent = 'No matching order found. Please verify your order number and contact information.';
+    errorEl.classList.add('show');
+    document.getElementById('resultArea').innerHTML = '';
+   }
+  } catch(e){
+   errorEl.textContent = 'Unable to connect to the server. Please retry later.';
+   errorEl.classList.add('show');
+  }
+  btn.disabled = false;
+ });
 
 
-  function cartFromURL(){
-    var raw = new URLSearchParams(window.location.search).get('cart');
-    if(!raw) return [];
-    return raw.split(',').map(function(chunk){
-      var parts = chunk.split(':'); var id = Number(parts[0]);
-      return id ? {id:id, variant:(parts[1]==='t'?'trial':'full'), qty:Number(parts[2])||1} : null;
-    }).filter(Boolean);
-  }
-  function cartToParam(items){ return items.map(function(it){ return it.id+':'+(it.variant==='trial'?'t':'f')+':'+it.qty; }).join(','); }
-  function withCart(url, items){
-    var cartStr = cartToParam(items);
-    if(!cartStr) return url;
-    var hashIdx = url.indexOf('#');
-    var hash = hashIdx === -1 ? '' : url.slice(hashIdx);
-    var base = hashIdx === -1 ? url : url.slice(0, hashIdx);
-    return base + (base.indexOf('?')===-1 ? '?' : '&') + 'cart=' + encodeURIComponent(cartStr) + hash;
-  }
-  var cartItems = cartFromURL();
-  function updateCartBadge(){
-    var total = cartItems.reduce(function(s,it){ return s+it.qty; }, 0);
-    var badge = document.getElementById('cartBadge');
-    badge.textContent = total;
-    badge.style.display = total > 0 ? 'flex' : 'none';
-  }
-  updateCartBadge();
+ function cartFromURL(){
+  var raw = new URLSearchParams(window.location.search).get('cart');
+  if(!raw) return [];
+  return raw.split(',').map(function(chunk){
+   var parts = chunk.split(':'); var id = Number(parts[0]);
+   return id ? {id:id, variant:(parts[1]==='t'?'trial':'full'), qty:Number(parts[2])||1} : null;
+  }).filter(Boolean);
+ }
+ function cartToParam(items){ return items.map(function(it){ return it.id+':'+(it.variant==='trial'?'t':'f')+':'+it.qty; }).join(','); }
+ function withCart(url, items){
+  var cartStr = cartToParam(items);
+  if(!cartStr) return url;
+  var hashIdx = url.indexOf('#');
+  var hash = hashIdx === -1 ? '' : url.slice(hashIdx);
+  var base = hashIdx === -1 ? url : url.slice(0, hashIdx);
+  return base + (base.indexOf('?')===-1 ? '?' : '&') + 'cart=' + encodeURIComponent(cartStr) + hash;
+ }
+ var cartItems = cartFromURL();
+ function updateCartBadge(){
+  var total = cartItems.reduce(function(s,it){ return s+it.qty; }, 0);
+  var badge = document.getElementById('cartBadge');
+  badge.textContent = total;
+  badge.style.display = total > 0 ? 'flex' : 'none';
+ }
+ updateCartBadge();
 
-  var toast = document.getElementById('toast');
-  var toastTimer = null;
-  function showToast(msg){
-    toast.textContent = msg;
-    toast.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2000);
-  }
+ var toast = document.getElementById('toast');
+ var toastTimer = null;
+ function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2000);
+ }
 
-  document.getElementById('brandBtn').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
-  document.getElementById('bcHome').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
-  document.getElementById('searchBtn').addEventListener('click', function(){ showToast('Search · Coming soon'); });
-  var vhAcctMenu = document.getElementById('vhAcctMenu');
-  document.getElementById('acctBtn').addEventListener('click', function(e){
-    e.stopPropagation();
-    vhAcctMenu.classList.toggle('open');
-  });
-  document.getElementById('vhamOrder').addEventListener('click', function(){
-    showToast('Currently on the Order Tracking page');
-    vhAcctMenu.classList.remove('open');
-  });
-  document.getElementById('vhamBooking').addEventListener('click', function(){
-    window.location.href = withCart('/bookings/', cartItems);
-  });
-  document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
-  vhAcctMenu.addEventListener('click', function(e){ e.stopPropagation(); });
-  document.getElementById('cartBtn').addEventListener('click', function(){
-    if(!cartItems.length){ showToast('Cart is empty'); return; }
-    window.location.href = withCart('/checkout/', cartItems);
-  });
+ document.getElementById('brandBtn').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
+ document.getElementById('bcHome').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
+ document.getElementById('searchBtn').addEventListener('click', function(){ showToast('Search · Coming soon'); });
+ var vhAcctMenu = document.getElementById('vhAcctMenu');
+ document.getElementById('acctBtn').addEventListener('click', function(e){
+  e.stopPropagation();
+  vhAcctMenu.classList.toggle('open');
+ });
+ document.getElementById('vhamOrder').addEventListener('click', function(){
+  showToast('Currently on the Order Tracking page');
+  vhAcctMenu.classList.remove('open');
+ });
+ document.getElementById('vhamBooking').addEventListener('click', function(){
+  window.location.href = withCart('/bookings/', cartItems);
+ });
+ document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
+ vhAcctMenu.addEventListener('click', function(e){ e.stopPropagation(); });
+ document.getElementById('cartBtn').addEventListener('click', function(){
+  if(!cartItems.length){ showToast('Cart is empty'); return; }
+  window.location.href = withCart('/checkout/', cartItems);
+ });
 })();
 </script>
 <style>
@@ -491,134 +491,134 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .vh-chat-input-row button{ flex:none; width:36px; height:36px; border-radius:50%; background:var(--forest,#26362B); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; }
 </style>
 <div class="vh-chat-fab" id="vhChatFab">
-  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
-  <span class="vh-chat-badge" id="vhChatBadge"></span>
+ <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+ <span class="vh-chat-badge" id="vhChatBadge"></span>
 </div>
 <div class="vh-chat-panel" id="vhChatPanel">
-  <div class="vh-chat-hd">
-    <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
-    <div class="vh-chat-hd-sub" id="vhChatSub">Chatting with Dr. Gong Shihong</div>
-    <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
-  </div>
-  <div class="vh-chat-body" id="vhChatBody"></div>
-  <div class="vh-chat-input-row">
-    <input type="text" id="vhChatInput" placeholder="Type a message…" maxlength="300">
-    <button type="button" id="vhChatSend"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
-  </div>
+ <div class="vh-chat-hd">
+  <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
+  <div class="vh-chat-hd-sub" id="vhChatSub">Chatting with Dr. Gong Shihong</div>
+  <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
+ </div>
+ <div class="vh-chat-body" id="vhChatBody"></div>
+ <div class="vh-chat-input-row">
+  <input type="text" id="vhChatInput" placeholder="Type a message…" maxlength="300">
+  <button type="button" id="vhChatSend"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+ </div>
 </div>
 <script>
 (function(){
-  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  // 聊天消息是任何匿名访客都能Submit的内容，管理员打开对话时会看到——不转义就直接拼进innerHTML
-  // 的话，访客可以在消息里塞HTML/脚本，在管理员已登录的Browse器里执行（存储型XSS）。
-  function escapeHtml(s){
-    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
-    });
-  }
-  var CUSTOMER_ID_KEY = 'vinath_customer_chat_id';
-  var pollTimer = null;
-  var currentThread = null;
-  var currentMessages = [];
-
-  function getCustomerId(){
-    try {
-      var id = localStorage.getItem(CUSTOMER_ID_KEY);
-      if(!id){ id = 'cust_' + Date.now() + '_' + Math.random().toString(36).slice(2,8); localStorage.setItem(CUSTOMER_ID_KEY, id); }
-      return id;
-    } catch(e){ return 'cust_temp'; }
-  }
-  // 客户端第一次打开聊天面板时调用——后端会自动处理"这pcs人是不是第一次来"、要不要插入欢迎语，
-  // 前端不用再自己判断这些
-  async function ensureMyThread(){
-    try {
-      var res = await fetch(API_BASE + '/chat/ensure-thread', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customerId: getCustomerId() })
-      });
-      if(!res.ok) return null;
-      var data = await res.json();
-      currentThread = data.thread;
-      currentMessages = data.messages;
-      return currentThread;
-    } catch(e){ console.error('Chat init failed:', e); return null; }
-  }
-  async function refreshMyThread(){
-    try {
-      var res = await fetch(API_BASE + '/chat/threads/' + getCustomerId());
-      if(!res.ok) return null;
-      var data = await res.json();
-      currentThread = data.thread;
-      currentMessages = data.messages;
-      return currentThread;
-    } catch(e){ return null; }
-  }
-
-  function renderMessages(){
-    var body = document.getElementById('vhChatBody');
-    var sub = document.getElementById('vhChatSub');
-    if(!currentThread || !currentMessages.length){
-      body.innerHTML = '<div class="vh-chat-empty">Hello, feel free to leave a message here and we will reply as soon as possible.</div>';
-    } else {
-      body.innerHTML = currentMessages.map(function(m){
-        return '<div class="vh-chat-msg '+m.from+'">'+escapeHtml(m.text)+'</div>';
-      }).join('');
-      body.scrollTop = body.scrollHeight;
-    }
-    if(currentThread) sub.textContent = 'Chatting with ' + currentThread.assignedToName + '';
-    updateBadge();
-  }
-  function updateBadge(){
-    var badge = document.getElementById('vhChatBadge');
-    var panelOpen = document.getElementById('vhChatPanel').classList.contains('open');
-    if(currentThread && currentThread.unreadForCustomer && !panelOpen){
-      badge.style.display = 'flex'; badge.textContent = '1';
-    } else {
-      badge.style.display = 'none';
-    }
-  }
-
-  document.getElementById('vhChatFab').addEventListener('click', async function(){
-    var panel = document.getElementById('vhChatPanel');
-    panel.classList.toggle('open');
-    if(panel.classList.contains('open')){
-      await ensureMyThread();
-      renderMessages();
-    }
-    updateBadge();
+ var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+ // 聊天消息是任何匿名访客都能Submit的内容, 管理员打开对话时会看到——不转义就直接拼进innerHTML
+ // 的话, 访客可以在消息里塞HTML/脚本, 在管理员已登录的Browse器里执行(存储型XSS).
+ function escapeHtml(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+   return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
   });
-  document.getElementById('vhChatClose').addEventListener('click', function(){
-    document.getElementById('vhChatPanel').classList.remove('open');
-  });
-  async function sendMsg(){
-    var input = document.getElementById('vhChatInput');
-    var text = input.value.trim();
-    if(!text) return;
-    input.value = '';
-    input.disabled = true;
-    try {
-      await fetch(API_BASE + '/chat/threads/' + getCustomerId() + '/messages', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: text })
-      });
-      await refreshMyThread();
-      renderMessages();
-    } catch(e){ console.error('Send failed:', e); }
-    input.disabled = false;
-    input.focus();
-  }
-  document.getElementById('vhChatSend').addEventListener('click', sendMsg);
-  document.getElementById('vhChatInput').addEventListener('keydown', function(e){ if(e.key==='Enter') sendMsg(); });
+ }
+ var CUSTOMER_ID_KEY = 'vinath_customer_chat_id';
+ var pollTimer = null;
+ var currentThread = null;
+ var currentMessages = [];
 
-  // poll for admin replies / handoff changes while the widget is on screen
-  pollTimer = setInterval(async function(){
-    if(!currentThread) return; // 还没打开过聊天面板，没必要轮询
-    await refreshMyThread();
-    renderMessages();
-  }, 4000);
+ function getCustomerId(){
+  try {
+   var id = localStorage.getItem(CUSTOMER_ID_KEY);
+   if(!id){ id = 'cust_' + Date.now() + '_' + Math.random().toString(36).slice(2,8); localStorage.setItem(CUSTOMER_ID_KEY, id); }
+   return id;
+  } catch(e){ return 'cust_temp'; }
+ }
+ // 客户端第一次打开聊天面板时调用——后端会自动处理"这pcs人是不是第一次来", 要不要插入欢迎语, 
+ // 前端不用再自己判断这些
+ async function ensureMyThread(){
+  try {
+   var res = await fetch(API_BASE + '/chat/ensure-thread', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ customerId: getCustomerId() })
+   });
+   if(!res.ok) return null;
+   var data = await res.json();
+   currentThread = data.thread;
+   currentMessages = data.messages;
+   return currentThread;
+  } catch(e){ console.error('Chat init failed:', e); return null; }
+ }
+ async function refreshMyThread(){
+  try {
+   var res = await fetch(API_BASE + '/chat/threads/' + getCustomerId());
+   if(!res.ok) return null;
+   var data = await res.json();
+   currentThread = data.thread;
+   currentMessages = data.messages;
+   return currentThread;
+  } catch(e){ return null; }
+ }
+
+ function renderMessages(){
+  var body = document.getElementById('vhChatBody');
+  var sub = document.getElementById('vhChatSub');
+  if(!currentThread || !currentMessages.length){
+   body.innerHTML = '<div class="vh-chat-empty">Hello, feel free to leave a message here and we will reply as soon as possible.</div>';
+  } else {
+   body.innerHTML = currentMessages.map(function(m){
+    return '<div class="vh-chat-msg '+m.from+'">'+escapeHtml(m.text)+'</div>';
+   }).join('');
+   body.scrollTop = body.scrollHeight;
+  }
+  if(currentThread) sub.textContent = 'Chatting with ' + currentThread.assignedToName + '';
+  updateBadge();
+ }
+ function updateBadge(){
+  var badge = document.getElementById('vhChatBadge');
+  var panelOpen = document.getElementById('vhChatPanel').classList.contains('open');
+  if(currentThread && currentThread.unreadForCustomer && !panelOpen){
+   badge.style.display = 'flex'; badge.textContent = '1';
+  } else {
+   badge.style.display = 'none';
+  }
+ }
+
+ document.getElementById('vhChatFab').addEventListener('click', async function(){
+  var panel = document.getElementById('vhChatPanel');
+  panel.classList.toggle('open');
+  if(panel.classList.contains('open')){
+   await ensureMyThread();
+   renderMessages();
+  }
+  updateBadge();
+ });
+ document.getElementById('vhChatClose').addEventListener('click', function(){
+  document.getElementById('vhChatPanel').classList.remove('open');
+ });
+ async function sendMsg(){
+  var input = document.getElementById('vhChatInput');
+  var text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+  input.disabled = true;
+  try {
+   await fetch(API_BASE + '/chat/threads/' + getCustomerId() + '/messages', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: text })
+   });
+   await refreshMyThread();
+   renderMessages();
+  } catch(e){ console.error('Send failed:', e); }
+  input.disabled = false;
+  input.focus();
+ }
+ document.getElementById('vhChatSend').addEventListener('click', sendMsg);
+ document.getElementById('vhChatInput').addEventListener('keydown', function(e){ if(e.key==='Enter') sendMsg(); });
+
+ // poll for admin replies / handoff changes while the widget is on screen
+ pollTimer = setInterval(async function(){
+  if(!currentThread) return; // 还没打开过聊天面板, 没必要轮询
+  await refreshMyThread();
+  renderMessages();
+ }, 4000);
 })();
 </script>
 
-  <script src="/assets/i18n.js?v=20260909z"></script>
+ <script src="/assets/i18n.js?v=20260909z"></script>
 </body>
 </html>

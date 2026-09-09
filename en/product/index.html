@@ -12,12 +12,12 @@ html{ -webkit-text-size-adjust:100%; }
 body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC","PingFang SC",sans-serif; color:#3B2E22; }
 
 :root{
-  --tan:#C9A876; --tan-deep:#A07A45; --espresso:#3B2E22; --espresso-soft:#6E5F4E;
-  --clay:#BC6E4E; --white-warm:#FFFDF9; --cream:#F7F3EC; --line:rgba(59,46,34,.10); --shadow:rgba(59,46,34,.13);
-  --amber:#B8863C; --amber-soft:rgba(184,134,60,.13);
-  --font-serif:"Noto Serif SC","Songti SC","STSong",serif;
-  --font-en:"Cormorant Garamond",Georgia,serif;
-  --pad: clamp(18px, 4.5vw, 44px);
+ --tan:#C9A876; --tan-deep:#A07A45; --espresso:#3B2E22; --espresso-soft:#6E5F4E;
+ --clay:#BC6E4E; --white-warm:#FFFDF9; --cream:#F7F3EC; --line:rgba(59,46,34,.10); --shadow:rgba(59,46,34,.13);
+ --amber:#B8863C; --amber-soft:rgba(184,134,60,.13);
+ --font-serif:"Noto Serif SC","Songti SC","STSong",serif;
+ --font-en:"Cormorant Garamond",Georgia,serif;
+ --pad: clamp(18px, 4.5vw, 44px);
 }
 
 .page{ max-width:760px; margin:0 auto; position:relative; }
@@ -39,7 +39,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .cart-badge{ position:absolute; top:-7px; right:-9px; background:var(--clay); color:#fff; font-size:10px; font-weight:700; min-width:16px; height:16px; border-radius:8px; display:flex; align-items:center; justify-content:center; padding:0 4px; }
 .vh-acct-wrap{ position:relative; display:flex; }
 .vh-acct-menu{ position:absolute; top:calc(100% + 12px); right:-6px; background:var(--white-warm); border-radius:14px; box-shadow:0 14px 34px rgba(59,46,34,.18);
-  padding:8px; min-width:140px; opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:60; }
+ padding:8px; min-width:140px; opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:60; }
 .vh-acct-menu.open{ opacity:1; pointer-events:auto; }
 .vham-item{ padding:11px 14px; font-size:14px; border-radius:9px; cursor:pointer; color:var(--espresso); white-space:nowrap; }
 .vham-item:hover{ background:var(--cream); }
@@ -126,633 +126,633 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .not-found{ text-align:center; padding:80px 20px; color:var(--espresso-soft); }
 
 .vh-toast{ position:fixed; left:50%; bottom:22px; transform:translate(-50%,10px); background:rgba(40,31,22,.94); color:#FDF8F0; font-size:15px; padding:11px 20px;
-  border-radius:20px; opacity:0; transition:opacity .25s, transform .25s; pointer-events:none; z-index:70; max-width:88vw; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+ border-radius:20px; opacity:0; transition:opacity .25s, transform .25s; pointer-events:none; z-index:70; max-width:88vw; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .vh-toast.show{ opacity:1; transform:translate(-50%,0); }
 </style>
-  <link rel="icon" type="image/webp" href="/favicon.webp">
+ <link rel="icon" type="image/webp" href="/favicon.webp">
 
 <script>
-  window.VINATH_PAGE_LANG = 'en';
+ window.VINATH_PAGE_LANG = 'en';
 </script>
 
 
 <style>
-  /* 英文版标题Apply Poppins Black */
-  h1, h2, h3, h4, h5, h6,
-  .hero-title, .section-title, .page-title,
-  .eyebrow, .cta-title,
-  .process-step-title, .journey-card-title,
-  .footer-title, .nav-link {
-    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
-  }
-  
-  /* 大标题Apply Black 900 */
-  h1, .hero-title, .section-title, .page-title {
-    font-weight: 900 !important;
-    letter-spacing: -0.02em;
-  }
-  
-  /* 二级标题Apply ExtraBold 800 */
-  h2, .process-step-title, .journey-card-title, .footer-title {
-    font-weight: 800 !important;
-  }
-  
-  /* 三级标题Apply Bold 700 */
-  h3, h4 {
-    font-weight: 700 !important;
-  }
-  
-  /* 小标签Apply SemiBold 600 */
-  .eyebrow, .cta-title {
-    font-weight: 600 !important;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
+ /* 英文版标题Apply Poppins Black */
+ h1, h2, h3, h4, h5, h6,
+ .hero-title, .section-title, .page-title,
+ .eyebrow, .cta-title,
+ .process-step-title, .journey-card-title,
+ .footer-title, .nav-link {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+ }
+ 
+ /* 大标题Apply Black 900 */
+ h1, .hero-title, .section-title, .page-title {
+  font-weight: 900 !important;
+  letter-spacing: -0.02em;
+ }
+ 
+ /* 二级标题Apply ExtraBold 800 */
+ h2, .process-step-title, .journey-card-title, .footer-title {
+  font-weight: 800 !important;
+ }
+ 
+ /* 三级标题Apply Bold 700 */
+ h3, h4 {
+  font-weight: 700 !important;
+ }
+ 
+ /* 小标签Apply SemiBold 600 */
+ .eyebrow, .cta-title {
+  font-weight: 600 !important;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+ }
 </style>
 
 </head>
 <body>
 
 <div class="page">
-  <div class="vh-header">
-    <div class="side">
-      <div class="vh-brand" id="brandBtn">VINATH<span class="vh-tm">™</span></div>
-    </div>
-    <div class="vh-icons">
-      <div class="vh-ibtn" id="searchBtn" aria-label="Search">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10.3" cy="10.3" r="6.3"/><line x1="19.5" y1="19.5" x2="15" y2="15"/></svg>
-      </div>
-      <span class="vh-acct-wrap">
-        <div class="vh-ibtn" id="acctBtn" aria-label="Account">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 19.5c1.2-3.8 3.9-5.7 7-5.7s5.8 1.9 7 5.7"/></svg>
-        </div>
-        <div class="vh-acct-menu" id="vhAcctMenu">
-          <div class="vham-item" id="vhamOrder">Track Order</div>
-          <div class="vham-item" id="vhamBooking">Track Booking</div>
-        </div>
-      </span>
-      <div class="vh-ibtn" id="cartBtn" aria-label="Cart">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
-        <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
-      </div>
-    </div>
+ <div class="vh-header">
+  <div class="side">
+   <div class="vh-brand" id="brandBtn">VINATH<span class="vh-tm">™</span></div>
   </div>
+  <div class="vh-icons">
+   <div class="vh-ibtn" id="searchBtn" aria-label="Search">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="10.3" cy="10.3" r="6.3"/><line x1="19.5" y1="19.5" x2="15" y2="15"/></svg>
+   </div>
+   <span class="vh-acct-wrap">
+    <div class="vh-ibtn" id="acctBtn" aria-label="Account">
+     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.3"/><path d="M5 19.5c1.2-3.8 3.9-5.7 7-5.7s5.8 1.9 7 5.7"/></svg>
+    </div>
+    <div class="vh-acct-menu" id="vhAcctMenu">
+     <div class="vham-item" id="vhamOrder">Track Order</div>
+     <div class="vham-item" id="vhamBooking">Track Booking</div>
+    </div>
+   </span>
+   <div class="vh-ibtn" id="cartBtn" aria-label="Cart">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+    <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
+   </div>
+  </div>
+ </div>
 
-  <div class="breadcrumb" id="breadcrumb"></div>
+ <div class="breadcrumb" id="breadcrumb"></div>
 
-  <div class="content" id="mainContent"></div>
+ <div class="content" id="mainContent"></div>
 </div>
 
 <div class="vh-footer">
-  <div class="vh-footer-top">
-    <div class="vh-footer-brand">VINATH<span class="vh-tm">™</span></div>
-  </div>
-  <div class="vh-footer-bottom">
-    <span>Copyright &copy; 2026 VINATH TCM HEALTH CARE. All rights reserved.</span>
-    <span class="vh-footer-my">Malaysia</span>
-  </div>
+ <div class="vh-footer-top">
+  <div class="vh-footer-brand">VINATH<span class="vh-tm">™</span></div>
+ </div>
+ <div class="vh-footer-bottom">
+  <span>Copyright &copy; 2026 VINATH TCM HEALTH CARE. All rights reserved.</span>
+  <span class="vh-footer-my">Malaysia</span>
+ </div>
 </div>
 
 <div class="vh-toast" id="toast"></div>
 
 <script>
 (function(){
-  var ICON = {
-    plaster:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="5"/><line x1="12" y1="9" x2="12" y2="15"/><line x1="9" y1="12" x2="15" y2="12"/></svg>',
-    tea:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9z"/><path d="M17 10.5h1.5a2.3 2.3 0 0 1 0 4.6H17"/><path d="M8 4.2c-1 1-1 1.8 0 2.8M12.5 4.2c-1 1-1 1.8 0 2.8"/></svg>',
-    soak:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18c0 4.5-4 8-9 8s-9-3.5-9-8z"/><path d="M9 4.2c0 1.2.9 1.2.9 2.4S9 7.8 9 9"/><path d="M14 4.2c0 1.2.9 1.2.9 2.4S14 7.8 14 9"/></svg>',
-    mask:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4c-4.5 0-7 3.3-7 7.5 0 5.5 3.3 9.5 7 9.5s7-4 7-9.5C19 7.3 16.5 4 12 4z"/><path d="M9 12c.6.6 1.2.6 1.8 0M13.2 12c.6.6 1.2.6 1.8 0"/><path d="M9.5 15.8c1 .8 4 .8 5 0"/></svg>'
-  };
-  var GENERIC_CAT_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="13" rx="2"/><path d="M4 11h16"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2"/></svg>';
-  function getShopCategoriesLocal(){
-    var EN_CAT_NAMES={plaster:'Plaster Series',tea:'Tea Series',soak:'Herbal Soup Series',mask:'Topical Series'};
-    var list=null;
-    try {
-      var raw = localStorage.getItem('vinath_shop_categories');
-      if(raw) list=JSON.parse(raw);
-    } catch(e){}
-    if(!list || !list.length) list=[{key:'plaster',name:'Plaster Series'},{key:'tea',name:'Tea Series'},{key:'soak',name:'Herbal Soup Series'},{key:'mask',name:'Topical Series'}];
-    list.forEach(function(cat){ if(EN_CAT_NAMES[cat.key]) cat.name=EN_CAT_NAMES[cat.key]; });
-    return list;
-  }
-  var TYPE_LABEL = {};
-  getShopCategoriesLocal().forEach(function(c){ TYPE_LABEL[c.key] = c.name; });
-  var CAUTION_HERBS = ['Notoginseng','Peach Kernel','Safflower','Motherwort','Bur Reed Tuber','Zedoary Rhizome','Cyathula Root','Vaccaria Seed','Turmeric','Frankincense','Cassia Twig','Cinnamon Bark'];
+ var ICON = {
+  plaster:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="5"/><line x1="12" y1="9" x2="12" y2="15"/><line x1="9" y1="12" x2="15" y2="12"/></svg>',
+  tea:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9z"/><path d="M17 10.5h1.5a2.3 2.3 0 0 1 0 4.6H17"/><path d="M8 4.2c-1 1-1 1.8 0 2.8M12.5 4.2c-1 1-1 1.8 0 2.8"/></svg>',
+  soak:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18c0 4.5-4 8-9 8s-9-3.5-9-8z"/><path d="M9 4.2c0 1.2.9 1.2.9 2.4S9 7.8 9 9"/><path d="M14 4.2c0 1.2.9 1.2.9 2.4S14 7.8 14 9"/></svg>',
+  mask:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4c-4.5 0-7 3.3-7 7.5 0 5.5 3.3 9.5 7 9.5s7-4 7-9.5C19 7.3 16.5 4 12 4z"/><path d="M9 12c.6.6 1.2.6 1.8 0M13.2 12c.6.6 1.2.6 1.8 0"/><path d="M9.5 15.8c1 .8 4 .8 5 0"/></svg>'
+ };
+ var GENERIC_CAT_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="13" rx="2"/><path d="M4 11h16"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2"/></svg>';
+ function getShopCategoriesLocal(){
+  var EN_CAT_NAMES={plaster:'Plaster Series',tea:'Tea Series',soak:'Herbal Soup Series',mask:'Topical Series'};
+  var list=null;
+  try {
+   var raw = localStorage.getItem('vinath_shop_categories');
+   if(raw) list=JSON.parse(raw);
+  } catch(e){}
+  if(!list || !list.length) list=[{key:'plaster',name:'Plaster Series'},{key:'tea',name:'Tea Series'},{key:'soak',name:'Herbal Soup Series'},{key:'mask',name:'Topical Series'}];
+  list.forEach(function(cat){ if(EN_CAT_NAMES[cat.key]) cat.name=EN_CAT_NAMES[cat.key]; });
+  return list;
+ }
+ var TYPE_LABEL = {};
+ getShopCategoriesLocal().forEach(function(c){ TYPE_LABEL[c.key] = c.name; });
+ var CAUTION_HERBS = ['Notoginseng','Peach Kernel','Safflower','Motherwort','Bur Reed Tuber','Zedoary Rhizome','Cyathula Root','Vaccaria Seed','Turmeric','Frankincense','Cassia Twig','Cinnamon Bark'];
 
-  var TAG_DATA = {
-    "Women's Health": [
-      {cond:'Menstrual Concerns', tags:['Menstrual Pain','Prolonged Period','heavy menstrual flow','scanty menstrual flow','cycledisordered','Spotting']},
-      {cond:'Abnormal Discharge', tags:['Heavy Flow','Abnormal Color','with odor','recurrent itching']},
-      {cond:'TCM Pre-pregnancy Care', tags:['cycleirregular','cold constitution','moodstress','Pre-pregnancywellness']},
-      {cond:'Gynecological Lumps', tags:['check-up indicates hyperplasia','Lower-abdominal Heaviness','discomfort worsens during menstrual period']},
-      {cond:'Menopause', tags:['Hot Flashes & Night Sweats','insomnia','mood swings','Palpitations']},
-    ],
-    'Body Sculpting': [
-      {cond:'dietary wellness', tags:['Irregular Meals','cravings for sweets and oily food','frequent eating out','Unplanned Diet']},
-      {cond:'Exercise Guidance', tags:['prolonged sitting, low activity','Improper Exercise','Hard to Stay Consistent','Slow Post-exercise Recovery']},
-      {cond:'Postpartum Body Sculpting', tags:['postpartum qi and blood deficiency','abdominal sagging','slow recovery of energy','breastfeeding wellness']},
-      {cond:'slow metabolism', tags:['Cold Sensitivity','fatigue-prone','Water Retention','difficulty losing weight']},
-    ],
-    'Beauty & Radiance': [
-      {cond:'dull complexion', tags:['Sallow Complexion','Lacking Radiance','fatigued dullness']},
-      {cond:'skin sagging', tags:['Loss of Elasticity','early fine lines','Sagging Cheeks']},
-      {cond:'recurrent acne', tags:['recurrent breakouts','Enlarged Pores','Redness & Tingling','Oily Skin']},
-      {cond:'Facial Contour', tags:['Facial Puffiness','Blurred Facial Contour','double chin']},
-    ],
-    'Daily Wellness': [
-      {cond:'Suboptimal Health', tags:['easily fatigued','Low Energy','Difficulty Concentrating','weaker immunity']},
-      {cond:'Seasonal Wellness', tags:['Heavy Dampness','Heat Intolerance & Easy Sweating','Seasonal Adjustment']},
-      {cond:'digestive wellness', tags:['Poor Appetite','Indigestion','constipation','Abdominal Bloating']},
-      {cond:'mood relief', tags:['high stress','Irritability','tense mood','Bedtime Overthinking']},
-    ],
-    'Pain Soothing': [
-      {cond:'Neck, Shoulders & Lower Back', tags:['stiffness from prolonged sitting','Stiff Neck','Lower-back & Body Aches','aching neck and shoulders']},
-      {cond:'joint discomfort', tags:['aching, heavy joints','Worse with Cold','Limited Mobility']},
-      {cond:'Sports Injury', tags:['muscle strain','Sprains & Bruises','Post-exercise Soreness']},
-      {cond:'fatigue-related aches', tags:['generalized body aches','discomfort from long standing or sitting','recurrent dull discomfort']},
-    ],
-    'Quality Sleep': [
-      {cond:'Difficulty Falling Asleep', tags:['Wide Awake When Lying Down','Racing Thoughts','taking long to fall asleep']},
-      {cond:'Light Sleep, Easily Woken', tags:['waking easily at night','Difficulty Returning to Sleep','sound sensitivity']},
-      {cond:'frequent dreams', tags:['Frequent Dreams','poor sleep quality']},
-      {cond:'Morning Fatigue', tags:['Still Tired After Waking','Difficulty Getting Up','Daytime Drowsiness']},
-    ],
-  };
-  var PRODUCTS = [
-    {id:1, name:'Yue Shu Patch', type:'plaster', journeys:["Women's Health"], tags:['Menstrual Pain'], price:9, trial:4, desc:'Apply during menstrual period for cold pain in waist and abdomen, the warmth slowly spreads.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Corydalis', amt:'10g'},{herb:'Cinnamon Bark', amt:'5g'},{herb:'Lindera Root', amt:'8g'},{herb:'Cyperus Rhizome', amt:'6g'}], usage:'Grind into powder, mix with rice wine or warm water into paste, apply to Guanyuan and Qihai acupoints, once daily starting 3 days before menstruation, 4-6 hours each time.'},
-    {id:2, name:'Chi Xi Tea', type:'tea', journeys:["Women's Health"], tags:['Prolonged Period'], price:45, trial:16, desc:'When menstruation lasts too long or is spotty, drink it to help the body regulate its rhythm.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Agrimonia', amt:'15g'},{herb:'Madder Root', amt:'6g'},{herb:'Smoked Plum', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Steep in boiling water for 15 minutes or lightly decoct for 10 minutes, drink daily from day 3 of menstruation until period ends, 1 dose per day.'},
-    {id:3, name:'Man Xi Tea', type:'tea', journeys:["Women's Health"], tags:['heavy menstrual flow'], price:45, trial:16, desc:'On days with heavier flow, drink a cup for peace of mind.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'15g'},{herb:'Calcined Dragon Bone (decoct first)', amt:'10g'},{herb:'Charred Palm Seed', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Decoct Dragon Bone first for 15 minutes, add other herbs and decoct for another 10 minutes, 1 dose daily on days 1-3 of menstruation.'},
-    {id:4, name:'Qian Xi Tea', type:'tea', journeys:["Women's Health"], tags:['scanty menstrual flow'], price:45, trial:16, desc:'Light and scanty periods, nourish qi and blood daily.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Angelica Root', amt:'6g'},{herb:'Polygonatum', amt:'10g'},{herb:'White Peony Root', amt:'8g'},{herb:'Red Date', amt:'3pcs'}], usage:'Steep or lightly decoct, drink for 1-2 weeks after period ends, 1 dose per day.'},
-    {id:5, name:'Xian Yue Tea', type:'tea', journeys:["Women's Health"], tags:['cycledisordered'], price:45, trial:16, desc:'Irregular cycles, help the body find its own rhythm.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Bupleurum Root', amt:'5g'},{herb:'Cyperus Rhizome', amt:'8g'},{herb:'Motherwort', amt:'10g'},{herb:'Rose Flower', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'Steep as tea, 1 dose daily outside menstruation, 2-3 weeks as one cycle.'},
-    {id:6, name:'Yue Xi Tea', type:'tea', journeys:["Women's Health"], tags:['Spotting'], price:45, trial:16, desc:'Occasional spotting between periods, nourish yin and cool blood, gentlewellness.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Ligustrum Fruit', amt:'10g'},{herb:'Eclipta', amt:'10g'},{herb:'Raw Rehmannia', amt:'8g'},{herb:'Madder Root', amt:'5g'}], usage:'Lightly decoct for 15 minutes, 1 dose daily around ovulation (days 12-16 of cycle).'},
-    {id:7, name:'Wang Xi Tea', type:'tea', journeys:["Women's Health"], tags:['Prolonged Period','heavy menstrual flow'], price:45, trial:16, desc:'On days with long and heavy periods, a cup of tea helps stabilize.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'15g'},{herb:'Agrimonia', amt:'12g'},{herb:'Cornelian Cherry', amt:'8g'},{herb:'Lotus Node', amt:'10g'},{herb:'Smoked Plum', amt:'5g'}], usage:'Lightly decoct for 15 minutes, 1 dose daily on days 1-4 of menstruation, can increase to 1.5 doses when flow is heavy.'},
-    {id:8, name:'Ying Yue Tea', type:'tea', journeys:["Women's Health"], tags:['cycledisordered','scanty menstrual flow'], price:45, trial:16, desc:'Scanty and irregular cycles, slowly nourish and replenish.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Angelica Root', amt:'8g'},{herb:'Polygonatum', amt:'10g'},{herb:'White Peony Root', amt:'8g'},{herb:'Rose Flower', amt:'4g'},{herb:'Red Date', amt:'3pcs'}], usage:'Steep, drink for 2 weeks after period ends, 1 dose daily.'},
-    {id:9, name:'Yun Jing Tea', type:'tea', journeys:["Women's Health"], tags:['Heavy Flow'], price:45, trial:16, desc:'Excessive leucorrhea, strengthen spleen and remove dampness, feel fresh and clean.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Atractylodes Rhizome', amt:'10g'},{herb:'Chinese Yam', amt:'10g'},{herb:'Euryale Seed', amt:'8g'},{herb:'White Hyacinth Bean', amt:'8g'},{herb:'Tangerine Peel', amt:'3g'}], usage:'Simmer gently for 15 minutes. Drink for 2 consecutive weeks, 1 dose daily.'},
-    {id:10, name:'Su Ya Tea', type:'tea', journeys:["Women's Health"], tags:['Abnormal Color'], price:45, trial:16, desc:'Abnormal color but not severe, daily gentle cleansing.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria', amt:'10g'},{herb:'Phellodendron Bark', amt:'4g'},{herb:'Coix Seed', amt:'12g'},{herb:'Licorice Root', amt:'3g'}], usage:'Simmer gently for 10 minutes. Drink for 1-2 consecutive weeks, 1 dose daily.'},
-    {id:11, name:'Zhilan Tea', type:'tea', journeys:["Women's Health"], tags:['with odor'], price:45, trial:16, desc:'With odor, clear heat and remove dampness, regain freshness.', active:true, inStock:false, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Dandelion', amt:'10g'},{herb:'Glabrous Greenbrier Rhizome', amt:'12g'},{herb:'Plantago Seed (wrap-decoct)', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'Wrap Plantago Seed and decoct with other herbs for 15 minutes. Drink for 1-2 weeks, 1 dose daily.'},
-    {id:12, name:'Lantang Sitz Bath Pack', type:'soak', journeys:["Women's Health"], tags:['recurrent itching'], price:25, trial:10, desc:'Recurring itching and discomfort, boil and take a reassuring hot bath.', active:true, inStock:true, featured:false, imgs:[], form:'Topical sitz bath', herbs:[{herb:'Sophora Root', amt:'15g'},{herb:'Cnidium Fruit', amt:'12g'},{herb:'Phellodendron Bark', amt:'10g'},{herb:'Sichuan Pepper', amt:'5g'},{herb:'Mugwort Leaf', amt:'10g'}], usage:'Wrap in a cloth bag, add 2000ml water and boil for 15 minutes. When lukewarm (about 40°C), use as a sitz bath for 15 minutes, once nightly for 5-7 days. Discontinue during menstrual period.'},
-    {id:13, name:'Chengche Tea', type:'tea', journeys:["Women's Health"], tags:['with odor','Abnormal Color'], price:45, trial:16, desc:'When abnormal color and odor appear together, this clears them on two fronts.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Phellodendron Bark', amt:'5g'},{herb:'Plantago Seed (wrap-decoct)', amt:'10g'},{herb:'Coix Seed', amt:'12g'},{herb:'Dandelion', amt:'8g'},{herb:'Glabrous Greenbrier Rhizome', amt:'10g'}], usage:'Wrap Plantago Seed and decoct with other herbs for 15 minutes. Drink for 2 weeks, 1 dose daily; increase to 1.5 doses daily when symptoms are pronounced.'},
-    {id:14, name:'Zhicheng Tea', type:'tea', journeys:["Women's Health"], tags:['with odor','Heavy Flow','Abnormal Color'], price:45, trial:16, desc:'For days with heavy flow, abnormal color and odor — comprehensive clearing and nourishing.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Chinese Yam', amt:'15g'},{herb:'Euryale Seed', amt:'10g'},{herb:'Phellodendron Bark', amt:'5g'},{herb:'Atractylodes', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'Simmer gently for 10-15 minutes. Drink for 2-3 weeks; 1.5 doses daily when discharge is yellow with strong odor.'},
-    {id:15, name:'Yuexu Tea', type:'tea', journeys:["Women's Health"], tags:['cycleirregular'], price:45, trial:16, desc:'When the cycle stays irregular during pre-pregnancy, this soothes the liver and regulates qi to restore balance.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Bupleurum Root', amt:'5g'},{herb:'Cyperus Rhizome', amt:'8g'},{herb:'Angelica Root', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'Steep covered; start after the period ends and drink for 2 consecutive weeks. Discontinue during menstrual period.'},
-    {id:16, name:'Xunuan Patch', type:'plaster', journeys:["Women's Health"], tags:['cold constitution'], price:9, trial:4, desc:'For cold constitution with cold hands and feet, apply this warm compress for deep inner warmth.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Cinnamon Bark', amt:'6g'},{herb:'Mugwort Leaf', amt:'10g'},{herb:'Fennel', amt:'8g'},{herb:'Dried Ginger', amt:'6g'}], usage:'Grind into powder, mix with ginger juice into a paste, apply to Guanyuan and Mingmen acupoints, 3-4 times weekly, 4-6 hours each time. Discontinue during menstrual period.'},
-    {id:17, name:'Lüe Tea', type:'tea', journeys:["Women's Health"], tags:['moodstress'], price:45, trial:16, desc:'When pre-pregnancy feels stressful, a cup helps you breathe easier.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Albizia Flower', amt:'6g'},{herb:'Green Calyx Plum Flower', amt:'5g'},{herb:'Poria', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'Steep covered as herbal tea, 1 dose daily during tense periods.'},
-    {id:18, name:'Lanxin Tea', type:'tea', journeys:["Women's Health"], tags:['Pre-pregnancywellness'], price:45, trial:16, desc:'Daily pre-pregnancy constitution care, gently tonifying the liver and kidney to build a foundation.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Cuscuta Seed', amt:'12g'},{herb:'Raspberry', amt:'10g'},{herb:'Goji Berry', amt:'10g'},{herb:'Mulberry Fruit', amt:'8g'}], usage:'Simmer gently for 15 minutes. For daily wellness, 4-5 times weekly, 1 dose each time.'},
-    {id:19, name:'Meiyue Tea', type:'tea', journeys:["Women's Health"], tags:['cycleirregular','moodstress'], price:45, trial:16, desc:'For irregular cycles with irritability, this soothes the liver and nourishes the blood together.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Bupleurum Root', amt:'5g'},{herb:'White Peony Root', amt:'10g'},{herb:'Albizia Flower', amt:'5g'},{herb:'Green Calyx Plum Flower', amt:'4g'},{herb:'Poria', amt:'10g'}], usage:'Steep covered; 1 dose daily outside menstruation for 2-3 consecutive weeks.'},
-    {id:20, name:'Lanxu Tea', type:'tea', journeys:["Women's Health"], tags:['cycleirregular','Pre-pregnancywellness','moodstress'], price:45, trial:16, desc:'A comprehensive wellness tea for when both cycle and mood need care during pre-pregnancy.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Cuscuta Seed', amt:'12g'},{herb:'White Peony Root', amt:'10g'},{herb:'Goji Berry', amt:'10g'},{herb:'Bupleurum Root', amt:'4g'},{herb:'Albizia Flower', amt:'5g'},{herb:'Red Date', amt:'3pcs'}], usage:'Start 1 dose daily after the period ends for about 2 weeks; may increase to 1.5 doses during tense periods. Discontinue during menstrual period. Stop once pregnancy is confirmed and consult a physician.'},
-    {id:21, name:'Jingyu Patch', type:'plaster', journeys:["Women's Health"], tags:['check-up indicates hyperplasia'], price:9, trial:4, desc:'If a check-up indicates hyperplasia, use as daily supportive wellness care alongside regular follow-ups.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Sparganium', amt:'6g'},{herb:'Zedoary', amt:'6g'},{herb:'Chinese Honeylocust Spine', amt:'8g'},{herb:'Cinnamon Twig', amt:'5g'}], usage:'Grind into powder, mix with vinegar into a paste, apply to the lower abdomen (avoid during menstrual period), 3 times weekly, 4 hours each time. Use alongside regular check-ups; contraindicated during pregnancy.'},
-    {id:22, name:'Hefeng Tea', type:'tea', journeys:["Women's Health"], tags:['Lower-abdominal Heaviness'], price:45, trial:16, desc:'For persistent lower-abdominal heaviness, this regulates qi to release that stuck, uncomfortable sensation.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Lindera Root', amt:'6g'},{herb:'Buddha Hand', amt:'6g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'Steep covered as tea, 1 dose daily on days of discomfort.'},
-    {id:23, name:'Jianghua Tea', type:'tea', journeys:["Women's Health"], tags:['discomfort worsens during menstrual period'], price:45, trial:16, desc:'For discomfort during menstrual days, this invigorates blood to release stagnation.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Motherwort', amt:'10g'},{herb:'Cyperus Rhizome', amt:'8g'},{herb:'Hawthorn', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'Simmer gently; start 1 dose daily 3 days before the menstrual period until it ends.'},
-    {id:24, name:'Nuanxi Tea', type:'tea', journeys:["Women's Health"], tags:['Lower-abdominal Heaviness','discomfort worsens during menstrual period'], price:45, trial:16, desc:'For heaviness that worsens during the menstrual period, this gently releases it.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Motherwort', amt:'10g'},{herb:'Lindera Root', amt:'8g'},{herb:'Buddha Hand', amt:'6g'},{herb:'Hawthorn', amt:'8g'},{herb:'China Rose', amt:'4g'}], usage:'Simmer gently for 15 minutes; 1 dose daily from 3 days before to day 3 of the menstrual period.'},
-    {id:25, name:'Qinglu Tea', type:'tea', journeys:["Women's Health"], tags:['Hot Flashes & Night Sweats'], price:45, trial:16, desc:'For hot flashes, night sweats and restless sleep, this nourishes yin and consolidates sweating for a calmer feel.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Blighted Wheat', amt:'12g'},{herb:'Lycium Bark', amt:'8g'},{herb:'Mulberry Leaf', amt:'6g'},{herb:'Ophiopogon', amt:'8g'},{herb:'Schisandra Fruit', amt:'5g'}], usage:'Simmer gently for 15 minutes, especially suitable in the afternoon; drink for 2-4 consecutive weeks.'},
-    {id:26, name:'Yuezhen Patch', type:'plaster', journeys:["Women's Health"], tags:['insomnia'], price:9, trial:4, desc:'For tossing and turning unable to sleep, apply to the Yongquan acupoint before bed.', active:true, inStock:true, featured:false, imgs:[], form:'patch, apply to Yongquan acupoint (topical use)', herbs:[{herb:'Sour Jujube Seed', amt:'15g'},{herb:'Fleeceflower Vine', amt:'15g'},{herb:'Polygala Root', amt:'8g'},{herb:'Evodia Fruit', amt:'6g'}], usage:'Grind into powder, mix with vinegar into a paste, apply to both Yongquan acupoints before bed, secure with tape, remove the next morning; use for 1-2 consecutive weeks.'},
-    {id:27, name:'Lanxin Tea', type:'tea', journeys:["Women's Health"], tags:['mood swings'], price:45, trial:16, desc:'When moods swing up and down, a cup helps you settle.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Blighted Wheat', amt:'20g'},{herb:'Red Date', amt:'6pcs'},{herb:'Licorice Root', amt:'5g'},{herb:'Albizia Bark', amt:'8g'},{herb:'Curcuma Root', amt:'6g'}], usage:'Simmer gently for 15-20 minutes, 1 dose daily during mood-swing periods.'},
-    {id:28, name:'Jinglan Tea', type:'tea', journeys:["Women's Health"], tags:['Palpitations'], price:45, trial:16, desc:'For an unsettled, racing heart, this clears the heart and calms palpitations to gradually settle.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Salvia Root', amt:'10g'},{herb:'Poria with Pine', amt:'12g'},{herb:'Arborvitae Seed', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'Steep covered or simmer gently; 1 dose daily when palpitations are pronounced, for 1-2 consecutive weeks.'},
-    {id:29, name:'Suyue Patch', type:'plaster', journeys:["Women's Health"], tags:['insomnia','Palpitations'], price:9, trial:4, desc:'For poor sleep with palpitations, apply before bed for dual calming.', active:true, inStock:true, featured:false, imgs:[], form:'patch, apply to Yongquan acupoint (topical use)', herbs:[{herb:'Sour Jujube Seed', amt:'10g'},{herb:'Fleeceflower Vine', amt:'10g'},{herb:'Polygala Root', amt:'6g'},{herb:'Salvia Root', amt:'8g'},{herb:'Evodia Fruit', amt:'5g'}], usage:'Grind into powder, mix with vinegar into a paste, apply to Yongquan acupoint before bed, remove the next morning; use for 1-2 consecutive weeks.'},
-    {id:30, name:'Jinghao Tea', type:'tea', journeys:["Women's Health"], tags:['insomnia','Palpitations','mood swings','Hot Flashes & Night Sweats'], price:49, trial:18, desc:'When menopause brings multiple discomforts at once, a cup of tea carries you steadily through.', active:true, inStock:true, featured:true, imgs:[], form:'Tea', herbs:[{herb:'Ligustrum Fruit', amt:'12g'},{herb:'Sour Jujube Seed', amt:'15g'},{herb:'Blighted Wheat', amt:'20g'},{herb:'Ophiopogon', amt:'10g'},{herb:'Salvia Root', amt:'10g'},{herb:'Schisandra Fruit', amt:'5g'}], usage:'Steep covered or simmer gently, drink from afternoon to before bed for 2-4 consecutive weeks; may increase to 1.5 doses daily when symptoms are pronounced.'},
-    {id:31, name:'Chengu Tea', type:'tea', journeys:['Body Sculpting'], tags:['Irregular Meals'], price:45, trial:16, desc:'For irregular meals, this strengthens the spleen and harmonizes the stomach to restore eating rhythm.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Atractylodes Rhizome', amt:'10g'},{herb:'Tangerine Peel', amt:'6g'},{herb:'Hawthorn', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'Simmer gently, drink after breakfast for 2 consecutive weeks.'},
-    {id:32, name:'Lanyin Tea', type:'tea', journeys:['Body Sculpting'], tags:['cravings for sweets and oily food'], price:45, trial:16, desc:"For sweet and oily food cravings, this resolves phlegm and dampness to lighten the body's load.", active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Tangerine Peel', amt:'8g'},{herb:'Poria', amt:'10g'},{herb:'Lotus Leaf', amt:'6g'},{herb:'Hawthorn', amt:'8g'}], usage:'Steep covered, drink after meals, 1 dose daily.'},
-    {id:33, name:'Jiashan Tea', type:'tea', journeys:['Body Sculpting'], tags:['frequent eating out'], price:45, trial:16, desc:'After eating out too much, this clears and nourishes the spleen and stomach for a fresh feeling.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Coix Seed', amt:'15g'},{herb:'Mung Bean Coat', amt:'8g'},{herb:'Malt', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'Simmer gently, drink on days with more eating out.'},
-    {id:34, name:'Chenxu Tea', type:'tea', journeys:['Body Sculpting'], tags:['Unplanned Diet'], price:45, trial:16, desc:'For an unplanned diet, this strengthens the spleen and boosts qi to build a foundation first.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Codonopsis', amt:'10g'},{herb:'Atractylodes Rhizome', amt:'8g'},{herb:'Poria', amt:'8g'},{herb:'Tangerine Peel', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'Simmer gently, 4-5 times weekly.'},
-    {id:35, name:'Yunyin Tea', type:'tea', journeys:['Body Sculpting'], tags:['cravings for sweets and oily food','Unplanned Diet'], price:45, trial:16, desc:'For sweet and oily cravings without a plan — doubly resolves turbidity for a lighter start.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Lotus Leaf', amt:'8g'},{herb:'Cassia Seed', amt:'8g'},{herb:'Hawthorn', amt:'10g'},{herb:'Tangerine Peel', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Steep covered, drink after meals for 2-3 consecutive weeks.'},
-    {id:36, name:'Qingchuan Tea', type:'tea', journeys:['Body Sculpting'], tags:['prolonged sitting, low activity'], price:45, trial:16, desc:'For prolonged sitting, this regulates qi and invigorates blood to get qi and blood flowing again.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Tangerine Peel', amt:'6g'},{herb:'Salvia Root', amt:'8g'},{herb:'Coix Seed', amt:'12g'},{herb:'Licorice Root', amt:'3g'}], usage:'Steep covered, drink after prolonged sitting.'},
-    {id:37, name:'Hezi Tea', type:'tea', journeys:['Body Sculpting'], tags:['Improper Exercise'], price:45, trial:16, desc:'For improper exercise form, this nourishes blood and relaxes the tendons for easier movement.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Angelica Root', amt:'8g'},{herb:'Papaya', amt:'8g'},{herb:'Common Clubmoss Herb', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Simmer gently, drink before or after exercise.'},
-    {id:38, name:'Hengchen Tea', type:'tea', journeys:['Body Sculpting'], tags:['Hard to Stay Consistent'], price:45, trial:16, desc:'For inconsistent routines, this boosts qi and strengthens the spleen to gradually build steady energy.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Atractylodes Rhizome', amt:'8g'},{herb:'Tangerine Peel', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking for continuous wellness.'},
-    {id:39, name:'Muchuan Tea', type:'tea', journeys:['Body Sculpting'], tags:['Slow Post-exercise Recovery'], price:45, trial:16, desc:'For slow post-exercise recovery, this boosts qi and nourishes blood to speed recovery.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Angelica Root', amt:'6g'},{herb:'Cinnamon Twig', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink after exercise.'},
-    {id:40, name:'Hechuan Tea', type:'tea', journeys:['Body Sculpting'], tags:['prolonged sitting, low activity','Improper Exercise'], price:45, trial:16, desc:'For prolonged sitting and poor exercise posture — helps loosen and relax.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Salvia Root', amt:'10g'},{herb:'Angelica Root', amt:'8g'},{herb:'Papaya', amt:'6g'},{herb:'Tangerine Peel', amt:'4g'}], usage:'Simmer gently, 1 dose daily.'},
-    {id:41, name:'Hengchuan Tea', type:'tea', journeys:['Body Sculpting'], tags:['Slow Post-exercise Recovery','Hard to Stay Consistent'], price:45, trial:16, desc:'For inconsistency and slow recovery, dual qi and blood tonification sustains your state.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'15g'},{herb:'Atractylodes Rhizome', amt:'8g'},{herb:'Angelica Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking or after exercise.'},
-    {id:42, name:'Chuxi Patch', type:'plaster', journeys:['Body Sculpting'], tags:['postpartum qi and blood deficiency'], price:9, trial:4, desc:'For postpartum qi and blood deficiency, gentle application to gradually rebuild.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Angelica Root', amt:'10g'},{herb:'Astragalus Root', amt:'12g'},{herb:'Prepared Rehmannia', amt:'8g'}], usage:'Mix with ginger juice into a paste, apply to Shenque acupoint, 3 times weekly, 4-6 hours each time.'},
-    {id:43, name:'Xiaoyue Patch', type:'plaster', journeys:['Body Sculpting'], tags:['abdominal sagging'], price:9, trial:4, desc:'For a sagging, weak abdomen, apply to help lift and tone.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Astragalus Root', amt:'15g'},{herb:'Cimicifuga', amt:'6g'},{herb:'Bitter Orange', amt:'8g'}], usage:'Mix with ginger juice into a paste, apply to abdomen, 3-4 times weekly.'},
-    {id:44, name:'Mugui Tea', type:'tea', journeys:['Body Sculpting'], tags:['slow recovery of energy'], price:45, trial:16, desc:'For slow postpartum recovery, dual qi and blood tonification supports you at a gentle pace.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Angelica Root', amt:'8g'},{herb:'Prepared Rehmannia', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'From 2 weeks postpartum, 1 dose daily.'},
-    {id:45, name:'Ganlu Tea', type:'tea', journeys:['Body Sculpting'], tags:['breastfeeding wellness'], price:45, trial:16, desc:'Breastfeeding needs extra qi and blood support — gentle nourishment.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Vaccaria Seed', amt:'8g'},{herb:'Astragalus Root', amt:'10g'},{herb:'Angelica Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'During breastfeeding, 1 dose daily.'},
-    {id:46, name:'Postpartum Vitality Patch', type:'plaster', journeys:['Body Sculpting'], tags:['postpartum qi and blood deficiency','slow recovery of energy'], price:9, trial:4, desc:'For postpartum qi and blood deficiency with slow recovery — an enhanced version to rebuild together.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Astragalus Root', amt:'15g'},{herb:'Angelica Root', amt:'10g'},{herb:'Prepared Rehmannia', amt:'8g'},{herb:'Atractylodes Rhizome', amt:'6g'}], usage:'Mix with ginger juice into a paste, apply to Shenque acupoint, 3-4 times weekly.'},
-    {id:47, name:'Nuanyang Patch', type:'plaster', journeys:['Body Sculpting'], tags:['Cold Sensitivity'], price:9, trial:4, desc:'For cold hands and feet, this warms yang and dispels cold; apply to warm up.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Cinnamon Bark', amt:'8g'},{herb:'Dried Ginger', amt:'10g'},{herb:'Fennel', amt:'8g'},{herb:'Mugwort Leaf', amt:'10g'}], usage:'Mix with ginger juice into a paste, apply to Guanyuan acupoint, 3 times weekly.'},
-    {id:48, name:'Qingxi Tea', type:'tea', journeys:['Body Sculpting'], tags:['fatigue-prone'], price:45, trial:16, desc:'For persistent low energy, this boosts qi and strengthens the spleen to restore vitality.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Codonopsis', amt:'10g'},{herb:'Astragalus Root', amt:'8g'},{herb:'Tangerine Peel', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking.'},
-    {id:49, name:'Yunche Tea', type:'tea', journeys:['Body Sculpting'], tags:['Water Retention'], price:45, trial:16, desc:'When water retention weighs the body down, this strengthens the spleen and promotes diuresis for a lighter feel.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria', amt:'12g'},{herb:'Alisma', amt:'8g'},{herb:'Wax Gourd Peel', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'Simmer gently, 1 dose daily.'},
-    {id:50, name:'Qingying Tea', type:'tea', journeys:['Body Sculpting'], tags:['difficulty losing weight'], price:45, trial:16, desc:'When weight plateaus, this resolves dampness and strengthens the spleen to help stimulate metabolism.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Lotus Leaf', amt:'8g'},{herb:'Atractylodes Rhizome', amt:'8g'},{herb:'Alisma', amt:'8g'},{herb:'Tangerine Peel', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink after meals.'},
-    {id:51, name:'Nuanshen Tea', type:'tea', journeys:['Body Sculpting'], tags:['Cold Sensitivity','fatigue-prone'], price:45, trial:16, desc:'For cold sensitivity with fatigue — warms yang and boosts qi together.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Cinnamon Bark', amt:'6g'},{herb:'Codonopsis', amt:'8g'},{herb:'Dried Ginger', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking.'},
-    {id:52, name:'Lanche Tea', type:'tea', journeys:['Body Sculpting'], tags:['difficulty losing weight','Water Retention'], price:45, trial:16, desc:'For water retention with difficulty losing weight — doubly dispels dampness and reduces swelling.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria', amt:'12g'},{herb:'Coix Seed', amt:'15g'},{herb:'Alisma', amt:'8g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'Simmer gently, 1 dose daily.'},
-    {id:53, name:'Chenyan Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Sallow Complexion'], price:45, trial:16, desc:'For a sallow, low-energy complexion, this boosts qi and nourishes blood to gradually bring out a healthy glow.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'8g'},{herb:'Angelica Root', amt:'6g'},{herb:'Atractylodes Rhizome', amt:'6g'},{herb:'Red Date', amt:'3pcs'}], usage:'Drink upon waking.'},
-    {id:54, name:'Yuze Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Lacking Radiance'], price:45, trial:16, desc:'For dehydrated, lackluster skin, this nourishes yin and moistens dryness for a hydrated feel.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Polygonatum Odoratum', amt:'8g'},{herb:'Ophiopogon', amt:'8g'},{herb:'Goji Berry', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'Steep covered, 1 dose daily.'},
-    {id:55, name:'Xiaguang Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['fatigued dullness'], price:45, trial:16, desc:'When fatigue shows on the face, dual qi and blood tonification restores a healthy complexion.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Angelica Root', amt:'6g'},{herb:'Goji Berry', amt:'8g'},{herb:'Tangerine Peel', amt:'3g'}], usage:'Drink upon waking.'},
-    {id:56, name:'Xihui Patch', type:'plaster', journeys:['Beauty & Radiance'], tags:['Sallow Complexion','fatigued dullness'], price:9, trial:4, desc:'For a poor complexion with fatigue, apply for dual complexion-brightening care.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Angelica Root', amt:'10g'},{herb:'Safflower', amt:'3g'}], usage:'Mix with ginger juice into a paste, apply to relevant acupoints, 2-3 times weekly.'},
-    {id:57, name:'Ningzhi Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Loss of Elasticity'], price:45, trial:16, desc:'For loss of skin elasticity, this boosts qi and nourishes yin to help skin regain firmness.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Chinese Yam', amt:'10g'},{herb:'Goji Berry', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:58, name:'Shuanghua Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['early fine lines'], price:45, trial:16, desc:'When fine lines begin to appear, this nourishes yin and moistens the skin to soften early signs.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Polygonatum Odoratum', amt:'10g'},{herb:'White Peony Root', amt:'8g'},{herb:'Angelica Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:59, name:'Wanxia Patch', type:'plaster', journeys:['Beauty & Radiance'], tags:['Sagging Cheeks'], price:9, trial:4, desc:'For slightly sagging cheeks, apply to help lift and tone.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Cimicifuga', amt:'5g'},{herb:'Angelica Root', amt:'6g'}], usage:'Mix with ginger juice into a paste, apply to relevant facial acupoints, 2-3 times weekly.'},
-    {id:60, name:'Ningzhi Patch', type:'plaster', journeys:['Beauty & Radiance'], tags:['early fine lines','Loss of Elasticity','Sagging Cheeks'], price:9, trial:4, desc:'When sagging, fine lines and loss of facial tone appear together — a comprehensive lifting approach.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Cimicifuga', amt:'6g'},{herb:'Angelica Root', amt:'10g'},{herb:'White Peony Root', amt:'8g'}], usage:'Mix with ginger juice into a paste, apply to relevant acupoints, 3 times weekly.'},
-    {id:61, name:'Cuie Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['recurrent breakouts'], price:45, trial:16, desc:'For recurrent acne, this clears heat and dispels dampness to gradually balance the constitution.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Dandelion', amt:'8g'},{herb:'Forsythia Fruit', amt:'6g'},{herb:'Coix Seed', amt:'12g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:62, name:'Yuji Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Enlarged Pores'], price:45, trial:16, desc:'For enlarged pores, this strengthens the spleen and seeps dampness for smoother skin.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Coix Seed', amt:'12g'},{herb:'Poria', amt:'10g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:63, name:'Zhiruo Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Redness & Tingling'], price:45, trial:16, desc:'For redness and tingling, this cools the blood and clears heat to soothe sensitivity.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Raw Rehmannia', amt:'8g'},{herb:'Tree Peony Bark', amt:'6g'},{herb:'Honeysuckle Flower', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:64, name:'Qinghe Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Oily Skin'], price:45, trial:16, desc:'For an oily face, this clears heat and dispels dampness to control oil for a fresher feel.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Phellodendron Bark', amt:'4g'},{herb:'Coix Seed', amt:'12g'},{herb:'Poria', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:65, name:'Cuihe Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['recurrent breakouts','Oily Skin'], price:45, trial:16, desc:'When acne and oily shine appear together — doubly clears heat and dispels dampness.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Dandelion', amt:'10g'},{herb:'Phellodendron Bark', amt:'5g'},{herb:'Coix Seed', amt:'15g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily for 2-3 consecutive weeks.'},
-    {id:66, name:'Qingyan Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Facial Puffiness'], price:45, trial:16, desc:'For slightly puffy face, this strengthens the spleen and promotes diuresis to reduce swelling.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria', amt:'10g'},{herb:'Wax Gourd Peel', amt:'8g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:67, name:'Yuelun Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Blurred Facial Contour'], price:45, trial:16, desc:'For a blurred facial contour, this boosts qi and nourishes blood to help restore definition.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'8g'},{herb:'Angelica Root', amt:'6g'},{herb:'Tangerine Peel', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:68, name:'Yunhan Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['double chin'], price:45, trial:16, desc:'For double-chin concerns, this resolves phlegm and dampness to help reduce it.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Tangerine Peel', amt:'8g'},{herb:'Poria', amt:'10g'},{herb:'Fritillaria Thunbergii', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:69, name:'Yueche Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['double chin','Facial Puffiness'], price:45, trial:16, desc:'For puffiness with a double chin — helps reduce both.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria', amt:'12g'},{herb:'Tangerine Peel', amt:'8g'},{herb:'Wax Gourd Peel', amt:'8g'},{herb:'Fritillaria Thunbergii', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily for 2 consecutive weeks.'},
-    {id:70, name:'Chenlu Tea', type:'tea', journeys:['Daily Wellness'], tags:['easily fatigued'], price:45, trial:16, desc:'For constant fatigue, this boosts qi and strengthens the spleen to restore energy.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Codonopsis', amt:'10g'},{herb:'Astragalus Root', amt:'8g'},{herb:'Tangerine Peel', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking.'},
-    {id:71, name:'Zhaohui Tea', type:'tea', journeys:['Daily Wellness'], tags:['Low Energy'], price:45, trial:16, desc:'For low energy and listlessness, this raises yang and boosts qi to awaken vitality.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Cimicifuga', amt:'4g'},{herb:'Bupleurum Root', amt:'3g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking.'},
-    {id:72, name:'Songfeng Tea', type:'tea', journeys:['Daily Wellness'], tags:['Difficulty Concentrating'], price:45, trial:16, desc:'For difficulty concentrating, this opens the orifices and calms the spirit for clearer thinking.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Polygala Root', amt:'6g'},{herb:'Acorus', amt:'6g'},{herb:'Poria', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink in the morning.'},
-    {id:73, name:'Pingshan Tea', type:'tea', journeys:['Daily Wellness'], tags:['weaker immunity'], price:45, trial:16, desc:'For frequent illness and weak resistance, this boosts qi and consolidates the exterior to strengthen defense.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Atractylodes Rhizome', amt:'8g'},{herb:'Saposhnikovia', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily for continuous wellness.'},
-    {id:74, name:'Chaoyang Tea', type:'tea', journeys:['Daily Wellness'], tags:['easily fatigued','Low Energy'], price:45, trial:16, desc:'For fatigue and low spirits — dual qi-boosting and yang-raising care.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Codonopsis', amt:'10g'},{herb:'Cimicifuga', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking.'},
-    {id:75, name:'Lanwu Tea', type:'tea', journeys:['Daily Wellness'], tags:['Heavy Dampness'], price:45, trial:16, desc:'When heavy dampness weighs the body down, this strengthens the spleen and dispels dampness for a lighter feeling.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Atractylodes', amt:'8g'},{herb:'Poria', amt:'10g'},{herb:'Coix Seed', amt:'12g'},{herb:'Tangerine Peel', amt:'4g'}], usage:'1 dose daily。'},
-    {id:76, name:'Helu Tea', type:'tea', journeys:['Daily Wellness'], tags:['Heat Intolerance & Easy Sweating'], price:45, trial:16, desc:'For sweating easily with movement, this consolidates sweating and boosts qi.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Blighted Wheat', amt:'12g'},{herb:'Schisandra Fruit', amt:'5g'},{herb:'Ophiopogon', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:77, name:'Sishi Tea', type:'tea', journeys:['Daily Wellness'], tags:['Seasonal Adjustment'], price:45, trial:16, desc:'For seasonal adjustment, this harmonizes the nutritive and defensive levels to help the body adapt faster.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Cinnamon Twig', amt:'5g'},{herb:'White Peony Root', amt:'6g'},{herb:'Astragalus Root', amt:'8g'},{herb:'Honey-fried Licorice', amt:'3g'},{herb:'Ginger', amt:'3pieces'},{herb:'Red Date', amt:'2pcs'}], usage:'1 dose daily around season changes.'},
-    {id:78, name:'Guya Tea', type:'tea', journeys:['Daily Wellness'], tags:['Poor Appetite'], price:45, trial:16, desc:'For poor appetite, this strengthens the stomach and aids digestion to restore appetite.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Hawthorn', amt:'8g'},{herb:'Malt', amt:'10g'},{herb:'Chicken Gizzard Lining', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink before meals.'},
-    {id:79, name:'Wanshan Tea', type:'tea', journeys:['Daily Wellness'], tags:['Indigestion'], price:45, trial:16, desc:'For slow digestion, this aids digestion and harmonizes the stomach for comfort after meals.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Hawthorn', amt:'10g'},{herb:'Medicated Leaven', amt:'8g'},{herb:'Radish Seed', amt:'6g'},{herb:'Tangerine Peel', amt:'5g'}], usage:'Drink after meals.'},
-    {id:80, name:'Nuanzhi Tea', type:'tea', journeys:['Daily Wellness'], tags:['constipation'], price:45, trial:16, desc:'For sluggish bowel movements, this moistens the intestines for gentle regularity.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Hemp Seed', amt:'10g'},{herb:'Bush Cherry Seed', amt:'8g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:81, name:'Wanfeng Tea', type:'tea', journeys:['Daily Wellness'], tags:['Abdominal Bloating'], price:45, trial:16, desc:'For persistent bloating, this regulates qi to ease distension for relief.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Tangerine Peel', amt:'8g'},{herb:'Bitter Orange', amt:'6g'},{herb:'Magnolia Bark', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink after meals.'},
-    {id:82, name:'Guyu Tea', type:'tea', journeys:['Daily Wellness'], tags:['Indigestion','Abdominal Bloating'], price:45, trial:16, desc:'For indigestion with bloating — this helps smooth things out.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Hawthorn', amt:'10g'},{herb:'Immature Bitter Orange', amt:'6g'},{herb:'Radish Seed', amt:'8g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink after meals.'},
-    {id:83, name:'Guxu Tea', type:'tea', journeys:['Daily Wellness'], tags:['constipation','Indigestion','Abdominal Bloating','Poor Appetite'], price:45, trial:16, desc:'When appetite, digestion, bowel movements and bloating are all off — holistic regulation.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Codonopsis', amt:'10g'},{herb:'Atractylodes Rhizome', amt:'8g'},{herb:'Tangerine Peel', amt:'6g'},{herb:'Bitter Orange', amt:'6g'},{herb:'Hawthorn', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily for continuous wellness.'},
-    {id:84, name:'Songlan Tea', type:'tea', journeys:['Daily Wellness'], tags:['high stress'], price:45, trial:16, desc:'When stress feels overwhelming, this soothes the liver and regulates qi to help you unwind.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Bupleurum Root', amt:'5g'},{herb:'Cyperus Rhizome', amt:'8g'},{herb:'Buddha Hand', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:85, name:'Zhuyun Tea', type:'tea', journeys:['Daily Wellness'], tags:['Irritability'], price:45, trial:16, desc:'For restlessness and irritability, this clears the heart and eliminates vexation to settle the mind.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Gardenia Fruit', amt:'5g'},{herb:'Lophatherum', amt:'6g'},{herb:'Albizia Bark', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:86, name:'Zhuying Tea', type:'tea', journeys:['Daily Wellness'], tags:['tense mood'], price:45, trial:16, desc:'When mood stays tense, this soothes the liver and releases stagnation to help you relax.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Albizia Bark', amt:'8g'},{herb:'Curcuma Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:87, name:'Yehe Tea', type:'tea', journeys:['Daily Wellness'], tags:['Bedtime Overthinking'], price:45, trial:16, desc:"For a mind that won't stop before bed, this nourishes the heart and calms the mind to help you let go.", active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria with Pine', amt:'10g'},{herb:'Sour Jujube Seed', amt:'10g'},{herb:'Longan Fruit', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
-    {id:88, name:'Zhusong Tea', type:'tea', journeys:['Daily Wellness'], tags:['high stress','Irritability'], price:45, trial:16, desc:'For high stress with irritability — doubly soothes the liver and clears the heart.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Bupleurum Root', amt:'6g'},{herb:'Gardenia Fruit', amt:'5g'},{herb:'White Peony Root', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:89, name:'Wangyou Tea', type:'tea', journeys:['Daily Wellness'], tags:['tense mood','Bedtime Overthinking'], price:45, trial:16, desc:'For tense mood with heavy thoughts, a cup of tea lets the worries rest a while.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Blighted Wheat', amt:'20g'},{herb:'Red Date', amt:'6pcs'},{herb:'Albizia Bark', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
-    {id:90, name:'Songjie Patch', type:'plaster', journeys:['Pain Soothing'], tags:['stiffness from prolonged sitting'], price:9, trial:4, desc:'For stiff neck and shoulders after sitting long, apply to loosen and relax.', active:true, inStock:true, featured:true, imgs:[], form:'Patch, topical use', herbs:[{herb:'Common Clubmoss Herb', amt:'12g'},{herb:'Garden Balsam Stem', amt:'10g'},{herb:'Safflower', amt:'5g'}], usage:'Mix with ginger juice into a paste, apply to neck and shoulders, once daily.'},
-    {id:91, name:'Geyou Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Stiff Neck'], price:9, trial:4, desc:"For a stiff neck that won't turn, apply to release the muscles and relax the tendons.", active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Kudzu Root', amt:'10g'},{herb:'Notopterygium', amt:'8g'},{herb:'Cinnamon Twig', amt:'6g'}], usage:'Mix with ginger juice into a paste, apply to affected area, 1-2 times daily.'},
-    {id:92, name:'Shanyue Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Lower-back & Body Aches'], price:9, trial:4, desc:'For lower-back and body aches, apply to tonify the liver and kidney and strengthen the lower back.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Eucommia Bark', amt:'12g'},{herb:'Dipsacus Root', amt:'10g'},{herb:'Mulberry Mistletoe', amt:'8g'}], usage:'Mix with ginger juice into a paste, apply to lower back, once daily.'},
-    {id:93, name:'Yunjian Patch', type:'plaster', journeys:['Pain Soothing'], tags:['aching neck and shoulders'], price:9, trial:4, desc:'For aching neck and shoulder discomfort, apply to invigorate blood and unblock the channels.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Turmeric', amt:'10g'},{herb:'Mulberry Twig', amt:'10g'},{herb:'Safflower', amt:'5g'}], usage:'Mix with ginger juice into a paste, apply to neck and shoulders, once daily.'},
-    {id:94, name:'Yunsong Patch', type:'plaster', journeys:['Pain Soothing'], tags:['stiffness from prolonged sitting','aching neck and shoulders'], price:9, trial:4, desc:'For prolonged sitting with aching neck and shoulders — soothing relief.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Turmeric', amt:'10g'},{herb:'Common Clubmoss Herb', amt:'10g'},{herb:'Mulberry Twig', amt:'8g'},{herb:'Safflower', amt:'4g'}], usage:'Mix with ginger juice into a paste, apply to affected area, once daily.'},
-    {id:95, name:'Nuanjie Patch', type:'plaster', journeys:['Pain Soothing'], tags:['aching, heavy joints'], price:9, trial:4, desc:'For aching, heavy joint discomfort, apply to dispel dampness and unblock the channels.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Pubescent Angelica', amt:'10g'},{herb:'Coix Seed', amt:'10g'},{herb:'Saposhnikovia', amt:'6g'}], usage:'Mix with ginger juice into a paste, apply to joints, once daily.'},
-    {id:96, name:'Qinglan Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Worse with Cold'], price:9, trial:4, desc:'For symptoms that worsen with cold, apply to warm the meridians and dispel cold.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Notopterygium', amt:'10g'},{herb:'Cinnamon Twig', amt:'8g'},{herb:'Mugwort Leaf', amt:'8g'}], usage:'Mix with ginger juice into a paste, apply to affected area, and keep warm.'},
-    {id:97, name:'Zhanyi Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Limited Mobility'], price:9, trial:4, desc:'For stiff, awkward movement, apply to relax the tendons and unblock the collaterals.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Papaya', amt:'10g'},{herb:'Common Clubmoss Herb', amt:'10g'},{herb:'Achyranthes Root', amt:'8g'}], usage:'Mix with ginger juice into a paste, apply to affected area, once daily.'},
-    {id:98, name:'Nuanlan Patch', type:'plaster', journeys:['Pain Soothing'], tags:['aching, heavy joints','Worse with Cold'], price:9, trial:4, desc:'For achy joints sensitive to cold — doubly dispels cold and dampness.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Notopterygium', amt:'8g'},{herb:'Pubescent Angelica', amt:'8g'},{herb:'Cinnamon Twig', amt:'6g'},{herb:'Mugwort Leaf', amt:'6g'}], usage:'Mix with ginger juice into a paste, apply to affected area, once daily.'},
-    {id:99, name:'Chixia Patch', type:'plaster', journeys:['Pain Soothing'], tags:['muscle strain'], price:9, trial:4, desc:'For muscle strain, apply to invigorate blood and soothe discomfort.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Notoginseng', amt:'6g'},{herb:'Safflower', amt:'5g'},{herb:'Frankincense', amt:'4g'}], usage:'Mix with ginger juice into a paste, apply to the affected area (for acute swelling, wait 48 hours before use).'},
-    {id:100, name:'Ziyun Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Sprains & Bruises'], price:9, trial:4, desc:'For sprains and bruises, apply to resolve stasis and reduce swelling.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Peach Kernel', amt:'6g'},{herb:'Safflower', amt:'5g'},{herb:'Chinese Angelica Root-tip', amt:'6g'}], usage:'Mix with ginger juice into a paste, apply to affected area, once daily.'},
-    {id:101, name:'Mujin Tea', type:'tea', journeys:['Pain Soothing'], tags:['Post-exercise Soreness'], price:45, trial:16, desc:'For post-exercise body aches, a cup nourishes and invigorates the blood.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Angelica Root', amt:'8g'},{herb:'Millettia Vine', amt:'10g'},{herb:'Salvia Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink after exercise.'},
-    {id:102, name:'Xiayun Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Sprains & Bruises','muscle strain'], price:9, trial:4, desc:'For strains with bruising — invigorates blood and resolves stasis together.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Notoginseng', amt:'10g'},{herb:'Peach Kernel', amt:'8g'},{herb:'Safflower', amt:'6g'},{herb:'Frankincense', amt:'5g'}], usage:'Mix with ginger juice into a paste, apply to affected area, once daily.'},
-    {id:103, name:'Chuanye Tea', type:'tea', journeys:['Pain Soothing'], tags:['generalized body aches'], price:45, trial:16, desc:'For generalized aching and weakness, dual qi and blood tonification gradually eases it.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Angelica Root', amt:'8g'},{herb:'Millettia Vine', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:104, name:'Wanli Patch', type:'plaster', journeys:['Pain Soothing'], tags:['discomfort from long standing or sitting'], price:9, trial:4, desc:'For discomfort after long standing or sitting, apply to relax the tendons and unblock the collaterals.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Common Clubmoss Herb', amt:'10g'},{herb:'Garden Balsam Stem', amt:'8g'},{herb:'Safflower', amt:'4g'}], usage:'Mix with ginger juice into a paste, apply to aching areas.'},
-    {id:105, name:'Yinshan Tea', type:'tea', journeys:['Pain Soothing'], tags:['recurrent dull discomfort'], price:45, trial:16, desc:'For recurrent discomfort, this nourishes blood and unblocks the collaterals for gradual wellness.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Millettia Vine', amt:'12g'},{herb:'Angelica Root', amt:'8g'},{herb:'Salvia Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily for continuous wellness.'},
-    {id:106, name:'Chuanyin Tea', type:'tea', journeys:['Pain Soothing'], tags:['recurrent dull discomfort','generalized body aches'], price:45, trial:16, desc:'For body aches with recurrent dull discomfort — dual qi and blood collateral-unblocking care.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Angelica Root', amt:'10g'},{herb:'Millettia Vine', amt:'12g'},{herb:'Salvia Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily。'},
-    {id:107, name:'Muhe Patch', type:'plaster', journeys:['Quality Sleep'], tags:['Wide Awake When Lying Down'], price:9, trial:4, desc:'For feeling wide awake on lying down, apply to the Yongquan acupoint before bed.', active:true, inStock:true, featured:false, imgs:[], form:'patch, apply to Yongquan acupoint (topical use)', herbs:[{herb:'Sour Jujube Seed', amt:'10g'},{herb:'Cinnamon Bark', amt:'3g'},{herb:'Evodia Fruit', amt:'5g'}], usage:'Grind into powder, mix with vinegar into a paste, apply to Yongquan acupoint before bed, remove the next morning.'},
-    {id:108, name:'Xingyu Tea', type:'tea', journeys:['Quality Sleep'], tags:['Racing Thoughts'], price:45, trial:16, desc:'For a mind full of unstoppable thoughts, this nourishes the heart and calms the mind to help settle.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Blighted Wheat', amt:'15g'},{herb:'Albizia Bark', amt:'8g'},{herb:'Curcuma Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
-    {id:109, name:'Yelan Tea', type:'tea', journeys:['Quality Sleep'], tags:['taking long to fall asleep'], price:45, trial:16, desc:'When falling asleep takes long, this nourishes the heart and calms the mind to help you drift off faster.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Sour Jujube Seed', amt:'12g'},{herb:'Arborvitae Seed', amt:'8g'},{herb:'Poria with Pine', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
-    {id:110, name:'Xinglan Tea', type:'tea', journeys:['Quality Sleep'], tags:['taking long to fall asleep','Racing Thoughts'], price:45, trial:16, desc:'For racing thoughts and difficulty sleeping — dual mind-calming, sleep-supporting care.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Sour Jujube Seed', amt:'12g'},{herb:'Blighted Wheat', amt:'15g'},{herb:'Albizia Bark', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
-    {id:111, name:'Muai Tea', type:'tea', journeys:['Quality Sleep'], tags:['waking easily at night'], price:45, trial:16, desc:'For waking often at night, this nourishes the heart and boosts qi for deeper sleep.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria with Pine', amt:'10g'},{herb:'Sour Jujube Seed', amt:'10g'},{herb:'Astragalus Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
-    {id:112, name:'Yuelan Patch', type:'plaster', journeys:['Quality Sleep'], tags:['Difficulty Returning to Sleep'], price:9, trial:4, desc:'For difficulty returning to sleep after waking, apply before bed to help you drift back.', active:true, inStock:true, featured:false, imgs:[], form:'patch, apply to Yongquan acupoint (topical use)', herbs:[{herb:'Sour Jujube Seed', amt:'10g'},{herb:'Fleeceflower Vine', amt:'10g'},{herb:'Schisandra Fruit', amt:'5g'}], usage:'Grind into powder, mix with vinegar into a paste, apply to Yongquan acupoint before bed, remove the next morning.'},
-    {id:113, name:'Jingxiang Tea', type:'tea', journeys:['Quality Sleep'], tags:['sound sensitivity'], price:45, trial:16, desc:'For waking at the slightest sound, this calms the heart and mind for more restful sleep.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria with Pine', amt:'10g'},{herb:'Polygala Root', amt:'6g'},{herb:'Arborvitae Seed', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
-    {id:114, name:'Aiyue Tea', type:'tea', journeys:['Quality Sleep'], tags:['waking easily at night','Difficulty Returning to Sleep'], price:45, trial:16, desc:'For waking easily and difficulty returning to sleep — dual mind-calming for steadier sleep.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria with Pine', amt:'10g'},{herb:'Sour Jujube Seed', amt:'12g'},{herb:'Fleeceflower Vine', amt:'10g'},{herb:'Schisandra Fruit', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
-    {id:115, name:'Demeng Tea', type:'tea', journeys:['Quality Sleep'], tags:['Frequent Dreams'], price:45, trial:16, desc:'For excessive dreams at night, this nourishes the heart and calms the mind for more solid sleep.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Longan Fruit', amt:'8g'},{herb:'Sour Jujube Seed', amt:'10g'},{herb:'Poria with Pine', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
-    {id:116, name:'Ziye Tea', type:'tea', journeys:['Quality Sleep'], tags:['poor sleep quality'], price:45, trial:16, desc:'For overall poor sleep quality, this nourishes the heart and calms the mind for gradual improvement.', active:false, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria', amt:'10g'},{herb:'Sour Jujube Seed', amt:'10g'},{herb:'Albizia Bark', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
-    {id:117, name:'Dieying Tea', type:'tea', journeys:['Quality Sleep'], tags:['Frequent Dreams','poor sleep quality'], price:45, trial:16, desc:'For frequent dreams and restless sleep — doubly nourishes the heart and calms the mind.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Longan Fruit', amt:'10g'},{herb:'Sour Jujube Seed', amt:'12g'},{herb:'Poria with Pine', amt:'10g'},{herb:'Albizia Bark', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
-    {id:118, name:'Xiaolan Tea', type:'tea', journeys:['Quality Sleep'], tags:['Still Tired After Waking'], price:45, trial:16, desc:'For still feeling sleepy after waking, this boosts qi and raises yang to awaken alertness.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'8g'},{herb:'Cimicifuga', amt:'4g'},{herb:'Acorus', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking.'},
-    {id:119, name:'Maoshi Tea', type:'tea', journeys:['Quality Sleep'], tags:['Difficulty Getting Up'], price:45, trial:16, desc:'For great difficulty getting up, this warms yang and boosts qi to help you wake.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Cinnamon Bark', amt:'3g'},{herb:'Cimicifuga', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking.'},
-    {id:120, name:'Wuzhou Tea', type:'tea', journeys:['Quality Sleep'], tags:['Daytime Drowsiness'], price:45, trial:16, desc:'For daytime drowsiness, this strengthens the spleen and raises yang to lift energy.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Atractylodes', amt:'8g'},{herb:'Cimicifuga', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink in the morning.'},
-    {id:121, name:'Chenxi Tea', type:'tea', journeys:['Quality Sleep'], tags:['Daytime Drowsiness','Difficulty Getting Up'], price:45, trial:16, desc:'For difficulty getting up with drowsiness — dual yang-raising, awakening care.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Cinnamon Bark', amt:'4g'},{herb:'Cimicifuga', amt:'5g'},{herb:'Atractylodes', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking.'},
-    {id:122, name:'Xiaoxia Mask', type:'mask', journeys:[], tags:[], price:39, trial:15, desc:'Not for a specific symptom — a daily brightening ritual and a weekend treat for yourself.', active:true, inStock:true, featured:true, imgs:[], form:'Topical facial mask', herbs:[{herb:'Angelica Dahurica', amt:'8g'},{herb:'Bletilla', amt:'6g'},{herb:'Mung Bean Powder', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'Grind to a very fine powder, mix with honey or warm water into a paste, apply to face for 15-20 minutes then rinse with warm water, 2-3 times weekly.'},
-  ];
+ var TAG_DATA = {
+  "Women's Health": [
+   {cond:'Menstrual Concerns', tags:['Menstrual Pain','Prolonged Period','heavy menstrual flow','scanty menstrual flow','cycledisordered','Spotting']},
+   {cond:'Abnormal Discharge', tags:['Heavy Flow','Abnormal Color','with odor','recurrent itching']},
+   {cond:'TCM Pre-pregnancy Care', tags:['cycleirregular','cold constitution','moodstress','Pre-pregnancywellness']},
+   {cond:'Gynecological Lumps', tags:['check-up indicates hyperplasia','Lower-abdominal Heaviness','discomfort worsens during menstrual period']},
+   {cond:'Menopause', tags:['Hot Flashes & Night Sweats','insomnia','mood swings','Palpitations']},
+  ],
+  'Body Sculpting': [
+   {cond:'dietary wellness', tags:['Irregular Meals','cravings for sweets and oily food','frequent eating out','Unplanned Diet']},
+   {cond:'Exercise Guidance', tags:['prolonged sitting, low activity','Improper Exercise','Hard to Stay Consistent','Slow Post-exercise Recovery']},
+   {cond:'Postpartum Body Sculpting', tags:['postpartum qi and blood deficiency','abdominal sagging','slow recovery of energy','breastfeeding wellness']},
+   {cond:'slow metabolism', tags:['Cold Sensitivity','fatigue-prone','Water Retention','difficulty losing weight']},
+  ],
+  'Beauty & Radiance': [
+   {cond:'dull complexion', tags:['Sallow Complexion','Lacking Radiance','fatigued dullness']},
+   {cond:'skin sagging', tags:['Loss of Elasticity','early fine lines','Sagging Cheeks']},
+   {cond:'recurrent acne', tags:['recurrent breakouts','Enlarged Pores','Redness & Tingling','Oily Skin']},
+   {cond:'Facial Contour', tags:['Facial Puffiness','Blurred Facial Contour','double chin']},
+  ],
+  'Daily Wellness': [
+   {cond:'Suboptimal Health', tags:['easily fatigued','Low Energy','Difficulty Concentrating','weaker immunity']},
+   {cond:'Seasonal Wellness', tags:['Heavy Dampness','Heat Intolerance & Easy Sweating','Seasonal Adjustment']},
+   {cond:'digestive wellness', tags:['Poor Appetite','Indigestion','constipation','Abdominal Bloating']},
+   {cond:'mood relief', tags:['high stress','Irritability','tense mood','Bedtime Overthinking']},
+  ],
+  'Pain Soothing': [
+   {cond:'Neck, Shoulders & Lower Back', tags:['stiffness from prolonged sitting','Stiff Neck','Lower-back & Body Aches','aching neck and shoulders']},
+   {cond:'joint discomfort', tags:['aching, heavy joints','Worse with Cold','Limited Mobility']},
+   {cond:'Sports Injury', tags:['muscle strain','Sprains & Bruises','Post-exercise Soreness']},
+   {cond:'fatigue-related aches', tags:['generalized body aches','discomfort from long standing or sitting','recurrent dull discomfort']},
+  ],
+  'Quality Sleep': [
+   {cond:'Difficulty Falling Asleep', tags:['Wide Awake When Lying Down','Racing Thoughts','taking long to fall asleep']},
+   {cond:'Light Sleep, Easily Woken', tags:['waking easily at night','Difficulty Returning to Sleep','sound sensitivity']},
+   {cond:'frequent dreams', tags:['Frequent Dreams','poor sleep quality']},
+   {cond:'Morning Fatigue', tags:['Still Tired After Waking','Difficulty Getting Up','Daytime Drowsiness']},
+  ],
+ };
+ var PRODUCTS = [
+  {id:1, name:'Yue Shu Patch', type:'plaster', journeys:["Women's Health"], tags:['Menstrual Pain'], price:9, trial:4, desc:'Apply during menstrual period for cold pain in waist and abdomen, the warmth slowly spreads.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Corydalis', amt:'10g'},{herb:'Cinnamon Bark', amt:'5g'},{herb:'Lindera Root', amt:'8g'},{herb:'Cyperus Rhizome', amt:'6g'}], usage:'Grind into powder, mix with rice wine or warm water into paste, apply to Guanyuan and Qihai acupoints, once daily starting 3 days before menstruation, 4-6 hours each time.'},
+  {id:2, name:'Chi Xi Tea', type:'tea', journeys:["Women's Health"], tags:['Prolonged Period'], price:45, trial:16, desc:'When menstruation lasts too long or is spotty, drink it to help the body regulate its rhythm.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Agrimonia', amt:'15g'},{herb:'Madder Root', amt:'6g'},{herb:'Smoked Plum', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Steep in boiling water for 15 minutes or lightly decoct for 10 minutes, drink daily from day 3 of menstruation until period ends, 1 dose per day.'},
+  {id:3, name:'Man Xi Tea', type:'tea', journeys:["Women's Health"], tags:['heavy menstrual flow'], price:45, trial:16, desc:'On days with heavier flow, drink a cup for peace of mind.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'15g'},{herb:'Calcined Dragon Bone (decoct first)', amt:'10g'},{herb:'Charred Palm Seed', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Decoct Dragon Bone first for 15 minutes, add other herbs and decoct for another 10 minutes, 1 dose daily on days 1-3 of menstruation.'},
+  {id:4, name:'Qian Xi Tea', type:'tea', journeys:["Women's Health"], tags:['scanty menstrual flow'], price:45, trial:16, desc:'Light and scanty periods, nourish qi and blood daily.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Angelica Root', amt:'6g'},{herb:'Polygonatum', amt:'10g'},{herb:'White Peony Root', amt:'8g'},{herb:'Red Date', amt:'3pcs'}], usage:'Steep or lightly decoct, drink for 1-2 weeks after period ends, 1 dose per day.'},
+  {id:5, name:'Xian Yue Tea', type:'tea', journeys:["Women's Health"], tags:['cycledisordered'], price:45, trial:16, desc:'Irregular cycles, help the body find its own rhythm.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Bupleurum Root', amt:'5g'},{herb:'Cyperus Rhizome', amt:'8g'},{herb:'Motherwort', amt:'10g'},{herb:'Rose Flower', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'Steep as tea, 1 dose daily outside menstruation, 2-3 weeks as one cycle.'},
+  {id:6, name:'Yue Xi Tea', type:'tea', journeys:["Women's Health"], tags:['Spotting'], price:45, trial:16, desc:'Occasional spotting between periods, nourish yin and cool blood, gentlewellness.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Ligustrum Fruit', amt:'10g'},{herb:'Eclipta', amt:'10g'},{herb:'Raw Rehmannia', amt:'8g'},{herb:'Madder Root', amt:'5g'}], usage:'Lightly decoct for 15 minutes, 1 dose daily around ovulation (days 12-16 of cycle).'},
+  {id:7, name:'Wang Xi Tea', type:'tea', journeys:["Women's Health"], tags:['Prolonged Period','heavy menstrual flow'], price:45, trial:16, desc:'On days with long and heavy periods, a cup of tea helps stabilize.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'15g'},{herb:'Agrimonia', amt:'12g'},{herb:'Cornelian Cherry', amt:'8g'},{herb:'Lotus Node', amt:'10g'},{herb:'Smoked Plum', amt:'5g'}], usage:'Lightly decoct for 15 minutes, 1 dose daily on days 1-4 of menstruation, can increase to 1.5 doses when flow is heavy.'},
+  {id:8, name:'Ying Yue Tea', type:'tea', journeys:["Women's Health"], tags:['cycledisordered','scanty menstrual flow'], price:45, trial:16, desc:'Scanty and irregular cycles, slowly nourish and replenish.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Angelica Root', amt:'8g'},{herb:'Polygonatum', amt:'10g'},{herb:'White Peony Root', amt:'8g'},{herb:'Rose Flower', amt:'4g'},{herb:'Red Date', amt:'3pcs'}], usage:'Steep, drink for 2 weeks after period ends, 1 dose daily.'},
+  {id:9, name:'Yun Jing Tea', type:'tea', journeys:["Women's Health"], tags:['Heavy Flow'], price:45, trial:16, desc:'Excessive leucorrhea, strengthen spleen and remove dampness, feel fresh and clean.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Atractylodes Rhizome', amt:'10g'},{herb:'Chinese Yam', amt:'10g'},{herb:'Euryale Seed', amt:'8g'},{herb:'White Hyacinth Bean', amt:'8g'},{herb:'Tangerine Peel', amt:'3g'}], usage:'Simmer gently for 15 minutes. Drink for 2 consecutive weeks, 1 dose daily.'},
+  {id:10, name:'Su Ya Tea', type:'tea', journeys:["Women's Health"], tags:['Abnormal Color'], price:45, trial:16, desc:'Abnormal color but not severe, daily gentle cleansing.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria', amt:'10g'},{herb:'Phellodendron Bark', amt:'4g'},{herb:'Coix Seed', amt:'12g'},{herb:'Licorice Root', amt:'3g'}], usage:'Simmer gently for 10 minutes. Drink for 1-2 consecutive weeks, 1 dose daily.'},
+  {id:11, name:'Zhilan Tea', type:'tea', journeys:["Women's Health"], tags:['with odor'], price:45, trial:16, desc:'With odor, clear heat and remove dampness, regain freshness.', active:true, inStock:false, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Dandelion', amt:'10g'},{herb:'Glabrous Greenbrier Rhizome', amt:'12g'},{herb:'Plantago Seed (wrap-decoct)', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'Wrap Plantago Seed and decoct with other herbs for 15 minutes. Drink for 1-2 weeks, 1 dose daily.'},
+  {id:12, name:'Lantang Sitz Bath Pack', type:'soak', journeys:["Women's Health"], tags:['recurrent itching'], price:25, trial:10, desc:'Recurring itching and discomfort, boil and take a reassuring hot bath.', active:true, inStock:true, featured:false, imgs:[], form:'Topical sitz bath', herbs:[{herb:'Sophora Root', amt:'15g'},{herb:'Cnidium Fruit', amt:'12g'},{herb:'Phellodendron Bark', amt:'10g'},{herb:'Sichuan Pepper', amt:'5g'},{herb:'Mugwort Leaf', amt:'10g'}], usage:'Wrap in a cloth bag, add 2000ml water and boil for 15 minutes. When lukewarm (about 40°C), use as a sitz bath for 15 minutes, once nightly for 5-7 days. Discontinue during menstrual period.'},
+  {id:13, name:'Chengche Tea', type:'tea', journeys:["Women's Health"], tags:['with odor','Abnormal Color'], price:45, trial:16, desc:'When abnormal color and odor appear together, this clears them on two fronts.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Phellodendron Bark', amt:'5g'},{herb:'Plantago Seed (wrap-decoct)', amt:'10g'},{herb:'Coix Seed', amt:'12g'},{herb:'Dandelion', amt:'8g'},{herb:'Glabrous Greenbrier Rhizome', amt:'10g'}], usage:'Wrap Plantago Seed and decoct with other herbs for 15 minutes. Drink for 2 weeks, 1 dose daily; increase to 1.5 doses daily when symptoms are pronounced.'},
+  {id:14, name:'Zhicheng Tea', type:'tea', journeys:["Women's Health"], tags:['with odor','Heavy Flow','Abnormal Color'], price:45, trial:16, desc:'For days with heavy flow, abnormal color and odor — comprehensive clearing and nourishing.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Chinese Yam', amt:'15g'},{herb:'Euryale Seed', amt:'10g'},{herb:'Phellodendron Bark', amt:'5g'},{herb:'Atractylodes', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'Simmer gently for 10-15 minutes. Drink for 2-3 weeks; 1.5 doses daily when discharge is yellow with strong odor.'},
+  {id:15, name:'Yuexu Tea', type:'tea', journeys:["Women's Health"], tags:['cycleirregular'], price:45, trial:16, desc:'When the cycle stays irregular during pre-pregnancy, this soothes the liver and regulates qi to restore balance.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Bupleurum Root', amt:'5g'},{herb:'Cyperus Rhizome', amt:'8g'},{herb:'Angelica Root', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'Steep covered; start after the period ends and drink for 2 consecutive weeks. Discontinue during menstrual period.'},
+  {id:16, name:'Xunuan Patch', type:'plaster', journeys:["Women's Health"], tags:['cold constitution'], price:9, trial:4, desc:'For cold constitution with cold hands and feet, apply this warm compress for deep inner warmth.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Cinnamon Bark', amt:'6g'},{herb:'Mugwort Leaf', amt:'10g'},{herb:'Fennel', amt:'8g'},{herb:'Dried Ginger', amt:'6g'}], usage:'Grind into powder, mix with ginger juice into a paste, apply to Guanyuan and Mingmen acupoints, 3-4 times weekly, 4-6 hours each time. Discontinue during menstrual period.'},
+  {id:17, name:'Lüe Tea', type:'tea', journeys:["Women's Health"], tags:['moodstress'], price:45, trial:16, desc:'When pre-pregnancy feels stressful, a cup helps you breathe easier.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Albizia Flower', amt:'6g'},{herb:'Green Calyx Plum Flower', amt:'5g'},{herb:'Poria', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'Steep covered as herbal tea, 1 dose daily during tense periods.'},
+  {id:18, name:'Lanxin Tea', type:'tea', journeys:["Women's Health"], tags:['Pre-pregnancywellness'], price:45, trial:16, desc:'Daily pre-pregnancy constitution care, gently tonifying the liver and kidney to build a foundation.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Cuscuta Seed', amt:'12g'},{herb:'Raspberry', amt:'10g'},{herb:'Goji Berry', amt:'10g'},{herb:'Mulberry Fruit', amt:'8g'}], usage:'Simmer gently for 15 minutes. For daily wellness, 4-5 times weekly, 1 dose each time.'},
+  {id:19, name:'Meiyue Tea', type:'tea', journeys:["Women's Health"], tags:['cycleirregular','moodstress'], price:45, trial:16, desc:'For irregular cycles with irritability, this soothes the liver and nourishes the blood together.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Bupleurum Root', amt:'5g'},{herb:'White Peony Root', amt:'10g'},{herb:'Albizia Flower', amt:'5g'},{herb:'Green Calyx Plum Flower', amt:'4g'},{herb:'Poria', amt:'10g'}], usage:'Steep covered; 1 dose daily outside menstruation for 2-3 consecutive weeks.'},
+  {id:20, name:'Lanxu Tea', type:'tea', journeys:["Women's Health"], tags:['cycleirregular','Pre-pregnancywellness','moodstress'], price:45, trial:16, desc:'A comprehensive wellness tea for when both cycle and mood need care during pre-pregnancy.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Cuscuta Seed', amt:'12g'},{herb:'White Peony Root', amt:'10g'},{herb:'Goji Berry', amt:'10g'},{herb:'Bupleurum Root', amt:'4g'},{herb:'Albizia Flower', amt:'5g'},{herb:'Red Date', amt:'3pcs'}], usage:'Start 1 dose daily after the period ends for about 2 weeks; may increase to 1.5 doses during tense periods. Discontinue during menstrual period. Stop once pregnancy is confirmed and consult a physician.'},
+  {id:21, name:'Jingyu Patch', type:'plaster', journeys:["Women's Health"], tags:['check-up indicates hyperplasia'], price:9, trial:4, desc:'If a check-up indicates hyperplasia, use as daily supportive wellness care alongside regular follow-ups.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Sparganium', amt:'6g'},{herb:'Zedoary', amt:'6g'},{herb:'Chinese Honeylocust Spine', amt:'8g'},{herb:'Cinnamon Twig', amt:'5g'}], usage:'Grind into powder, mix with vinegar into a paste, apply to the lower abdomen (avoid during menstrual period), 3 times weekly, 4 hours each time. Use alongside regular check-ups; contraindicated during pregnancy.'},
+  {id:22, name:'Hefeng Tea', type:'tea', journeys:["Women's Health"], tags:['Lower-abdominal Heaviness'], price:45, trial:16, desc:'For persistent lower-abdominal heaviness, this regulates qi to release that stuck, uncomfortable sensation.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Lindera Root', amt:'6g'},{herb:'Buddha Hand', amt:'6g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'Steep covered as tea, 1 dose daily on days of discomfort.'},
+  {id:23, name:'Jianghua Tea', type:'tea', journeys:["Women's Health"], tags:['discomfort worsens during menstrual period'], price:45, trial:16, desc:'For discomfort during menstrual days, this invigorates blood to release stagnation.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Motherwort', amt:'10g'},{herb:'Cyperus Rhizome', amt:'8g'},{herb:'Hawthorn', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'Simmer gently; start 1 dose daily 3 days before the menstrual period until it ends.'},
+  {id:24, name:'Nuanxi Tea', type:'tea', journeys:["Women's Health"], tags:['Lower-abdominal Heaviness','discomfort worsens during menstrual period'], price:45, trial:16, desc:'For heaviness that worsens during the menstrual period, this gently releases it.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Motherwort', amt:'10g'},{herb:'Lindera Root', amt:'8g'},{herb:'Buddha Hand', amt:'6g'},{herb:'Hawthorn', amt:'8g'},{herb:'China Rose', amt:'4g'}], usage:'Simmer gently for 15 minutes; 1 dose daily from 3 days before to day 3 of the menstrual period.'},
+  {id:25, name:'Qinglu Tea', type:'tea', journeys:["Women's Health"], tags:['Hot Flashes & Night Sweats'], price:45, trial:16, desc:'For hot flashes, night sweats and restless sleep, this nourishes yin and consolidates sweating for a calmer feel.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Blighted Wheat', amt:'12g'},{herb:'Lycium Bark', amt:'8g'},{herb:'Mulberry Leaf', amt:'6g'},{herb:'Ophiopogon', amt:'8g'},{herb:'Schisandra Fruit', amt:'5g'}], usage:'Simmer gently for 15 minutes, especially suitable in the afternoon; drink for 2-4 consecutive weeks.'},
+  {id:26, name:'Yuezhen Patch', type:'plaster', journeys:["Women's Health"], tags:['insomnia'], price:9, trial:4, desc:'For tossing and turning unable to sleep, apply to the Yongquan acupoint before bed.', active:true, inStock:true, featured:false, imgs:[], form:'patch, apply to Yongquan acupoint (topical use)', herbs:[{herb:'Sour Jujube Seed', amt:'15g'},{herb:'Fleeceflower Vine', amt:'15g'},{herb:'Polygala Root', amt:'8g'},{herb:'Evodia Fruit', amt:'6g'}], usage:'Grind into powder, mix with vinegar into a paste, apply to both Yongquan acupoints before bed, secure with tape, remove the next morning; use for 1-2 consecutive weeks.'},
+  {id:27, name:'Lanxin Tea', type:'tea', journeys:["Women's Health"], tags:['mood swings'], price:45, trial:16, desc:'When moods swing up and down, a cup helps you settle.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Blighted Wheat', amt:'20g'},{herb:'Red Date', amt:'6pcs'},{herb:'Licorice Root', amt:'5g'},{herb:'Albizia Bark', amt:'8g'},{herb:'Curcuma Root', amt:'6g'}], usage:'Simmer gently for 15-20 minutes, 1 dose daily during mood-swing periods.'},
+  {id:28, name:'Jinglan Tea', type:'tea', journeys:["Women's Health"], tags:['Palpitations'], price:45, trial:16, desc:'For an unsettled, racing heart, this clears the heart and calms palpitations to gradually settle.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Salvia Root', amt:'10g'},{herb:'Poria with Pine', amt:'12g'},{herb:'Arborvitae Seed', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'Steep covered or simmer gently; 1 dose daily when palpitations are pronounced, for 1-2 consecutive weeks.'},
+  {id:29, name:'Suyue Patch', type:'plaster', journeys:["Women's Health"], tags:['insomnia','Palpitations'], price:9, trial:4, desc:'For poor sleep with palpitations, apply before bed for dual calming.', active:true, inStock:true, featured:false, imgs:[], form:'patch, apply to Yongquan acupoint (topical use)', herbs:[{herb:'Sour Jujube Seed', amt:'10g'},{herb:'Fleeceflower Vine', amt:'10g'},{herb:'Polygala Root', amt:'6g'},{herb:'Salvia Root', amt:'8g'},{herb:'Evodia Fruit', amt:'5g'}], usage:'Grind into powder, mix with vinegar into a paste, apply to Yongquan acupoint before bed, remove the next morning; use for 1-2 consecutive weeks.'},
+  {id:30, name:'Jinghao Tea', type:'tea', journeys:["Women's Health"], tags:['insomnia','Palpitations','mood swings','Hot Flashes & Night Sweats'], price:49, trial:18, desc:'When menopause brings multiple discomforts at once, a cup of tea carries you steadily through.', active:true, inStock:true, featured:true, imgs:[], form:'Tea', herbs:[{herb:'Ligustrum Fruit', amt:'12g'},{herb:'Sour Jujube Seed', amt:'15g'},{herb:'Blighted Wheat', amt:'20g'},{herb:'Ophiopogon', amt:'10g'},{herb:'Salvia Root', amt:'10g'},{herb:'Schisandra Fruit', amt:'5g'}], usage:'Steep covered or simmer gently, drink from afternoon to before bed for 2-4 consecutive weeks; may increase to 1.5 doses daily when symptoms are pronounced.'},
+  {id:31, name:'Chengu Tea', type:'tea', journeys:['Body Sculpting'], tags:['Irregular Meals'], price:45, trial:16, desc:'For irregular meals, this strengthens the spleen and harmonizes the stomach to restore eating rhythm.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Atractylodes Rhizome', amt:'10g'},{herb:'Tangerine Peel', amt:'6g'},{herb:'Hawthorn', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'Simmer gently, drink after breakfast for 2 consecutive weeks.'},
+  {id:32, name:'Lanyin Tea', type:'tea', journeys:['Body Sculpting'], tags:['cravings for sweets and oily food'], price:45, trial:16, desc:"For sweet and oily food cravings, this resolves phlegm and dampness to lighten the body's load.", active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Tangerine Peel', amt:'8g'},{herb:'Poria', amt:'10g'},{herb:'Lotus Leaf', amt:'6g'},{herb:'Hawthorn', amt:'8g'}], usage:'Steep covered, drink after meals, 1 dose daily.'},
+  {id:33, name:'Jiashan Tea', type:'tea', journeys:['Body Sculpting'], tags:['frequent eating out'], price:45, trial:16, desc:'After eating out too much, this clears and nourishes the spleen and stomach for a fresh feeling.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Coix Seed', amt:'15g'},{herb:'Mung Bean Coat', amt:'8g'},{herb:'Malt', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'Simmer gently, drink on days with more eating out.'},
+  {id:34, name:'Chenxu Tea', type:'tea', journeys:['Body Sculpting'], tags:['Unplanned Diet'], price:45, trial:16, desc:'For an unplanned diet, this strengthens the spleen and boosts qi to build a foundation first.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Codonopsis', amt:'10g'},{herb:'Atractylodes Rhizome', amt:'8g'},{herb:'Poria', amt:'8g'},{herb:'Tangerine Peel', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'Simmer gently, 4-5 times weekly.'},
+  {id:35, name:'Yunyin Tea', type:'tea', journeys:['Body Sculpting'], tags:['cravings for sweets and oily food','Unplanned Diet'], price:45, trial:16, desc:'For sweet and oily cravings without a plan — doubly resolves turbidity for a lighter start.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Lotus Leaf', amt:'8g'},{herb:'Cassia Seed', amt:'8g'},{herb:'Hawthorn', amt:'10g'},{herb:'Tangerine Peel', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Steep covered, drink after meals for 2-3 consecutive weeks.'},
+  {id:36, name:'Qingchuan Tea', type:'tea', journeys:['Body Sculpting'], tags:['prolonged sitting, low activity'], price:45, trial:16, desc:'For prolonged sitting, this regulates qi and invigorates blood to get qi and blood flowing again.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Tangerine Peel', amt:'6g'},{herb:'Salvia Root', amt:'8g'},{herb:'Coix Seed', amt:'12g'},{herb:'Licorice Root', amt:'3g'}], usage:'Steep covered, drink after prolonged sitting.'},
+  {id:37, name:'Hezi Tea', type:'tea', journeys:['Body Sculpting'], tags:['Improper Exercise'], price:45, trial:16, desc:'For improper exercise form, this nourishes blood and relaxes the tendons for easier movement.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Angelica Root', amt:'8g'},{herb:'Papaya', amt:'8g'},{herb:'Common Clubmoss Herb', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Simmer gently, drink before or after exercise.'},
+  {id:38, name:'Hengchen Tea', type:'tea', journeys:['Body Sculpting'], tags:['Hard to Stay Consistent'], price:45, trial:16, desc:'For inconsistent routines, this boosts qi and strengthens the spleen to gradually build steady energy.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Atractylodes Rhizome', amt:'8g'},{herb:'Tangerine Peel', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking for continuous wellness.'},
+  {id:39, name:'Muchuan Tea', type:'tea', journeys:['Body Sculpting'], tags:['Slow Post-exercise Recovery'], price:45, trial:16, desc:'For slow post-exercise recovery, this boosts qi and nourishes blood to speed recovery.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Angelica Root', amt:'6g'},{herb:'Cinnamon Twig', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink after exercise.'},
+  {id:40, name:'Hechuan Tea', type:'tea', journeys:['Body Sculpting'], tags:['prolonged sitting, low activity','Improper Exercise'], price:45, trial:16, desc:'For prolonged sitting and poor exercise posture — helps loosen and relax.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Salvia Root', amt:'10g'},{herb:'Angelica Root', amt:'8g'},{herb:'Papaya', amt:'6g'},{herb:'Tangerine Peel', amt:'4g'}], usage:'Simmer gently, 1 dose daily.'},
+  {id:41, name:'Hengchuan Tea', type:'tea', journeys:['Body Sculpting'], tags:['Slow Post-exercise Recovery','Hard to Stay Consistent'], price:45, trial:16, desc:'For inconsistency and slow recovery, dual qi and blood tonification sustains your state.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'15g'},{herb:'Atractylodes Rhizome', amt:'8g'},{herb:'Angelica Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking or after exercise.'},
+  {id:42, name:'Chuxi Patch', type:'plaster', journeys:['Body Sculpting'], tags:['postpartum qi and blood deficiency'], price:9, trial:4, desc:'For postpartum qi and blood deficiency, gentle application to gradually rebuild.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Angelica Root', amt:'10g'},{herb:'Astragalus Root', amt:'12g'},{herb:'Prepared Rehmannia', amt:'8g'}], usage:'Mix with ginger juice into a paste, apply to Shenque acupoint, 3 times weekly, 4-6 hours each time.'},
+  {id:43, name:'Xiaoyue Patch', type:'plaster', journeys:['Body Sculpting'], tags:['abdominal sagging'], price:9, trial:4, desc:'For a sagging, weak abdomen, apply to help lift and tone.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Astragalus Root', amt:'15g'},{herb:'Cimicifuga', amt:'6g'},{herb:'Bitter Orange', amt:'8g'}], usage:'Mix with ginger juice into a paste, apply to abdomen, 3-4 times weekly.'},
+  {id:44, name:'Mugui Tea', type:'tea', journeys:['Body Sculpting'], tags:['slow recovery of energy'], price:45, trial:16, desc:'For slow postpartum recovery, dual qi and blood tonification supports you at a gentle pace.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Angelica Root', amt:'8g'},{herb:'Prepared Rehmannia', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'From 2 weeks postpartum, 1 dose daily.'},
+  {id:45, name:'Ganlu Tea', type:'tea', journeys:['Body Sculpting'], tags:['breastfeeding wellness'], price:45, trial:16, desc:'Breastfeeding needs extra qi and blood support — gentle nourishment.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Vaccaria Seed', amt:'8g'},{herb:'Astragalus Root', amt:'10g'},{herb:'Angelica Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'During breastfeeding, 1 dose daily.'},
+  {id:46, name:'Postpartum Vitality Patch', type:'plaster', journeys:['Body Sculpting'], tags:['postpartum qi and blood deficiency','slow recovery of energy'], price:9, trial:4, desc:'For postpartum qi and blood deficiency with slow recovery — an enhanced version to rebuild together.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Astragalus Root', amt:'15g'},{herb:'Angelica Root', amt:'10g'},{herb:'Prepared Rehmannia', amt:'8g'},{herb:'Atractylodes Rhizome', amt:'6g'}], usage:'Mix with ginger juice into a paste, apply to Shenque acupoint, 3-4 times weekly.'},
+  {id:47, name:'Nuanyang Patch', type:'plaster', journeys:['Body Sculpting'], tags:['Cold Sensitivity'], price:9, trial:4, desc:'For cold hands and feet, this warms yang and dispels cold; apply to warm up.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Cinnamon Bark', amt:'8g'},{herb:'Dried Ginger', amt:'10g'},{herb:'Fennel', amt:'8g'},{herb:'Mugwort Leaf', amt:'10g'}], usage:'Mix with ginger juice into a paste, apply to Guanyuan acupoint, 3 times weekly.'},
+  {id:48, name:'Qingxi Tea', type:'tea', journeys:['Body Sculpting'], tags:['fatigue-prone'], price:45, trial:16, desc:'For persistent low energy, this boosts qi and strengthens the spleen to restore vitality.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Codonopsis', amt:'10g'},{herb:'Astragalus Root', amt:'8g'},{herb:'Tangerine Peel', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking.'},
+  {id:49, name:'Yunche Tea', type:'tea', journeys:['Body Sculpting'], tags:['Water Retention'], price:45, trial:16, desc:'When water retention weighs the body down, this strengthens the spleen and promotes diuresis for a lighter feel.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria', amt:'12g'},{herb:'Alisma', amt:'8g'},{herb:'Wax Gourd Peel', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'Simmer gently, 1 dose daily.'},
+  {id:50, name:'Qingying Tea', type:'tea', journeys:['Body Sculpting'], tags:['difficulty losing weight'], price:45, trial:16, desc:'When weight plateaus, this resolves dampness and strengthens the spleen to help stimulate metabolism.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Lotus Leaf', amt:'8g'},{herb:'Atractylodes Rhizome', amt:'8g'},{herb:'Alisma', amt:'8g'},{herb:'Tangerine Peel', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink after meals.'},
+  {id:51, name:'Nuanshen Tea', type:'tea', journeys:['Body Sculpting'], tags:['Cold Sensitivity','fatigue-prone'], price:45, trial:16, desc:'For cold sensitivity with fatigue — warms yang and boosts qi together.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Cinnamon Bark', amt:'6g'},{herb:'Codonopsis', amt:'8g'},{herb:'Dried Ginger', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking.'},
+  {id:52, name:'Lanche Tea', type:'tea', journeys:['Body Sculpting'], tags:['difficulty losing weight','Water Retention'], price:45, trial:16, desc:'For water retention with difficulty losing weight — doubly dispels dampness and reduces swelling.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria', amt:'12g'},{herb:'Coix Seed', amt:'15g'},{herb:'Alisma', amt:'8g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'Simmer gently, 1 dose daily.'},
+  {id:53, name:'Chenyan Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Sallow Complexion'], price:45, trial:16, desc:'For a sallow, low-energy complexion, this boosts qi and nourishes blood to gradually bring out a healthy glow.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'8g'},{herb:'Angelica Root', amt:'6g'},{herb:'Atractylodes Rhizome', amt:'6g'},{herb:'Red Date', amt:'3pcs'}], usage:'Drink upon waking.'},
+  {id:54, name:'Yuze Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Lacking Radiance'], price:45, trial:16, desc:'For dehydrated, lackluster skin, this nourishes yin and moistens dryness for a hydrated feel.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Polygonatum Odoratum', amt:'8g'},{herb:'Ophiopogon', amt:'8g'},{herb:'Goji Berry', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'Steep covered, 1 dose daily.'},
+  {id:55, name:'Xiaguang Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['fatigued dullness'], price:45, trial:16, desc:'When fatigue shows on the face, dual qi and blood tonification restores a healthy complexion.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Angelica Root', amt:'6g'},{herb:'Goji Berry', amt:'8g'},{herb:'Tangerine Peel', amt:'3g'}], usage:'Drink upon waking.'},
+  {id:56, name:'Xihui Patch', type:'plaster', journeys:['Beauty & Radiance'], tags:['Sallow Complexion','fatigued dullness'], price:9, trial:4, desc:'For a poor complexion with fatigue, apply for dual complexion-brightening care.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Angelica Root', amt:'10g'},{herb:'Safflower', amt:'3g'}], usage:'Mix with ginger juice into a paste, apply to relevant acupoints, 2-3 times weekly.'},
+  {id:57, name:'Ningzhi Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Loss of Elasticity'], price:45, trial:16, desc:'For loss of skin elasticity, this boosts qi and nourishes yin to help skin regain firmness.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Chinese Yam', amt:'10g'},{herb:'Goji Berry', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily.'},
+  {id:58, name:'Shuanghua Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['early fine lines'], price:45, trial:16, desc:'When fine lines begin to appear, this nourishes yin and moistens the skin to soften early signs.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Polygonatum Odoratum', amt:'10g'},{herb:'White Peony Root', amt:'8g'},{herb:'Angelica Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily.'},
+  {id:59, name:'Wanxia Patch', type:'plaster', journeys:['Beauty & Radiance'], tags:['Sagging Cheeks'], price:9, trial:4, desc:'For slightly sagging cheeks, apply to help lift and tone.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Cimicifuga', amt:'5g'},{herb:'Angelica Root', amt:'6g'}], usage:'Mix with ginger juice into a paste, apply to relevant facial acupoints, 2-3 times weekly.'},
+  {id:60, name:'Ningzhi Patch', type:'plaster', journeys:['Beauty & Radiance'], tags:['early fine lines','Loss of Elasticity','Sagging Cheeks'], price:9, trial:4, desc:'When sagging, fine lines and loss of facial tone appear together — a comprehensive lifting approach.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Cimicifuga', amt:'6g'},{herb:'Angelica Root', amt:'10g'},{herb:'White Peony Root', amt:'8g'}], usage:'Mix with ginger juice into a paste, apply to relevant acupoints, 3 times weekly.'},
+  {id:61, name:'Cuie Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['recurrent breakouts'], price:45, trial:16, desc:'For recurrent acne, this clears heat and dispels dampness to gradually balance the constitution.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Dandelion', amt:'8g'},{herb:'Forsythia Fruit', amt:'6g'},{herb:'Coix Seed', amt:'12g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily.'},
+  {id:62, name:'Yuji Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Enlarged Pores'], price:45, trial:16, desc:'For enlarged pores, this strengthens the spleen and seeps dampness for smoother skin.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Coix Seed', amt:'12g'},{herb:'Poria', amt:'10g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily.'},
+  {id:63, name:'Zhiruo Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Redness & Tingling'], price:45, trial:16, desc:'For redness and tingling, this cools the blood and clears heat to soothe sensitivity.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Raw Rehmannia', amt:'8g'},{herb:'Tree Peony Bark', amt:'6g'},{herb:'Honeysuckle Flower', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily.'},
+  {id:64, name:'Qinghe Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Oily Skin'], price:45, trial:16, desc:'For an oily face, this clears heat and dispels dampness to control oil for a fresher feel.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Phellodendron Bark', amt:'4g'},{herb:'Coix Seed', amt:'12g'},{herb:'Poria', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily.'},
+  {id:65, name:'Cuihe Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['recurrent breakouts','Oily Skin'], price:45, trial:16, desc:'When acne and oily shine appear together — doubly clears heat and dispels dampness.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Dandelion', amt:'10g'},{herb:'Phellodendron Bark', amt:'5g'},{herb:'Coix Seed', amt:'15g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily for 2-3 consecutive weeks.'},
+  {id:66, name:'Qingyan Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Facial Puffiness'], price:45, trial:16, desc:'For slightly puffy face, this strengthens the spleen and promotes diuresis to reduce swelling.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria', amt:'10g'},{herb:'Wax Gourd Peel', amt:'8g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily.'},
+  {id:67, name:'Yuelun Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['Blurred Facial Contour'], price:45, trial:16, desc:'For a blurred facial contour, this boosts qi and nourishes blood to help restore definition.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'8g'},{herb:'Angelica Root', amt:'6g'},{herb:'Tangerine Peel', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily.'},
+  {id:68, name:'Yunhan Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['double chin'], price:45, trial:16, desc:'For double-chin concerns, this resolves phlegm and dampness to help reduce it.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Tangerine Peel', amt:'8g'},{herb:'Poria', amt:'10g'},{herb:'Fritillaria Thunbergii', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily.'},
+  {id:69, name:'Yueche Tea', type:'tea', journeys:['Beauty & Radiance'], tags:['double chin','Facial Puffiness'], price:45, trial:16, desc:'For puffiness with a double chin — helps reduce both.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria', amt:'12g'},{herb:'Tangerine Peel', amt:'8g'},{herb:'Wax Gourd Peel', amt:'8g'},{herb:'Fritillaria Thunbergii', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily for 2 consecutive weeks.'},
+  {id:70, name:'Chenlu Tea', type:'tea', journeys:['Daily Wellness'], tags:['easily fatigued'], price:45, trial:16, desc:'For constant fatigue, this boosts qi and strengthens the spleen to restore energy.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Codonopsis', amt:'10g'},{herb:'Astragalus Root', amt:'8g'},{herb:'Tangerine Peel', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking.'},
+  {id:71, name:'Zhaohui Tea', type:'tea', journeys:['Daily Wellness'], tags:['Low Energy'], price:45, trial:16, desc:'For low energy and listlessness, this raises yang and boosts qi to awaken vitality.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Cimicifuga', amt:'4g'},{herb:'Bupleurum Root', amt:'3g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking.'},
+  {id:72, name:'Songfeng Tea', type:'tea', journeys:['Daily Wellness'], tags:['Difficulty Concentrating'], price:45, trial:16, desc:'For difficulty concentrating, this opens the orifices and calms the spirit for clearer thinking.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Polygala Root', amt:'6g'},{herb:'Acorus', amt:'6g'},{herb:'Poria', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink in the morning.'},
+  {id:73, name:'Pingshan Tea', type:'tea', journeys:['Daily Wellness'], tags:['weaker immunity'], price:45, trial:16, desc:'For frequent illness and weak resistance, this boosts qi and consolidates the exterior to strengthen defense.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Atractylodes Rhizome', amt:'8g'},{herb:'Saposhnikovia', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily for continuous wellness.'},
+  {id:74, name:'Chaoyang Tea', type:'tea', journeys:['Daily Wellness'], tags:['easily fatigued','Low Energy'], price:45, trial:16, desc:'For fatigue and low spirits — dual qi-boosting and yang-raising care.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Codonopsis', amt:'10g'},{herb:'Cimicifuga', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking.'},
+  {id:75, name:'Lanwu Tea', type:'tea', journeys:['Daily Wellness'], tags:['Heavy Dampness'], price:45, trial:16, desc:'When heavy dampness weighs the body down, this strengthens the spleen and dispels dampness for a lighter feeling.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Atractylodes', amt:'8g'},{herb:'Poria', amt:'10g'},{herb:'Coix Seed', amt:'12g'},{herb:'Tangerine Peel', amt:'4g'}], usage:'1 dose daily.'},
+  {id:76, name:'Helu Tea', type:'tea', journeys:['Daily Wellness'], tags:['Heat Intolerance & Easy Sweating'], price:45, trial:16, desc:'For sweating easily with movement, this consolidates sweating and boosts qi.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Blighted Wheat', amt:'12g'},{herb:'Schisandra Fruit', amt:'5g'},{herb:'Ophiopogon', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily.'},
+  {id:77, name:'Sishi Tea', type:'tea', journeys:['Daily Wellness'], tags:['Seasonal Adjustment'], price:45, trial:16, desc:'For seasonal adjustment, this harmonizes the nutritive and defensive levels to help the body adapt faster.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Cinnamon Twig', amt:'5g'},{herb:'White Peony Root', amt:'6g'},{herb:'Astragalus Root', amt:'8g'},{herb:'Honey-fried Licorice', amt:'3g'},{herb:'Ginger', amt:'3pieces'},{herb:'Red Date', amt:'2pcs'}], usage:'1 dose daily around season changes.'},
+  {id:78, name:'Guya Tea', type:'tea', journeys:['Daily Wellness'], tags:['Poor Appetite'], price:45, trial:16, desc:'For poor appetite, this strengthens the stomach and aids digestion to restore appetite.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Hawthorn', amt:'8g'},{herb:'Malt', amt:'10g'},{herb:'Chicken Gizzard Lining', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink before meals.'},
+  {id:79, name:'Wanshan Tea', type:'tea', journeys:['Daily Wellness'], tags:['Indigestion'], price:45, trial:16, desc:'For slow digestion, this aids digestion and harmonizes the stomach for comfort after meals.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Hawthorn', amt:'10g'},{herb:'Medicated Leaven', amt:'8g'},{herb:'Radish Seed', amt:'6g'},{herb:'Tangerine Peel', amt:'5g'}], usage:'Drink after meals.'},
+  {id:80, name:'Nuanzhi Tea', type:'tea', journeys:['Daily Wellness'], tags:['constipation'], price:45, trial:16, desc:'For sluggish bowel movements, this moistens the intestines for gentle regularity.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Hemp Seed', amt:'10g'},{herb:'Bush Cherry Seed', amt:'8g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily.'},
+  {id:81, name:'Wanfeng Tea', type:'tea', journeys:['Daily Wellness'], tags:['Abdominal Bloating'], price:45, trial:16, desc:'For persistent bloating, this regulates qi to ease distension for relief.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Tangerine Peel', amt:'8g'},{herb:'Bitter Orange', amt:'6g'},{herb:'Magnolia Bark', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink after meals.'},
+  {id:82, name:'Guyu Tea', type:'tea', journeys:['Daily Wellness'], tags:['Indigestion','Abdominal Bloating'], price:45, trial:16, desc:'For indigestion with bloating — this helps smooth things out.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Hawthorn', amt:'10g'},{herb:'Immature Bitter Orange', amt:'6g'},{herb:'Radish Seed', amt:'8g'},{herb:'Tangerine Peel', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink after meals.'},
+  {id:83, name:'Guxu Tea', type:'tea', journeys:['Daily Wellness'], tags:['constipation','Indigestion','Abdominal Bloating','Poor Appetite'], price:45, trial:16, desc:'When appetite, digestion, bowel movements and bloating are all off — holistic regulation.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Codonopsis', amt:'10g'},{herb:'Atractylodes Rhizome', amt:'8g'},{herb:'Tangerine Peel', amt:'6g'},{herb:'Bitter Orange', amt:'6g'},{herb:'Hawthorn', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily for continuous wellness.'},
+  {id:84, name:'Songlan Tea', type:'tea', journeys:['Daily Wellness'], tags:['high stress'], price:45, trial:16, desc:'When stress feels overwhelming, this soothes the liver and regulates qi to help you unwind.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Bupleurum Root', amt:'5g'},{herb:'Cyperus Rhizome', amt:'8g'},{herb:'Buddha Hand', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily.'},
+  {id:85, name:'Zhuyun Tea', type:'tea', journeys:['Daily Wellness'], tags:['Irritability'], price:45, trial:16, desc:'For restlessness and irritability, this clears the heart and eliminates vexation to settle the mind.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Gardenia Fruit', amt:'5g'},{herb:'Lophatherum', amt:'6g'},{herb:'Albizia Bark', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily.'},
+  {id:86, name:'Zhuying Tea', type:'tea', journeys:['Daily Wellness'], tags:['tense mood'], price:45, trial:16, desc:'When mood stays tense, this soothes the liver and releases stagnation to help you relax.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Albizia Bark', amt:'8g'},{herb:'Curcuma Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily.'},
+  {id:87, name:'Yehe Tea', type:'tea', journeys:['Daily Wellness'], tags:['Bedtime Overthinking'], price:45, trial:16, desc:"For a mind that won't stop before bed, this nourishes the heart and calms the mind to help you let go.", active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria with Pine', amt:'10g'},{herb:'Sour Jujube Seed', amt:'10g'},{herb:'Longan Fruit', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
+  {id:88, name:'Zhusong Tea', type:'tea', journeys:['Daily Wellness'], tags:['high stress','Irritability'], price:45, trial:16, desc:'For high stress with irritability — doubly soothes the liver and clears the heart.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Bupleurum Root', amt:'6g'},{herb:'Gardenia Fruit', amt:'5g'},{herb:'White Peony Root', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily.'},
+  {id:89, name:'Wangyou Tea', type:'tea', journeys:['Daily Wellness'], tags:['tense mood','Bedtime Overthinking'], price:45, trial:16, desc:'For tense mood with heavy thoughts, a cup of tea lets the worries rest a while.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Blighted Wheat', amt:'20g'},{herb:'Red Date', amt:'6pcs'},{herb:'Albizia Bark', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
+  {id:90, name:'Songjie Patch', type:'plaster', journeys:['Pain Soothing'], tags:['stiffness from prolonged sitting'], price:9, trial:4, desc:'For stiff neck and shoulders after sitting long, apply to loosen and relax.', active:true, inStock:true, featured:true, imgs:[], form:'Patch, topical use', herbs:[{herb:'Common Clubmoss Herb', amt:'12g'},{herb:'Garden Balsam Stem', amt:'10g'},{herb:'Safflower', amt:'5g'}], usage:'Mix with ginger juice into a paste, apply to neck and shoulders, once daily.'},
+  {id:91, name:'Geyou Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Stiff Neck'], price:9, trial:4, desc:"For a stiff neck that won't turn, apply to release the muscles and relax the tendons.", active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Kudzu Root', amt:'10g'},{herb:'Notopterygium', amt:'8g'},{herb:'Cinnamon Twig', amt:'6g'}], usage:'Mix with ginger juice into a paste, apply to affected area, 1-2 times daily.'},
+  {id:92, name:'Shanyue Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Lower-back & Body Aches'], price:9, trial:4, desc:'For lower-back and body aches, apply to tonify the liver and kidney and strengthen the lower back.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Eucommia Bark', amt:'12g'},{herb:'Dipsacus Root', amt:'10g'},{herb:'Mulberry Mistletoe', amt:'8g'}], usage:'Mix with ginger juice into a paste, apply to lower back, once daily.'},
+  {id:93, name:'Yunjian Patch', type:'plaster', journeys:['Pain Soothing'], tags:['aching neck and shoulders'], price:9, trial:4, desc:'For aching neck and shoulder discomfort, apply to invigorate blood and unblock the channels.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Turmeric', amt:'10g'},{herb:'Mulberry Twig', amt:'10g'},{herb:'Safflower', amt:'5g'}], usage:'Mix with ginger juice into a paste, apply to neck and shoulders, once daily.'},
+  {id:94, name:'Yunsong Patch', type:'plaster', journeys:['Pain Soothing'], tags:['stiffness from prolonged sitting','aching neck and shoulders'], price:9, trial:4, desc:'For prolonged sitting with aching neck and shoulders — soothing relief.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Turmeric', amt:'10g'},{herb:'Common Clubmoss Herb', amt:'10g'},{herb:'Mulberry Twig', amt:'8g'},{herb:'Safflower', amt:'4g'}], usage:'Mix with ginger juice into a paste, apply to affected area, once daily.'},
+  {id:95, name:'Nuanjie Patch', type:'plaster', journeys:['Pain Soothing'], tags:['aching, heavy joints'], price:9, trial:4, desc:'For aching, heavy joint discomfort, apply to dispel dampness and unblock the channels.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Pubescent Angelica', amt:'10g'},{herb:'Coix Seed', amt:'10g'},{herb:'Saposhnikovia', amt:'6g'}], usage:'Mix with ginger juice into a paste, apply to joints, once daily.'},
+  {id:96, name:'Qinglan Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Worse with Cold'], price:9, trial:4, desc:'For symptoms that worsen with cold, apply to warm the meridians and dispel cold.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Notopterygium', amt:'10g'},{herb:'Cinnamon Twig', amt:'8g'},{herb:'Mugwort Leaf', amt:'8g'}], usage:'Mix with ginger juice into a paste, apply to affected area, and keep warm.'},
+  {id:97, name:'Zhanyi Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Limited Mobility'], price:9, trial:4, desc:'For stiff, awkward movement, apply to relax the tendons and unblock the collaterals.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Papaya', amt:'10g'},{herb:'Common Clubmoss Herb', amt:'10g'},{herb:'Achyranthes Root', amt:'8g'}], usage:'Mix with ginger juice into a paste, apply to affected area, once daily.'},
+  {id:98, name:'Nuanlan Patch', type:'plaster', journeys:['Pain Soothing'], tags:['aching, heavy joints','Worse with Cold'], price:9, trial:4, desc:'For achy joints sensitive to cold — doubly dispels cold and dampness.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Notopterygium', amt:'8g'},{herb:'Pubescent Angelica', amt:'8g'},{herb:'Cinnamon Twig', amt:'6g'},{herb:'Mugwort Leaf', amt:'6g'}], usage:'Mix with ginger juice into a paste, apply to affected area, once daily.'},
+  {id:99, name:'Chixia Patch', type:'plaster', journeys:['Pain Soothing'], tags:['muscle strain'], price:9, trial:4, desc:'For muscle strain, apply to invigorate blood and soothe discomfort.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Notoginseng', amt:'6g'},{herb:'Safflower', amt:'5g'},{herb:'Frankincense', amt:'4g'}], usage:'Mix with ginger juice into a paste, apply to the affected area (for acute swelling, wait 48 hours before use).'},
+  {id:100, name:'Ziyun Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Sprains & Bruises'], price:9, trial:4, desc:'For sprains and bruises, apply to resolve stasis and reduce swelling.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Peach Kernel', amt:'6g'},{herb:'Safflower', amt:'5g'},{herb:'Chinese Angelica Root-tip', amt:'6g'}], usage:'Mix with ginger juice into a paste, apply to affected area, once daily.'},
+  {id:101, name:'Mujin Tea', type:'tea', journeys:['Pain Soothing'], tags:['Post-exercise Soreness'], price:45, trial:16, desc:'For post-exercise body aches, a cup nourishes and invigorates the blood.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Angelica Root', amt:'8g'},{herb:'Millettia Vine', amt:'10g'},{herb:'Salvia Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink after exercise.'},
+  {id:102, name:'Xiayun Patch', type:'plaster', journeys:['Pain Soothing'], tags:['Sprains & Bruises','muscle strain'], price:9, trial:4, desc:'For strains with bruising — invigorates blood and resolves stasis together.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Notoginseng', amt:'10g'},{herb:'Peach Kernel', amt:'8g'},{herb:'Safflower', amt:'6g'},{herb:'Frankincense', amt:'5g'}], usage:'Mix with ginger juice into a paste, apply to affected area, once daily.'},
+  {id:103, name:'Chuanye Tea', type:'tea', journeys:['Pain Soothing'], tags:['generalized body aches'], price:45, trial:16, desc:'For generalized aching and weakness, dual qi and blood tonification gradually eases it.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Angelica Root', amt:'8g'},{herb:'Millettia Vine', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily.'},
+  {id:104, name:'Wanli Patch', type:'plaster', journeys:['Pain Soothing'], tags:['discomfort from long standing or sitting'], price:9, trial:4, desc:'For discomfort after long standing or sitting, apply to relax the tendons and unblock the collaterals.', active:true, inStock:true, featured:false, imgs:[], form:'Patch, topical use', herbs:[{herb:'Common Clubmoss Herb', amt:'10g'},{herb:'Garden Balsam Stem', amt:'8g'},{herb:'Safflower', amt:'4g'}], usage:'Mix with ginger juice into a paste, apply to aching areas.'},
+  {id:105, name:'Yinshan Tea', type:'tea', journeys:['Pain Soothing'], tags:['recurrent dull discomfort'], price:45, trial:16, desc:'For recurrent discomfort, this nourishes blood and unblocks the collaterals for gradual wellness.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Millettia Vine', amt:'12g'},{herb:'Angelica Root', amt:'8g'},{herb:'Salvia Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily for continuous wellness.'},
+  {id:106, name:'Chuanyin Tea', type:'tea', journeys:['Pain Soothing'], tags:['recurrent dull discomfort','generalized body aches'], price:45, trial:16, desc:'For body aches with recurrent dull discomfort — dual qi and blood collateral-unblocking care.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Angelica Root', amt:'10g'},{herb:'Millettia Vine', amt:'12g'},{herb:'Salvia Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'1 dose daily.'},
+  {id:107, name:'Muhe Patch', type:'plaster', journeys:['Quality Sleep'], tags:['Wide Awake When Lying Down'], price:9, trial:4, desc:'For feeling wide awake on lying down, apply to the Yongquan acupoint before bed.', active:true, inStock:true, featured:false, imgs:[], form:'patch, apply to Yongquan acupoint (topical use)', herbs:[{herb:'Sour Jujube Seed', amt:'10g'},{herb:'Cinnamon Bark', amt:'3g'},{herb:'Evodia Fruit', amt:'5g'}], usage:'Grind into powder, mix with vinegar into a paste, apply to Yongquan acupoint before bed, remove the next morning.'},
+  {id:108, name:'Xingyu Tea', type:'tea', journeys:['Quality Sleep'], tags:['Racing Thoughts'], price:45, trial:16, desc:'For a mind full of unstoppable thoughts, this nourishes the heart and calms the mind to help settle.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Blighted Wheat', amt:'15g'},{herb:'Albizia Bark', amt:'8g'},{herb:'Curcuma Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
+  {id:109, name:'Yelan Tea', type:'tea', journeys:['Quality Sleep'], tags:['taking long to fall asleep'], price:45, trial:16, desc:'When falling asleep takes long, this nourishes the heart and calms the mind to help you drift off faster.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Sour Jujube Seed', amt:'12g'},{herb:'Arborvitae Seed', amt:'8g'},{herb:'Poria with Pine', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
+  {id:110, name:'Xinglan Tea', type:'tea', journeys:['Quality Sleep'], tags:['taking long to fall asleep','Racing Thoughts'], price:45, trial:16, desc:'For racing thoughts and difficulty sleeping — dual mind-calming, sleep-supporting care.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Sour Jujube Seed', amt:'12g'},{herb:'Blighted Wheat', amt:'15g'},{herb:'Albizia Bark', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
+  {id:111, name:'Muai Tea', type:'tea', journeys:['Quality Sleep'], tags:['waking easily at night'], price:45, trial:16, desc:'For waking often at night, this nourishes the heart and boosts qi for deeper sleep.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria with Pine', amt:'10g'},{herb:'Sour Jujube Seed', amt:'10g'},{herb:'Astragalus Root', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
+  {id:112, name:'Yuelan Patch', type:'plaster', journeys:['Quality Sleep'], tags:['Difficulty Returning to Sleep'], price:9, trial:4, desc:'For difficulty returning to sleep after waking, apply before bed to help you drift back.', active:true, inStock:true, featured:false, imgs:[], form:'patch, apply to Yongquan acupoint (topical use)', herbs:[{herb:'Sour Jujube Seed', amt:'10g'},{herb:'Fleeceflower Vine', amt:'10g'},{herb:'Schisandra Fruit', amt:'5g'}], usage:'Grind into powder, mix with vinegar into a paste, apply to Yongquan acupoint before bed, remove the next morning.'},
+  {id:113, name:'Jingxiang Tea', type:'tea', journeys:['Quality Sleep'], tags:['sound sensitivity'], price:45, trial:16, desc:'For waking at the slightest sound, this calms the heart and mind for more restful sleep.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria with Pine', amt:'10g'},{herb:'Polygala Root', amt:'6g'},{herb:'Arborvitae Seed', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
+  {id:114, name:'Aiyue Tea', type:'tea', journeys:['Quality Sleep'], tags:['waking easily at night','Difficulty Returning to Sleep'], price:45, trial:16, desc:'For waking easily and difficulty returning to sleep — dual mind-calming for steadier sleep.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria with Pine', amt:'10g'},{herb:'Sour Jujube Seed', amt:'12g'},{herb:'Fleeceflower Vine', amt:'10g'},{herb:'Schisandra Fruit', amt:'5g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
+  {id:115, name:'Demeng Tea', type:'tea', journeys:['Quality Sleep'], tags:['Frequent Dreams'], price:45, trial:16, desc:'For excessive dreams at night, this nourishes the heart and calms the mind for more solid sleep.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Longan Fruit', amt:'8g'},{herb:'Sour Jujube Seed', amt:'10g'},{herb:'Poria with Pine', amt:'8g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
+  {id:116, name:'Ziye Tea', type:'tea', journeys:['Quality Sleep'], tags:['poor sleep quality'], price:45, trial:16, desc:'For overall poor sleep quality, this nourishes the heart and calms the mind for gradual improvement.', active:false, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Poria', amt:'10g'},{herb:'Sour Jujube Seed', amt:'10g'},{herb:'Albizia Bark', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
+  {id:117, name:'Dieying Tea', type:'tea', journeys:['Quality Sleep'], tags:['Frequent Dreams','poor sleep quality'], price:45, trial:16, desc:'For frequent dreams and restless sleep — doubly nourishes the heart and calms the mind.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Longan Fruit', amt:'10g'},{herb:'Sour Jujube Seed', amt:'12g'},{herb:'Poria with Pine', amt:'10g'},{herb:'Albizia Bark', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink 1 hour before bed.'},
+  {id:118, name:'Xiaolan Tea', type:'tea', journeys:['Quality Sleep'], tags:['Still Tired After Waking'], price:45, trial:16, desc:'For still feeling sleepy after waking, this boosts qi and raises yang to awaken alertness.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'8g'},{herb:'Cimicifuga', amt:'4g'},{herb:'Acorus', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking.'},
+  {id:119, name:'Maoshi Tea', type:'tea', journeys:['Quality Sleep'], tags:['Difficulty Getting Up'], price:45, trial:16, desc:'For great difficulty getting up, this warms yang and boosts qi to help you wake.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Cinnamon Bark', amt:'3g'},{herb:'Cimicifuga', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking.'},
+  {id:120, name:'Wuzhou Tea', type:'tea', journeys:['Quality Sleep'], tags:['Daytime Drowsiness'], price:45, trial:16, desc:'For daytime drowsiness, this strengthens the spleen and raises yang to lift energy.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'10g'},{herb:'Atractylodes', amt:'8g'},{herb:'Cimicifuga', amt:'4g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink in the morning.'},
+  {id:121, name:'Chenxi Tea', type:'tea', journeys:['Quality Sleep'], tags:['Daytime Drowsiness','Difficulty Getting Up'], price:45, trial:16, desc:'For difficulty getting up with drowsiness — dual yang-raising, awakening care.', active:true, inStock:true, featured:false, imgs:[], form:'Tea', herbs:[{herb:'Astragalus Root', amt:'12g'},{herb:'Cinnamon Bark', amt:'4g'},{herb:'Cimicifuga', amt:'5g'},{herb:'Atractylodes', amt:'6g'},{herb:'Licorice Root', amt:'3g'}], usage:'Drink upon waking.'},
+  {id:122, name:'Xiaoxia Mask', type:'mask', journeys:[], tags:[], price:39, trial:15, desc:'Not for a specific symptom — a daily brightening ritual and a weekend treat for yourself.', active:true, inStock:true, featured:true, imgs:[], form:'Topical facial mask', herbs:[{herb:'Angelica Dahurica', amt:'8g'},{herb:'Bletilla', amt:'6g'},{herb:'Mung Bean Powder', amt:'10g'},{herb:'Licorice Root', amt:'3g'}], usage:'Grind to a very fine powder, mix with honey or warm water into a paste, apply to face for 15-20 minutes then rinse with warm water, 2-3 times weekly.'},
+ ];
 
-  // [stated bug fix] same gap as Shop had — this page ran off its own frozen product copy with
-  // zero connection to 商品管理. Now overlays the shared catalog onto this page's own copy before
-  // building the id-index below, so edits made in the admin tool (price/stock/desc/etc.) show up
-  // here too.
-  function mergeCatalogFromStorage(){
-    try {
-      var raw = localStorage.getItem('vinath_product_catalog');
-      if(!raw) return;
-      var byId = {};
-      JSON.parse(raw).forEach(function(c){ byId[c.id] = c; });
-      PRODUCTS.forEach(function(p){
-        var c = byId[p.id];
-        if(!c) return;
-        if(typeof c.stockQty === 'number'){ p.stockQty = c.stockQty; p.inStock = c.stockQty > 0; }
-        if(c.name) p.name = c.name;
-        if(c.nameEn !== undefined) p.nameEn = c.nameEn;
-        if(typeof c.price === 'number') p.price = c.price;
-        if(c.type) p.type = c.type;
-        if(typeof c.trial === 'number') p.trial = c.trial;
-        if(c.desc !== undefined) p.desc = c.desc;
-        if(typeof c.active === 'boolean') p.active = c.active;
-        if(typeof c.featured === 'boolean') p.featured = c.featured;
-        if(c.tags) p.tags = c.tags;
-        if(c.journeys) p.journeys = c.journeys;
-        if(c.form !== undefined) p.form = c.form;
-        if(c.herbs) p.herbs = c.herbs;
-        if(c.usage !== undefined) p.usage = c.usage;
-        if(c.imgs && c.imgs.length) p.imgs = c.imgs;
-      });
-    } catch(e){}
-  }
-  // [stated] 这pcs文items后面几百行有不少直接依赖 PRODUCTS_BY_ID / product 已经就绪的同步代码，
-  // 分散得比较开，贸然大范围改成异步回调风险较高。这里用同步XHR请求(虽然是过时写法，
-  // 但只在页面刚打开这一下用，不影响交互流畅度)，保持原来的代码结构不用大动，
-  // 只把数据来源从写死的数组换成真实后端。
-  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  (function loadProductsFromBackendSync(){
-    try {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', API_BASE + '/products', false); // false = 同步
-      xhr.send(null);
-      if(xhr.status === 200){
-        var backendProducts = JSON.parse(xhr.responseText);
-        if(backendProducts && backendProducts.length){
-        PRODUCTS.length = 0;
-        backendProducts.forEach(function(p){
-          PRODUCTS.push({ id:p.id, name:p.name, nameEn:p.name_en, type:p.type, price:p.price,
-            trial:(typeof p.trial_price === 'number' ? p.trial_price : p.price),
-            desc:p.description, active:p.active, inStock:p.stock_qty > 0, stockQty:p.stock_qty,
-            featured:p.featured, imgs:p.images||[], form:'', herbs:[], usage:p.usage_note||'',
-            journeys:[], tags:[] });
-        });
-        }
-      }
-    } catch(e){ console.error('Failed to connect to backend: ', e); }
-  })();
-
-  var TAG_LOOKUP = {};
-  Object.keys(TAG_DATA).forEach(function(journey){
-    TAG_DATA[journey].forEach(function(g){
-      g.tags.forEach(function(tag){ TAG_LOOKUP[tag] = {journey:journey, cond:g.cond}; });
+ // [stated bug fix] same gap as Shop had — this page ran off its own frozen product copy with
+ // zero connection to 商品管理. Now overlays the shared catalog onto this page's own copy before
+ // building the id-index below, so edits made in the admin tool (price/stock/desc/etc.) show up
+ // here too.
+ function mergeCatalogFromStorage(){
+  try {
+   var raw = localStorage.getItem('vinath_product_catalog');
+   if(!raw) return;
+   var byId = {};
+   JSON.parse(raw).forEach(function(c){ byId[c.id] = c; });
+   PRODUCTS.forEach(function(p){
+    var c = byId[p.id];
+    if(!c) return;
+    if(typeof c.stockQty === 'number'){ p.stockQty = c.stockQty; p.inStock = c.stockQty > 0; }
+    if(c.name) p.name = c.name;
+    if(c.nameEn !== undefined) p.nameEn = c.nameEn;
+    if(typeof c.price === 'number') p.price = c.price;
+    if(c.type) p.type = c.type;
+    if(typeof c.trial === 'number') p.trial = c.trial;
+    if(c.desc !== undefined) p.desc = c.desc;
+    if(typeof c.active === 'boolean') p.active = c.active;
+    if(typeof c.featured === 'boolean') p.featured = c.featured;
+    if(c.tags) p.tags = c.tags;
+    if(c.journeys) p.journeys = c.journeys;
+    if(c.form !== undefined) p.form = c.form;
+    if(c.herbs) p.herbs = c.herbs;
+    if(c.usage !== undefined) p.usage = c.usage;
+    if(c.imgs && c.imgs.length) p.imgs = c.imgs;
+   });
+  } catch(e){}
+ }
+ // [stated] 这pcs文items后面几百行有不少直接依赖 PRODUCTS_BY_ID / product 已经就绪的同步代码, 
+ // 分散得比较开, 贸然大范围改成异步回调风险较高.这里用同步XHR请求(虽然是过时写法, 
+ // 但只在页面刚打开这一下用, 不影响交互流畅度), 保持原来的代码结构不用大动, 
+ // 只把数据来源从写死的数组换成真实后端.
+ var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+ (function loadProductsFromBackendSync(){
+  try {
+   var xhr = new XMLHttpRequest();
+   xhr.open('GET', API_BASE + '/products', false); // false = 同步
+   xhr.send(null);
+   if(xhr.status === 200){
+    var backendProducts = JSON.parse(xhr.responseText);
+    if(backendProducts && backendProducts.length){
+    PRODUCTS.length = 0;
+    backendProducts.forEach(function(p){
+     PRODUCTS.push({ id:p.id, name:p.name, nameEn:p.name_en, type:p.type, price:p.price,
+      trial:(typeof p.trial_price === 'number' ? p.trial_price : p.price),
+      desc:p.description, active:p.active, inStock:p.stock_qty > 0, stockQty:p.stock_qty,
+      featured:p.featured, imgs:p.images||[], form:'', herbs:[], usage:p.usage_note||'',
+      journeys:[], tags:[] });
     });
-  });
-  var PRODUCTS_BY_ID = {};
-  PRODUCTS.forEach(function(p){ PRODUCTS_BY_ID[p.id] = p; });
-
-  function cartFromURL(){
-    var raw = new URLSearchParams(window.location.search).get('cart');
-    if(!raw) return [];
-    return raw.split(',').map(function(chunk){
-      var parts = chunk.split(':'); var id = parts[0];
-      return id ? {id:id, variant:(parts[1]==='t'?'trial':'full'), qty:Number(parts[2])||1} : null;
-    }).filter(Boolean);
-  }
-  function cartToParam(items){ return items.map(function(it){ return it.id+':'+(it.variant==='trial'?'t':'f')+':'+it.qty; }).join(','); }
-  function withCart(url, items){
-    var cartStr = cartToParam(items);
-    if(!cartStr) return url;
-    var hashIdx = url.indexOf('#');
-    var hash = hashIdx === -1 ? '' : url.slice(hashIdx);
-    var base = hashIdx === -1 ? url : url.slice(0, hashIdx);
-    return base + (base.indexOf('?')===-1 ? '?' : '&') + 'cart=' + encodeURIComponent(cartStr) + hash;
-  }
-  var cartItems = cartFromURL();
-  function cartTotalQty(){ return cartItems.reduce(function(s,it){ return s+it.qty; }, 0); }
-  function updateCartBadge(){
-    var total = cartTotalQty();
-    var badge = document.getElementById('cartBadge');
-    badge.textContent = total;
-    badge.style.display = total > 0 ? 'flex' : 'none';
-  }
-
-  var params = new URLSearchParams(window.location.search);
-  var productId = params.get('id');
-  // ---- 收藏/心愿单: per-browser/per-device, same as the shopping cart (no login system exists) ----
-  var WISHLIST_KEY = 'vinath_wishlist';
-  function getWishlist(){
-    try { var raw = localStorage.getItem(WISHLIST_KEY); return raw ? JSON.parse(raw) : []; } catch(e){ return []; }
-  }
-  function saveWishlist(list){ try { localStorage.setItem(WISHLIST_KEY, JSON.stringify(list)); } catch(e){} }
-  function isWishlisted(id){ return getWishlist().indexOf(id) !== -1; }
-  function toggleWishlist(id){
-    var list = getWishlist();
-    var idx = list.indexOf(id);
-    var isAdding = idx===-1;
-    if(isAdding) list.push(id); else list.splice(idx,1);
-    saveWishlist(list);
-    // 这条收藏/Cancel收藏动作同时上报给后端做匿名聚合统计（"这item(s)现在有多少人收藏着"）；
-    // 客户自己的收藏列表本身还是留在本地——这pcs项目没有真实客户账号体系，没法做到真正跨设备同步
-    if(product){
-      fetch(API_BASE + '/analytics/wishlist-event', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId:id, productName:product.name, action: isAdding?'add':'remove' })
-      }).catch(function(){});
     }
-  }
+   }
+  } catch(e){ console.error('Failed to connect to backend: ', e); }
+ })();
 
-  var product = PRODUCTS_BY_ID[productId];
+ var TAG_LOOKUP = {};
+ Object.keys(TAG_DATA).forEach(function(journey){
+  TAG_DATA[journey].forEach(function(g){
+   g.tags.forEach(function(tag){ TAG_LOOKUP[tag] = {journey:journey, cond:g.cond}; });
+  });
+ });
+ var PRODUCTS_BY_ID = {};
+ PRODUCTS.forEach(function(p){ PRODUCTS_BY_ID[p.id] = p; });
 
+ function cartFromURL(){
+  var raw = new URLSearchParams(window.location.search).get('cart');
+  if(!raw) return [];
+  return raw.split(',').map(function(chunk){
+   var parts = chunk.split(':'); var id = parts[0];
+   return id ? {id:id, variant:(parts[1]==='t'?'trial':'full'), qty:Number(parts[2])||1} : null;
+  }).filter(Boolean);
+ }
+ function cartToParam(items){ return items.map(function(it){ return it.id+':'+(it.variant==='trial'?'t':'f')+':'+it.qty; }).join(','); }
+ function withCart(url, items){
+  var cartStr = cartToParam(items);
+  if(!cartStr) return url;
+  var hashIdx = url.indexOf('#');
+  var hash = hashIdx === -1 ? '' : url.slice(hashIdx);
+  var base = hashIdx === -1 ? url : url.slice(0, hashIdx);
+  return base + (base.indexOf('?')===-1 ? '?' : '&') + 'cart=' + encodeURIComponent(cartStr) + hash;
+ }
+ var cartItems = cartFromURL();
+ function cartTotalQty(){ return cartItems.reduce(function(s,it){ return s+it.qty; }, 0); }
+ function updateCartBadge(){
+  var total = cartTotalQty();
+  var badge = document.getElementById('cartBadge');
+  badge.textContent = total;
+  badge.style.display = total > 0 ? 'flex' : 'none';
+ }
+
+ var params = new URLSearchParams(window.location.search);
+ var productId = params.get('id');
+ // ---- 收藏/心愿单: per-browser/per-device, same as the shopping cart (no login system exists) ----
+ var WISHLIST_KEY = 'vinath_wishlist';
+ function getWishlist(){
+  try { var raw = localStorage.getItem(WISHLIST_KEY); return raw ? JSON.parse(raw) : []; } catch(e){ return []; }
+ }
+ function saveWishlist(list){ try { localStorage.setItem(WISHLIST_KEY, JSON.stringify(list)); } catch(e){} }
+ function isWishlisted(id){ return getWishlist().indexOf(id) !== -1; }
+ function toggleWishlist(id){
+  var list = getWishlist();
+  var idx = list.indexOf(id);
+  var isAdding = idx===-1;
+  if(isAdding) list.push(id); else list.splice(idx,1);
+  saveWishlist(list);
+  // 这条收藏/Cancel收藏动作同时上报给后端做匿名聚合统计("这item(s)现在有多少人收藏着");
+  // 客户自己的收藏列表本身还是留在本地——这pcs项目没有真实客户账号体系, 没法做到真正跨设备同步
   if(product){
-    fetch(API_BASE + '/analytics/pageview', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ page: 'Product Details-' + product.name })
+   fetch(API_BASE + '/analytics/wishlist-event', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ productId:id, productName:product.name, action: isAdding?'add':'remove' })
+   }).catch(function(){});
+  }
+ }
+
+ var product = PRODUCTS_BY_ID[productId];
+
+ if(product){
+  fetch(API_BASE + '/analytics/pageview', {
+   method: 'POST', headers: { 'Content-Type': 'application/json' },
+   body: JSON.stringify({ page: 'Product Details-' + product.name })
+  }).catch(function(){});
+  // 商品关注度统计——记录停留时长, 方便后台看"用户对哪些商品感兴趣(停留时间较长)";
+  // 离开/切到后台标签页/关闭页面都会触发一次, 只记一次, 避免重复计入.用 fetch 搭配
+  // keepalive:true(不是 navigator.sendBeacon)——实测过 sendBeacon 在这pcs环境下发出的请求
+  // 在网络层直接失败, 根本到不了服务端;keepalive就是fetch专门为"页面卸载前仍要发出去"
+  // 这种场景设计的选项, 跟这pcs项目里其他地方一直稳定工作的fetch用的是同一套机制.
+  (function(){
+   var startTime = Date.now();
+   var logged = false;
+   function logInterest(){
+    if(logged) return;
+    logged = true;
+    fetch(API_BASE + '/analytics/product-interest', {
+     method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true,
+     body: JSON.stringify({ productId: product.id, productName: product.name, dwellMs: Date.now()-startTime })
     }).catch(function(){});
-    // 商品关注度统计——记录停留时长，方便后台看"用户对哪些商品感兴趣（停留时间较长）"；
-    // 离开/切到后台标签页/关闭页面都会触发一次，只记一次，避免重复计入。用 fetch 搭配
-    // keepalive:true（不是 navigator.sendBeacon）——实测过 sendBeacon 在这pcs环境下发出的请求
-    // 在网络层直接失败，根本到不了服务端；keepalive就是fetch专门为"页面卸载前仍要发出去"
-    // 这种场景设计的选项，跟这pcs项目里其他地方一直稳定工作的fetch用的是同一套机制。
-    (function(){
-      var startTime = Date.now();
-      var logged = false;
-      function logInterest(){
-        if(logged) return;
-        logged = true;
-        fetch(API_BASE + '/analytics/product-interest', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true,
-          body: JSON.stringify({ productId: product.id, productName: product.name, dwellMs: Date.now()-startTime })
-        }).catch(function(){});
-      }
-      window.addEventListener('beforeunload', logInterest);
-      document.addEventListener('visibilitychange', function(){ if(document.visibilityState === 'hidden') logInterest(); });
-    })();
+   }
+   window.addEventListener('beforeunload', logInterest);
+   document.addEventListener('visibilitychange', function(){ if(document.visibilityState === 'hidden') logInterest(); });
+  })();
+ }
+
+ var selectedVariant = 'full';
+ var qty = 1;
+ var imgIdx = 0;
+ var pdImgs = [];
+
+ function renderNotFound(){
+  document.getElementById('breadcrumb').innerHTML = '<span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-link" id="bcShop">Shop</span><span class="sep">›</span><span class="bc-current">Product Not Found</span>';
+  document.getElementById('mainContent').innerHTML = '<div class="not-found">This product was not found. It may be off-shelf or the link may be incorrect.</div>';
+  bindHeaderNav();
+ }
+
+ function renderPdImage(){
+  document.getElementById('pdTrack').style.transform = 'translateX(-'+(imgIdx*100)+'%)';
+  document.querySelectorAll('.pd-dot').forEach(function(d,i){ d.classList.toggle('on', i===imgIdx); });
+  var prevBtn = document.getElementById('pdPrev'), nextBtn = document.getElementById('pdNext');
+  if(prevBtn) prevBtn.classList.toggle('hide', imgIdx===0 || pdImgs.length<2);
+  if(nextBtn) nextBtn.classList.toggle('hide', imgIdx===pdImgs.length-1 || pdImgs.length<2);
+ }
+ function goPdImg(i){ imgIdx = Math.max(0, Math.min(pdImgs.length-1, i)); renderPdImage(); }
+
+ function buildHero(){
+  var hasImgs = product.imgs && product.imgs.length;
+  pdImgs = hasImgs ? product.imgs.slice() : [null];
+  var slides = pdImgs.map(function(src){
+   return '<div class="pd-hero-slide">' + (src ? '<img src="'+src+'" alt="'+product.name+'">' : '<div class="pt-icon">'+(ICON[product.type]||GENERIC_CAT_ICON)+'</div>') + '</div>';
+  }).join('');
+  var dots = pdImgs.length>1 ? pdImgs.map(function(_,i){ return '<span class="pd-dot'+(i===0?' on':'')+'"></span>'; }).join('') : '';
+  return '<div class="pd-hero" id="pdHero">'
+   + (!product.inStock ? '<div class="pd-oos-badge">Temporarily Out of Stock</div>' : '')
+   + '<span class="pd-wish'+(isWishlisted(product.id)?' on':'')+'" id="pdWishBtn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9.5-9C.5 8 2 4 6 4c2 0 3.5 1 4 2 .5-1 2-2 4-2 4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg></span>'
+   + '<div class="pd-hero-track" id="pdTrack">'+slides+'</div>'
+   + '<div class="pd-hero-nav prev hide" id="pdPrev"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l-7 7 7 7"/></svg></div>'
+   + '<div class="pd-hero-nav next hide" id="pdNext"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5l7 7-7 7"/></svg></div>'
+   + '<div class="pd-dots">'+dots+'</div></div>';
+ }
+
+ function buildFormulaSection(){
+  if(!product.herbs || !product.herbs.length) return '';
+  var chips = product.herbs.map(function(h){ return '<span class="pd-herb-chip">'+h.herb+'</span>'; }).join('');
+  return '<div class="pd-section"><div class="pd-section-title">Formula & Usage</div>'
+   + '<div class="pd-form-row"><span class="fl">Form</span><span>'+product.form+'</span></div>'
+   + '<div class="pd-herb-label">Ingredients</div>'
+   + '<div class="pd-herb-chips">'+chips+'</div>'
+   + '<div class="pd-usage-box"><b>Usage: </b>'+product.usage+'</div>'
+   + '</div>';
+ }
+
+ function buildSafetySection(){
+  var items = [];
+  if(product.type === 'plaster'){
+   items.push('For first use, test on a small area first to watch for skin sensitivity; do not apply to broken or inflamed skin.');
+  } else if(product.type === 'tea'){
+   items.push('This is a daily wellness blend of medicinal-food ingredients, not a diagnostic or treatment medicine; if symptoms persist or worsen, consult a qualified physician promptly.');
+  } else if(product.type === 'soak'){
+   items.push('For topical decoction, pause use during menstrual period or vaginal bleeding.');
+  } else if(product.type === 'mask'){
+   items.push('Before use, test on a small area behind the ear or inner wrist; apply to the face only if no discomfort occurs.');
   }
-
-  var selectedVariant = 'full';
-  var qty = 1;
-  var imgIdx = 0;
-  var pdImgs = [];
-
-  function renderNotFound(){
-    document.getElementById('breadcrumb').innerHTML = '<span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-link" id="bcShop">Shop</span><span class="sep">›</span><span class="bc-current">Product Not Found</span>';
-    document.getElementById('mainContent').innerHTML = '<div class="not-found">This product was not found. It may be off-shelf or the link may be incorrect.</div>';
-    bindHeaderNav();
+  if(product.herbs && product.herbs.some(function(h){ return CAUTION_HERBS.indexOf(h.herb)!==-1; })){
+   items.push('This formula contains blood-invigorating herbs; do not use during pregnancy. If in doubt, consult a physician first.');
   }
+  items.push('TCM emphasizes syndrome differentiation and individualized care. For a more precise personalized plan, book a one-to-one consultation via "Meet Now".');
+  return '<div class="pd-section"><div class="pd-section-title">Usage Notes</div><div class="pd-safety"><ul>'
+   + items.map(function(i){ return '<li>'+i+'</li>'; }).join('')
+   + '</ul></div></div>';
+ }
 
-  function renderPdImage(){
-    document.getElementById('pdTrack').style.transform = 'translateX(-'+(imgIdx*100)+'%)';
-    document.querySelectorAll('.pd-dot').forEach(function(d,i){ d.classList.toggle('on', i===imgIdx); });
-    var prevBtn = document.getElementById('pdPrev'), nextBtn = document.getElementById('pdNext');
-    if(prevBtn) prevBtn.classList.toggle('hide', imgIdx===0 || pdImgs.length<2);
-    if(nextBtn) nextBtn.classList.toggle('hide', imgIdx===pdImgs.length-1 || pdImgs.length<2);
-  }
-  function goPdImg(i){ imgIdx = Math.max(0, Math.min(pdImgs.length-1, i)); renderPdImage(); }
+ function buildRelatedSection(){
+  var related = PRODUCTS.filter(function(p){
+   return p.id !== product.id && p.active && p.type === product.type;
+  });
+  if(!related.length) return '';
+  var cards = related.slice(0, 8).map(function(p){
+   var hasImg = p.imgs && p.imgs[0];
+   return '<div class="related-card" data-id="'+p.id+'">'
+    + '<div class="related-thumb">' + (hasImg ? '<img src="'+p.imgs[0]+'" alt="'+p.name+'">' : '<div class="pt-icon">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>') + '</div>'
+    + '<div class="related-name">'+p.name+'</div><div class="related-price">MYR '+p.trial+' onwards</div></div>';
+  }).join('');
+  return '<div class="pd-section"><div class="pd-section-title">Similar Products · '+TYPE_LABEL[product.type]+'</div><div class="related-grid">'+cards+'</div></div>';
+ }
 
-  function buildHero(){
-    var hasImgs = product.imgs && product.imgs.length;
-    pdImgs = hasImgs ? product.imgs.slice() : [null];
-    var slides = pdImgs.map(function(src){
-      return '<div class="pd-hero-slide">' + (src ? '<img src="'+src+'" alt="'+product.name+'">' : '<div class="pt-icon">'+(ICON[product.type]||GENERIC_CAT_ICON)+'</div>') + '</div>';
-    }).join('');
-    var dots = pdImgs.length>1 ? pdImgs.map(function(_,i){ return '<span class="pd-dot'+(i===0?' on':'')+'"></span>'; }).join('') : '';
-    return '<div class="pd-hero" id="pdHero">'
-      + (!product.inStock ? '<div class="pd-oos-badge">Temporarily Out of Stock</div>' : '')
-      + '<span class="pd-wish'+(isWishlisted(product.id)?' on':'')+'" id="pdWishBtn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9.5-9C.5 8 2 4 6 4c2 0 3.5 1 4 2 .5-1 2-2 4-2 4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg></span>'
-      + '<div class="pd-hero-track" id="pdTrack">'+slides+'</div>'
-      + '<div class="pd-hero-nav prev hide" id="pdPrev"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l-7 7 7 7"/></svg></div>'
-      + '<div class="pd-hero-nav next hide" id="pdNext"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5l7 7-7 7"/></svg></div>'
-      + '<div class="pd-dots">'+dots+'</div></div>';
-  }
+ function render(){
+  document.getElementById('breadcrumb').innerHTML = '<span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-link" id="bcShop">Shop</span><span class="sep">›</span><span class="bc-current">'+product.name+'</span>';
 
-  function buildFormulaSection(){
-    if(!product.herbs || !product.herbs.length) return '';
-    var chips = product.herbs.map(function(h){ return '<span class="pd-herb-chip">'+h.herb+'</span>'; }).join('');
-    return '<div class="pd-section"><div class="pd-section-title">Formula & Usage</div>'
-      + '<div class="pd-form-row"><span class="fl">Form</span><span>'+product.form+'</span></div>'
-      + '<div class="pd-herb-label">Ingredients</div>'
-      + '<div class="pd-herb-chips">'+chips+'</div>'
-      + '<div class="pd-usage-box"><b>Usage: </b>'+product.usage+'</div>'
-      + '</div>';
-  }
+  var html = buildHero();
+  html += '<div class="pd-type">'+TYPE_LABEL[product.type]+'</div>';
+  html += '<div class="pd-name">'+product.name+'</div>';
+  html += '<div class="pd-desc">'+product.desc+'</div>';
 
-  function buildSafetySection(){
-    var items = [];
-    if(product.type === 'plaster'){
-      items.push('For first use, test on a small area first to watch for skin sensitivity; do not apply to broken or inflamed skin.');
-    } else if(product.type === 'tea'){
-      items.push('This is a daily wellness blend of medicinal-food ingredients, not a diagnostic or treatment medicine; if symptoms persist or worsen, consult a qualified physician promptly.');
-    } else if(product.type === 'soak'){
-      items.push('For topical decoction, pause use during menstrual period or vaginal bleeding.');
-    } else if(product.type === 'mask'){
-      items.push('Before use, test on a small area behind the ear or inner wrist; apply to the face only if no discomfort occurs.');
-    }
-    if(product.herbs && product.herbs.some(function(h){ return CAUTION_HERBS.indexOf(h.herb)!==-1; })){
-      items.push('This formula contains blood-invigorating herbs; do not use during pregnancy. If in doubt, consult a physician first.');
-    }
-    items.push('TCM emphasizes syndrome differentiation and individualized care. For a more precise personalized plan, book a one-to-one consultation via "Meet Now".');
-    return '<div class="pd-section"><div class="pd-section-title">Usage Notes</div><div class="pd-safety"><ul>'
-      + items.map(function(i){ return '<li>'+i+'</li>'; }).join('')
-      + '</ul></div></div>';
-  }
+  html += '<div class="pd-variants">'
+   + '<div class="pd-variant on" data-v="full"><div class="vv-lbl">Full Size</div><div class="vv-price">MYR '+product.price+'</div></div>'
+   + '<div class="pd-variant" data-v="trial"><div class="vv-lbl">Trial Size</div><div class="vv-price">MYR '+product.trial+'</div></div>'
+   + '</div>';
 
-  function buildRelatedSection(){
-    var related = PRODUCTS.filter(function(p){
-      return p.id !== product.id && p.active && p.type === product.type;
-    });
-    if(!related.length) return '';
-    var cards = related.slice(0, 8).map(function(p){
-      var hasImg = p.imgs && p.imgs[0];
-      return '<div class="related-card" data-id="'+p.id+'">'
-        + '<div class="related-thumb">' + (hasImg ? '<img src="'+p.imgs[0]+'" alt="'+p.name+'">' : '<div class="pt-icon">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>') + '</div>'
-        + '<div class="related-name">'+p.name+'</div><div class="related-price">MYR '+p.trial+'  onwards</div></div>';
-    }).join('');
-    return '<div class="pd-section"><div class="pd-section-title">Similar Products · '+TYPE_LABEL[product.type]+'</div><div class="related-grid">'+cards+'</div></div>';
-  }
+  html += '<div class="pd-qty-row"><div class="pd-qty-label">Quantity</div>'
+   + '<div class="pd-stepper"><div class="pd-step-btn" id="pdMinus">－</div><div class="pd-qty-num" id="pdQtyNum">1</div><div class="pd-step-btn" id="pdPlus">＋</div></div></div>';
 
-  function render(){
-    document.getElementById('breadcrumb').innerHTML = '<span class="bc-link" id="bcHome">Home</span><span class="sep">›</span><span class="bc-link" id="bcShop">Shop</span><span class="sep">›</span><span class="bc-current">'+product.name+'</span>';
+  if(!product.inStock) html += '<div class="pd-oos-msg">This item is temporarily out of stock and will be relisted automatically once restocked.</div>';
+  html += '<button class="pd-add" id="pdAdd"'+(product.inStock?'':' disabled')+'>'+(product.inStock?'Add to Cart':'Temporarily Out of Stock')+'</button>';
 
-    var html = buildHero();
-    html += '<div class="pd-type">'+TYPE_LABEL[product.type]+'</div>';
-    html += '<div class="pd-name">'+product.name+'</div>';
-    html += '<div class="pd-desc">'+product.desc+'</div>';
+  html += buildFormulaSection();
+  html += buildSafetySection();
+  html += buildRelatedSection();
 
-    html += '<div class="pd-variants">'
-      + '<div class="pd-variant on" data-v="full"><div class="vv-lbl">Full Size</div><div class="vv-price">MYR '+product.price+'</div></div>'
-      + '<div class="pd-variant" data-v="trial"><div class="vv-lbl">Trial Size</div><div class="vv-price">MYR '+product.trial+'</div></div>'
-      + '</div>';
+  document.getElementById('mainContent').innerHTML = html;
+  bindPageEvents();
+  updateCartBadge();
+ }
 
-    html += '<div class="pd-qty-row"><div class="pd-qty-label">Quantity</div>'
-      + '<div class="pd-stepper"><div class="pd-step-btn" id="pdMinus">－</div><div class="pd-qty-num" id="pdQtyNum">1</div><div class="pd-step-btn" id="pdPlus">＋</div></div></div>';
-
-    if(!product.inStock) html += '<div class="pd-oos-msg">This item is temporarily out of stock and will be relisted automatically once restocked.</div>';
-    html += '<button class="pd-add" id="pdAdd"'+(product.inStock?'':' disabled')+'>'+(product.inStock?'Add to Cart':'Temporarily Out of Stock')+'</button>';
-
-    html += buildFormulaSection();
-    html += buildSafetySection();
-    html += buildRelatedSection();
-
-    document.getElementById('mainContent').innerHTML = html;
-    bindPageEvents();
+ function bindPageEvents(){
+  document.querySelectorAll('.pd-variant').forEach(function(v){
+   v.addEventListener('click', function(){
+    selectedVariant = this.getAttribute('data-v');
+    document.querySelectorAll('.pd-variant').forEach(function(x){ x.classList.remove('on'); });
+    this.classList.add('on');
+   });
+  });
+  document.getElementById('pdMinus').addEventListener('click', function(){
+   qty = Math.max(1, qty-1);
+   document.getElementById('pdQtyNum').textContent = qty;
+  });
+  document.getElementById('pdPlus').addEventListener('click', function(){
+   qty += 1;
+   document.getElementById('pdQtyNum').textContent = qty;
+  });
+  var addBtn = document.getElementById('pdAdd');
+  if(addBtn){
+   addBtn.addEventListener('click', function(){
+    if(!product.inStock) return;
+    var existing = cartItems.find(function(it){ return it.id===product.id && it.variant===selectedVariant; });
+    if(existing){ existing.qty += qty; } else { cartItems.push({id:product.id, variant:selectedVariant, qty:qty}); }
     updateCartBadge();
+    var variantLbl = selectedVariant==='trial' ? 'Trial Size' : 'Full Size';
+    showToast('Added to Cart: '+product.name+'('+variantLbl+')×'+qty);
+   });
   }
-
-  function bindPageEvents(){
-    document.querySelectorAll('.pd-variant').forEach(function(v){
-      v.addEventListener('click', function(){
-        selectedVariant = this.getAttribute('data-v');
-        document.querySelectorAll('.pd-variant').forEach(function(x){ x.classList.remove('on'); });
-        this.classList.add('on');
-      });
-    });
-    document.getElementById('pdMinus').addEventListener('click', function(){
-      qty = Math.max(1, qty-1);
-      document.getElementById('pdQtyNum').textContent = qty;
-    });
-    document.getElementById('pdPlus').addEventListener('click', function(){
-      qty += 1;
-      document.getElementById('pdQtyNum').textContent = qty;
-    });
-    var addBtn = document.getElementById('pdAdd');
-    if(addBtn){
-      addBtn.addEventListener('click', function(){
-        if(!product.inStock) return;
-        var existing = cartItems.find(function(it){ return it.id===product.id && it.variant===selectedVariant; });
-        if(existing){ existing.qty += qty; } else { cartItems.push({id:product.id, variant:selectedVariant, qty:qty}); }
-        updateCartBadge();
-        var variantLbl = selectedVariant==='trial' ? 'Trial Size' : 'Full Size';
-        showToast('Added to Cart: '+product.name+'（'+variantLbl+'）×'+qty);
-      });
-    }
-    var prevBtn = document.getElementById('pdPrev'), nextBtn = document.getElementById('pdNext');
-    if(prevBtn) prevBtn.addEventListener('click', function(){ goPdImg(imgIdx-1); });
-    if(nextBtn) nextBtn.addEventListener('click', function(){ goPdImg(imgIdx+1); });
-    var wishBtn = document.getElementById('pdWishBtn');
-    if(wishBtn) wishBtn.addEventListener('click', function(){
-      toggleWishlist(product.id);
-      wishBtn.classList.toggle('on');
-    });
-    var hero = document.getElementById('pdHero');
-    if(hero){
-      var sx=0, dx=0, touching=false;
-      var track = document.getElementById('pdTrack');
-      hero.addEventListener('touchstart', function(e){ sx=e.touches[0].clientX; dx=0; touching=true; track.style.transition='none'; }, {passive:true});
-      hero.addEventListener('touchmove', function(e){
-        if(!touching) return;
-        dx = e.touches[0].clientX - sx;
-        var eff = dx;
-        if((imgIdx===0 && dx>0) || (imgIdx===pdImgs.length-1 && dx<0)) eff = dx*0.35;
-        track.style.transform = 'translateX(calc(-'+(imgIdx*100)+'% + '+eff+'px))';
-      }, {passive:true});
-      hero.addEventListener('touchend', function(){
-        touching=false; track.style.transition='';
-        if(Math.abs(dx)>40){ dx<0 ? goPdImg(imgIdx+1) : goPdImg(imgIdx-1); } else { renderPdImage(); }
-        dx=0;
-      });
-    }
-    document.querySelectorAll('.related-card').forEach(function(c){
-      c.addEventListener('click', function(){
-        window.location.href = withCart('/product/?id=' + this.getAttribute('data-id'), cartItems);
-      });
-    });
-    bindHeaderNav();
-  }
-
-  function bindHeaderNav(){
-    document.getElementById('brandBtn').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
-    document.getElementById('bcHome').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
-    document.getElementById('bcShop').addEventListener('click', function(){ window.location.href = withCart('/shop/', cartItems); });
-    document.getElementById('searchBtn').addEventListener('click', function(){ showToast('Search · Coming soon'); });
-    var vhAcctMenu = document.getElementById('vhAcctMenu');
-  document.getElementById('acctBtn').addEventListener('click', function(e){
-    e.stopPropagation();
-    vhAcctMenu.classList.toggle('open');
+  var prevBtn = document.getElementById('pdPrev'), nextBtn = document.getElementById('pdNext');
+  if(prevBtn) prevBtn.addEventListener('click', function(){ goPdImg(imgIdx-1); });
+  if(nextBtn) nextBtn.addEventListener('click', function(){ goPdImg(imgIdx+1); });
+  var wishBtn = document.getElementById('pdWishBtn');
+  if(wishBtn) wishBtn.addEventListener('click', function(){
+   toggleWishlist(product.id);
+   wishBtn.classList.toggle('on');
   });
-  document.getElementById('vhamOrder').addEventListener('click', function(){
-    window.location.href = withCart('/orders/', cartItems);
-  });
-  document.getElementById('vhamBooking').addEventListener('click', function(){
-    window.location.href = withCart('/bookings/', cartItems);
-  });
-  document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
-  vhAcctMenu.addEventListener('click', function(e){ e.stopPropagation(); });
-    document.getElementById('cartBtn').addEventListener('click', function(){
-      if(!cartItems.length){ showToast('Cart is empty'); return; }
-      var encoded = cartItems.map(function(it){ return it.id+':'+(it.variant==='trial'?'t':'f')+':'+it.qty; }).join(',');
-      window.location.href = '/checkout/?cart=' + encodeURIComponent(encoded);
-    });
+  var hero = document.getElementById('pdHero');
+  if(hero){
+   var sx=0, dx=0, touching=false;
+   var track = document.getElementById('pdTrack');
+   hero.addEventListener('touchstart', function(e){ sx=e.touches[0].clientX; dx=0; touching=true; track.style.transition='none'; }, {passive:true});
+   hero.addEventListener('touchmove', function(e){
+    if(!touching) return;
+    dx = e.touches[0].clientX - sx;
+    var eff = dx;
+    if((imgIdx===0 && dx>0) || (imgIdx===pdImgs.length-1 && dx<0)) eff = dx*0.35;
+    track.style.transform = 'translateX(calc(-'+(imgIdx*100)+'% + '+eff+'px))';
+   }, {passive:true});
+   hero.addEventListener('touchend', function(){
+    touching=false; track.style.transition='';
+    if(Math.abs(dx)>40){ dx<0 ? goPdImg(imgIdx+1) : goPdImg(imgIdx-1); } else { renderPdImage(); }
+    dx=0;
+   });
   }
+  document.querySelectorAll('.related-card').forEach(function(c){
+   c.addEventListener('click', function(){
+    window.location.href = withCart('/product/?id=' + this.getAttribute('data-id'), cartItems);
+   });
+  });
+  bindHeaderNav();
+ }
 
-  var toast = document.getElementById('toast');
-  var toastTimer = null;
-  function showToast(msg){
-    toast.textContent = msg;
-    toast.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2000);
-  }
+ function bindHeaderNav(){
+  document.getElementById('brandBtn').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
+  document.getElementById('bcHome').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
+  document.getElementById('bcShop').addEventListener('click', function(){ window.location.href = withCart('/shop/', cartItems); });
+  document.getElementById('searchBtn').addEventListener('click', function(){ showToast('Search · Coming soon'); });
+  var vhAcctMenu = document.getElementById('vhAcctMenu');
+ document.getElementById('acctBtn').addEventListener('click', function(e){
+  e.stopPropagation();
+  vhAcctMenu.classList.toggle('open');
+ });
+ document.getElementById('vhamOrder').addEventListener('click', function(){
+  window.location.href = withCart('/orders/', cartItems);
+ });
+ document.getElementById('vhamBooking').addEventListener('click', function(){
+  window.location.href = withCart('/bookings/', cartItems);
+ });
+ document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
+ vhAcctMenu.addEventListener('click', function(e){ e.stopPropagation(); });
+  document.getElementById('cartBtn').addEventListener('click', function(){
+   if(!cartItems.length){ showToast('Cart is empty'); return; }
+   var encoded = cartItems.map(function(it){ return it.id+':'+(it.variant==='trial'?'t':'f')+':'+it.qty; }).join(',');
+   window.location.href = '/checkout/?cart=' + encodeURIComponent(encoded);
+  });
+ }
 
-  if(product){ render(); } else { renderNotFound(); }
+ var toast = document.getElementById('toast');
+ var toastTimer = null;
+ function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2000);
+ }
+
+ if(product){ render(); } else { renderNotFound(); }
 })();
 </script>
 <style>
@@ -776,134 +776,134 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .vh-chat-input-row button{ flex:none; width:36px; height:36px; border-radius:50%; background:var(--forest,#26362B); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; }
 </style>
 <div class="vh-chat-fab" id="vhChatFab">
-  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
-  <span class="vh-chat-badge" id="vhChatBadge"></span>
+ <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+ <span class="vh-chat-badge" id="vhChatBadge"></span>
 </div>
 <div class="vh-chat-panel" id="vhChatPanel">
-  <div class="vh-chat-hd">
-    <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
-    <div class="vh-chat-hd-sub" id="vhChatSub">Chatting with Dr. Gong Shihong</div>
-    <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
-  </div>
-  <div class="vh-chat-body" id="vhChatBody"></div>
-  <div class="vh-chat-input-row">
-    <input type="text" id="vhChatInput" placeholder="Type a message…" maxlength="300">
-    <button type="button" id="vhChatSend"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
-  </div>
+ <div class="vh-chat-hd">
+  <div class="vh-chat-hd-title" id="vhChatTitle">Online Consultation</div>
+  <div class="vh-chat-hd-sub" id="vhChatSub">Chatting with Dr. Gong Shihong</div>
+  <span class="vh-chat-close" id="vhChatClose"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg></span>
+ </div>
+ <div class="vh-chat-body" id="vhChatBody"></div>
+ <div class="vh-chat-input-row">
+  <input type="text" id="vhChatInput" placeholder="Type a message…" maxlength="300">
+  <button type="button" id="vhChatSend"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+ </div>
 </div>
 <script>
 (function(){
-  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  // 聊天消息是任何匿名访客都能Submit的内容，管理员打开对话时会看到——不转义就直接拼进innerHTML
-  // 的话，访客可以在消息里塞HTML/脚本，在管理员已登录的Browse器里执行（存储型XSS）。
-  function escapeHtml(s){
-    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
-    });
-  }
-  var CUSTOMER_ID_KEY = 'vinath_customer_chat_id';
-  var pollTimer = null;
-  var currentThread = null;
-  var currentMessages = [];
-
-  function getCustomerId(){
-    try {
-      var id = localStorage.getItem(CUSTOMER_ID_KEY);
-      if(!id){ id = 'cust_' + Date.now() + '_' + Math.random().toString(36).slice(2,8); localStorage.setItem(CUSTOMER_ID_KEY, id); }
-      return id;
-    } catch(e){ return 'cust_temp'; }
-  }
-  // 客户端第一次打开聊天面板时调用——后端会自动处理"这pcs人是不是第一次来"、要不要插入欢迎语，
-  // 前端不用再自己判断这些
-  async function ensureMyThread(){
-    try {
-      var res = await fetch(API_BASE + '/chat/ensure-thread', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customerId: getCustomerId() })
-      });
-      if(!res.ok) return null;
-      var data = await res.json();
-      currentThread = data.thread;
-      currentMessages = data.messages;
-      return currentThread;
-    } catch(e){ console.error('Chat init failed:', e); return null; }
-  }
-  async function refreshMyThread(){
-    try {
-      var res = await fetch(API_BASE + '/chat/threads/' + getCustomerId());
-      if(!res.ok) return null;
-      var data = await res.json();
-      currentThread = data.thread;
-      currentMessages = data.messages;
-      return currentThread;
-    } catch(e){ return null; }
-  }
-
-  function renderMessages(){
-    var body = document.getElementById('vhChatBody');
-    var sub = document.getElementById('vhChatSub');
-    if(!currentThread || !currentMessages.length){
-      body.innerHTML = '<div class="vh-chat-empty">Hello, feel free to leave a message here and we will reply as soon as possible.</div>';
-    } else {
-      body.innerHTML = currentMessages.map(function(m){
-        return '<div class="vh-chat-msg '+m.from+'">'+escapeHtml(m.text)+'</div>';
-      }).join('');
-      body.scrollTop = body.scrollHeight;
-    }
-    if(currentThread) sub.textContent = 'Chatting with ' + currentThread.assignedToName + '';
-    updateBadge();
-  }
-  function updateBadge(){
-    var badge = document.getElementById('vhChatBadge');
-    var panelOpen = document.getElementById('vhChatPanel').classList.contains('open');
-    if(currentThread && currentThread.unreadForCustomer && !panelOpen){
-      badge.style.display = 'flex'; badge.textContent = '1';
-    } else {
-      badge.style.display = 'none';
-    }
-  }
-
-  document.getElementById('vhChatFab').addEventListener('click', async function(){
-    var panel = document.getElementById('vhChatPanel');
-    panel.classList.toggle('open');
-    if(panel.classList.contains('open')){
-      await ensureMyThread();
-      renderMessages();
-    }
-    updateBadge();
+ var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+ // 聊天消息是任何匿名访客都能Submit的内容, 管理员打开对话时会看到——不转义就直接拼进innerHTML
+ // 的话, 访客可以在消息里塞HTML/脚本, 在管理员已登录的Browse器里执行(存储型XSS).
+ function escapeHtml(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+   return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
   });
-  document.getElementById('vhChatClose').addEventListener('click', function(){
-    document.getElementById('vhChatPanel').classList.remove('open');
-  });
-  async function sendMsg(){
-    var input = document.getElementById('vhChatInput');
-    var text = input.value.trim();
-    if(!text) return;
-    input.value = '';
-    input.disabled = true;
-    try {
-      await fetch(API_BASE + '/chat/threads/' + getCustomerId() + '/messages', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: text })
-      });
-      await refreshMyThread();
-      renderMessages();
-    } catch(e){ console.error('Send failed:', e); }
-    input.disabled = false;
-    input.focus();
-  }
-  document.getElementById('vhChatSend').addEventListener('click', sendMsg);
-  document.getElementById('vhChatInput').addEventListener('keydown', function(e){ if(e.key==='Enter') sendMsg(); });
+ }
+ var CUSTOMER_ID_KEY = 'vinath_customer_chat_id';
+ var pollTimer = null;
+ var currentThread = null;
+ var currentMessages = [];
 
-  // poll for admin replies / handoff changes while the widget is on screen
-  pollTimer = setInterval(async function(){
-    if(!currentThread) return; // 还没打开过聊天面板，没必要轮询
-    await refreshMyThread();
-    renderMessages();
-  }, 4000);
+ function getCustomerId(){
+  try {
+   var id = localStorage.getItem(CUSTOMER_ID_KEY);
+   if(!id){ id = 'cust_' + Date.now() + '_' + Math.random().toString(36).slice(2,8); localStorage.setItem(CUSTOMER_ID_KEY, id); }
+   return id;
+  } catch(e){ return 'cust_temp'; }
+ }
+ // 客户端第一次打开聊天面板时调用——后端会自动处理"这pcs人是不是第一次来", 要不要插入欢迎语, 
+ // 前端不用再自己判断这些
+ async function ensureMyThread(){
+  try {
+   var res = await fetch(API_BASE + '/chat/ensure-thread', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ customerId: getCustomerId() })
+   });
+   if(!res.ok) return null;
+   var data = await res.json();
+   currentThread = data.thread;
+   currentMessages = data.messages;
+   return currentThread;
+  } catch(e){ console.error('Chat init failed:', e); return null; }
+ }
+ async function refreshMyThread(){
+  try {
+   var res = await fetch(API_BASE + '/chat/threads/' + getCustomerId());
+   if(!res.ok) return null;
+   var data = await res.json();
+   currentThread = data.thread;
+   currentMessages = data.messages;
+   return currentThread;
+  } catch(e){ return null; }
+ }
+
+ function renderMessages(){
+  var body = document.getElementById('vhChatBody');
+  var sub = document.getElementById('vhChatSub');
+  if(!currentThread || !currentMessages.length){
+   body.innerHTML = '<div class="vh-chat-empty">Hello, feel free to leave a message here and we will reply as soon as possible.</div>';
+  } else {
+   body.innerHTML = currentMessages.map(function(m){
+    return '<div class="vh-chat-msg '+m.from+'">'+escapeHtml(m.text)+'</div>';
+   }).join('');
+   body.scrollTop = body.scrollHeight;
+  }
+  if(currentThread) sub.textContent = 'Chatting with ' + currentThread.assignedToName + '';
+  updateBadge();
+ }
+ function updateBadge(){
+  var badge = document.getElementById('vhChatBadge');
+  var panelOpen = document.getElementById('vhChatPanel').classList.contains('open');
+  if(currentThread && currentThread.unreadForCustomer && !panelOpen){
+   badge.style.display = 'flex'; badge.textContent = '1';
+  } else {
+   badge.style.display = 'none';
+  }
+ }
+
+ document.getElementById('vhChatFab').addEventListener('click', async function(){
+  var panel = document.getElementById('vhChatPanel');
+  panel.classList.toggle('open');
+  if(panel.classList.contains('open')){
+   await ensureMyThread();
+   renderMessages();
+  }
+  updateBadge();
+ });
+ document.getElementById('vhChatClose').addEventListener('click', function(){
+  document.getElementById('vhChatPanel').classList.remove('open');
+ });
+ async function sendMsg(){
+  var input = document.getElementById('vhChatInput');
+  var text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+  input.disabled = true;
+  try {
+   await fetch(API_BASE + '/chat/threads/' + getCustomerId() + '/messages', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: text })
+   });
+   await refreshMyThread();
+   renderMessages();
+  } catch(e){ console.error('Send failed:', e); }
+  input.disabled = false;
+  input.focus();
+ }
+ document.getElementById('vhChatSend').addEventListener('click', sendMsg);
+ document.getElementById('vhChatInput').addEventListener('keydown', function(e){ if(e.key==='Enter') sendMsg(); });
+
+ // poll for admin replies / handoff changes while the widget is on screen
+ pollTimer = setInterval(async function(){
+  if(!currentThread) return; // 还没打开过聊天面板, 没必要轮询
+  await refreshMyThread();
+  renderMessages();
+ }, 4000);
 })();
 </script>
 
-  <script src="/assets/i18n.js?v=20260909z"></script>
+ <script src="/assets/i18n.js?v=20260909z"></script>
 </body>
 </html>
