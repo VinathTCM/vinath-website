@@ -694,6 +694,8 @@
     currentLang = lang;
     localStorage.setItem(STORAGE_KEY, lang);
     applyTranslations();
+    // 延迟再执行一次，确保动态内容也被翻译
+    scheduleAutoTranslate();
     // 触发自定义事件，方便页面监听
     document.dispatchEvent(new CustomEvent('vinath-lang-change', { detail: { lang: lang } }));
   }
@@ -764,10 +766,68 @@
     });
   }
 
+  // ========== MutationObserver：监听动态内容变化，自动重新翻译 ==========
+  var observer = null;
+  var translateTimer = null;
+  var isTranslating = false;
+
+  function scheduleAutoTranslate() {
+    if (currentLang === 'zh') return;
+    if (isTranslating) return;
+    if (translateTimer) clearTimeout(translateTimer);
+    translateTimer = setTimeout(function() {
+      isTranslating = true;
+      try {
+        autoTranslate();
+      } catch(e) {
+        console.warn('autoTranslate error:', e);
+      }
+      isTranslating = false;
+    }, 300);
+  }
+
+  function startObserver() {
+    if (observer) return;
+    if (!('MutationObserver' in window)) return;
+    observer = new MutationObserver(function(mutations) {
+      var needsTranslate = false;
+      for (var i = 0; i < mutations.length; i++) {
+        var m = mutations[i];
+        if (m.type === 'childList' && m.addedNodes.length > 0) {
+          // 检查是否有新的文本节点或包含中文的元素
+          for (var j = 0; j < m.addedNodes.length; j++) {
+            var node = m.addedNodes[j];
+            if (node.nodeType === 1) { // Element
+              if (node.textContent && /[\u4e00-\u9fa5]/.test(node.textContent)) {
+                needsTranslate = true;
+                break;
+              }
+            } else if (node.nodeType === 3) { // Text node
+              if (node.textContent && /[\u4e00-\u9fa5]/.test(node.textContent)) {
+                needsTranslate = true;
+                break;
+              }
+            }
+          }
+        }
+        if (needsTranslate) break;
+      }
+      if (needsTranslate) {
+        scheduleAutoTranslate();
+      }
+    });
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true
+    });
+  }
+
   // ========== 初始化 ==========
   function init() {
     createLangSwitcher();
     applyTranslations();
+    startObserver();
   }
 
   if (document.readyState === 'loading') {
@@ -781,6 +841,7 @@
     t: t,
     setLang: setLang,
     getLang: function() { return currentLang; },
-    dict: I18N
+    dict: I18N,
+    refresh: function() { scheduleAutoTranslate(); }
   };
 })();
