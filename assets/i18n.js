@@ -170,6 +170,38 @@
       'home.chat.title': '在线咨询',
       'home.chat.sub': '正在与 龚诗宏医师 对话',
       'home.chat.empty': '您好，有任何问题都可以在这里留言，我们会尽快回复您。',
+      // 商店页面
+      'shop.breadcrumbHome': '首页',
+      'shop.breadcrumbCurrent': '商店',
+      'shop.title': '商店',
+      'shop.wishlist': '我的收藏',
+      'shop.itemCount': '{n} 件商品',
+      'shop.featured': '当季主打',
+      'shop.noProducts': '暂无精选商品',
+      'shop.viewDetails': '查看完整详情 →',
+      'shop.quantity': '数量',
+      'shop.addToCart': '加入购物车',
+      'shop.searchAll': '搜索全部商品，例如：茶、痛经、月舒贴',
+      'shop.searchCategory': '搜索这个系列的商品',
+      'shop.chatInput': '输入消息…',
+      // 通用页面
+      'page.queryOrder': '查询订单',
+      'page.queryBooking': '查询预约',
+      'page.onlineConsult': '在线咨询',
+      'page.chattingWith': '正在与 {doctor} 对话',
+      // 旅程卡片
+      'journey.womens.title': '女性调理',
+      'journey.womens.desc': '平衡，贯穿每一个周期。',
+      'journey.slimming.title': '中医塑体',
+      'journey.slimming.desc': '疏通气血，塑造轻盈体态。',
+      'journey.beauty.title': '美容养颜',
+      'journey.beauty.desc': '由内而外的光彩。',
+      'journey.wellness.title': '日常养生',
+      'journey.wellness.desc': '微小仪式，真实活力。',
+      'journey.pain.title': '舒缓疼痛',
+      'journey.pain.desc': '自在活动，畅快每一天。',
+      'journey.sleep.title': '优质睡眠',
+      'journey.sleep.desc': '睡得更深，醒得更轻盈。',
     },
     en: {
       // Nav
@@ -331,6 +363,38 @@
       'home.chat.title': 'Online Consultation',
       'home.chat.sub': 'Chatting with Dr. Gong Shihong',
       'home.chat.empty': 'Hello, feel free to leave a message here, we will reply soon.',
+      // Shop page
+      'shop.breadcrumbHome': 'Home',
+      'shop.breadcrumbCurrent': 'Shop',
+      'shop.title': 'Shop',
+      'shop.wishlist': 'My Wishlist',
+      'shop.itemCount': '{n} items',
+      'shop.featured': 'Seasonal Picks',
+      'shop.noProducts': 'No featured products',
+      'shop.viewDetails': 'View Full Details →',
+      'shop.quantity': 'Quantity',
+      'shop.addToCart': 'Add to Cart',
+      'shop.searchAll': 'Search all products, e.g.: tea, menstrual pain',
+      'shop.searchCategory': 'Search products in this category',
+      'shop.chatInput': 'Type a message…',
+      // Common pages
+      'page.queryOrder': 'Track Order',
+      'page.queryBooking': 'Track Booking',
+      'page.onlineConsult': 'Online Consultation',
+      'page.chattingWith': 'Chatting with {doctor}',
+      // Journey cards
+      'journey.womens.title': "Women's Care",
+      'journey.womens.desc': 'Balance, through every cycle.',
+      'journey.slimming.title': 'Body Shaping',
+      'journey.slimming.desc': 'Unblock qi and blood, shape a lighter body.',
+      'journey.beauty.title': 'Beauty & Skincare',
+      'journey.beauty.desc': 'Radiance from within.',
+      'journey.wellness.title': 'Daily Wellness',
+      'journey.wellness.desc': 'Small rituals, real vitality.',
+      'journey.pain.title': 'Pain Relief',
+      'journey.pain.desc': 'Move freely, enjoy every day.',
+      'journey.sleep.title': 'Quality Sleep',
+      'journey.sleep.desc': 'Sleep deeper, wake lighter.',
     },
     bm: {
       // Nav
@@ -492,6 +556,38 @@
       'home.chat.title': 'Perundingan Dalam Talian',
       'home.chat.sub': 'Berbual dengan Dr. Gong Shihong',
       'home.chat.empty': 'Halo, sila tinggalkan mesej di sini, kami akan membalas tidak lama lagi.',
+      // Halaman kedai
+      'shop.breadcrumbHome': 'Laman Utama',
+      'shop.breadcrumbCurrent': 'Kedai',
+      'shop.title': 'Kedai',
+      'shop.wishlist': 'Senarai Keinginan Saya',
+      'shop.itemCount': '{n} produk',
+      'shop.featured': 'Pilihan Musim',
+      'shop.noProducts': 'Tiada produk pilihan',
+      'shop.viewDetails': 'Lihat Butiran Penuh →',
+      'shop.quantity': 'Kuantiti',
+      'shop.addToCart': 'Tambah ke Troli',
+      'shop.searchAll': 'Cari semua produk, cth: teh, sakit haid',
+      'shop.searchCategory': 'Cari produk dalam kategori ini',
+      'shop.chatInput': 'Taip mesej…',
+      // Halaman umum
+      'page.queryOrder': 'Jejak Pesanan',
+      'page.queryBooking': 'Jejak Tempahan',
+      'page.onlineConsult': 'Perundingan Dalam Talian',
+      'page.chattingWith': 'Berbual dengan {doctor}',
+      // Kad perjalanan
+      'journey.womens.title': 'Penjagaan Wanita',
+      'journey.womens.desc': 'Keseimbangan, sepanjang setiap kitaran.',
+      'journey.slimming.title': 'Pembentukan Badan',
+      'journey.slimming.desc': 'Buka qi dan darah, bentuk badan yang lebih ringan.',
+      'journey.beauty.title': 'Kecantikan & Penjagaan Kulit',
+      'journey.beauty.desc': 'Cahaya dari dalam.',
+      'journey.wellness.title': 'Kesejahteraan Harian',
+      'journey.wellness.desc': 'Ritual kecil, tenaga sebenar.',
+      'journey.pain.title': 'Pelegaan Sakit',
+      'journey.pain.desc': 'Bergerak bebas, nikmati setiap hari.',
+      'journey.sleep.title': 'Tidur Berkualiti',
+      'journey.sleep.desc': 'Tidur lebih lena, bangun lebih segar.',
     }
   };
 
@@ -526,6 +622,71 @@
     document.documentElement.setAttribute('lang', currentLang);
     // 更新语言切换按钮状态
     updateLangSwitcher();
+    // 自动翻译：扫描页面上所有中文文本，匹配翻译字典后自动替换
+    autoTranslate();
+  }
+
+  // ========== 自动翻译（无需手动加 data-i18n） ==========
+  // 构建反向字典：中文原文 -> key
+  var reverseDict = null;
+  function buildReverseDict() {
+    if (reverseDict) return reverseDict;
+    reverseDict = {};
+    for (var key in I18N.zh) {
+      if (I18N.zh.hasOwnProperty(key)) {
+        var zhText = I18N.zh[key];
+        // 只索引不含占位符的短文本
+        if (zhText && zhText.length < 80 && zhText.indexOf('{') === -1) {
+          reverseDict[zhText.trim()] = key;
+        }
+      }
+    }
+    return reverseDict;
+  }
+
+  function autoTranslate() {
+    if (currentLang === 'zh') {
+      // 切换回中文时，恢复被自动翻译的元素
+      document.querySelectorAll('[data-i18n-auto]').forEach(function(el) {
+        var original = el.getAttribute('data-i18n-original');
+        if (original) {
+          el.textContent = original;
+        }
+        el.removeAttribute('data-i18n-auto');
+        el.removeAttribute('data-i18n-original');
+      });
+      return;
+    }
+
+    var dict = buildReverseDict();
+    var count = 0;
+
+    // 遍历所有元素，只处理纯文本节点（没有子元素的）
+    var allElements = document.querySelectorAll('body *:not(script):not(style):not([data-i18n]):not([data-i18n-auto])');
+    for (var i = 0; i < allElements.length; i++) {
+      var el = allElements[i];
+      // 跳过有子元素的容器
+      if (el.children.length > 0) continue;
+      // 跳过 input/textarea/option（这些由 data-i18n 处理）
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'OPTION') continue;
+      // 跳过语言切换按钮
+      if (el.classList && el.classList.contains('vinath-lang-btn')) continue;
+
+      var text = el.textContent.trim();
+      if (!text || text.length > 80) continue;
+
+      var key = dict[text];
+      if (key) {
+        var translation = t(key);
+        if (translation !== key && translation !== text) {
+          // 保存原始中文文本，标记为自动翻译
+          el.setAttribute('data-i18n-original', text);
+          el.setAttribute('data-i18n-auto', key);
+          el.textContent = translation;
+          count++;
+        }
+      }
+    }
   }
 
   function setLang(lang) {
