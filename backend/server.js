@@ -74,6 +74,7 @@ app.use('/api', require('./routes/settings'));
 app.use('/api', require('./routes/staff-chat'));
 app.use('/api', require('./routes/reviews'));
 app.use('/api', require('./routes/audit'));
+app.use('/api', require('./routes/tmt-translate')); // 腾讯TMT机器翻译中转接口
 
 app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
 

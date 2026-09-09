@@ -848,13 +848,17 @@
     }
   }
 
-  // ========== API 自动翻译（MyMemory，免费无需密钥） ==========
+  // ========== API 自动翻译（本站后端中转腾讯TMT，密钥不暴露前端） ==========
   var translationCache = {};
   var CACHE_KEY = 'vinath_translation_cache';
   var apiQueue = [];
   var apiRunning = false;
-  var API_CONCURRENCY = 2;
-  var API_DELAY = 600;
+  var API_CONCURRENCY = 3;
+  var API_DELAY = 300;
+  // 后端翻译接口地址——本地开发用localhost，线上用api.vinathtcm.com
+  var TMT_API_URL = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
+    ? 'http://127.0.0.1:3001/api/tmt-translate'
+    : 'https://api.vinathtcm.com/api/tmt-translate';
 
   // 加载缓存
   try {
@@ -889,11 +893,7 @@
       return;
     }
 
-    // MyMemory API 语言代码
-    var langMap = { 'en': 'en', 'bm': 'ms' };
-    var apiLang = langMap[targetLang] || targetLang;
-
-    apiQueue.push({ text: text, targetLang: targetLang, apiLang: apiLang, callback: callback });
+    apiQueue.push({ text: text, targetLang: targetLang, callback: callback });
     if (!apiRunning) processApiQueue();
   }
 
@@ -906,20 +906,20 @@
 
     batch.forEach(function(item, idx) {
       setTimeout(function() {
-        var url = 'https://api.mymemory.translated.net/get?q=' +
-                  encodeURIComponent(item.text) +
-                  '&langpair=zh|' + item.apiLang;
-
         var retryCount = 0;
         var maxRetries = 2;
-        
+
         function doFetch() {
-          fetch(url)
+          fetch(TMT_API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: item.text, target: item.targetLang })
+          })
             .then(function(r) { return r.json(); })
             .then(function(data) {
               var translated = '';
-              if (data && data.responseData && data.responseData.translatedText) {
-                translated = data.responseData.translatedText;
+              if (data && data.translated) {
+                translated = data.translated;
                 // 修复常见翻译问题
                 translated = translated.replace(/&amp;/g, '&');
                 translated = translated.replace(/&quot;/g, '"');
