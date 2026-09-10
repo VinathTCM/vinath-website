@@ -195,7 +195,10 @@ tbody tr.stock-warn:hover td, tbody tr.stock-crit:hover td{ filter:brightness(.9
 .van-item:hover{ color:#fff; }
 .van-item.current{ color:#fff; border-bottom-color:#BC6E4E; font-weight:700; }
 </style>
-  <link rel="icon" type="image/webp" href="../favicon.webp">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/webp" href="/favicon.webp">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 </head>
 <body>
 
@@ -233,7 +236,6 @@ tbody tr.stock-warn:hover td, tbody tr.stock-crit:hover td{ filter:brightness(.9
       </table>
     </div></div>
   </div>
-
 
   <div id="tab-pricing" style="display:none;">
     <div class="closure-card">
@@ -491,7 +493,6 @@ window.scrollTo(0,0);
   SHOP_CATEGORIES.forEach(function(c){ TYPE_LABEL[c.key] = c.name; });
   var JOURNEYS = ['女性调理','中医塑体','美容养颜','日常养生','舒缓疼痛','优质睡眠'];
 
-
   var TAG_DATA = {
     '女性调理': [
       {cond:'月经问题', tags:['痛经','月经过长','经量过多','经量过少','周期紊乱','经间点滴']},
@@ -735,7 +736,6 @@ window.scrollTo(0,0);
     renderProducts();
     window.scrollTo({top: document.querySelector('.card').getBoundingClientRect().top + window.scrollY - 90, behavior:'smooth'});
   });
-
 
   document.querySelectorAll('.tab').forEach(function(t){
     t.addEventListener('click', function(){

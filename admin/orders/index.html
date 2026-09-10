@@ -529,7 +529,10 @@ th.sortable-th:hover{ color:var(--ink); }
 tr.row-cancelled td{ color:var(--ink-soft); text-decoration:line-through; }
 tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
 </style>
-  <link rel="icon" type="image/webp" href="../favicon.webp">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/webp" href="/favicon.webp">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 </head>
 <body>
 
@@ -1112,7 +1115,6 @@ window.escapeHtml = function(s){
     renderSummary(); renderTodayTasks();
   }
 
-
   function orderSubtotal(o){ return o.items.reduce(function(s,i){ return s+i.qty*i.price; },0); }
   function orderShipping(o){ return orderSubtotal(o) >= 100 ? 0 : o.shipping; }
   function orderTotal(o){ return orderSubtotal(o) + orderShipping(o); }
@@ -1185,7 +1187,6 @@ window.escapeHtml = function(s){
     if(cur && cur.type==='junior' && (cur.adminType==='fulfillment' || cur.adminType==='support')) return []; // II类、III类都不处理预约
     return BOOKINGS.filter(function(b){ return matchesCurrentRegions(b.area); });
   }
-
 
   var pendingLoginType = null, pendingLoginId = null, pendingLoginName = null;
 
