@@ -184,6 +184,10 @@ db.exec(`
     responded_at TEXT
   );
 
+  -- 软删除字段（回收箱30天自动永久删除）
+  ALTER TABLE instant_requests ADD COLUMN deleted_at TEXT;
+  ALTER TABLE instant_requests ADD COLUMN deleted_by TEXT;
+
   CREATE TABLE IF NOT EXISTS medical_records (
     id TEXT PRIMARY KEY,
     patient_phone TEXT NOT NULL,

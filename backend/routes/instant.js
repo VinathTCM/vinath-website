@@ -97,14 +97,50 @@ router.get('/instant-requests/:id', (req, res) => {
 // ---- 管理员查看待处理的即时预约请求：SENIOR看全部，PRACTITIONER只看匹配给自己的 ----
 router.get('/admin/instant-requests', authMiddleware, requireRole('SENIOR', 'PRACTITIONER'), (req, res) => {
   expireStaleRequests();
+  purgeOldTrash(); // 顺手清理超过30天的回收箱记录
   let rows;
   if(req.admin.role === 'SENIOR'){
-    rows = db.prepare(`SELECT * FROM instant_requests WHERE status IN ('pending_confirmation','unmatched','expired','declined') ORDER BY created_at DESC`).all();
+    rows = db.prepare(`SELECT * FROM instant_requests WHERE status IN ('pending_confirmation','unmatched','expired','declined') AND deleted_at IS NULL ORDER BY created_at DESC`).all();
   } else {
-    rows = db.prepare(`SELECT * FROM instant_requests WHERE status = 'pending_confirmation' AND matched_practitioner_id = ? ORDER BY created_at DESC`).all(req.admin.sub);
+    rows = db.prepare(`SELECT * FROM instant_requests WHERE status = 'pending_confirmation' AND matched_practitioner_id = ? AND deleted_at IS NULL ORDER BY created_at DESC`).all(req.admin.sub);
   }
   res.json(rows.map(serializeRequest));
 });
+
+// ---- 回收箱：查看已删除的即时预约请求（仅SENIOR） ----
+router.get('/admin/instant-requests/trash', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  purgeOldTrash();
+  const rows = db.prepare(`SELECT * FROM instant_requests WHERE deleted_at IS NOT NULL ORDER BY deleted_at DESC`).all();
+  res.json(rows.map(serializeRequest));
+});
+
+// ---- 软删除：移入回收箱（仅SENIOR） ----
+router.delete('/admin/instant-requests/:id', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const row = db.prepare('SELECT * FROM instant_requests WHERE id = ?').get(req.params.id);
+  if(!row) return res.status(404).json({ error: '找不到这个请求' });
+  if(row.deleted_at) return res.status(409).json({ error: '这个请求已经在回收箱里了' });
+  db.prepare('UPDATE instant_requests SET deleted_at = CURRENT_TIMESTAMP, deleted_by = ? WHERE id = ?')
+    .run(req.admin.name, req.params.id);
+  res.json({ ok: true, message: '已移入回收箱，30天后自动永久删除' });
+});
+
+// ---- 从回收箱恢复（仅SENIOR） ----
+router.post('/admin/instant-requests/:id/restore', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const row = db.prepare('SELECT * FROM instant_requests WHERE id = ?').get(req.params.id);
+  if(!row) return res.status(404).json({ error: '找不到这个请求' });
+  if(!row.deleted_at) return res.status(409).json({ error: '这个请求不在回收箱里' });
+  db.prepare('UPDATE instant_requests SET deleted_at = NULL, deleted_by = NULL WHERE id = ?').run(req.params.id);
+  res.json({ ok: true, message: '已从回收箱恢复' });
+});
+
+// ---- 回收箱清理：超过30天的记录永久删除 ----
+function purgeOldTrash(){
+  try {
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString().replace('T', ' ').slice(0, 19);
+    const result = db.prepare('DELETE FROM instant_requests WHERE deleted_at IS NOT NULL AND deleted_at < ?').run(thirtyDaysAgo);
+    if(result.changes > 0) console.log('[回收箱] 已永久删除 ' + result.changes + ' 条超过30天的即时预约记录');
+  } catch(e){ console.error('[回收箱] 清理失败:', e.message); }
+}
 
 router.put('/admin/instant-requests/:id/respond', authMiddleware, requireRole('SENIOR', 'PRACTITIONER'), (req, res) => {
   const { accept } = req.body;

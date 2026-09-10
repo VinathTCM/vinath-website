@@ -435,6 +435,15 @@ tbody tr:hover{ background:#FBFAF7; }
 .instant-req-decline{ flex:none; padding:9px 18px; border-radius:100px; border:1.5px solid var(--line); background:none; color:var(--ink-soft); font-weight:600; font-size:13px; cursor:pointer; }
 .instant-req-accept:disabled{ background:#B9AFA0; cursor:default; }
 .instant-badge{ display:inline-block; background:#C0503A; color:#fff; font-size:10.5px; font-weight:700; border-radius:100px; padding:2px 8px; margin-left:8px; vertical-align:middle; }
+.instant-req-delete{ flex:none; padding:9px 14px; border-radius:100px; border:1.5px solid #E0C8C0; background:none; color:#B0503A; font-weight:600; font-size:12px; cursor:pointer; }
+.instant-req-delete:hover{ background:#FDF0ED; }
+.instant-trash-toggle{ padding:6px 14px; border-radius:100px; border:1.5px solid #D0C8B8; background:#FAF6EE; color:#7A6F60; font-weight:600; font-size:12px; cursor:pointer; }
+.instant-trash-toggle.active{ background:#7A6F60; color:#fff; border-color:#7A6F60; }
+.instant-trash-row{ display:flex; justify-content:space-between; align-items:center; gap:14px; padding:12px 14px; border:1px dashed #D0C8B8; background:#F8F4EC; border-radius:12px; margin-bottom:8px; opacity:0.85; }
+.instant-trash-info b{ font-size:13.5px; color:#7A6F60; }
+.instant-trash-info .meta{ font-size:11.5px; color:#9A8F80; margin-top:3px; }
+.instant-trash-restore{ flex:none; padding:7px 16px; border-radius:100px; border:none; background:#8BA878; color:#fff; font-weight:600; font-size:12px; cursor:pointer; }
+.instant-trash-restore:hover{ background:#7A9768; }
 .wholesale-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; }
 .wholesale-card{ background:var(--white); border:1.5px solid var(--line); border-radius:14px; padding:14px 16px; box-shadow:var(--shadow); }
 .wholesale-card-name{ font-weight:700; font-size:14px; margin-bottom:4px; }
@@ -923,9 +932,13 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
   <div id="tab-chat" style="display:none;">
 
     <div class="closure-card" id="instantReqCard" style="display:none;">
-      <div class="closure-card-title">即时预约请求</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div class="closure-card-title" style="margin-bottom:0;">即时预约请求</div>
+        <button type="button" class="instant-trash-toggle" id="instantTrashToggle" style="display:none;">🗑 回收箱</button>
+      </div>
       <div class="closure-card-hint">客户在「居家会诊」选择"立即预约"后，系统按客户所在地区自动匹配负责该地区的小管理员，请求会出现在这里——由负责该地区的小管理员手动点"接单"确认。</div>
       <div id="instantReqList"></div>
+      <div id="instantTrashList" style="display:none;"></div>
     </div>
 
     <div class="chat-wrap">
@@ -4097,6 +4110,9 @@ window.escapeHtml = function(s){
     });
     renderChatMain();
   }
+  // 回收箱切换按钮
+  var instantTrashToggle = document.getElementById('instantTrashToggle');
+  if(instantTrashToggle) instantTrashToggle.addEventListener('click', toggleInstantTrash);
   document.getElementById('newStaffChatBtn').addEventListener('click', async function(){
     var contacts = [];
     try {
@@ -4253,9 +4269,11 @@ window.escapeHtml = function(s){
     if(changed) saveInstantRequests(list);
     return list;
   }
+  var instantTrashOpen = false;
   async function renderInstantRequests(){
     var cur = getCurrentAdmin();
     if(!cur || !authToken) return;
+    var isSenior = !!(cur && cur.type==='senior');
     var pending = [];
     try {
       var res = await fetch(API_BASE + '/admin/instant-requests', { headers: { 'Authorization': 'Bearer ' + authToken } });
@@ -4263,7 +4281,9 @@ window.escapeHtml = function(s){
     } catch(e){ console.error('拉取即时预约请求失败:', e); }
     var card = document.getElementById('instantReqCard');
     var badge = document.getElementById('chatTabBadge');
-    if(!pending.length){ card.style.display = 'none'; badge.style.display = 'none'; return; }
+    var trashToggle = document.getElementById('instantTrashToggle');
+    if(isSenior && trashToggle) trashToggle.style.display = '';
+    if(!pending.length && !instantTrashOpen){ card.style.display = 'none'; badge.style.display = 'none'; return; }
     card.style.display = ''; badge.style.display = 'inline-block'; badge.textContent = pending.length;
     document.getElementById('instantReqList').innerHTML = pending.map(function(r){
       var remainMin = Math.max(0, Math.ceil(r.remainMs/60000));
@@ -4274,7 +4294,8 @@ window.escapeHtml = function(s){
            : r.status==='declined' ? ' · 医师暂无法接单，由大管理员跟进'
            : ' · 已自动匹配')
         + (r.status==='pending_confirmation' ? ' · <span style="color:#B0503A;font-weight:600;">剩余 '+remainMin+' 分钟需回应</span>' : '') + '</div></div>'
-        + '<div style="display:flex;gap:8px;flex:none;">'
+        + '<div style="display:flex;gap:8px;flex:none;align-items:center;">'
+        + (isSenior ? '<button type="button" class="instant-req-delete" data-rid="'+r.id+'" title="移入回收箱（30天后自动永久删除）">删除</button>' : '')
         + '<button type="button" class="instant-req-decline" data-rid="'+r.id+'">不接单</button>'
         + '<button type="button" class="instant-req-accept" data-rid="'+r.id+'">接单</button>'
         + '</div></div>';
@@ -4305,6 +4326,90 @@ window.escapeHtml = function(s){
         } catch(e){ showToast('操作失败，请检查网络后重试'); btn.disabled = false; }
       });
     });
+    document.querySelectorAll('.instant-req-delete').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        var rid = this.getAttribute('data-rid');
+        if(!confirm('确定要把这条即时预约请求移入回收箱吗？\n\n回收箱中的记录会保留30天，期间可以随时恢复；超过30天后会自动永久删除，无法恢复。')) return;
+        btn.disabled = true;
+        try {
+          var delRes = await fetch(API_BASE + '/admin/instant-requests/' + rid, {
+            method: 'DELETE', headers: { 'Authorization': 'Bearer ' + authToken }
+          });
+          if(delRes.ok){
+            showToast('已移入回收箱，30天内可恢复');
+            renderInstantRequests();
+          } else {
+            var err = await delRes.json().catch(function(){return {};});
+            showToast(err.error || '删除失败，请重试');
+            btn.disabled = false;
+          }
+        } catch(e){ showToast('操作失败，请检查网络后重试'); btn.disabled = false; }
+      });
+    });
+  }
+
+  // ---- 回收箱：查看已删除的即时预约请求 ----
+  async function renderInstantTrash(){
+    var cur = getCurrentAdmin();
+    if(!cur || cur.type!=='senior' || !authToken) return;
+    var trash = [];
+    try {
+      var res = await fetch(API_BASE + '/admin/instant-requests/trash', { headers: { 'Authorization': 'Bearer ' + authToken } });
+      if(res.ok) trash = await res.json();
+    } catch(e){ console.error('拉取回收箱失败:', e); }
+    var listEl = document.getElementById('instantTrashList');
+    if(!trash.length){
+      listEl.innerHTML = '<div style="padding:20px;text-align:center;color:#9A8F80;font-size:13px;">回收箱是空的</div>';
+      return;
+    }
+    listEl.innerHTML = '<div style="font-size:12px;color:#9A8F80;margin-bottom:8px;">以下记录已删除，30天后自动永久删除</div>'
+      + trash.map(function(r){
+        return '<div class="instant-trash-row"><div class="instant-trash-info"><b>'+escapeHtml(r.customer_name)+'</b> · '+r.area
+          + '<div class="meta">'+(r.need||'')+' · 删除于 '+(r.deleted_at||'').slice(0,16).replace('T',' ')
+          + (r.deleted_by ? ' · 由 '+r.deleted_by+' 删除' : '') + '</div></div>'
+          + '<button type="button" class="instant-trash-restore" data-rid="'+r.id+'">恢复</button>'
+          + '</div>';
+      }).join('');
+    document.querySelectorAll('.instant-trash-restore').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        var rid = this.getAttribute('data-rid');
+        btn.disabled = true;
+        try {
+          var res = await fetch(API_BASE + '/admin/instant-requests/' + rid + '/restore', {
+            method: 'POST', headers: { 'Authorization': 'Bearer ' + authToken }
+          });
+          if(res.ok){
+            showToast('已从回收箱恢复');
+            renderInstantTrash();
+            renderInstantRequests();
+          } else {
+            var err = await res.json().catch(function(){return {};});
+            showToast(err.error || '恢复失败，请重试');
+            btn.disabled = false;
+          }
+        } catch(e){ showToast('操作失败，请检查网络后重试'); btn.disabled = false; }
+      });
+    });
+  }
+
+  // ---- 切换回收箱显示 ----
+  function toggleInstantTrash(){
+    instantTrashOpen = !instantTrashOpen;
+    var toggle = document.getElementById('instantTrashToggle');
+    var reqList = document.getElementById('instantReqList');
+    var trashList = document.getElementById('instantTrashList');
+    if(instantTrashOpen){
+      toggle.classList.add('active');
+      toggle.textContent = '📋 返回请求列表';
+      reqList.style.display = 'none';
+      trashList.style.display = '';
+      renderInstantTrash();
+    } else {
+      toggle.classList.remove('active');
+      toggle.textContent = '🗑 回收箱';
+      reqList.style.display = '';
+      trashList.style.display = 'none';
+    }
   }
 
   // ---- 自动刷新（5秒静默轮询）----
