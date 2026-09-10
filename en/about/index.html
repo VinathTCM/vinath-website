@@ -268,6 +268,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   }
  ];
  var DOCTORS = DOCTORS_SEED.map(function(d){
+  // 英文页面：只合并头像/视频等非文本字段，绝不合并 title/creds/desc/tags
+  // （后台 localStorage 里的这些字段是中文，会覆盖英文静态内容）
   try {
    var raw = localStorage.getItem('vinath_practitioner_profiles');
    if(raw){
@@ -276,10 +278,9 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     if(p){
      var merged = {};
      for(var k in d){ merged[k] = d[k]; }
-     if(p.title) merged.title = p.title;
-     if(p.creds) merged.creds = p.creds;
-     if(p.desc) merged.desc = p.desc;
-     if(p.tags && p.tags.length) merged.tags = p.tags;
+     if(p.avatar) merged.avatar = p.avatar;
+     if(p.video) merged.video = p.video;
+     if(p.regions) merged.regions = p.regions;
      return merged;
     }
    }

@@ -669,10 +669,10 @@ body{
    var raw = localStorage.getItem('vinath_business_info');
    if(raw){ var info = JSON.parse(raw); if(info.whatsapp) return info.whatsapp; }
   } catch(e){}
-  return '60138092888'; // fallback if Content Management's 基本信息 tab has never been opened yet
+  return '601145799499'; // fallback if Content Management's 基本信息 tab has never been opened yet
  }
  var WHATSAPP_NUMBER = getWhatsappNumber();
- // [fix] journeys 页面原来只从 localStorage 读 WhatsApp, 读不到就回退旧号 60138092888;
+ // [fix] journeys 页面原来只从 localStorage 读 WhatsApp, 读不到就回退旧号 601145799499;
  // 这里从后端 /site-settings/business_info 拉取后台Content Management里设置的正确号码, 
  // 同时更新 localStorage 缓存和页面上已生成的 wa.me 链接, 后续动态生成的链接也用新号码.
  (function(){

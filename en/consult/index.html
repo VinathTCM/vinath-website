@@ -303,10 +303,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
    var raw = localStorage.getItem('vinath_business_info');
    if(raw){ var info = JSON.parse(raw); if(info.whatsapp) return info.whatsapp; }
   } catch(e){}
-  return '60138092888'; // fallback if Content Management's 基本Information tab has never been opened yet
+  return '601145799499'; // fallback if Content Management's 基本Information tab has never been opened yet
  }
  var WHATSAPP_NUMBER = getWhatsappNumber();
- // [fix] consult 页面原来只从 localStorage 读 WhatsApp, 读不到就回退旧号 60138092888;
+ // [fix] consult 页面原来只从 localStorage 读 WhatsApp, 读不到就回退旧号 601145799499;
  // 这里从后端 /site-settings/business_info 拉取后台Content Management里设置的正确号码, 
  // 同时更新 localStorage 缓存和页面上已生成的 wa.me 链接, 后续动态生成的链接也用新号码.
  (function(){
@@ -800,7 +800,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
    }
    if(!regions.length || regions.indexOf(area)!==-1){
     results.push({ id:doc.id, name:doc.name, video:doc.video,
-     specialtyText: prof.specialty || doc.specialties.join(', '), avatar: prof.avatar || '' });
+     specialtyText: doc.specialties.join(', '), avatar: prof.avatar || '' });
    }
   });
   getJuniorAdminsLocal().forEach(function(j){
@@ -811,7 +811,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
    if(j.licenseExpiry && j.licenseExpiry < todayISO) return; // 执照已过期, 不再作为可预约Physician展示
    var prof = profiles[j.id] || {};
    results.push({ id:j.id, name:j.name, video:null,
-    specialtyText: prof.specialty || 'Licensed Physician', avatar: prof.avatar || '' });
+    specialtyText: 'Licensed TCM Practitioner', avatar: prof.avatar || '' });
   });
   return results;
  }
