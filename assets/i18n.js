@@ -843,7 +843,12 @@
   let currentLang = localStorage.getItem(STORAGE_KEY) || 'zh';
   
   // 英文静态页面：强制使用英文，确保t()函数返回英文翻译
-  if (window.VINATH_PAGE_LANG === 'en') {
+  // 双重检测：1) window.VINATH_PAGE_LANG 变量  2) URL路径包含 /en/
+  // 防止缓存或执行顺序问题导致英文页面显示中文
+  var isEnglishPage = (window.VINATH_PAGE_LANG === 'en') ||
+                      (window.location.pathname.indexOf('/en/') === 0) ||
+                      (window.location.pathname === '/en');
+  if (isEnglishPage) {
     currentLang = 'en';
   }
 
@@ -854,7 +859,7 @@
 
   function applyTranslations() {
     // 英文静态页面：内容已经是英文，不重复翻译
-    if (window.VINATH_PAGE_LANG === 'en') return;
+    if (isEnglishPage) return;
     
     document.querySelectorAll('[data-i18n]').forEach(function(el) {
       var key = el.getAttribute('data-i18n');
