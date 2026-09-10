@@ -581,7 +581,7 @@ body{
    xhr.send(null);
    if(xhr.status === 200){
     var fromBackend = JSON.parse(xhr.responseText);
-    if(fromBackend) return fromBackend;
+    if(fromBackend && !/[\u4e00-\u9fff]/.test(JSON.stringify(fromBackend))) return fromBackend;
    }
   } catch(e){ console.error('Failed to fetch Journeys, using local fallback data:', e); }
   var fresh = {};

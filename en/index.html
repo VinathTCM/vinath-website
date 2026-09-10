@@ -545,7 +545,7 @@
    <a href="#consult" data-i18n="nav.consult">Home Consultation</a>
    <div class="nav-dropdown">
     <div class="nav-dropdown-inner">
-     <a href="https://wa.me/60123456789?text=%E6%82%A8%E5%A5%BD%EF%BC%8C%E6%88%91%E6%83%B3%E4%BA%86%E8%A7%A3VINATH%E7%9A%84%E4%B8%AA%E4%BA%BA%E5%AE%9A%E5%88%B6%E8%B0%83%E7%90%86%E6%96%B9%E6%A1%88%E3%80%82" id="waLinkHome1" data-i18n="consult.personal">Personalized Care</a>
+     <a href="https://wa.me/60123456789?text=Hi%20VINATH%20TCM%2C%20I%20would%20like%20to%20learn%20about%20your%20personalized%20wellness%20plan." id="waLinkHome1" data-i18n="consult.personal">Personalized Care</a>
      <a href="/en/consult/" data-i18n="consult.home">Home Consultation</a>
     </div>
    </div>
@@ -631,7 +631,7 @@
   <div class="mm-group">
    <div class="mm-group-hd" data-g="c"><span data-i18n="nav.consult">Home Consultation</span><svg class="mm-chev" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></div>
    <div class="mm-group-body" id="mmg-c">
-    <a href="https://wa.me/60123456789?text=%E6%82%A8%E5%A5%BD%EF%BC%8C%E6%88%91%E6%83%B3%E4%BA%86%E8%A7%A3VINATH%E7%9A%84%E4%B8%AA%E4%BA%BA%E5%AE%9A%E5%88%B6%E8%B0%83%E7%90%86%E6%96%B9%E6%A1%88%E3%80%82" id="waLinkHome2" data-i18n="consult.personal">Personalized Care</a>
+    <a href="https://wa.me/60123456789?text=Hi%20VINATH%20TCM%2C%20I%20would%20like%20to%20learn%20about%20your%20personalized%20wellness%20plan." id="waLinkHome2" data-i18n="consult.personal">Personalized Care</a>
     <a href="/en/consult/" data-i18n="consult.home">Home Consultation</a>
    </div>
   </div>
@@ -864,7 +864,7 @@
    </button>
 
    <div class="consult-options" id="consultOptions">
-    <a href="https://wa.me/60123456789?text=%E6%82%A8%E5%A5%BD%EF%BC%8C%E6%88%91%E6%83%B3%E4%BA%86%E8%A7%A3VINATH%E7%9A%84%E4%B8%AA%E4%BA%BA%E5%AE%9A%E5%88%B6%E8%B0%83%E7%90%86%E6%96%B9%E6%A1%88%E3%80%82" class="option-card" id="waLinkHome3">
+    <a href="https://wa.me/60123456789?text=Hi%20VINATH%20TCM%2C%20I%20would%20like%20to%20learn%20about%20your%20personalized%20wellness%20plan." class="option-card" id="waLinkHome3">
      <div class="option-icon">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
        <path d="M10 2h4"/>
@@ -1104,7 +1104,7 @@
   try {
    var res = await fetch(API_BASE + '/site-settings/health_journeys');
    var data = res.ok ? await res.json() : null;
-   journeysData = data || JOURNEYS_SEED;
+   journeysData = (data && !/[\u4e00-\u9fff]/.test(JSON.stringify(data))) ? data : JOURNEYS_SEED;
   } catch(e){ journeysData = JOURNEYS_SEED; }
 
   var navHtml = '', cardHtml = '';
