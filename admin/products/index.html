@@ -342,6 +342,13 @@ tbody tr.stock-warn:hover td, tbody tr.stock-crit:hover td{ filter:brightness(.9
       </div>
     </div>
     <div class="field">
+      <label>正装规格换算（选填）</label>
+      <div class="two-col">
+        <div><input type="number" id="fTrialPerFull" placeholder="1个正装 = 几个试用装" min="1" step="1"></div>
+      </div>
+      <div style="font-size:12px;color:var(--ink-soft);margin-top:6px;">填了之后，商品详情页会提示顾客"1 正装 = N 个试用装"，方便顾客对比选择。例如 7 个试用装凑成 1 个正装就填 7；不填则前台不显示换算提示。</div>
+    </div>
+    <div class="field">
       <label>拿货价（MYR，I类小管理员的进货价）</label>
       <div class="two-col">
         <div><input type="number" id="fWholesale" placeholder="正装拿货价" min="0"></div>
@@ -570,7 +577,7 @@ window.scrollTo(0,0);
       var products = await res.json();
       PRODUCTS.length = 0;
       products.forEach(function(p){
-        PRODUCTS.push({ id:p.id, name:p.name, nameEn:p.nameEn, type:p.type, price:p.price, trial:p.trial_price,
+        PRODUCTS.push({ id:p.id, name:p.name, nameEn:p.nameEn, type:p.type, price:p.price, trial:p.trial_price, trialPerFull:p.trialPerFull,
           cost:p.cost, costTrial:p.costTrial, couponPrice:p.couponPrice, couponPriceTrial:p.couponTrialPrice,
           wholesale:p.wholesalePrice, wholesaleTrial:p.wholesaleTrialPrice,
           desc:p.description, active:p.active, featured:p.featured, tags:p.tags||[], journeys:p.journeys||[],
@@ -749,6 +756,7 @@ window.scrollTo(0,0);
   var fDesc = document.getElementById('fDesc');
   var fPrice = document.getElementById('fPrice');
   var fTrial = document.getElementById('fTrial');
+  var fTrialPerFull = document.getElementById('fTrialPerFull');
   var fCost = document.getElementById('fCost');
   var fCostTrial = document.getElementById('fCostTrial');
   var fWholesale = document.getElementById('fWholesale');
@@ -1075,7 +1083,7 @@ window.scrollTo(0,0);
     document.getElementById('nameWarn').classList.remove('show');
     if(id === null){
       document.getElementById('panelTitle').textContent = '新增商品';
-      fName.value = ''; fNameEn.value = ''; fDesc.value = ''; fPrice.value = ''; fTrial.value = '';
+      fName.value = ''; fNameEn.value = ''; fDesc.value = ''; fPrice.value = ''; fTrial.value = ''; fTrialPerFull.value = '';
       fCost.value = ''; fCostTrial.value = ''; fWholesale.value = ''; fWholesaleTrial.value = ''; fCoupon.value = ''; fCouponTrial.value = '';
       wholesaleAutoFilled = {full:true, trial:true}; couponAutoFilled = {full:true, trial:true};
       document.getElementById('fForm').value = ''; document.getElementById('fUsage').value = '';
@@ -1091,7 +1099,7 @@ window.scrollTo(0,0);
     } else {
       var p = PRODUCTS.find(function(x){ return x.id==id; });
       document.getElementById('panelTitle').textContent = '编辑商品';
-      fName.value = p.name; fNameEn.value = p.nameEn || ''; fDesc.value = p.desc || ''; fPrice.value = p.price; fTrial.value = p.trial;
+      fName.value = p.name; fNameEn.value = p.nameEn || ''; fDesc.value = p.desc || ''; fPrice.value = p.price; fTrial.value = p.trial; fTrialPerFull.value = (p.trialPerFull || '');
       fCost.value = p.cost || ''; fCostTrial.value = p.costTrial || '';
       fWholesale.value = p.wholesale || ''; fWholesaleTrial.value = p.wholesaleTrial || '';
       fCoupon.value = p.couponPrice || ''; fCouponTrial.value = p.couponPriceTrial || '';
@@ -1136,6 +1144,7 @@ window.scrollTo(0,0);
     var payload = {
       name: name, nameEn: nameEn, type: currentType, journeys: currentJourneys.slice(), tags: checkedTags,
       price: Number(fPrice.value) || 0, trialPrice: Number(fTrial.value) || 0,
+      trialPerFull: (Number(fTrialPerFull.value) > 0) ? Math.round(Number(fTrialPerFull.value)) : null,
       cost: Number(fCost.value) || 0, costTrial: Number(fCostTrial.value) || 0,
       wholesalePrice: Number(fWholesale.value) || 0, wholesaleTrialPrice: Number(fWholesaleTrial.value) || 0,
       couponPrice: Number(fCoupon.value) || 0, couponTrialPrice: Number(fCouponTrial.value) || 0,

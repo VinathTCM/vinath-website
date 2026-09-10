@@ -80,6 +80,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .pd-variant.on{ border-color:var(--clay); background:rgba(188,110,78,.07); }
 .pd-variant .vv-lbl{ font-size:12.5px; color:var(--espresso-soft); font-weight:600; }
 .pd-variant .vv-price{ font-family:var(--font-serif); font-weight:700; font-size:17px; margin-top:3px; }
+.pd-size-note{ font-size:12.5px; color:var(--espresso-soft); background:rgba(188,110,78,.06); border:1px solid rgba(188,110,78,.18); border-radius:10px; padding:8px 12px; margin:-8px 0 16px; line-height:1.5; }
 
 .pd-qty-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
 .pd-qty-label{ font-size:13px; font-weight:700; color:var(--espresso-soft); }
@@ -370,6 +371,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         if(typeof c.price === 'number') p.price = c.price;
         if(c.type) p.type = c.type;
         if(typeof c.trial === 'number') p.trial = c.trial;
+        if(typeof c.trialPerFull === 'number') p.trialPerFull = c.trialPerFull;
         if(c.desc !== undefined) p.desc = c.desc;
         if(typeof c.active === 'boolean') p.active = c.active;
         if(typeof c.featured === 'boolean') p.featured = c.featured;
@@ -399,6 +401,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         backendProducts.forEach(function(p){
           PRODUCTS.push({ id:p.id, name:p.name, nameEn:p.name_en, type:p.type, price:p.price,
             trial:(typeof p.trial_price === 'number' ? p.trial_price : p.price),
+            trialPerFull:p.trialPerFull,
             desc:p.description, active:p.active, inStock:p.stock_qty > 0, stockQty:p.stock_qty,
             featured:p.featured, imgs:p.images||[], form:'', herbs:[], usage:p.usage_note||'',
             journeys:[], tags:[] });
@@ -589,6 +592,9 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="pd-variant on" data-v="full"><div class="vv-lbl">正装</div><div class="vv-price">MYR '+product.price+'</div></div>'
       + '<div class="pd-variant" data-v="trial"><div class="vv-lbl">试用装</div><div class="vv-price">MYR '+product.trial+'</div></div>'
       + '</div>';
+    if(product.trialPerFull && Number(product.trialPerFull) >= 2){
+      html += '<div class="pd-size-note">规格换算：1 份正装 ≈ '+Number(product.trialPerFull)+' 份试用装，可按需要的用量选择。</div>';
+    }
 
     html += '<div class="pd-qty-row"><div class="pd-qty-label">数量</div>'
       + '<div class="pd-stepper"><div class="pd-step-btn" id="pdMinus">－</div><div class="pd-qty-num" id="pdQtyNum">1</div><div class="pd-step-btn" id="pdPlus">＋</div></div></div>';

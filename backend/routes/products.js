@@ -11,7 +11,7 @@ function serializePublicProduct(p){
   return {
     id:p.id, name:p.name, nameEn:p.name_en, type:p.type, price:p.price, trial_price:p.trial_price,
     couponPrice:p.coupon_price, couponPriceTrial:p.coupon_trial_price,
-    stock_qty:p.stock_qty, active: !!p.active, featured: !!p.featured,
+    stock_qty:p.stock_qty, active: !!p.active, featured: !!p.featured, trialPerFull:p.trial_per_full,
     description:p.description, usage_note:p.usage_note, herbs: JSON.parse(p.herbs||'[]'), form:p.form,
     tags: JSON.parse(p.tags||'[]'), journeys: JSON.parse(p.journeys||'[]'), images: JSON.parse(p.images||'[]')
   };
@@ -52,7 +52,8 @@ function productFieldsFromBody(b){
     cost: b.cost||null, cost_trial: b.costTrial||null,
     wholesale_price: b.wholesalePrice||null, wholesale_trial_price: b.wholesaleTrialPrice||null,
     coupon_price: b.couponPrice||null, coupon_trial_price: b.couponTrialPrice||null,
-    stock_qty: b.stockQty||0, description: b.description||null, usage_note: b.usageNote||null,
+    stock_qty: b.stockQty||0, trial_per_full: (b.trialPerFull && Number(b.trialPerFull)>0) ? Math.round(Number(b.trialPerFull)) : null,
+    description: b.description||null, usage_note: b.usageNote||null,
     herbs: JSON.stringify(b.herbs||[]), form: b.form||null,
     tags: JSON.stringify(b.tags||[]), journeys: JSON.stringify(b.journeys||[]), images: JSON.stringify(b.images||[])
   };
@@ -68,11 +69,11 @@ router.post('/admin/products', authMiddleware, requireRole('SENIOR'), (req, res)
   db.prepare(`
     INSERT INTO products (id, name, name_en, type, price, trial_price, cost, cost_trial,
       wholesale_price, wholesale_trial_price, coupon_price, coupon_trial_price,
-      stock_qty, description, usage_note, herbs, form, tags, journeys, images)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      stock_qty, trial_per_full, description, usage_note, herbs, form, tags, journeys, images)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(id, f.name, f.name_en, f.type, f.price, f.trial_price, f.cost, f.cost_trial,
     f.wholesale_price, f.wholesale_trial_price, f.coupon_price, f.coupon_trial_price,
-    f.stock_qty, f.description, f.usage_note, f.herbs, f.form, f.tags, f.journeys, f.images);
+    f.stock_qty, f.trial_per_full, f.description, f.usage_note, f.herbs, f.form, f.tags, f.journeys, f.images);
   const row = db.prepare('SELECT * FROM products WHERE id = ?').get(id);
   res.status(201).json(serializeAdminProduct(row));
 });
@@ -84,7 +85,7 @@ router.put('/admin/products/:id', authMiddleware, requireRole('SENIOR'), (req, r
   db.prepare(`
     UPDATE products SET name=?, name_en=?, type=?, price=?, trial_price=?, cost=?, cost_trial=?,
       wholesale_price=?, wholesale_trial_price=?, coupon_price=?, coupon_trial_price=?,
-      stock_qty=?, active=?, featured=?, description=?, usage_note=?, herbs=?, form=?, tags=?, journeys=?, images=?,
+      stock_qty=?, trial_per_full=?, active=?, featured=?, description=?, usage_note=?, herbs=?, form=?, tags=?, journeys=?, images=?,
       updated_at=CURRENT_TIMESTAMP WHERE id=?
   `).run(
     b.name ?? existing.name, b.nameEn ?? existing.name_en, b.type ?? existing.type,
@@ -93,6 +94,7 @@ router.put('/admin/products/:id', authMiddleware, requireRole('SENIOR'), (req, r
     b.wholesalePrice ?? existing.wholesale_price, b.wholesaleTrialPrice ?? existing.wholesale_trial_price,
     b.couponPrice ?? existing.coupon_price, b.couponTrialPrice ?? existing.coupon_trial_price,
     b.stockQty ?? existing.stock_qty,
+    (b.trialPerFull!=null && Number(b.trialPerFull)>0) ? Math.round(Number(b.trialPerFull)) : (b.trialPerFull===0||b.trialPerFull==='0' ? null : existing.trial_per_full),
     b.active!=null ? (b.active?1:0) : existing.active, b.featured!=null ? (b.featured?1:0) : existing.featured,
     b.description ?? existing.description, b.usageNote ?? existing.usage_note, b.herbs ? JSON.stringify(b.herbs) : existing.herbs,
     b.form ?? existing.form, b.tags ? JSON.stringify(b.tags) : existing.tags, b.journeys ? JSON.stringify(b.journeys) : existing.journeys,

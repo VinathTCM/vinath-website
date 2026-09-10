@@ -364,6 +364,10 @@ db.exec(`
   if(!ircols.includes('deleted_at')) db.exec('ALTER TABLE instant_requests ADD COLUMN deleted_at TEXT');
   if(!ircols.includes('deleted_by')) db.exec('ALTER TABLE instant_requests ADD COLUMN deleted_by TEXT');
 
+  // products：1正装=N试用装（不设置为null，前台不提示）
+  const prodcols = db.prepare('PRAGMA table_info(products)').all().map(c => c.name);
+  if(!prodcols.includes('trial_per_full')) db.exec('ALTER TABLE products ADD COLUMN trial_per_full INTEGER');
+
   const pcols = db.prepare('PRAGMA table_info(prescriptions)').all().map(c => c.name);
   const padd = (col, ddl) => { if(!pcols.includes(col)) db.exec('ALTER TABLE prescriptions ADD COLUMN ' + ddl); };
   padd('doses', "doses INTEGER DEFAULT 1");
