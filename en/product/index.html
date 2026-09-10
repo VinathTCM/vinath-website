@@ -685,6 +685,9 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   var prevBtn = document.getElementById('pdPrev'), nextBtn = document.getElementById('pdNext');
   if(prevBtn) prevBtn.addEventListener('click', function(){ goPdImg(imgIdx-1); });
   if(nextBtn) nextBtn.addEventListener('click', function(){ goPdImg(imgIdx+1); });
+  // Fix: refresh arrow visibility on init (otherwise arrows stay hidden with multiple images on desktop)
+  document.querySelectorAll('.pd-dot').forEach(function(dot, i){ dot.style.cursor='pointer'; dot.addEventListener('click', function(){ goPdImg(i); }); });
+  renderPdImage();
   var wishBtn = document.getElementById('pdWishBtn');
   if(wishBtn) wishBtn.addEventListener('click', function(){
    toggleWishlist(product.id);
