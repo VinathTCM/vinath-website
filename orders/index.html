@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -291,7 +291,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     {id:122, name:'晓霞膜', type:'mask', journeys:[], tags:[], price:39, trial:15, desc:'不针对特定症状，日常美白提亮，周末宠爱自己的仪式感。', active:true, inStock:true, featured:true, imgs:[]},
   ];
   var PRODUCTS_BY_ID = {};
-  PRODUCTS.forEach(function(p){ PRODUCTS_BY_ID[p.id] = p; });
+  // PRODUCTS_BY_ID 从后端订单数据获取, 不再用静态假商品初始化
 
   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
 

@@ -585,8 +585,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
                 // 为了不让还在引用这两pcs字段的代码报错, 不影响实际显示
     };
    });
-   if(mapped && mapped.length){ PRODUCTS.length = 0;
-   mapped.forEach(function(p){ PRODUCTS.push(p); }); }
+   PRODUCTS.length = 0;
+   if(mapped && mapped.length){ mapped.forEach(function(p){ PRODUCTS.push(p); }); }
   } catch(e){
    console.error('Failed to connect to backend: ', e);
    showToast('Unable to connect to the server. Please retry later.');

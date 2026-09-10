@@ -438,8 +438,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
    xhr.send(null);
    if(xhr.status === 200){
     var backendProducts = JSON.parse(xhr.responseText);
-    if(backendProducts && backendProducts.length){
     PRODUCTS.length = 0;
+    if(backendProducts && backendProducts.length){
     backendProducts.forEach(function(p){
      PRODUCTS.push({ id:p.id, name:p.name, nameEn:p.name_en, type:p.type, price:p.price,
       trial:(typeof p.trial_price === 'number' ? p.trial_price : p.price),
