@@ -447,8 +447,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2000);
  }
 
- document.getElementById('brandBtn').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
- document.getElementById('bcHome').addEventListener('click', function(){ window.location.href = withCart('/', cartItems); });
+ document.getElementById('brandBtn').addEventListener('click', function(){ window.location.href = withCart('/en/', cartItems); });
+ document.getElementById('bcHome').addEventListener('click', function(){ window.location.href = withCart('/en/', cartItems); });
  document.getElementById('searchBtn').addEventListener('click', function(){ showToast('Search · Coming soon'); });
  var vhAcctMenu = document.getElementById('vhAcctMenu');
  document.getElementById('acctBtn').addEventListener('click', function(e){

@@ -1184,8 +1184,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   return url + (url.indexOf('?')===-1 ? '?' : '&') + 'cart=' + encodeURIComponent(encoded);
  }
 
- document.getElementById('brandBtn').addEventListener('click', function(){ window.location.href = withCurrentCart('/'); });
- document.getElementById('bcHome').addEventListener('click', function(){ window.location.href = withCurrentCart('/'); });
+ document.getElementById('brandBtn').addEventListener('click', function(){ window.location.href = withCurrentCart('/en/'); });
+ document.getElementById('bcHome').addEventListener('click', function(){ window.location.href = withCurrentCart('/en/'); });
  document.getElementById('bcShop').addEventListener('click', function(){ window.location.href = withCurrentCart('/en/shop/'); });
  document.getElementById('searchBtn').addEventListener('click', function(){ showToast('Search · Coming soon'); });
  var vhAcctMenu = document.getElementById('vhAcctMenu');
