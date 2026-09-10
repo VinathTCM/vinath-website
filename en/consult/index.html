@@ -1137,7 +1137,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   qs.set('slot', completedBooking.slot);
   qs.set('area', completedBooking.area);
   qs.set('method', completedBooking.method);
-  window.location.href = withCart('/bookings/?' + qs.toString(), cartItems);
+  window.location.href = withCart('/en/bookings/?' + qs.toString(), cartItems);
  });
  document.getElementById('resultCloseBtn').addEventListener('click', function(){
   document.getElementById('resultModal').classList.remove('show');
@@ -1196,16 +1196,16 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   vhAcctMenu.classList.toggle('open');
  });
  document.getElementById('vhamOrder').addEventListener('click', function(){
-  window.location.href = withCart('/orders/', cartItems);
+  window.location.href = withCart('/en/orders/', cartItems);
  });
  document.getElementById('vhamBooking').addEventListener('click', function(){
-  window.location.href = withCart('/bookings/', cartItems);
+  window.location.href = withCart('/en/bookings/', cartItems);
  });
  document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
  vhAcctMenu.addEventListener('click', function(e){ e.stopPropagation(); });
  document.getElementById('cartBtn').addEventListener('click', function(){
   if(!cartItems.length){ showToast('Cart is empty'); return; }
-  window.location.href = withCart('/checkout/', cartItems);
+  window.location.href = withCart('/en/checkout/', cartItems);
  });
 
  fetchPractitionersFromApi();

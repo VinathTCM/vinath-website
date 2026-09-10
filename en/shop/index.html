@@ -957,7 +957,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
    if(card) card.classList.toggle('on', isWishlisted(p.id));
   };
   document.getElementById('qvFullLink').onclick = function(){
-   window.location.href = withCart('/product/?id=' + p.id, cartItems);
+   window.location.href = withCart('/en/product/?id=' + p.id, cartItems);
   };
   qvName.textContent = p.name;
   qvDesc.textContent = p.desc;
@@ -1018,17 +1018,17 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   vhAcctMenu.classList.toggle('open');
  });
  document.getElementById('vhamOrder').addEventListener('click', function(){
-  window.location.href = withCart('/orders/', cartItems);
+  window.location.href = withCart('/en/orders/', cartItems);
  });
  document.getElementById('vhamBooking').addEventListener('click', function(){
-  window.location.href = withCart('/bookings/', cartItems);
+  window.location.href = withCart('/en/bookings/', cartItems);
  });
  document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
  vhAcctMenu.addEventListener('click', function(e){ e.stopPropagation(); });
  document.getElementById('cartBtn').addEventListener('click', function(){
   if(!cartItems.length){ showToast('Cart is empty'); return; }
   var encoded = cartItems.map(function(it){ return it.id+':'+(it.variant==='trial'?'t':'f')+':'+it.qty; }).join(',');
-  window.location.href = '/checkout/?cart=' + encodeURIComponent(encoded);
+  window.location.href = '/en/checkout/?cart=' + encodeURIComponent(encoded);
  });
 
 })();

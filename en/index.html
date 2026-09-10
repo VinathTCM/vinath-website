@@ -1113,7 +1113,7 @@
   sortedKeys.forEach(function(key){
    var j = journeysData[key];
    if(!j || j.active === false) return;
-   var url = '/journeys/detail/?j=' + encodeURIComponent(key);
+   var url = '/en/journeys/detail/?j=' + encodeURIComponent(key);
    navHtml += '<a href="' + url + '">' + j.name + '</a>';
    var tagline = TAGLINE_FALLBACK[j.name] || (j.en || '');
    cardHtml += '<a href="' + url + '" class="card">'
@@ -1412,10 +1412,10 @@
  window.initJourneyRail = initJourneyRail;
 
  document.getElementById('startJourneyBtn').addEventListener('click', function(){
-  window.location.href = withCart('/journeys/', cartItems);
+  window.location.href = withCart('/en/journeys/', cartItems);
  });
  document.getElementById('exploreShopBtn').addEventListener('click', function(){
-  window.location.href = withCart('/shop/', cartItems);
+  window.location.href = withCart('/en/shop/', cartItems);
  });
 
  var mmBtn = document.getElementById('mmBtn');
@@ -1484,7 +1484,7 @@
  function goSearch(){
   var q = document.getElementById('navSearchInput').value.trim();
   if(!q) return;
-  window.location.href = withCart('/shop/?q=' + encodeURIComponent(q), cartItems);
+  window.location.href = withCart('/en/shop/?q=' + encodeURIComponent(q), cartItems);
  }
  document.getElementById('navSearchGo').addEventListener('click', goSearch);
  document.getElementById('navSearchInput').addEventListener('keydown', function(e){ if(e.key==='Enter') goSearch(); });
@@ -1495,15 +1495,15 @@
   navAcctMenu.classList.toggle('open');
  });
  document.getElementById('namOrder').addEventListener('click', function(){
-  window.location.href = withCart('/orders/', cartItems);
+  window.location.href = withCart('/en/orders/', cartItems);
  });
  document.getElementById('namBooking').addEventListener('click', function(){
-  window.location.href = withCart('/bookings/', cartItems);
+  window.location.href = withCart('/en/bookings/', cartItems);
  });
  document.addEventListener('click', function(){ navAcctMenu.classList.remove('open'); });
  navAcctMenu.addEventListener('click', function(e){ e.stopPropagation(); });
  document.getElementById('navCartBtn').addEventListener('click', function(){
-  window.location.href = withCart('/checkout/', cartItems);
+  window.location.href = withCart('/en/checkout/', cartItems);
  });
 })();
 </script>

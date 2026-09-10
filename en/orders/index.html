@@ -460,13 +460,13 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   vhAcctMenu.classList.remove('open');
  });
  document.getElementById('vhamBooking').addEventListener('click', function(){
-  window.location.href = withCart('/bookings/', cartItems);
+  window.location.href = withCart('/en/bookings/', cartItems);
  });
  document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
  vhAcctMenu.addEventListener('click', function(e){ e.stopPropagation(); });
  document.getElementById('cartBtn').addEventListener('click', function(){
   if(!cartItems.length){ showToast('Cart is empty'); return; }
-  window.location.href = withCart('/checkout/', cartItems);
+  window.location.href = withCart('/en/checkout/', cartItems);
  });
 })();
 </script>

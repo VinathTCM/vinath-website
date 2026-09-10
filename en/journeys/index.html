@@ -473,7 +473,7 @@ body{
   if(titleRow){
    titleRow.addEventListener('click', function(){
     var _jkey = JOURNEY_KEY_BY_TITLE[this.getAttribute('data-title')];
-    if(_jkey){ window.location.href = withCart('/journeys/detail/?j=' + _jkey, cartItems); }
+    if(_jkey){ window.location.href = withCart('/en/journeys/detail/?j=' + _jkey, cartItems); }
    });
   }
   var yue = document.getElementById('yueBtn');
@@ -487,7 +487,7 @@ body{
    });
   }
   if(shop){
-   shop.addEventListener('click', function(){ window.location.href = withCart('/shop/', cartItems); });
+   shop.addEventListener('click', function(){ window.location.href = withCart('/en/shop/', cartItems); });
   }
   var subs = document.querySelectorAll('.act-expand-item');
   for(var i=0;i<subs.length;i++){
@@ -495,7 +495,7 @@ body{
     var lbl = this.getAttribute('data-lbl');
     if(lbl === 'Personalized') return; // native <a href> handles navigation now
     if(lbl === 'Home Consultation'){
-     window.location.href = withCart('/consult/?journey=' + encodeURIComponent(JOURNEYS[idx].title), cartItems);
+     window.location.href = withCart('/en/consult/?journey=' + encodeURIComponent(JOURNEYS[idx].title), cartItems);
      return;
     }
     showToast('Go to "'+lbl+'" page');
@@ -683,14 +683,14 @@ body{
   vhAcctMenu.classList.toggle('open');
  });
  document.getElementById('vhamOrder').addEventListener('click', function(){
-  window.location.href = withCart('/orders/', cartItems);
+  window.location.href = withCart('/en/orders/', cartItems);
  });
  document.getElementById('vhamBooking').addEventListener('click', function(){
-  window.location.href = withCart('/bookings/', cartItems);
+  window.location.href = withCart('/en/bookings/', cartItems);
  });
  document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
  vhAcctMenu.addEventListener('click', function(e){ e.stopPropagation(); });
- document.getElementById('cartBtn').addEventListener('click', function(){ window.location.href = withCart('/checkout/', cartItems); });
+ document.getElementById('cartBtn').addEventListener('click', function(){ window.location.href = withCart('/en/checkout/', cartItems); });
 
  buildSlides();
  syncHeroHeight();

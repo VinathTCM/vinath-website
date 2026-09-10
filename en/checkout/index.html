@@ -664,7 +664,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
    + '<p>Your shopping cart is empty. Visit the Shop to find products you like.</p>'
    + '<button class="empty-btn" id="goShopBtn">Go to Shop</button>'
    + '</div>';
-  document.getElementById('goShopBtn').addEventListener('click', function(){ window.location.href = '/shop/'; });
+  document.getElementById('goShopBtn').addEventListener('click', function(){ window.location.href = '/en/shop/'; });
  }
 
  var completedOrder = null; // {orderNo, items, total, contact}
@@ -878,10 +878,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   document.getElementById('mainArea').innerHTML = html;
   document.getElementById('trackOrderBtn').addEventListener('click', function(){
    var itemsEncoded = completedOrder.items.map(function(it){ return it.product.id+':'+(it.variant==='trial'?'t':'f')+':'+it.qty; }).join(',');
-   var url = '/orders/?order=' + completedOrder.orderNo + '&items=' + encodeURIComponent(itemsEncoded) + '&demo=1';
+   var url = '/en/orders/?order=' + completedOrder.orderNo + '&items=' + encodeURIComponent(itemsEncoded) + '&demo=1';
    window.location.href = url;
   });
-  document.getElementById('backToShopBtn').addEventListener('click', function(){ window.location.href = '/shop/'; });
+  document.getElementById('backToShopBtn').addEventListener('click', function(){ window.location.href = '/en/shop/'; });
   cart = [];
   updateCartBadge();
  }
@@ -1186,7 +1186,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
  document.getElementById('brandBtn').addEventListener('click', function(){ window.location.href = withCurrentCart('/'); });
  document.getElementById('bcHome').addEventListener('click', function(){ window.location.href = withCurrentCart('/'); });
- document.getElementById('bcShop').addEventListener('click', function(){ window.location.href = withCurrentCart('/shop/'); });
+ document.getElementById('bcShop').addEventListener('click', function(){ window.location.href = withCurrentCart('/en/shop/'); });
  document.getElementById('searchBtn').addEventListener('click', function(){ showToast('Search · Coming soon'); });
  var vhAcctMenu = document.getElementById('vhAcctMenu');
  document.getElementById('acctBtn').addEventListener('click', function(e){
@@ -1194,10 +1194,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   vhAcctMenu.classList.toggle('open');
  });
  document.getElementById('vhamOrder').addEventListener('click', function(){
-  window.location.href = withCurrentCart('/orders/');
+  window.location.href = withCurrentCart('/en/orders/');
  });
  document.getElementById('vhamBooking').addEventListener('click', function(){
-  window.location.href = withCurrentCart('/bookings/');
+  window.location.href = withCurrentCart('/en/bookings/');
  });
  document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
  vhAcctMenu.addEventListener('click', function(e){ e.stopPropagation(); });

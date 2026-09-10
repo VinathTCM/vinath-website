@@ -718,7 +718,7 @@ body{
     var expId = this.closest('.mini-expand').id;
     var condIdx = expId.match(/consult-(\d+)-exp/)[1];
     var tags = selectedTags[condIdx] ? Array.from(selectedTags[condIdx]) : [];
-    var url = '/consult/?journey=' + encodeURIComponent(JOURNEY_NAME) + (tags.length ? '&tags=' + encodeURIComponent(tags.join(',')) : '');
+    var url = '/en/consult/?journey=' + encodeURIComponent(JOURNEY_NAME) + (tags.length ? '&tags=' + encodeURIComponent(tags.join(',')) : '');
     window.location.href = withCart(url, cartItems);
     return;
    }
@@ -770,15 +770,15 @@ body{
   vhAcctMenu.classList.toggle('open');
  });
  document.getElementById('vhamOrder').addEventListener('click', function(){
-  window.location.href = withCart('/orders/', cartItems);
+  window.location.href = withCart('/en/orders/', cartItems);
  });
  document.getElementById('vhamBooking').addEventListener('click', function(){
-  window.location.href = withCart('/bookings/', cartItems);
+  window.location.href = withCart('/en/bookings/', cartItems);
  });
  document.addEventListener('click', function(){ vhAcctMenu.classList.remove('open'); });
  vhAcctMenu.addEventListener('click', function(e){ e.stopPropagation(); });
- document.getElementById('cartBtn').addEventListener('click', function(){ window.location.href = withCart('/checkout/', cartItems); });
- document.getElementById('shopAllBtn').addEventListener('click', function(){ window.location.href = withCart('/shop/', cartItems); });
+ document.getElementById('cartBtn').addEventListener('click', function(){ window.location.href = withCart('/en/checkout/', cartItems); });
+ document.getElementById('shopAllBtn').addEventListener('click', function(){ window.location.href = withCart('/en/shop/', cartItems); });
 })();
 </script>
 <style>
