@@ -812,7 +812,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="os-icon"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>'
       + '<div class="os-title">订单提交成功</div>'
       + '<div class="os-sub">感谢您的选购，我们会尽快为您安排发货</div>'
-      + '<div class="os-order-no">订单号 <b>'+completedOrder.orderNo+'</b></div>'
+      + '<div class="os-order-no">订单号 <b>'+completedOrder.orderNo+'</b></div>'+ '<div style="background:#FFF8E1;border:1px solid #FFD54F;border-radius:10px;padding:10px 14px;margin-top:10px;font-size:13px;color:#795548;text-align:left;line-height:1.5;margin-bottom:16px;">&#128247; 请截图或保存这个<b>订单号</b>——后续查询订单物流时需要用到。</div>'
       + '<div class="os-summary-card">';
     completedOrder.items.forEach(function(it){
       html += '<div class="os-item"><span>'+it.product.name+' × '+it.qty+'</span><span>MYR '+(unitPrice(it)*it.qty)+'</span></div>';

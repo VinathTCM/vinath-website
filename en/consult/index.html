@@ -1087,7 +1087,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
      + '<div><b>Physician:</b>'+docName+'</div>'
      + '<div><b>Time:</b>'+apptDateStr+' '+slotLabel+'</div>'
      + '<div><b>Address:</b>'+form.area+'</div>'
-     + '<div><b>Contact Information:</b>'+(method==='call'?'Phone':'WhatsApp')+'</div>';
+     + '<div><b>Contact Information:</b>'+(method==='call'?'Phone':'WhatsApp')+'</div>'+ '<div style="background:#FFF8E1;border:1px solid #FFD54F;border-radius:10px;padding:10px 14px;margin-top:10px;font-size:13px;color:#795548;text-align:left;line-height:1.5;">&#128247; Please screenshot or save this <b>Booking Number</b> — you will need it to check your booking status later. You can also find it via Track Booking using your phone number.</div>';
     completedBooking = {bookingNo:bookingNo, doctor:docName, apptDate:apptDateStr, slot:slotLabel, area:form.area, method:method};
     trackBtn.style.display = '';
    } catch(e){

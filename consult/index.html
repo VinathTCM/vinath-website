@@ -1045,7 +1045,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
           + '<div><b>医师：</b>'+docName+'</div>'
           + '<div><b>时间：</b>'+apptDateStr+' '+slotLabel+'</div>'
           + '<div><b>地址：</b>'+form.area+'</div>'
-          + '<div><b>联系方式：</b>'+(method==='call'?'电话':'WhatsApp')+'</div>';
+          + '<div><b>联系方式：</b>'+(method==='call'?'电话':'WhatsApp')+'</div>'+ '<div style="background:#FFF8E1;border:1px solid #FFD54F;border-radius:10px;padding:10px 14px;margin-top:10px;font-size:13px;color:#795548;text-align:left;line-height:1.5;">&#128247; 请截图或保存这个<b>预约编号</b>——后续查询预约进度时需要用到。您也可以通过「预约查询」用手机号找回。</div>';
         completedBooking = {bookingNo:bookingNo, doctor:docName, apptDate:apptDateStr, slot:slotLabel, area:form.area, method:method};
         trackBtn.style.display = '';
       } catch(e){
