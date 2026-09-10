@@ -447,7 +447,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       trial:(typeof p.trial_price === 'number' ? p.trial_price : p.price),
       trialPerFull:p.trialPerFull,
       desc:p.description, active:p.active, inStock:p.stock_qty > 0, stockQty:p.stock_qty,
-      featured:p.featured, imgs:p.images||[], form:'', herbs:[], usage:p.usage_note||'',
+      featured:p.featured, imgs:p.images||[], form:p.form||'', herbs:p.herbs||[], usage:p.usage_note||'',
       journeys:[], tags:[] });
     });
     }
@@ -579,13 +579,30 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
    + '<div class="pd-dots">'+dots+'</div></div>';
  }
 
+ function herbGrams(amt){
+  var s = String(amt==null?'':amt).trim();
+  if(!s) return null;
+  if(/^[\d.]+$/.test(s)){ var v=parseFloat(s); return isNaN(v)?null:v; }
+  var m = s.match(/^([\d.]+)\s*(g|克|G)$/);
+  if(m){ var v2=parseFloat(m[1]); return isNaN(v2)?null:v2; }
+  return null;
+ }
+ function totalHerbGrams(herbs){
+  var t=0;
+  (herbs||[]).forEach(function(h){ var g=herbGrams(h.amt); if(g!=null) t+=g; });
+  return Math.round(t*100)/100;
+ }
+ function fmtGrams(v){ return (Math.round(v*100)/100).toString(); }
  function buildFormulaSection(){
   if(!product.herbs || !product.herbs.length) return '';
   var chips = product.herbs.map(function(h){ return '<span class="pd-herb-chip">'+h.herb+'</span>'; }).join('');
+  var grams = totalHerbGrams(product.herbs);
+  var weightRow = grams>0 ? '<div class="pd-form-row"><span class="fl">Net weight / pack</span><span>approx. '+fmtGrams(grams)+' g ('+product.herbs.length+' herbal ingredients, total per formula)</span></div>' : '';
   return '<div class="pd-section"><div class="pd-section-title">Formula & Usage</div>'
    + '<div class="pd-form-row"><span class="fl">Form</span><span>'+product.form+'</span></div>'
    + '<div class="pd-herb-label">Ingredients</div>'
    + '<div class="pd-herb-chips">'+chips+'</div>'
+   + weightRow
    + '<div class="pd-usage-box"><b>Usage: </b>'+product.usage+'</div>'
    + '</div>';
  }
