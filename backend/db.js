@@ -184,10 +184,6 @@ db.exec(`
     responded_at TEXT
   );
 
-  -- 软删除字段（回收箱30天自动永久删除）
-  ALTER TABLE instant_requests ADD COLUMN deleted_at TEXT;
-  ALTER TABLE instant_requests ADD COLUMN deleted_by TEXT;
-
   CREATE TABLE IF NOT EXISTS medical_records (
     id TEXT PRIMARY KEY,
     patient_phone TEXT NOT NULL,
@@ -363,6 +359,11 @@ db.exec(`
 
 // 处方扩展字段 + 协定方价格 + 药材价格表 的幂等迁移：旧库缺列就补，新库直接跳过
 (function migratePrescriptionExt(){
+  // instant_requests 软删除字段（回收箱30天）——幂等添加，列已存在时跳过
+  const ircols = db.prepare('PRAGMA table_info(instant_requests)').all().map(c => c.name);
+  if(!ircols.includes('deleted_at')) db.exec('ALTER TABLE instant_requests ADD COLUMN deleted_at TEXT');
+  if(!ircols.includes('deleted_by')) db.exec('ALTER TABLE instant_requests ADD COLUMN deleted_by TEXT');
+
   const pcols = db.prepare('PRAGMA table_info(prescriptions)').all().map(c => c.name);
   const padd = (col, ddl) => { if(!pcols.includes(col)) db.exec('ALTER TABLE prescriptions ADD COLUMN ' + ddl); };
   padd('doses', "doses INTEGER DEFAULT 1");
