@@ -492,7 +492,7 @@
     <li>
       <a href="/shop/" data-i18n="nav.shop">商店</a>
       <div class="nav-dropdown">
-        <div class="nav-dropdown-inner">
+        <div class="nav-dropdown-inner" id="navShopList">
           <a href="/shop/?cat=plaster" data-i18n="shop.plaster">膏药系列</a>
           <a href="/shop/?cat=tea" data-i18n="shop.tea">茶饮系列</a>
           <a href="/shop/?cat=soak" data-i18n="shop.soak">汤包系列</a>
@@ -1084,6 +1084,29 @@
     document.getElementById('navJourneyList').innerHTML = navHtml;
     document.getElementById('journeyRail').innerHTML = cardHtml;
     if(window.initJourneyRail) window.initJourneyRail();
+  })();
+
+  // 商店分类动态渲染（与后台内容管理共用 shop_categories，修改分类后首页导航自动同步）
+  (async function(){
+    var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+    var cats = [];
+    try {
+      var res = await fetch(API_BASE + '/site-settings/shop_categories');
+      var data = res.ok ? await res.json() : null;
+      if(data && Array.isArray(data)) cats = data;
+    } catch(e){}
+    if(!cats.length){
+      cats = [{key:'plaster',name:'膏药系列'},{key:'tea',name:'茶饮系列'},{key:'soak',name:'汤包系列'},{key:'mask',name:'外用系列'}];
+    }
+    function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];}); }
+    var html = cats.map(function(c){ return '<a href="/shop/?cat='+esc(c.key)+'">'+esc(c.name)+'</a>'; }).join('');
+    var desk = document.getElementById('navShopList');
+    if(desk) desk.innerHTML = html;
+    var mob = document.getElementById('mmg-s');
+    if(mob){
+      var allLink = mob.querySelector('a[href="/shop/"]');
+      mob.innerHTML = html + (allLink ? allLink.outerHTML : '<a href="/shop/">全部商品</a>');
+    }
   })();
 })();
 

@@ -532,7 +532,7 @@
   <li>
    <a href="/en/shop/" data-i18n="nav.shop">Shop</a>
    <div class="nav-dropdown">
-    <div class="nav-dropdown-inner">
+    <div class="nav-dropdown-inner" id="navShopList">
      <a href="/en/shop/?cat=plaster" data-i18n="shop.plaster">Plaster Series</a>
      <a href="/en/shop/?cat=tea" data-i18n="shop.tea">Tea Series</a>
      <a href="/en/shop/?cat=soak" data-i18n="shop.soak">Herbal Soup Series</a>
@@ -1124,6 +1124,27 @@
   document.getElementById('navJourneyList').innerHTML = navHtml;
   document.getElementById('journeyRail').innerHTML = cardHtml;
   if(window.initJourneyRail) window.initJourneyRail();
+ })();
+
+ // Shop categories dynamic render (shared with admin content management)
+ (async function(){
+   var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+   var cats = [];
+   try {
+     var res = await fetch(API_BASE + '/site-settings/shop_categories');
+     var data = res.ok ? await res.json() : null;
+     if(data && Array.isArray(data)) cats = data;
+   } catch(e){}
+   if(!cats.length){
+     cats = [{key:'plaster',name:'Plaster Series'},{key:'tea',name:'Tea Series'},{key:'soak',name:'Herbal Soup Series'},{key:'mask',name:'Topical Series'}];
+   }
+   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];}); }
+   var html = cats.map(function(c){ return '<a href="/en/shop/?cat='+esc(c.key)+'">'+esc(c.name)+'</a>'; }).join('');
+   var allHtml = '<a href="/en/shop/">All Products</a>';
+   var desk = document.getElementById('navShopList');
+   if(desk) desk.innerHTML = html + allHtml;
+   var mob = document.getElementById('mmg-s');
+   if(mob) mob.innerHTML = html + allHtml;
  })();
 })();
 

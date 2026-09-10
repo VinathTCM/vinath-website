@@ -206,6 +206,8 @@ tbody tr:hover{ background:#FBFAF7; }
 /* ---- category list ---- */
 .cat-row{ display:flex; align-items:center; gap:14px; padding:14px 16px; background:var(--white); border:1px solid var(--line); border-radius:12px; margin-bottom:10px; }
 .cat-drag{ color:var(--line); flex:none; }
+.cat-row.drop-target{ box-shadow:0 0 0 2.5px var(--clay,#BC6E4E); }
+.cat-row{ cursor:grab; }
 .cat-name-input{ flex:1; border:none; background:none; font-size:14.5px; font-weight:600; color:var(--ink); padding:4px 0; }
 .cat-name-input:focus{ outline:none; }
 .cat-count{ font-size:12.5px; color:var(--ink-soft); flex:none; }
@@ -999,15 +1001,42 @@ window.scrollTo(0,0);
   // 也从来没有任何地方读取过它；商店/商品管理那边显示的"膏药系列"这些名称，是完全独立、写死在
   // 各自代码里的另一份数据，跟这里毫无关系。改这里的名字、加新分类、删分类，客户端和商品管理
   // 后台都不会有任何变化。现在改成真正持久化，商店和商品管理都会读取这一份。
+  // 商店分类已迁移到后端 site_settings(shop_categories)，localStorage 仅作离线缓存。
   function getShopCategories(){
     try {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', API_BASE + '/site-settings/shop_categories', false);
+      xhr.send();
+      if(xhr.status === 200){
+        var data = JSON.parse(xhr.responseText);
+        if(data && Array.isArray(data) && data.length){
+          try { localStorage.setItem(SHOP_CATEGORIES_KEY, JSON.stringify(data)); } catch(e){}
+          return data;
+        }
+      }
+    } catch(e){}
+    try {
       var raw = localStorage.getItem(SHOP_CATEGORIES_KEY);
-      if(raw) return JSON.parse(raw);
+      if(raw){ var local = JSON.parse(raw); if(Array.isArray(local) && local.length){
+        // 后端为空但本地有自定义分类：自动迁移到后端（含分类名、图片、顺序）
+        saveShopCategories(local);
+        return local;
+      }}
     } catch(e){}
     try { localStorage.setItem(SHOP_CATEGORIES_KEY, JSON.stringify(SHOP_CATEGORIES_SEED)); } catch(e){}
+    saveShopCategories(SHOP_CATEGORIES_SEED);
     return SHOP_CATEGORIES_SEED;
   }
-  function saveShopCategories(list){ try { localStorage.setItem(SHOP_CATEGORIES_KEY, JSON.stringify(list)); } catch(e){} }
+  function saveShopCategories(list){
+    try { localStorage.setItem(SHOP_CATEGORIES_KEY, JSON.stringify(list)); } catch(e){}
+    try {
+      fetch(API_BASE + '/admin/site-settings/shop_categories', {
+        method:'PUT',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},
+        body:JSON.stringify(list)
+      }).catch(function(e){ console.warn('shop_categories save failed', e); });
+    } catch(e){}
+  }
   function categoryProductCount(key){
     return getProductCatalogForPicker().filter(function(p){ return p.type===key && p.active; }).length;
   }
@@ -1365,7 +1394,7 @@ window.scrollTo(0,0);
   function renderCategories(){
     document.getElementById('catList').innerHTML = CATEGORIES.map(function(c, i){
       var count = categoryProductCount(c.key);
-      return '<div class="cat-row">'
+      return '<div class="cat-row" draggable="true" data-i="'+i+'">'
         + '<svg class="cat-drag" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/></svg>'
         + '<div class="cat-img-box" data-i="'+i+'">' + (c.art ? '<img src="'+c.art+'">' : '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>') + '</div>'
         + '<input type="file" accept="image/*" class="cat-img-file" data-i="'+i+'" style="display:none;">'
@@ -1384,11 +1413,26 @@ window.scrollTo(0,0);
         var i = Number(this.getAttribute('data-i'));
         var file = e.target.files[0];
         if(!file) return;
+        var box = document.querySelector('.cat-img-box[data-i="'+i+'"]');
+        if(box) box.style.opacity = '0.35';
+        var img = new Image();
         var reader = new FileReader();
         reader.onload = function(ev){
-          CATEGORIES[i].art = ev.target.result;
-          saveShopCategories(CATEGORIES);
-          renderCategories();
+          img.onload = function(){
+            var maxSide = 800, w = img.width, h = img.height;
+            if(w > maxSide || h > maxSide){
+              if(w > h){ h = Math.round(h * maxSide / w); w = maxSide; }
+              else { w = Math.round(w * maxSide / h); h = maxSide; }
+            }
+            var canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            CATEGORIES[i].art = canvas.toDataURL('image/webp', 0.85);
+            saveShopCategories(CATEGORIES);
+            renderCategories();
+          };
+          img.onerror = function(){ if(box) box.style.opacity = ''; };
+          img.src = ev.target.result;
         };
         reader.readAsDataURL(file);
       });
@@ -1410,6 +1454,38 @@ window.scrollTo(0,0);
         CATEGORIES.splice(i, 1);
         saveShopCategories(CATEGORIES);
         renderCategories();
+      });
+    });
+    // 拖拽排序：按住分类行拖动到目标位置即可调整顺序
+    var dragSrc = null;
+    document.querySelectorAll('.cat-row').forEach(function(row){
+      row.addEventListener('dragstart', function(e){
+        dragSrc = this;
+        this.style.opacity = '0.4';
+        try { e.dataTransfer.effectAllowed = 'move'; } catch(err){}
+      });
+      row.addEventListener('dragend', function(){
+        this.style.opacity = '';
+        document.querySelectorAll('.cat-row').forEach(function(r){ r.classList.remove('drop-target'); });
+      });
+      row.addEventListener('dragover', function(e){
+        e.preventDefault();
+        try { e.dataTransfer.dropEffect = 'move'; } catch(err){}
+        if(this !== dragSrc) this.classList.add('drop-target');
+      });
+      row.addEventListener('dragleave', function(){ this.classList.remove('drop-target'); });
+      row.addEventListener('drop', function(e){
+        e.preventDefault();
+        if(this !== dragSrc && dragSrc){
+          var from = Number(dragSrc.getAttribute('data-i'));
+          var to = Number(this.getAttribute('data-i'));
+          if(!isNaN(from) && !isNaN(to)){
+            var item = CATEGORIES.splice(from, 1)[0];
+            CATEGORIES.splice(to, 0, item);
+            saveShopCategories(CATEGORIES);
+            renderCategories();
+          }
+        }
       });
     });
   }

@@ -346,6 +346,19 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   var GENERIC_CAT_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="13" rx="2"/><path d="M4 11h16"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2"/></svg>';
   var TYPE_ART_BY_KEY = {plaster:ART_PLASTER, tea:ART_TEA, soak:ART_SOAK, mask:ART_MASK};
   function getShopCategoriesLocal(){
+    // 优先从后端同步读取（与后台共用同一份 shop_categories）
+    try {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', API_BASE + '/site-settings/shop_categories', false);
+      xhr.send();
+      if(xhr.status === 200){
+        var data = JSON.parse(xhr.responseText);
+        if(data && Array.isArray(data) && data.length){
+          try { localStorage.setItem('vinath_shop_categories', JSON.stringify(data)); } catch(e){}
+          return data;
+        }
+      }
+    } catch(e){}
     try {
       var raw = localStorage.getItem('vinath_shop_categories');
       if(raw) return JSON.parse(raw);
