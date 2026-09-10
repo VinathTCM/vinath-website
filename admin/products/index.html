@@ -975,10 +975,51 @@ window.scrollTo(0,0);
     addInput.addEventListener('change', function(e){
       var file = e.target.files[0];
       if(!file) return;
-      var reader = new FileReader();
-      reader.onload = function(ev){ currentImgs.push(ev.target.result); renderGallery(); };
-      reader.readAsDataURL(file);
+      addInput.disabled = true;
+      convertProductImageToWebP(file, function(dataUrl){
+        addInput.disabled = false;
+        addInput.value = '';
+        if(dataUrl){ currentImgs.push(dataUrl); renderGallery(); }
+        else { showToast('图片处理失败，请换一张试试'); }
+      });
     });
+  }
+
+  // 商品图自动转WebP：最长边1600px、质量0.9（视觉无损），保留PNG透明背景；
+  // 转换后若比原图还大（如简单图标）则保留原图；浏览器不支持WebP时回退原格式
+  function convertProductImageToWebP(file, cb){
+    if(!file || !/^image\//.test(file.type || '')){ cb(null); return; }
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      var original = ev.target.result;
+      // GIF动图不转，直接保留
+      if(file.type === 'image/gif'){ cb(original); return; }
+      var img = new Image();
+      img.onload = function(){
+        try {
+          var MAX_DIM = 1600;
+          var sc = Math.min(1, MAX_DIM / Math.max(img.width, img.height));
+          var w = Math.max(1, Math.round(img.width * sc));
+          var h = Math.max(1, Math.round(img.height * sc));
+          var cv = document.createElement('canvas');
+          cv.width = w; cv.height = h;
+          var ctx = cv.getContext('2d');
+          // 不填白底，保留PNG透明通道（商品抠图常用透明底）
+          ctx.drawImage(img, 0, 0, w, h);
+          var webp = cv.toDataURL('image/webp', 0.9);
+          // 浏览器不支持WebP（会回退成png）或转换后反而更大时，保留原图
+          if(webp.indexOf('data:image/webp') !== 0 || webp.length >= original.length){
+            cb(original);
+          } else {
+            cb(webp);
+          }
+        } catch(err){ cb(original); }
+      };
+      img.onerror = function(){ cb(original); };
+      img.src = original;
+    };
+    reader.onerror = function(){ cb(null); };
+    reader.readAsDataURL(file);
   }
 
   function buildJourneyChips(){
