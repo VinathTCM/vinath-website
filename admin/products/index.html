@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -691,7 +691,7 @@ window.scrollTo(0,0);
     tbody.querySelectorAll('.toggle[data-act]').forEach(function(t){
       t.addEventListener('click', async function(){
         var id = this.getAttribute('data-act');
-        var p = PRODUCTS.find(function(x){ return x.id===id; });
+        var p = PRODUCTS.find(function(x){ return x.id==id; });
         p.active = !p.active;
         renderProducts();
         try {
@@ -1048,7 +1048,7 @@ window.scrollTo(0,0);
       buildJourneyChips();
       buildTagPicker([]);
     } else {
-      var p = PRODUCTS.find(function(x){ return x.id===id; });
+      var p = PRODUCTS.find(function(x){ return x.id==id; });
       document.getElementById('panelTitle').textContent = '编辑商品';
       fName.value = p.name; fNameEn.value = p.nameEn || ''; fDesc.value = p.desc || ''; fPrice.value = p.price; fTrial.value = p.trial;
       fCost.value = p.cost || ''; fCostTrial.value = p.costTrial || '';
