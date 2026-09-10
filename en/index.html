@@ -1139,7 +1139,7 @@
      cats = [{key:'plaster',name:'Plaster Series'},{key:'tea',name:'Tea Series'},{key:'soak',name:'Herbal Soup Series'},{key:'mask',name:'Topical Series'}];
    }
    function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];}); }
-   var html = cats.map(function(c){ return '<a href="/en/shop/?cat='+esc(c.key)+'">'+esc(c.name)+'</a>'; }).join('');
+   var html = cats.map(function(c){ return '<a href="/en/shop/?cat='+esc(c.key)+'">'+esc(c.name_en||c.name)+'</a>'; }).join('');
    var allHtml = '<a href="/en/shop/">All Products</a>';
    var desk = document.getElementById('navShopList');
    if(desk) desk.innerHTML = html + allHtml;

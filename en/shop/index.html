@@ -387,13 +387,24 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
  var TYPE_ART_BY_KEY = {plaster:ART_PLASTER, tea:ART_TEA, soak:ART_SOAK, mask:ART_MASK};
  function getShopCategoriesLocal(){
   var EN_CAT_NAMES={plaster:'Plaster Series',tea:'Tea Series',soak:'Herbal Soup Series',mask:'Topical Series'};
+  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
   var list=null;
+  // 优先从后端同步读取（与后台共用 shop_categories）
   try {
-   var raw = localStorage.getItem('vinath_shop_categories');
-   if(raw) list=JSON.parse(raw);
+   var xhr=new XMLHttpRequest();
+   xhr.open('GET', API_BASE+'/site-settings/shop_categories', false);
+   xhr.send();
+   if(xhr.status===200){ var d=JSON.parse(xhr.responseText); if(d&&Array.isArray(d)&&d.length) list=d; }
   } catch(e){}
-  if(!list || !list.length) list=[{key:'plaster',name:'Plaster Series'},{key:'tea',name:'Tea Series'},{key:'soak',name:'Herbal Soup Series'},{key:'mask',name:'Topical Series'}];
-  list.forEach(function(cat){ if(EN_CAT_NAMES[cat.key]) cat.name=EN_CAT_NAMES[cat.key]; });
+  if(!list){
+   try {
+    var raw = localStorage.getItem('vinath_shop_categories');
+    if(raw) list=JSON.parse(raw);
+   } catch(e){}
+  }
+  if(!list || !list.length) list=[{key:'plaster',name:'膏药系列',name_en:'Plaster Series'},{key:'tea',name:'茶饮系列',name_en:'Tea Series'},{key:'soak',name:'汤包系列',name_en:'Herbal Soup Series'},{key:'mask',name:'外用系列',name_en:'Topical Series'}];
+  // 英文页：优先用后台填的 name_en，其次内置英文名，最后回退中文名
+  list.forEach(function(cat){ cat.name = cat.name_en || EN_CAT_NAMES[cat.key] || cat.name; });
   return list;
  }
  var SHOP_CATEGORIES = getShopCategoriesLocal();

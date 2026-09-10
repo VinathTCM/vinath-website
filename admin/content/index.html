@@ -279,7 +279,8 @@ tbody tr:hover{ background:#FBFAF7; }
   <div id="tab-categories" style="display:none;">
     <div id="catList"></div>
     <div class="add-cat-row">
-      <input type="text" id="newCatInput" placeholder="新分类名称，例如：外用系列">
+      <input type="text" id="newCatInput" placeholder="新分类中文名，例如：外用系列">
+      <input type="text" id="newCatInputEn" placeholder="English name, e.g. Topical Series">
       <button id="addCatBtn">添加分类</button>
     </div>
     <div class="note" style="margin-top:20px;"><b>提示：</b>点分类前面的方框可以上传示意图，用在商店页面这个分类的入口卡片上——不上传的话，"膏药系列/茶饮系列/汤包系列/外用系列"这4个原有分类会继续用原来的图，新增的分类会显示一个通用图标占位。删除分类前，请先确认该分类下没有还在架上的商品。</div>
@@ -992,10 +993,10 @@ window.scrollTo(0,0);
 
   var SHOP_CATEGORIES_KEY = 'vinath_shop_categories';
   var SHOP_CATEGORIES_SEED = [
-    {key:'plaster', name:'膏药系列'},
-    {key:'tea', name:'茶饮系列'},
-    {key:'soak', name:'汤包系列'},
-    {key:'mask', name:'外用系列'}
+    {key:'plaster', name:'膏药系列', name_en:'Plaster Series'},
+    {key:'tea', name:'茶饮系列', name_en:'Tea Series'},
+    {key:'soak', name:'汤包系列', name_en:'Herbal Soup Series'},
+    {key:'mask', name:'外用系列', name_en:'Topical Series'}
   ];
   // [stated bug fix] 这个tab之前是纯摆设——CATEGORIES只是页面自己内存里的一个数组，刷新就没了，
   // 也从来没有任何地方读取过它；商店/商品管理那边显示的"膏药系列"这些名称，是完全独立、写死在
@@ -1398,7 +1399,10 @@ window.scrollTo(0,0);
         + '<svg class="cat-drag" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/></svg>'
         + '<div class="cat-img-box" data-i="'+i+'">' + (c.art ? '<img src="'+c.art+'">' : '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>') + '</div>'
         + '<input type="file" accept="image/*" class="cat-img-file" data-i="'+i+'" style="display:none;">'
-        + '<input type="text" class="cat-name-input" value="'+escapeHtml(c.name)+'" data-i="'+i+'">'
+        + '<div style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0;">'
+        + '<input type="text" class="cat-name-input" value="'+escapeHtml(c.name)+'" data-i="'+i+'" placeholder="分类中文名">'
+        + '<input type="text" class="cat-name-en-input" value="'+escapeHtml(c.name_en||'')+'" data-i="'+i+'" placeholder="English name" style="border:none;background:none;font-size:12.5px;color:var(--ink-soft);padding:1px 0;font-weight:500;">'
+        + '</div>'
         + '<span class="cat-count">'+count+' 件商品</span>'
         + '<button class="cat-del" data-i="'+i+'"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0v14a1 1 0 01-1 1H7a1 1 0 01-1-1V6h12z"/></svg></button>'
         + '</div>';
@@ -1440,6 +1444,12 @@ window.scrollTo(0,0);
     document.querySelectorAll('.cat-name-input').forEach(function(inp){
       inp.addEventListener('input', function(){
         CATEGORIES[Number(this.getAttribute('data-i'))].name = this.value;
+        saveShopCategories(CATEGORIES);
+      });
+    });
+    document.querySelectorAll('.cat-name-en-input').forEach(function(inp){
+      inp.addEventListener('input', function(){
+        CATEGORIES[Number(this.getAttribute('data-i'))].name_en = this.value;
         saveShopCategories(CATEGORIES);
       });
     });
@@ -1491,11 +1501,14 @@ window.scrollTo(0,0);
   }
   document.getElementById('addCatBtn').addEventListener('click', function(){
     var input = document.getElementById('newCatInput');
+    var inputEn = document.getElementById('newCatInputEn');
     var name = input.value.trim();
     if(!name) return;
-    CATEGORIES.push({key:'cat'+Date.now(), name:name, art:''});
+    var nameEn = inputEn ? inputEn.value.trim() : '';
+    CATEGORIES.push({key:'cat'+Date.now(), name:name, name_en:nameEn, art:''});
     saveShopCategories(CATEGORIES);
     input.value = '';
+    if(inputEn) inputEn.value = '';
     renderCategories();
   });
 
