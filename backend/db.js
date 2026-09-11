@@ -907,4 +907,97 @@ try {
   console.log('[迁移] 医师档案迁移跳过:', e.message);
 }
 
+
+
+// ===== 迁移：添加7个茶饮系列商品（2026-09-11） =====
+(function migrateTeaProducts(){
+  try {
+    const teaProducts = [
+      {
+        id:'tea_fuxiaomai', name:'浮小麦白芍茶', nameEn:'Wheat & Peony Tea',
+        price:45, trial_price:16, cost:5.91, cost_trial:1.69,
+        wholesale_price:13.91, wholesale_trial_price:4.69,
+        description:'精神紧绷、夜里睡不安稳时，一杯温茶慢慢放松下来。',
+        usage_note:'浸泡10-20分钟，代茶饮。忌：虚寒腹痛泄泻者慎服。',
+        herbs:JSON.stringify([{herb:'浮小麦',amt:'7g'},{herb:'白芍',amt:'3.5g'},{herb:'甘草',amt:'1.5g'}]),
+        form:'茶包', tags:JSON.stringify(['精神紧张','睡不好']), journeys:JSON.stringify(['优质睡眠','日常养生'])
+      },
+      {
+        id:'tea_duzhong', name:'杜仲续断茶', nameEn:'Eucommia & Teasel Tea',
+        price:45, trial_price:16, cost:7.03, cost_trial:2.01,
+        wholesale_price:15.03, wholesale_trial_price:5.01,
+        description:'久坐久站后腰背发酸，日常养护肝肾、强健筋骨。',
+        usage_note:'加水煮沸，转小火煮30分钟，去渣取汁，代茶饮。忌：阴虚火旺者慎服。',
+        herbs:JSON.stringify([{herb:'杜仲',amt:'4g'},{herb:'怀牛膝',amt:'4g'},{herb:'续断',amt:'4g'}]),
+        form:'茶包', tags:JSON.stringify(['腰酸背痛']), journeys:JSON.stringify(['舒缓疼痛'])
+      },
+      {
+        id:'tea_siwu', name:'四物补血茶', nameEn:'Four Substances Tea',
+        price:45, trial_price:16, cost:9.84, cost_trial:2.81,
+        wholesale_price:17.84, wholesale_trial_price:5.81,
+        description:'经典妇科调理基础方，温和滋养气血，适合日常女性养护。',
+        usage_note:'加水煎煮，去渣取汁，可作茶饮/炖肉/熬汤。忌：牛奶、绿豆。',
+        herbs:JSON.stringify([{herb:'当归',amt:'3.3g'},{herb:'熟地黄',amt:'3.3g'},{herb:'白芍',amt:'3.3g'},{herb:'川芎',amt:'2.1g'}]),
+        form:'茶包', tags:JSON.stringify(['女性保健']), journeys:JSON.stringify(['女性调理'])
+      },
+      {
+        id:'tea_tongjing', name:'通经缓痛茶', nameEn:'Cycle Soothing Tea',
+        price:45, trial_price:16, cost:11.23, cost_trial:3.21,
+        wholesale_price:19.23, wholesale_trial_price:6.21,
+        description:'经期前小腹坠胀、经血不畅时，益气活血、温和舒缓经期不适。',
+        usage_note:'开水冲泡5分钟，茶饮。忌：月经量多者禁用。',
+        herbs:JSON.stringify([{herb:'黄芪',amt:'2.4g'},{herb:'党参',amt:'2.4g'},{herb:'川芎',amt:'2.4g'},{herb:'当归',amt:'2.4g'},{herb:'枸杞',amt:'2.4g'}]),
+        form:'茶包', tags:JSON.stringify(['血瘀型痛经']), journeys:JSON.stringify(['女性调理'])
+      },
+      {
+        id:'tea_qinghua', name:'清化湿热茶', nameEn:'Dampness Clearing Tea',
+        price:45, trial_price:16, cost:5.66, cost_trial:1.62,
+        wholesale_price:13.66, wholesale_trial_price:4.62,
+        description:'身体困重、舌苔黄腻时，健脾利湿、清化湿热，清爽过一天。',
+        usage_note:'开水冲泡或轻煎10分钟，代茶饮。',
+        herbs:JSON.stringify([{herb:'茯苓',amt:'6g'},{herb:'泽泻',amt:'3g'},{herb:'陈皮',amt:'2g'},{herb:'甘草',amt:'1g'}]),
+        form:'茶包', tags:JSON.stringify(['湿热']), journeys:JSON.stringify(['日常养生'])
+      },
+      {
+        id:'tea_qingliang', name:'清凉去火茶', nameEn:'Cooling & Clearing Tea',
+        price:45, trial_price:16, cost:6.40, cost_trial:1.83,
+        wholesale_price:14.40, wholesale_trial_price:4.83,
+        description:'心烦口干、咽喉燥热时，清心除烦、清凉舒缓，让身体静下来。',
+        usage_note:'开水冲泡5-10分钟，代茶饮。忌：脾胃虚寒、容易拉肚子的人、经期女性、孕妇。建议喝2-4天休息。',
+        herbs:JSON.stringify([{herb:'莲子',amt:'8g'},{herb:'薄荷',amt:'2g'},{herb:'甘草',amt:'2g'}]),
+        form:'茶包', tags:JSON.stringify(['心火','上焦燥热','睡不安','口干口苦','咽喉燥热']), journeys:JSON.stringify(['日常养生','优质睡眠'])
+      },
+      {
+        id:'tea_yiqi', name:'益气养血茶', nameEn:'Qi & Blood Nourishing Tea',
+        price:45, trial_price:16, cost:8.19, cost_trial:2.34,
+        wholesale_price:16.19, wholesale_trial_price:5.34,
+        description:'容易疲劳、气短懒言时，益气养血、慢慢补足精气神。',
+        usage_note:'开水冲泡或轻煎15分钟，代茶饮。忌：感冒发热、经量大者。',
+        herbs:JSON.stringify([{herb:'黄芪',amt:'7.5g'},{herb:'当归',amt:'1.5g'},{herb:'红枣',amt:'3g'}]),
+        form:'茶包', tags:JSON.stringify(['气虚']), journeys:JSON.stringify(['日常养生','女性调理'])
+      }
+    ];
+
+    const insert = db.prepare(`
+      INSERT OR IGNORE INTO products
+        (id, name, name_en, type, price, trial_price, cost, cost_trial,
+         wholesale_price, wholesale_trial_price, stock_qty, active, featured,
+         description, usage_note, herbs, form, tags, journeys, images)
+      VALUES
+        (@id, @name, @nameEn, 'tea', @price, @trial_price, @cost, @cost_trial,
+         @wholesale_price, @wholesale_trial_price, 100, 1, 0,
+         @description, @usage_note, @herbs, @form, @tags, @journeys, '[]')
+    `);
+
+    let count = 0;
+    teaProducts.forEach(function(p){
+      const info = insert.run(p);
+      if(info.changes > 0) count++;
+    });
+    if(count > 0) console.log('[迁移] 已添加 ' + count + ' 个茶饮系列商品');
+  } catch(e) {
+    console.log('[迁移] 茶饮商品迁移跳过:', e.message);
+  }
+})();
+
 module.exports = db;
