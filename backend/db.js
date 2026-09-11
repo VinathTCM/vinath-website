@@ -931,7 +931,7 @@ try {
         id:'tea_duzhong', name:'杜仲续断茶', nameEn:'Eucommia & Teasel Tea',
         price:40, trial_price:13, cost:7.03, cost_trial:2.01,
         wholesale_price:20, wholesale_trial_price:5,
-        description:'久坐久站后腰背发酸，日常养护肝肾、强健筋骨。适合长期伏案、站立工作的人群日常调理。\n\nDaily support for lower back and joints after long hours sitting or standing. Nourishes and strengthens for those with desk-bound or standing jobs.',
+        description:'久坐久站后腰背发酸，日常养护肝肾、养护筋骨。适合长期伏案、站立工作的人群日常调理。\n\nDaily support for lower back and joints after long hours sitting or standing. Nourishes and supports joints for those with desk-bound or standing jobs.',
         usage_note:'加水煮沸，转小火煮30分钟，去渣取汁，代茶饮。忌：阴虚火旺者慎服。\n\nBoil then simmer 30 mins, strain and drink. Caution: Not suitable for those with yin-deficiency heat signs.',
         herbs:JSON.stringify([{herb:'杜仲',amt:'4g'},{herb:'怀牛膝',amt:'4g'},{herb:'续断',amt:'4g'}]),
         form:'茶包', tags:JSON.stringify(['腰酸背痛']), journeys:JSON.stringify(['舒缓疼痛'])
@@ -949,7 +949,7 @@ try {
         id:'tea_tongjing', name:'经期舒缓茶', nameEn:'Cycle Soothing Tea',
         price:48, trial_price:16, cost:11.23, cost_trial:3.21,
         wholesale_price:25, wholesale_trial_price:6,
-        description:'经期前小腹坠胀、经血不畅时，益气活血、温和舒缓经期不适。适合经期前一周开始饮用。\n\nGentle support for pre-cycle discomfort and bloating. Nourishes qi and blood flow. Best enjoyed the week before your cycle.',
+        description:'经期前小腹坠胀、经血不畅时，益气养血、温和舒缓经期不适。适合经期前一周开始饮用。\n\nGentle support for pre-cycle discomfort and bloating. Nourishes qi and supports healthy circulation. Best enjoyed the week before your cycle.',
         usage_note:'开水冲泡5分钟，茶饮。忌：月经量多者禁用。\n\nSteep 5 minutes in boiling water, drink as tea. Contraindication: Not for heavy menstrual flow.',
         herbs:JSON.stringify([{herb:'黄芪',amt:'2.4g'},{herb:'党参',amt:'2.4g'},{herb:'川芎',amt:'2.4g'},{herb:'当归',amt:'2.4g'},{herb:'枸杞',amt:'2.4g'}]),
         form:'茶包', tags:JSON.stringify(['经期不适']), journeys:JSON.stringify(['女性调理'])
