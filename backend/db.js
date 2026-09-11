@@ -885,4 +885,26 @@ db.exec(`
   } catch(e){}
 })();
 
+
+
+// ===== 数据迁移：更新旧医师档案的description和tags（合规修改） =====
+try {
+  const gong = db.prepare("SELECT id, description, tags FROM admins WHERE id = 'gong'").get();
+  if (gong) {
+    const needUpdateDesc = !gong.description || !gong.description.includes('中国上海');
+    const needUpdateTags = !gong.tags || gong.tags.includes('止痛');
+    if (needUpdateDesc || needUpdateTags) {
+      const newDesc = '持有中国上海高级推拿师执照10年之久，并有新加坡中医理疗相关工作经历。专注颈肩腰腿痛、旧伤劳损、关节淤堵、跌打损伤调理，擅用中药外敷、经络调理改善各类慢性骨伤病痛，自研骨伤专用敷贴配方，适配日常劳损、运动损伤、陈年旧患。';
+      const newTags = JSON.stringify(['舒缓疼痛','中医塑体','日常养生','美容养颜','优质睡眠']);
+      db.prepare("UPDATE admins SET description = ?, tags = ? WHERE id = 'gong'").run(
+        needUpdateDesc ? newDesc : gong.description,
+        needUpdateTags ? newTags : gong.tags
+      );
+      console.log('[迁移] 已更新龚诗宏医师档案:', needUpdateDesc ? 'description' : '', needUpdateTags ? 'tags' : '');
+    }
+  }
+} catch(e) {
+  console.log('[迁移] 医师档案迁移跳过:', e.message);
+}
+
 module.exports = db;

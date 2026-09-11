@@ -928,6 +928,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     qvVariants.innerHTML =
       '<div class="qv-variant on" data-v="full"><div class="vv-lbl">正装</div><div class="vv-price">MYR '+p.price+'</div></div>'
       + '<div class="qv-variant" data-v="trial"><div class="vv-lbl">试用装</div><div class="vv-price">MYR '+p.trial+'</div></div>';
+      + '<div class="qv-conversion" style="margin-top:8px;font-size:12px;color:var(--espresso-soft);text-align:center;">'+((p.trial_per_full || 7) + ' 个试用装 = 1 个正装')+'</div>';
     qvVariants.querySelectorAll('.qv-variant').forEach(function(v){
       v.addEventListener('click', function(){
         selectedVariant = this.getAttribute('data-v');

@@ -267,9 +267,9 @@
       'process.step3.title': '诊断',
       'process.step3.desc': '全面咨询，包括脉诊、舌诊和健康评估。',
       'process.step4.title': '开方',
-      'process.step4.desc': '根据您的具体情况定制个性化中药配方和治疗方案。',
+      'process.step4.desc': '根据您的具体情况定制个性化中药配方和调理方案。',
       'process.step5.title': '后续跟进',
-      'process.step5.desc': '我们跟进您的进展，并根据需要调整治疗方案以获得最佳效果。',
+      'process.step5.desc': '我们跟进您的进展，并根据需要调整方案以更贴合您的体质。',
 
       // 页脚
       'footer.services': '服务项目',
