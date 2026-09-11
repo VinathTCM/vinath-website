@@ -915,19 +915,22 @@
     
     // 方案C：子目录多语言 - 切换语言时跳转到对应版本
     var currentPath = window.location.pathname;
+    // 保留查询字符串(如商品详情 ?id=xxx)与锚点，切换语言后仍停留在同一商品/页面
+    var currentSearch = window.location.search || '';
+    var currentHash = window.location.hash || '';
     var isEnPage = currentPath.indexOf('/en/') === 0;
-    
+
     if (lang === 'en' && !isEnPage) {
       // 中文页面 -> 跳转到英文版本
       var enPath = '/en' + currentPath;
       if (currentPath === '/' || currentPath === '') enPath = '/en/';
-      window.location.href = enPath;
+      window.location.href = enPath + currentSearch + currentHash;
       return;
     } else if (lang === 'zh' && isEnPage) {
       // 英文页面 -> 跳回中文版本
       var zhPath = currentPath.replace(/^\/en/, '');
       if (zhPath === '' || zhPath === '/') zhPath = '/';
-      window.location.href = zhPath;
+      window.location.href = zhPath + currentSearch + currentHash;
       return;
     }
     

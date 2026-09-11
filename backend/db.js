@@ -1006,4 +1006,68 @@ try {
 })();
 
 
+
+// ===== 迁移：足浴系列商品（3款）— 广告法合规 + 双语 + 定价（2026-09-12） =====
+// 安全策略：仅当商品不存在时才插入，绝不覆盖用户之后在后台的手动修改
+(function migrateFootSoakProducts(){
+  try {
+    const pcols = db.prepare("PRAGMA table_info(products)").all().map(c=>c.name);
+    if(!pcols.includes('description_en')) db.exec("ALTER TABLE products ADD COLUMN description_en TEXT");
+    if(!pcols.includes('usage_note_en')) db.exec("ALTER TABLE products ADD COLUMN usage_note_en");
+    if(!pcols.includes('trial_per_full')) db.exec("ALTER TABLE products ADD COLUMN trial_per_full INTEGER");
+
+    const soakProducts = [
+      {
+        id:'soak_qushi', name:'祛湿舒缓足浴包', nameEn:'Dampness Soothing Foot Soak',
+        price:36, trial_price:12, cost:10.16, cost_trial:1.45,
+        wholesale_price:22, wholesale_trial_price:5, trial_per_full:7,
+        description:'久坐久站后，下肢感觉沉重、发胀时，泡一泡舒缓放松。适合日常忙碌、久坐久站人群作为足部日常养护。\n\nA soothing foot soak after long hours of sitting or standing. Suitable for people with busy lifestyles as part of regular foot care.',
+        usage_note:'取一包足浴包，加入沸水浸泡10分钟，待水温适宜后泡脚15-20分钟。\n\nPlace one packet in boiling water, steep for 10 minutes. When the temperature is comfortable, soak feet for 15-20 minutes.\n\n禁忌：皮膚破损者禁用；孕期请咨询中医师。\n\nCaution: Do not use on broken skin. Consult a Chinese medicine practitioner during pregnancy.',
+        herbs:JSON.stringify([{herb:'茯苓',amt:'12g'},{herb:'苍术',amt:'6g'},{herb:'泽泻',amt:'6g'},{herb:'陈皮',amt:'6g'}]),
+        form:'足浴包', tags:JSON.stringify(['下肢沉重','久坐久站']), journeys:JSON.stringify(['日常养生'])
+      },
+      {
+        id:'soak_shuluo', name:'舒络养身足浴包', nameEn:'Meridian Nourishing Foot Soak',
+        price:45, trial_price:15, cost:20.35, cost_trial:2.91,
+        wholesale_price:31, wholesale_trial_price:7, trial_per_full:7,
+        description:'久坐久站、小腿酸胀紧绷时，温泡舒缓，帮助放松。适合长期伏案、走动较多的人群日常养护。\n\nA warm foot soak for tired, achy and tight calves after long hours of sitting or standing. Suitable for busy and active lifestyles.',
+        usage_note:'取一包足浴包，加入沸水浸泡10分钟，待水温适宜后泡脚15-20分钟。\n\nPlace one packet in boiling water, steep for 10 minutes. When the temperature is comfortable, soak feet for 15-20 minutes.\n\n禁忌：经期、有出血倾向者禁用；皮膚破损者禁用；孕期请咨询中医师。\n\nCaution: Not to be used during menstruation or if there is a bleeding tendency. Do not use on broken skin. Consult a Chinese medicine practitioner during pregnancy.',
+        herbs:JSON.stringify([{herb:'当归',amt:'9g'},{herb:'川芎',amt:'9g'},{herb:'续断',amt:'9g'},{herb:'丹参',amt:'3g'}]),
+        form:'足浴包', tags:JSON.stringify(['小腿酸胀','筋骨紧绷']), journeys:JSON.stringify(['日常养生','舒缓疼痛'])
+      },
+      {
+        id:'soak_wenyang', name:'温养暖足足浴包', nameEn:'Warming Comfort Foot Soak',
+        price:34, trial_price:11, cost:7.83, cost_trial:1.12,
+        wholesale_price:20, wholesale_trial_price:5, trial_per_full:7,
+        description:'手脚偏凉、容易怕冷时，暖乎乎泡一泡，让身体更舒适放松。适合秋冬季节及日常足部养护。\n\nA warming foot soak for cold feet and chilly days. Helps you feel comfortable and relaxed. Suitable for daily foot care, especially in cold weather.',
+        usage_note:'取一包足浴包，加入沸水浸泡10分钟，待水温适宜后泡脚15-20分钟。\n\nPlace one packet in boiling water, steep for 10 minutes. When the temperature is comfortable, soak feet for 15-20 minutes.\n\n禁忌：皮膚破损者禁用；孕期请咨询中医师。\n\nCaution: Do not use on broken skin. Consult a Chinese medicine practitioner during pregnancy.',
+        herbs:JSON.stringify([{herb:'艾叶',amt:'9g'},{herb:'干姜',amt:'15g'},{herb:'桂枝',amt:'6g'}]),
+        form:'足浴包', tags:JSON.stringify(['手脚偏凉','容易怕冷']), journeys:JSON.stringify(['日常养生'])
+      }
+    ];
+
+    const exists = db.prepare("SELECT id FROM products WHERE id = ?");
+    const insert = db.prepare(`
+      INSERT INTO products
+        (id, name, name_en, type, price, trial_price, cost, cost_trial,
+         wholesale_price, wholesale_trial_price, trial_per_full, stock_qty, active, featured,
+         description, usage_note, herbs, form, tags, journeys, images)
+      VALUES
+        (@id, @name, @nameEn, 'soak', @price, @trial_price, @cost, @cost_trial,
+         @wholesale_price, @wholesale_trial_price, @trial_per_full, 100, 1, 0,
+         @description, @usage_note, @herbs, @form, @tags, @journeys, '[]')
+    `);
+
+    let added = 0, skipped = 0;
+    soakProducts.forEach(function(p){
+      if(exists.get(p.id)){ skipped++; return; }
+      insert.run(p);
+      added++;
+    });
+    console.log('[迁移] 足浴系列商品：新增 ' + added + ' 个，已存在跳过 ' + skipped + ' 个');
+  } catch(e) {
+    console.log('[迁移] 足浴商品迁移跳过:', e.message);
+  }
+})();
+
 module.exports = db;
