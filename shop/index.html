@@ -677,7 +677,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var list = currentTypeList;
     if(q){
       list = list.filter(function(p){
-        return p.name.toLowerCase().indexOf(q)!==-1 || (p.desc||'').toLowerCase().indexOf(q)!==-1;
+        return (p.name||'').toLowerCase().indexOf(q)!==-1 || (p.nameEn||'').toLowerCase().indexOf(q)!==-1 || (p.desc||'').toLowerCase().indexOf(q)!==-1;
       });
     }
     ehCount.textContent = list.length + ' 件商品';

@@ -685,7 +685,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
    + oos
    + '<span class="prod-wish'+(wished?' on':'')+'" data-wid="'+p.id+'">'+WISH_HEART_SVG+'</span>'
    + '</div>'
-   + '<div class="prod-name">'+p.name+'</div>'
+   + '<div class="prod-name">'+(p.nameEn||p.name)+'</div>'
    + '<div class="prod-price">MYR '+p.trial+' onwards</div>'
    + '</div>';
  }
@@ -717,7 +717,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   var list = currentTypeList;
   if(q){
    list = list.filter(function(p){
-    return p.name.toLowerCase().indexOf(q)!==-1 || (p.desc||'').toLowerCase().indexOf(q)!==-1;
+    return (p.name||'').toLowerCase().indexOf(q)!==-1 || (p.nameEn||'').toLowerCase().indexOf(q)!==-1 || (p.desc||'').toLowerCase().indexOf(q)!==-1;
    });
   }
   ehCount.textContent = list.length + ' item(s)';
@@ -829,7 +829,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       : '<div class="pt-icon">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>')
     + '<div class="feat-pin">Seasonal Picks</div>'
     + '<span class="prod-wish'+(wished?' on':'')+'" data-wid="'+p.id+'" style="top:12px;right:12px;">'+WISH_HEART_SVG+'</span>'
-    + '<div class="feat-body'+(hasImg?'':' feat-body-plain')+'"><div class="feat-name">'+p.name+'</div><div class="feat-price">MYR '+p.trial+' onwards</div></div>'
+    + '<div class="feat-body'+(hasImg?'':' feat-body-plain')+'"><div class="feat-name">'+(p.nameEn||p.name)+'</div><div class="feat-price">MYR '+p.trial+' onwards</div></div>'
     + '</div>';
   });
   featGrid.innerHTML = html || '<div class="prod-empty">No featured products yet</div>';
@@ -962,7 +962,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   document.getElementById('qvFullLink').onclick = function(){
    window.location.href = withCart('/en/product/?id=' + p.id, cartItems);
   };
-  qvName.textContent = p.name;
+  qvName.textContent = p.nameEn || p.name;
   qvDesc.textContent = p.desc;
   qvOosMsg.innerHTML = p.inStock ? '' : '<div class="qv-oos">This item is out of stock and will be relisted automatically once restocked.</div>';
   qvVariants.innerHTML =
