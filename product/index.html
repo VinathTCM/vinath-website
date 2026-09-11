@@ -404,8 +404,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
           PRODUCTS.push({ id:p.id, name:p.name, nameEn:p.nameEn, type:p.type, price:p.price,
             trial:(typeof p.trial_price === 'number' ? p.trial_price : p.price),
             trialPerFull:p.trialPerFull,
-            desc:p.description, active:p.active, inStock:p.stock_qty > 0, stockQty:p.stock_qty,
-            featured:p.featured, imgs:p.images||[], form:p.form||'', herbs:p.herbs||[], usage:p.usage_note||'',
+            desc:p.description, descEn:p.descriptionEn, active:p.active, inStock:p.stock_qty > 0, stockQty:p.stock_qty,
+            featured:p.featured, imgs:p.images||[], form:p.form||'', herbs:p.herbs||[], usage:p.usage_note||'', usageEn:p.usageNoteEn||'',
             journeys:[], tags:[] });
         });
         }
@@ -562,7 +562,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="pd-herb-label">成分</div>'
       + '<div class="pd-herb-chips">'+chips+'</div>'
       + weightRow
-      + '<div class="pd-usage-box"><b>用法：</b>'+product.usage+'</div>'
+      + '<div class="pd-usage-box"><b>'+(_curLang==='en'?'Usage:':'用法：')+'</b>'+(_curLang==='en' && product.usageEn ? product.usageEn : product.usage)+'</div>'
       + '</div>';
   }
 
@@ -606,7 +606,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var html = buildHero();
     html += '<div class="pd-type">'+TYPE_LABEL[product.type]+'</div>';
     html += '<div class="pd-name">'+product.name+'</div>';
-    html += '<div class="pd-desc">'+product.desc+'</div>';
+    var _curLang = (window.VinathI18n && window.VinathI18n.getLang) ? window.VinathI18n.getLang() : (window.location.pathname.indexOf('/en/')===0?'en':'zh');
+    html += '<div class="pd-desc">'+(_curLang==='en' && product.descEn ? product.descEn : product.desc)+'</div>';
 
     html += '<div class="pd-variants">'
       + '<div class="pd-variant on" data-v="full"><div class="vv-lbl">正装</div><div class="vv-price">MYR '+product.price+'</div></div>'

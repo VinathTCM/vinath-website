@@ -12,7 +12,7 @@ function serializePublicProduct(p){
     id:p.id, name:p.name, nameEn:p.name_en, type:p.type, price:p.price, trial_price:p.trial_price,
     couponPrice:p.coupon_price, couponPriceTrial:p.coupon_trial_price,
     stock_qty:p.stock_qty, active: !!p.active, featured: !!p.featured, trialPerFull:p.trial_per_full,
-    description:p.description, usage_note:p.usage_note, herbs: JSON.parse(p.herbs||'[]'), form:p.form,
+    description:p.description, descriptionEn:p.description_en, usage_note:p.usage_note, usageNoteEn:p.usage_note_en, herbs: JSON.parse(p.herbs||'[]'), form:p.form,
     tags: JSON.parse(p.tags||'[]'), journeys: JSON.parse(p.journeys||'[]'), images: JSON.parse(p.images||'[]')
   };
 }
