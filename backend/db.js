@@ -357,6 +357,27 @@ db.exec(`
   );
 `);
 
+// ===== 安全网：在跑任何商品迁移之前，先把商品表全量(含图片base64)备份到持久磁盘 =====
+// 防止迁移误覆盖用户在后台上传的图片/手动修改；保留最近10份，出问题可直接读 JSON 恢复。
+(function backupProductsBeforeMigrate(){
+  try {
+    const fs = require('fs');
+    const backupDir = path.join(path.dirname(DB_FILE), 'backups');
+    if(!fs.existsSync(backupDir)) fs.mkdirSync(backupDir, { recursive:true });
+    const rows = db.prepare('SELECT * FROM products').all();
+    if(!rows.length) return; // 空库首次初始化，无需备份
+    const d = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    const stamp = d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'_'+pad(d.getHours())+pad(d.getMinutes())+pad(d.getSeconds());
+    fs.writeFileSync(path.join(backupDir,'products_'+stamp+'.json'), JSON.stringify(rows,null,2), 'utf8');
+    const files = fs.readdirSync(backupDir).filter(f=>/^products_.*\.json$/.test(f)).sort();
+    while(files.length > 10){ const old = files.shift(); try { fs.unlinkSync(path.join(backupDir,old)); } catch(e){} }
+    console.log('[安全备份] 商品表已备份 '+rows.length+' 条 -> backups/products_'+stamp+'.json');
+  } catch(e){
+    console.log('[安全备份] 商品表备份跳过:', e.message);
+  }
+})();
+
 // 处方扩展字段 + 协定方价格 + 药材价格表 的幂等迁移：旧库缺列就补，新库直接跳过
 (function migratePrescriptionExt(){
   // instant_requests 软删除字段（回收箱30天）——幂等添加，列已存在时跳过
@@ -983,8 +1004,11 @@ try {
       }
     ];
 
-    const upsert = db.prepare(`
-      INSERT OR REPLACE INTO products
+    // 安全策略（2026-09-12 修复）：商品已存在则整行跳过，绝不用 INSERT OR REPLACE 覆盖，
+    // 否则每次部署都会把用户在后台上传的 images、库存、上下架等手动修改重置掉。
+    const existsTea = db.prepare("SELECT id FROM products WHERE id = ?");
+    const insertTea = db.prepare(`
+      INSERT INTO products
         (id, name, name_en, type, price, trial_price, cost, cost_trial,
          wholesale_price, wholesale_trial_price, stock_qty, active, featured,
          description, usage_note, herbs, form, tags, journeys, images)
@@ -994,12 +1018,13 @@ try {
          @description, @usage_note, @herbs, @form, @tags, @journeys, '[]')
     `);
 
-    let count = 0;
+    let teaAdded = 0, teaSkipped = 0;
     teaProducts.forEach(function(p){
-      upsert.run(p);
-      count++;
+      if(existsTea.get(p.id)){ teaSkipped++; return; }
+      insertTea.run(p);
+      teaAdded++;
     });
-    console.log('[迁移] 茶饮系列商品 v2 已更新 ' + count + ' 个（合规重命名+双语+重新定价）');
+    console.log('[迁移] 茶饮系列商品：新增 ' + teaAdded + ' 个，已存在跳过 ' + teaSkipped + ' 个（保留后台图片与手动修改）');
   } catch(e) {
     console.log('[迁移] 茶饮商品v2迁移跳过:', e.message);
   }

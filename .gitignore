@@ -17,3 +17,5 @@ node_modules/
 *.db-journal
 *.db-wal
 *.db-shm
+# runtime product backups
+backend/backups/
