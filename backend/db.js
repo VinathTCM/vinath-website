@@ -922,10 +922,8 @@ try {
         id:'tea_fuxiaomai', name:'浮小麦白芍茶', nameEn:'Wheat & Peony Calming Tea',
         price:38, trial_price:12, cost:5.91, cost_trial:1.69,
         wholesale_price:18, wholesale_trial_price:5,
-        description:'精神紧绷、夜里睡不安稳时，一杯温茶慢慢放松下来。适合日常压力大、思虑过多的人群饮用。',
-        description_en:'A warm cup to help you unwind when the mind feels tight and restless. Suitable for those with daily stress and busy thoughts.',
-        usage_note:'浸泡10-20分钟，代茶饮。忌：虚寒腹痛泄泻者慎服。',
-        usage_note_en:'Steep 10-20 minutes, drink as tea. Caution: Not suitable for those with cold-deficiency abdominal pain or diarrhea.',
+        description:'精神紧绷、夜里睡不安稳时，一杯温茶慢慢放松下来。适合日常压力大、思虑过多的人群饮用。\n\nA warm cup to help you unwind when the mind feels tight and restless. Suitable for those with daily stress and busy thoughts.',
+        usage_note:'浸泡10-20分钟，代茶饮。忌：虚寒腹痛泄泻者慎服。\n\nSteep 10-20 minutes, drink as tea. Caution: Not suitable for those with cold-deficiency abdominal pain or diarrhea.',
         herbs:JSON.stringify([{herb:'浮小麦',amt:'7g'},{herb:'白芍',amt:'3.5g'},{herb:'甘草',amt:'1.5g'}]),
         form:'茶包', tags:JSON.stringify(['精神紧张','睡不好']), journeys:JSON.stringify(['优质睡眠','日常养生'])
       },
@@ -933,10 +931,8 @@ try {
         id:'tea_duzhong', name:'杜仲续断茶', nameEn:'Eucommia & Teasel Tea',
         price:40, trial_price:13, cost:7.03, cost_trial:2.01,
         wholesale_price:20, wholesale_trial_price:5,
-        description:'久坐久站后腰背发酸，日常养护肝肾、强健筋骨。适合长期伏案、站立工作的人群日常调理。',
-        description_en:'Daily support for lower back and joints after long hours sitting or standing. Nourishes and strengthens for those with desk-bound or standing jobs.',
-        usage_note:'加水煮沸，转小火煮30分钟，去渣取汁，代茶饮。忌：阴虚火旺者慎服。',
-        usage_note_en:'Boil then simmer 30 mins, strain and drink. Caution: Not suitable for those with yin-deficiency heat signs.',
+        description:'久坐久站后腰背发酸，日常养护肝肾、强健筋骨。适合长期伏案、站立工作的人群日常调理。\n\nDaily support for lower back and joints after long hours sitting or standing. Nourishes and strengthens for those with desk-bound or standing jobs.',
+        usage_note:'加水煮沸，转小火煮30分钟，去渣取汁，代茶饮。忌：阴虚火旺者慎服。\n\nBoil then simmer 30 mins, strain and drink. Caution: Not suitable for those with yin-deficiency heat signs.',
         herbs:JSON.stringify([{herb:'杜仲',amt:'4g'},{herb:'怀牛膝',amt:'4g'},{herb:'续断',amt:'4g'}]),
         form:'茶包', tags:JSON.stringify(['腰酸背痛']), journeys:JSON.stringify(['舒缓疼痛'])
       },
@@ -944,10 +940,8 @@ try {
         id:'tea_siwu', name:'四物滋养茶', nameEn:'Four Substances Nourishing Tea',
         price:45, trial_price:15, cost:9.84, cost_trial:2.81,
         wholesale_price:23, wholesale_trial_price:6,
-        description:'经典妇科调理基础方，温和滋养气血，适合日常女性养护、经期后调理饮用。',
-        description_en:'A classic women\'s wellness formula, gently nourishing from within. Suitable for daily women\'s care and post-cycle support.',
-        usage_note:'加水煎煮，去渣取汁，可作茶饮/炖肉/熬汤。忌：牛奶、绿豆。',
-        usage_note_en:'Decoct in water, strain. Can be used as tea, in soups or stews. Avoid: milk, mung bean.',
+        description:'经典妇科调理基础方，温和滋养气血，适合日常女性养护、经期后调理饮用。\n\nA classic women\'s wellness formula, gently nourishing from within. Suitable for daily women\'s care and post-cycle support.',
+        usage_note:'加水煎煮，去渣取汁，可作茶饮/炖肉/熬汤。忌：牛奶、绿豆。\n\nDecoct in water, strain. Can be used as tea, in soups or stews. Avoid: milk, mung bean.',
         herbs:JSON.stringify([{herb:'当归',amt:'3.3g'},{herb:'熟地黄',amt:'3.3g'},{herb:'白芍',amt:'3.3g'},{herb:'川芎',amt:'2.1g'}]),
         form:'茶包', tags:JSON.stringify(['女性保健']), journeys:JSON.stringify(['女性调理'])
       },
@@ -955,10 +949,8 @@ try {
         id:'tea_tongjing', name:'经期舒缓茶', nameEn:'Cycle Soothing Tea',
         price:48, trial_price:16, cost:11.23, cost_trial:3.21,
         wholesale_price:25, wholesale_trial_price:6,
-        description:'经期前小腹坠胀、经血不畅时，益气活血、温和舒缓经期不适。适合经期前一周开始饮用。',
-        description_en:'Gentle support for pre-cycle discomfort and bloating. Nourishes qi and blood flow. Best enjoyed the week before your cycle.',
-        usage_note:'开水冲泡5分钟，茶饮。忌：月经量多者禁用。',
-        usage_note_en:'Steep 5 minutes in boiling water, drink as tea. Contraindication: Not for heavy menstrual flow.',
+        description:'经期前小腹坠胀、经血不畅时，益气活血、温和舒缓经期不适。适合经期前一周开始饮用。\n\nGentle support for pre-cycle discomfort and bloating. Nourishes qi and blood flow. Best enjoyed the week before your cycle.',
+        usage_note:'开水冲泡5分钟，茶饮。忌：月经量多者禁用。\n\nSteep 5 minutes in boiling water, drink as tea. Contraindication: Not for heavy menstrual flow.',
         herbs:JSON.stringify([{herb:'黄芪',amt:'2.4g'},{herb:'党参',amt:'2.4g'},{herb:'川芎',amt:'2.4g'},{herb:'当归',amt:'2.4g'},{herb:'枸杞',amt:'2.4g'}]),
         form:'茶包', tags:JSON.stringify(['经期不适']), journeys:JSON.stringify(['女性调理'])
       },
@@ -966,10 +958,8 @@ try {
         id:'tea_qinghua', name:'清润祛湿茶', nameEn:'Dampness Balancing Tea',
         price:36, trial_price:12, cost:5.66, cost_trial:1.62,
         wholesale_price:17, wholesale_trial_price:5,
-        description:'身体困重、舌苔黄腻时，健脾利湿、清润祛湿，清爽过一天。适合湿热体质日常调理。',
-        description_en:'Helps the body feel lighter when sluggish and heavy. Supports spleen and dampness balance for daily wellness.',
-        usage_note:'开水冲泡或轻煎10分钟，代茶饮。',
-        usage_note_en:'Steep or lightly simmer 10 minutes, drink as tea.',
+        description:'身体困重、舌苔黄腻时，健脾利湿、清润祛湿，清爽过一天。适合湿热体质日常调理。\n\nHelps the body feel lighter when sluggish and heavy. Supports spleen and dampness balance for daily wellness.',
+        usage_note:'开水冲泡或轻煎10分钟，代茶饮。\n\nSteep or lightly simmer 10 minutes, drink as tea.',
         herbs:JSON.stringify([{herb:'茯苓',amt:'6g'},{herb:'泽泻',amt:'3g'},{herb:'陈皮',amt:'2g'},{herb:'甘草',amt:'1g'}]),
         form:'茶包', tags:JSON.stringify(['湿热体质']), journeys:JSON.stringify(['日常养生'])
       },
@@ -977,10 +967,8 @@ try {
         id:'tea_qingliang', name:'清心舒缓茶', nameEn:'Heart Calming Tea',
         price:38, trial_price:12, cost:6.40, cost_trial:1.83,
         wholesale_price:18, wholesale_trial_price:5,
-        description:'心烦口干、咽喉燥热时，清心除烦、清凉舒缓，让身体静下来。建议喝2-4天休息。',
-        description_en:'Cooling and calming for restlessness, dry mouth and throat irritation. Helps the body settle. Suggest 2-4 days on, then rest.',
-        usage_note:'开水冲泡5-10分钟，代茶饮。忌：脾胃虚寒、容易拉肚子的人、经期女性、孕妇。',
-        usage_note_en:'Steep 5-10 minutes, drink as tea. Caution: Not for cold-deficiency digestion, diarrhea-prone, during cycle, or pregnancy.',
+        description:'心烦口干、咽喉燥热时，清心除烦、清凉舒缓，让身体静下来。建议喝2-4天休息。\n\nCooling and calming for restlessness, dry mouth and throat irritation. Helps the body settle. Suggest 2-4 days on, then rest.',
+        usage_note:'开水冲泡5-10分钟，代茶饮。忌：脾胃虚寒、容易拉肚子的人、经期女性、孕妇。\n\nSteep 5-10 minutes, drink as tea. Caution: Not for cold-deficiency digestion, diarrhea-prone, during cycle, or pregnancy.',
         herbs:JSON.stringify([{herb:'莲子',amt:'8g'},{herb:'薄荷',amt:'2g'},{herb:'甘草',amt:'2g'}]),
         form:'茶包', tags:JSON.stringify(['心烦燥热']), journeys:JSON.stringify(['日常养生','优质睡眠'])
       },
@@ -988,10 +976,8 @@ try {
         id:'tea_yiqi', name:'气血滋养茶', nameEn:'Qi & Blood Nourishing Tea',
         price:42, trial_price:14, cost:8.19, cost_trial:2.34,
         wholesale_price:21, wholesale_trial_price:5,
-        description:'容易疲劳、气短懒言时，益气养血、慢慢补足精气神。适合气虚体质日常养护。',
-        description_en:'Gentle nourishment for fatigue and low energy. Slowly restores vitality for daily wellness.',
-        usage_note:'开水冲泡或轻煎15分钟，代茶饮。忌：感冒发热、经量大者。',
-        usage_note_en:'Steep or simmer 15 minutes, drink as tea. Caution: Not during cold/fever or heavy cycle.',
+        description:'容易疲劳、气短懒言时，益气养血、慢慢补足精气神。适合气虚体质日常养护。\n\nGentle nourishment for fatigue and low energy. Slowly restores vitality for daily wellness.',
+        usage_note:'开水冲泡或轻煎15分钟，代茶饮。忌：感冒发热、经量大者。\n\nSteep or simmer 15 minutes, drink as tea. Caution: Not during cold/fever or heavy cycle.',
         herbs:JSON.stringify([{herb:'黄芪',amt:'7.5g'},{herb:'当归',amt:'1.5g'},{herb:'红枣',amt:'3g'}]),
         form:'茶包', tags:JSON.stringify(['气虚疲劳']), journeys:JSON.stringify(['日常养生','女性调理'])
       }
@@ -1001,11 +987,11 @@ try {
       INSERT OR REPLACE INTO products
         (id, name, name_en, type, price, trial_price, cost, cost_trial,
          wholesale_price, wholesale_trial_price, stock_qty, active, featured,
-         description, description_en, usage_note, usage_note_en, herbs, form, tags, journeys, images)
+         description, usage_note, herbs, form, tags, journeys, images)
       VALUES
         (@id, @name, @nameEn, 'tea', @price, @trial_price, @cost, @cost_trial,
          @wholesale_price, @wholesale_trial_price, 100, 1, 0,
-         @description, @description_en, @usage_note, @usage_note_en, @herbs, @form, @tags, @journeys, '[]')
+         @description, @usage_note, @herbs, @form, @tags, @journeys, '[]')
     `);
 
     let count = 0;
