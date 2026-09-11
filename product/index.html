@@ -473,6 +473,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     }
   }
 
+  var _curLang = (window.VinathI18n && window.VinathI18n.getLang) ? window.VinathI18n.getLang() : (window.location.pathname.indexOf('/en/')===0?'en':'zh');
   var product = PRODUCTS_BY_ID[productId];
 
   if(product){
@@ -606,7 +607,6 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var html = buildHero();
     html += '<div class="pd-type">'+TYPE_LABEL[product.type]+'</div>';
     html += '<div class="pd-name">'+product.name+'</div>';
-    var _curLang = (window.VinathI18n && window.VinathI18n.getLang) ? window.VinathI18n.getLang() : (window.location.pathname.indexOf('/en/')===0?'en':'zh');
     html += '<div class="pd-desc">'+(_curLang==='en' && product.descEn ? product.descEn : product.desc)+'</div>';
 
     html += '<div class="pd-variants">'
