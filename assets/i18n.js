@@ -1061,11 +1061,33 @@
     });
   }
 
+  // ========== 修正内部链接：英文页面自动加 /en/ 前缀 ==========
+  function fixInternalLinks() {
+    var isEnPage = window.location.pathname.indexOf('/en/') === 0;
+    if (!isEnPage) return;
+    var links = document.querySelectorAll('a[href]');
+    links.forEach(function(a) {
+      var href = a.getAttribute('href');
+      if (!href) return;
+      if (href.charAt(0) === '#' ||
+          href.indexOf('http') === 0 ||
+          href.indexOf('javascript:') === 0 ||
+          href.indexOf('mailto:') === 0 ||
+          href.indexOf('tel:') === 0 ||
+          href.indexOf('/en/') === 0 ||
+          href.indexOf('/en') === 0) return;
+      if (href.charAt(0) === '/') {
+        a.setAttribute('href', '/en' + href);
+      }
+    });
+  }
+
   // ========== 初始化 ==========
   var scrollTimer = null;
   function init() {
     createLangSwitcher();
     applyTranslations();
+    fixInternalLinks();
     startObserver();
     
     // 页面加载后多次触发翻译，确保动态内容都被翻译
