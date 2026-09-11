@@ -401,7 +401,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         PRODUCTS.length = 0;
     if(backendProducts && backendProducts.length){
         backendProducts.forEach(function(p){
-          PRODUCTS.push({ id:p.id, name:p.name, nameEn:p.name_en, type:p.type, price:p.price,
+          PRODUCTS.push({ id:p.id, name:p.name, nameEn:p.nameEn, type:p.type, price:p.price,
             trial:(typeof p.trial_price === 'number' ? p.trial_price : p.price),
             trialPerFull:p.trialPerFull,
             desc:p.description, active:p.active, inStock:p.stock_qty > 0, stockQty:p.stock_qty,

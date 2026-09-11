@@ -587,7 +587,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
    var res = await fetch(API_BASE + '/products');
    var products = await res.json();
    var mapped = products.map(function(p){
-    return { id:p.id, name:p.name, nameEn:p.name_en, type:p.type, price:p.price,
+    return { id:p.id, name:p.name, nameEn:p.nameEn, type:p.type, price:p.price,
      trial:(typeof p.trial_price === 'number' ? p.trial_price : p.price), // 没设试用价就用常规价兜底, 
                                          // 避免页面上出现"MYR null"
      desc:p.description, active:p.active, inStock:p.stock_qty > 0, stockQty:p.stock_qty,
