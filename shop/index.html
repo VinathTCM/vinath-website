@@ -902,7 +902,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     imgIdx = 0;
     qvTrack.style.transition = 'none';
     qvTrack.innerHTML = qvImgs.map(function(src){
-      return '<div class="qv-hero-slide">' + (src ? '<img src="'+src+'" alt="'+p.name+'">' : '<div class="pt-icon">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>') + '</div>';
+      return '<div class="qv-hero-slide">' + (src ? '<img src="'+src+'" alt="'+p.name+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';"><div class="pt-icon" style="display:none;">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>' : '<div class="pt-icon">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>') + '</div>';
     }).join('');
     qvDots.innerHTML = qvImgs.length>1 ? qvImgs.map(function(_,i){ return '<span class="qv-dot'+(i===0?' on':'')+'"></span>'; }).join('') : '';
     requestAnimationFrame(function(){ qvTrack.style.transition = ''; renderQvImage(); });

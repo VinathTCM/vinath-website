@@ -568,7 +568,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   var hasImgs = product.imgs && product.imgs.length;
   pdImgs = hasImgs ? product.imgs.slice() : [null];
   var slides = pdImgs.map(function(src){
-   return '<div class="pd-hero-slide">' + (src ? '<img src="'+src+'" alt="'+product.name+'">' : '<div class="pt-icon">'+(ICON[product.type]||GENERIC_CAT_ICON)+'</div>') + '</div>';
+   return '<div class="pd-hero-slide">' + (src ? '<img src="'+src+'" alt="'+product.name+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';"><div class="pt-icon" style="display:none;">'+(ICON[product.type]||GENERIC_CAT_ICON)+'</div>' : '<div class="pt-icon">'+(ICON[product.type]||GENERIC_CAT_ICON)+'</div>') + '</div>';
   }).join('');
   var dots = pdImgs.length>1 ? pdImgs.map(function(_,i){ return '<span class="pd-dot'+(i===0?' on':'')+'"></span>'; }).join('') : '';
   return '<div class="pd-hero" id="pdHero">'
@@ -636,7 +636,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   var cards = related.slice(0, 8).map(function(p){
    var hasImg = p.imgs && p.imgs[0];
    return '<div class="related-card" data-id="'+p.id+'">'
-    + '<div class="related-thumb">' + (hasImg ? '<img src="'+p.imgs[0]+'" alt="'+p.name+'">' : '<div class="pt-icon">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>') + '</div>'
+    + '<div class="related-thumb">' + (hasImg ? '<img src="'+p.imgs[0]+'" alt="'+p.name+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';"><div class="pt-icon" style="display:none;">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>' : '<div class="pt-icon">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>') + '</div>'
     + '<div class="related-name">'+(p.nameEn||p.name)+'</div><div class="related-price">MYR '+p.trial+' onwards</div></div>';
   }).join('');
   return '<div class="pd-section"><div class="pd-section-title">Similar Products · '+TYPE_LABEL[product.type]+'</div><div class="related-grid">'+cards+'</div></div>';
