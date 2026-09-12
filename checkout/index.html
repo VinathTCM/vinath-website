@@ -478,7 +478,26 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     {code:'SWK', name:'砂拉越 Sarawak', region:'east'},
     {code:'LBN', name:'纳闽 Labuan', region:'east'}
   ];
+  var _apiShipSettings = null;
+  var _apiShipLoaded = false;
+  // 从后端API加载运费设置（后台可配置），失败则用localStorage或默认值
+  function loadShippingSettingsFromAPI(){
+    fetch('https://api.vinathtcm.com/api/site-settings/shipping_settings')
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if(data && typeof data.west === 'number'){
+          _apiShipSettings = data;
+          _apiShipLoaded = true;
+          try{ localStorage.setItem('vinath_shipping_settings', JSON.stringify(data)); }catch(e){}
+          // 重新渲染运费（如果结算摘要已渲染）
+          if(typeof renderSummary === 'function') renderSummary();
+        }
+      })
+      .catch(function(){ /* API失败时用本地缓存 */ });
+  }
+  loadShippingSettingsFromAPI();
   function getShippingSettings(){
+    if(_apiShipSettings) return _apiShipSettings;
     try {
       var raw = localStorage.getItem('vinath_shipping_settings');
       if(raw) return JSON.parse(raw);

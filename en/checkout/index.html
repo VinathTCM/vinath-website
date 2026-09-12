@@ -517,12 +517,29 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   {code:'SWK', name:'Sarawak Sarawak', region:'east'},
   {code:'LBN', name:'Labuan Labuan', region:'east'}
  ];
+ var _apiShipSettings = null;
+ var _apiShipLoaded = false;
+ function loadShippingSettingsFromAPI(){
+   fetch('https://api.vinathtcm.com/api/site-settings/shipping_settings')
+     .then(function(r){ return r.json(); })
+     .then(function(data){
+       if(data && typeof data.west === 'number'){
+         _apiShipSettings = data;
+         _apiShipLoaded = true;
+         try{ localStorage.setItem('vinath_shipping_settings', JSON.stringify(data)); }catch(e){}
+         if(typeof renderSummary === 'function') renderSummary();
+       }
+     })
+     .catch(function(){});
+ }
+ loadShippingSettingsFromAPI();
  function getShippingSettings(){
-  try {
-   var raw = localStorage.getItem('vinath_shipping_settings');
-   if(raw) return JSON.parse(raw);
-  } catch(e){}
-  return {west:8, east:18, freeThreshold:100};
+   if(_apiShipSettings) return _apiShipSettings;
+   try {
+    var raw = localStorage.getItem('vinath_shipping_settings');
+    if(raw) return JSON.parse(raw);
+   } catch(e){}
+   return {west:8, east:18, freeThreshold:100};
  }
  var SHIP_FEE = (function(){ var s = getShippingSettings(); return {west:s.west, east:s.east}; })();
  var STATE_BY_CODE = {};

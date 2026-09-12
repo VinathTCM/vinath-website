@@ -596,6 +596,7 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
       <div class="hint">当前 <b id="orderCount">0</b> 个订单</div>
       <div class="search-box"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.3" cy="10.3" r="6.3"/><line x1="19.5" y1="19.5" x2="15" y2="15"/></svg><input type="text" id="orderSearch" placeholder="搜索订单编号或联系方式"></div>
       <div class="filters" id="orderFilters"></div>
+      <button type="button" class="btn-secondary" id="shippingSettingsBtn" style="padding:6px 14px;font-size:13px;white-space:nowrap;">运费设置</button>
     </div>
     <div class="card"><div class="tbl-scroll">
       <table>
@@ -5013,6 +5014,96 @@ window.escapeHtml = function(s){
   })();
 })();
 </script>
-  <script src="/assets/i18n.js?v=20260910a"></script>
+  <script src="/assets/i18n.js?v=20260910a">
+// ===== 运费设置弹窗 =====
+(function(){
+  var overlay = document.getElementById('shippingModalOverlay');
+  if(!overlay) return;
+  var btn = document.getElementById('shippingSettingsBtn');
+  var closeBtn = document.getElementById('shippingModalClose');
+  var cancelBtn = document.getElementById('shippingCancelBtn');
+  var saveBtn = document.getElementById('shippingSaveBtn');
+  var msg = document.getElementById('shippingMsg');
+  var westIn = document.getElementById('shipWestInput');
+  var eastIn = document.getElementById('shipEastInput');
+  var freeIn = document.getElementById('shipFreeInput');
+
+  function showMsg(text, isError){
+    msg.textContent = text;
+    msg.style.color = isError ? '#c0392b' : '#27ae60';
+    msg.style.display = 'block';
+    setTimeout(function(){ msg.style.display = 'none'; }, 3000);
+  }
+  function openModal(){
+    overlay.style.display = 'flex';
+    // Load current settings
+    fetch(API_BASE + '/site-settings/shipping_settings')
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if(data){
+          westIn.value = data.west != null ? data.west : 8;
+          eastIn.value = data.east != null ? data.east : 18;
+          freeIn.value = data.freeThreshold != null ? data.freeThreshold : 100;
+        } else {
+          westIn.value = 8; eastIn.value = 18; freeIn.value = 100;
+        }
+      })
+      .catch(function(){ westIn.value = 8; eastIn.value = 18; freeIn.value = 100; });
+  }
+  function closeModal(){ overlay.style.display = 'none'; }
+  function saveSettings(){
+    var token = localStorage.getItem('vinath_admin_token');
+    var payload = {
+      west: parseFloat(westIn.value) || 0,
+      east: parseFloat(eastIn.value) || 0,
+      freeThreshold: parseFloat(freeIn.value) || 0
+    };
+    fetch(API_BASE + '/admin/site-settings/shipping_settings', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify(payload)
+    })
+    .then(function(r){
+      if(r.ok){ showMsg('保存成功！前台结算页将自动使用新运费', false); }
+      else { showMsg('保存失败，请确认已登录大管理员', true); }
+    })
+    .catch(function(){ showMsg('网络错误', true); });
+  }
+  if(btn) btn.addEventListener('click', openModal);
+  if(closeBtn) closeBtn.addEventListener('click', closeModal);
+  if(cancelBtn) cancelBtn.addEventListener('click', closeModal);
+  if(saveBtn) saveBtn.addEventListener('click', saveSettings);
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) closeModal(); });
+})();
+
+</script>
+
+<!-- 运费设置弹窗 -->
+<div class="shipping-modal-overlay" id="shippingModalOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;">
+  <div class="shipping-modal" style="background:#fff;border-radius:16px;padding:28px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <h3 style="margin:0;font-size:18px;color:#332A21;">运费与包邮设置</h3>
+      <button type="button" id="shippingModalClose" style="background:none;border:none;font-size:22px;cursor:pointer;color:#999;line-height:1;">&times;</button>
+    </div>
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:13px;color:#666;margin-bottom:6px;">西马运费（RM）</label>
+      <input type="number" id="shipWestInput" step="0.01" min="0" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;box-sizing:border-box;">
+    </div>
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:13px;color:#666;margin-bottom:6px;">东马运费（RM）</label>
+      <input type="number" id="shipEastInput" step="0.01" min="0" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;box-sizing:border-box;">
+    </div>
+    <div style="margin-bottom:24px;">
+      <label style="display:block;font-size:13px;color:#666;margin-bottom:6px;">满多少包邮（RM，填0表示不包邮）</label>
+      <input type="number" id="shipFreeInput" step="0.01" min="0" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;box-sizing:border-box;">
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button type="button" id="shippingSaveBtn" style="flex:1;background:#332A21;color:#fff;border:none;padding:12px;border-radius:10px;font-size:15px;cursor:pointer;">保存</button>
+      <button type="button" id="shippingCancelBtn" style="flex:1;background:#f0f0f0;color:#333;border:none;padding:12px;border-radius:10px;font-size:15px;cursor:pointer;">取消</button>
+    </div>
+    <div id="shippingMsg" style="margin-top:12px;font-size:13px;text-align:center;display:none;"></div>
+  </div>
+</div>
+
 </body>
 </html>
