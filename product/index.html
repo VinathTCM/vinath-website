@@ -135,6 +135,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .vh-toast.show{ opacity:1; transform:translate(-50%,0); }
 
 .related-price-sub{ font-size:11px; color:var(--espresso-soft); opacity:.75; margin-top:1px; }
+
+.pd-img-disclaimer{ text-align:center; font-size:11px; color:var(--espresso-soft); opacity:.7; padding:6px 0 0; }
 </style>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=20260911logo4">
 <link rel="icon" href="/favicon.ico?v=20260911logo4" sizes="any">
@@ -543,7 +545,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="pd-hero-track" id="pdTrack">'+slides+'</div>'
       + '<div class="pd-hero-nav prev hide" id="pdPrev"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l-7 7 7 7"/></svg></div>'
       + '<div class="pd-hero-nav next hide" id="pdNext"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5l7 7-7 7"/></svg></div>'
-      + '<div class="pd-dots">'+dots+'</div></div>';
+      + '<div class="pd-dots">'+dots+'</div><div class="pd-img-disclaimer">图片仅供参考，实物以实际商品为准</div></div>';
   }
 
   // 解析单味药克重：后台amt为纯数字（单位即克）或带g/克；枚/片等非克单位不计入总重
