@@ -5055,7 +5055,7 @@ document.addEventListener('DOMContentLoaded', function(){
   }
   function closeModal(){ overlay.style.display = 'none'; }
   function saveSettings(){
-    var token = localStorage.getItem('vinath_admin_token');
+    var token = sessionStorage.getItem('vinath_auth_token');
     var payload = {
       west: parseFloat(westIn.value) || 0,
       east: parseFloat(eastIn.value) || 0,
