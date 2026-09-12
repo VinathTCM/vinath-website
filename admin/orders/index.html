@@ -5015,8 +5015,14 @@ window.escapeHtml = function(s){
 })();
 </script>
   <script src="/assets/i18n.js?v=20260910a">
+
+
+</script>
+<script>
 // ===== 运费设置弹窗 =====
-(function(){
+document.addEventListener('DOMContentLoaded', function(){
+// ===== 运费设置弹窗 =====
+
   var overlay = document.getElementById('shippingModalOverlay');
   if(!overlay) return;
   var btn = document.getElementById('shippingSettingsBtn');
@@ -5032,7 +5038,7 @@ window.escapeHtml = function(s){
     msg.textContent = text;
     msg.style.color = isError ? '#c0392b' : '#27ae60';
     msg.style.display = 'block';
-    setTimeout(function(){ msg.style.display = 'none'; }, 3000);
+    setTimeout msg.style.display = 'none'; }, 3000);
   }
   function openModal(){
     overlay.style.display = 'flex';
@@ -5048,7 +5054,7 @@ window.escapeHtml = function(s){
           westIn.value = 8; eastIn.value = 18; freeIn.value = 100;
         }
       })
-      .catch(function(){ westIn.value = 8; eastIn.value = 18; freeIn.value = 100; });
+      .catch westIn.value = 8; eastIn.value = 18; freeIn.value = 100; });
   }
   function closeModal(){ overlay.style.display = 'none'; }
   function saveSettings(){
@@ -5067,16 +5073,17 @@ window.escapeHtml = function(s){
       if(r.ok){ showMsg('保存成功！前台结算页将自动使用新运费', false); }
       else { showMsg('保存失败，请确认已登录大管理员', true); }
     })
-    .catch(function(){ showMsg('网络错误', true); });
+    .catch showMsg('网络错误', true); });
   }
   if(btn) btn.addEventListener('click', openModal);
   if(closeBtn) closeBtn.addEventListener('click', closeModal);
   if(cancelBtn) cancelBtn.addEventListener('click', closeModal);
   if(saveBtn) saveBtn.addEventListener('click', saveSettings);
   overlay.addEventListener('click', function(e){ if(e.target === overlay) closeModal(); });
-})();
 
+});
 </script>
+
 
 <!-- 运费设置弹窗 -->
 <div class="shipping-modal-overlay" id="shippingModalOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center;">
