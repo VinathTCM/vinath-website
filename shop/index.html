@@ -191,6 +191,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
 .prod-price-sub{ font-size:11px; color:var(--espresso-soft); opacity:.75; margin-top:2px; }
 .feat-price-sub{ font-size:11px; color:rgba(255,255,255,.8); margin-top:2px; }
+
+
+.prod-thumb .img-ref{ position:absolute; bottom:6px; right:8px; background:rgba(255,255,255,.82); color:var(--espresso-soft); font-size:9px; padding:2px 6px; border-radius:8px; font-weight:500; z-index:2; }
+.feat-card .img-ref{ position:absolute; bottom:8px; right:10px; background:rgba(0,0,0,.45); color:#fff; font-size:9px; padding:2px 6px; border-radius:8px; font-weight:500; z-index:3; }
 </style>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=20260911logo4">
 <link rel="icon" href="/favicon.ico?v=20260911logo4" sizes="any">
@@ -651,7 +655,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var oos = !p.inStock ? '<span class="oos-badge">缺货</span>' : '';
     var wished = isWishlisted(p.id);
     return '<div class="prod-card" data-id="'+p.id+'">'
-      + '<div class="prod-thumb">' + (hasImg ? '<img src="'+p.imgs[0]+'" loading="lazy" decoding="async" alt="'+p.name+'">' : '<div class="pt-icon">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>')
+      + '<div class="prod-thumb">' + (hasImg ? '<img src="'+p.imgs[0]+'" loading="lazy" decoding="async" alt="'+p.name+'"><span class="img-ref">'+'图片仅供参考'+'</span>' : '<div class="pt-icon">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>')
       + oos
       + '<span class="prod-wish'+(wished?' on':'')+'" data-wid="'+p.id+'">'+WISH_HEART_SVG+'</span>'
       + (hasImg ? '<span class="prod-dl" data-dlid="'+p.id+'" title="下载图片（带水印）"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>' : '')
@@ -806,7 +810,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       var wished = isWishlisted(p.id);
       html += '<div class="feat-card" data-id="'+p.id+'">'
         + (hasImg
-            ? '<img src="'+p.imgs[0]+'" loading="lazy" decoding="async" alt="'+p.name+'"><div class="feat-scrim"></div>'
+            ? '<img src="'+p.imgs[0]+'" loading="lazy" decoding="async" alt="'+p.name+'"><span class="img-ref">'+'图片仅供参考'+'</span><div class="feat-scrim"></div>'
             : '<div class="pt-icon">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>')
         + '<div class="feat-pin">当季主打</div>'
         + '<span class="prod-wish'+(wished?' on':'')+'" data-wid="'+p.id+'" style="top:12px;right:12px;">'+WISH_HEART_SVG+'</span>'
