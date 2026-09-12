@@ -69,6 +69,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .pd-wish{ position:absolute; top:14px; right:14px; width:38px; height:38px; border-radius:50%; background:rgba(255,253,249,.92); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:2; box-shadow:0 2px 8px var(--shadow); }
 .pd-wish svg{ stroke:var(--espresso-soft); transition:.15s; }
 .pd-wish.on svg{ fill:var(--clay); stroke:var(--clay); }
+.pd-download{ position:absolute; top:14px; right:58px; width:38px; height:38px; border-radius:50%; background:rgba(255,253,249,.92); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:2; box-shadow:0 2px 8px var(--shadow); transition:.15s; }
+.pd-download svg{ stroke:var(--espresso-soft); transition:.15s; }
+.pd-download:hover{ background:#fff; }
+.pd-download:hover svg{ stroke:var(--clay); }
 
 /* ---- title/buy block ---- */
 .pd-type{ font-size:12px; font-weight:700; color:var(--tan-deep); letter-spacing:.08em; text-transform:uppercase; margin-bottom:6px; }
@@ -532,6 +536,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     return '<div class="pd-hero" id="pdHero">'
       + (!product.inStock ? '<div class="pd-oos-badge">暂时缺货</div>' : '')
       + '<span class="pd-wish'+(isWishlisted(product.id)?' on':'')+'" id="pdWishBtn"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9.5-9C.5 8 2 4 6 4c2 0 3.5 1 4 2 .5-1 2-2 4-2 4 0 5.5 4 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg></span>'
+      + '<span class="pd-download" id="pdDownloadBtn" title="下载图片（带 VINATH 水印）"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>'
       + '<div class="pd-hero-track" id="pdTrack">'+slides+'</div>'
       + '<div class="pd-hero-nav prev hide" id="pdPrev"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5l-7 7 7 7"/></svg></div>'
       + '<div class="pd-hero-nav next hide" id="pdNext"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5l7 7-7 7"/></svg></div>'
@@ -669,6 +674,15 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     if(wishBtn) wishBtn.addEventListener('click', function(){
       toggleWishlist(product.id);
       wishBtn.classList.toggle('on');
+    });
+    var dlBtn = document.getElementById('pdDownloadBtn');
+    if(dlBtn) dlBtn.addEventListener('click', function(){
+      var src = pdImgs[imgIdx];
+      if(src && window.VINATH_watermarkDownload){
+        VINATH_watermarkDownload(src, product.name + '-' + (imgIdx+1) + '.jpg');
+      } else if(src){
+        var a=document.createElement('a'); a.href=src; a.download=product.name+'-'+(imgIdx+1)+'.jpg'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      }
     });
     var hero = document.getElementById('pdHero');
     if(hero){
@@ -883,6 +897,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 </script>
 
   <script src="/assets/i18n.js?v=20260910a"></script>
+  <script src="/assets/watermark-download.js?v=20260912"></script>
 <footer>
   <div class="footer-grid">
     <!-- 第1列：服务项目 -->

@@ -116,6 +116,11 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .prod-wish{ position:absolute; top:8px; right:8px; width:29px; height:29px; border-radius:50%; background:rgba(255,253,249,.92); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:2; transition:.15s; }
 .prod-wish svg{ stroke:var(--espresso-soft); transition:.15s; }
 .prod-wish.on svg{ fill:var(--clay); stroke:var(--clay); }
+.prod-dl{ position:absolute; top:8px; right:42px; width:29px; height:29px; border-radius:50%; background:rgba(255,253,249,.92); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:2; transition:.15s; opacity:0; }
+.prod-card:hover .prod-dl, .prod-card:active .prod-dl{ opacity:1; }
+.prod-dl svg{ stroke:var(--espresso-soft); transition:.15s; }
+.prod-dl:hover{ background:#fff; }
+.prod-dl:hover svg{ stroke:var(--clay); }
 .wish-filter-chip{ display:inline-flex; align-items:center; gap:5px; font-size:13px; padding:8px 15px; border-radius:100px; border:1.5px solid var(--line); background:var(--white-warm); color:var(--espresso); cursor:pointer; margin-bottom:18px; }
 .wish-filter-chip.on{ background:var(--clay); border-color:var(--clay); color:#fff; }
 .wish-filter-chip svg{ flex:none; }
@@ -265,6 +270,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     <div class="qv-hero-nav next hide" id="qvNext"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5l7 7-7 7"/></svg></div>
     <div class="qv-dots" id="qvDots"></div>
     <span class="prod-wish" id="qvWishBtn" style="top:14px;right:52px;"></span>
+    <span class="prod-dl" id="qvDownloadBtn" title="下载图片（带水印）" style="top:14px;right:88px;opacity:1;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>
     <button class="qv-close" id="qvClose">
       <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
     </button>
@@ -644,6 +650,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="prod-thumb">' + (hasImg ? '<img src="'+p.imgs[0]+'" loading="lazy" decoding="async" alt="'+p.name+'">' : '<div class="pt-icon">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>')
       + oos
       + '<span class="prod-wish'+(wished?' on':'')+'" data-wid="'+p.id+'">'+WISH_HEART_SVG+'</span>'
+      + (hasImg ? '<span class="prod-dl" data-dlid="'+p.id+'" title="下载图片（带水印）"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>' : '')
       + '</div>'
       + '<div class="prod-name">'+p.name+'</div>'
       + '<div class="prod-price">MYR '+p.trial+' 起</div>'
@@ -665,6 +672,16 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         toggleWishlist(this.getAttribute('data-wid'));
         this.classList.toggle('on');
         updateWishFilterCount();
+      });
+    });
+    document.querySelectorAll('.prod-dl').forEach(function(d){
+      d.addEventListener('click', function(e){
+        e.stopPropagation();
+        var card = this.closest('.prod-card');
+        var img = card ? card.querySelector('.prod-thumb img') : null;
+        var src = img ? img.src : null;
+        var name = card ? (card.querySelector('.prod-name')||{}).textContent : 'product';
+        if(src && window.VINATH_watermarkDownload){ VINATH_watermarkDownload(src, name + '.jpg'); }
       });
     });
   }
@@ -789,6 +806,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
             : '<div class="pt-icon">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>')
         + '<div class="feat-pin">当季主打</div>'
         + '<span class="prod-wish'+(wished?' on':'')+'" data-wid="'+p.id+'" style="top:12px;right:12px;">'+WISH_HEART_SVG+'</span>'
+        + (hasImg ? '<span class="prod-dl" data-dlid="'+p.id+'" title="下载图片（带水印）" style="top:12px;right:46px;opacity:1;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>' : '')
         + '<div class="feat-body'+(hasImg?'':' feat-body-plain')+'"><div class="feat-name">'+p.name+'</div><div class="feat-price">MYR '+p.trial+' 起</div></div>'
         + '</div>';
     });
@@ -802,6 +820,16 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         toggleWishlist(this.getAttribute('data-wid'));
         this.classList.toggle('on');
         updateWishFilterCount();
+      });
+    });
+    featGrid.querySelectorAll('.prod-dl').forEach(function(d){
+      d.addEventListener('click', function(e){
+        e.stopPropagation();
+        var card = this.closest('.feat-card');
+        var img = card ? card.querySelector('img') : null;
+        var src = img ? img.src : null;
+        var name = card ? (card.querySelector('.feat-name')||{}).textContent : 'product';
+        if(src && window.VINATH_watermarkDownload){ VINATH_watermarkDownload(src, name + '.jpg'); }
       });
     });
   }
@@ -918,6 +946,12 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       updateWishFilterCount();
       var card = document.querySelector('.prod-card[data-id="'+p.id+'"] .prod-wish');
       if(card) card.classList.toggle('on', isWishlisted(p.id));
+    };
+    var qvDlBtn = document.getElementById('qvDownloadBtn');
+    if(qvDlBtn) qvDlBtn.onclick = function(e){
+      e.stopPropagation();
+      var src = qvImgs[imgIdx];
+      if(src && window.VINATH_watermarkDownload){ VINATH_watermarkDownload(src, p.name + '-' + (imgIdx+1) + '.jpg'); }
     };
     document.getElementById('qvFullLink').onclick = function(){
       window.location.href = withCart('/product/?id=' + p.id, cartItems);
@@ -1147,6 +1181,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 </script>
 
   <script src="/assets/i18n.js?v=20260910a"></script>
+  <script src="/assets/watermark-download.js?v=20260912"></script>
 <footer>
   <div class="footer-grid">
     <!-- 第1列：服务项目 -->
