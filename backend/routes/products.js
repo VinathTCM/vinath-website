@@ -16,6 +16,15 @@ function serializePublicProduct(p){
     tags: JSON.parse(p.tags||'[]'), journeys: JSON.parse(p.journeys||'[]'), images: JSON.parse(p.images||'[]')
   };
 }
+// 列表页专用：只返回第一张图片，大幅减少API响应体积
+function serializePublicProductList(p){
+  const allImages = JSON.parse(p.images||'[]');
+  return {
+    ...serializePublicProduct(p),
+    images: allImages.slice(0, 1),
+    imageCount: allImages.length
+  };
+}
 // 管理员能看到全部字段，包括成本价、批发价、优惠码价这些定价决策数据
 function serializeAdminProduct(p){
   return { ...serializePublicProduct(p), cost:p.cost, costTrial:p.cost_trial,
@@ -26,7 +35,7 @@ function serializeAdminProduct(p){
 // ---- 公开接口：客户端商店/商品详情页调用，不需要登录 ----
 router.get('/products', (req, res) => {
   const rows = db.prepare('SELECT * FROM products WHERE active = 1 ORDER BY created_at DESC').all();
-  res.json(rows.map(serializePublicProduct));
+  res.json(rows.map(serializePublicProductList));
 });
 
 router.get('/products/:id', (req, res) => {
