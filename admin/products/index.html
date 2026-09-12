@@ -158,6 +158,16 @@ tbody tr.stock-warn:hover td, tbody tr.stock-crit:hover td{ filter:brightness(.9
 .rte-editor p{ margin:6px 0; }
 .rte-editor ul, .rte-editor ol{ margin:6px 0; padding-left:24px; }
 .rte-editor blockquote{ border-left:3px solid var(--clay); padding-left:12px; margin:8px 0; color:var(--ink-soft); }
+/* Brand preset styles for product descriptions */
+.rte-editor .brand-title{ font-size:18px; font-weight:700; color:var(--clay); margin:14px 0 8px; letter-spacing:.3px; }
+.rte-editor .brand-subtitle{ font-size:15px; font-weight:600; color:var(--ink); margin:10px 0 6px; }
+.rte-editor .brand-highlight{ background:linear-gradient(transparent 60%, rgba(168,146,112,.25) 60%); padding:0 2px; font-weight:500; }
+.rte-editor .brand-tip{ background:var(--cream); border-left:3px solid #a89270; padding:10px 14px; margin:10px 0; border-radius:0 8px 8px 0; font-size:14px; color:var(--ink-soft); line-height:1.7; }
+.rte-editor .brand-price-note{ color:#8b6914; font-weight:500; font-size:14px; }
+.rte-editor .brand-list-item{ margin:4px 0; }
+.rte-editor .brand-divider{ border:none; border-top:1px dashed var(--line); margin:14px 0; }
+.rte-toolbar .preset-btn{ background:var(--cream); color:var(--clay); border-color:var(--clay); font-weight:600; font-size:12px; padding:0 10px; }
+.rte-toolbar .preset-btn:hover{ background:var(--clay); color:#fff; }
 .field input:focus, .field textarea:focus{ outline:none; border-color:var(--clay); }
 .two-col{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 .seg{ display:flex; gap:6px; flex-wrap:wrap; }
@@ -625,6 +635,12 @@ function initRTE(editorId, toolbarId) {
     { cmd: 'undo', label: '↶', title: '撤销' },
     { cmd: 'redo', label: '↷', title: '重做' },
     { cmd: 'removeFormat', label: '清除', title: '清除格式' },
+    { sep: true },
+    { preset: 'title', label: '标题', title: '品牌大标题' },
+    { preset: 'subtitle', label: '小标题', title: '品牌小标题' },
+    { preset: 'highlight', label: '重点', title: '重点高亮' },
+    { preset: 'tip', label: '提示框', title: '温馨提示框' },
+    { preset: 'divider', label: '分割线', title: '虚线分割' },
   ];
 
   buttons.forEach(function(b) {
@@ -658,16 +674,48 @@ function initRTE(editorId, toolbarId) {
     if (b.style) btn.style.cssText = b.style;
     btn.setAttribute('data-cmd', b.cmd);
     btn.onmousedown = function(e) { e.preventDefault(); };
-    btn.onclick = function() {
-      if (b.cmd === 'formatBlock') {
-        document.execCommand('formatBlock', false, b.val);
-      } else {
-        document.execCommand(b.cmd, false, null);
-      }
-      editor.focus();
-    };
+    if (b.preset) {
+      btn.className = 'preset-btn';
+      btn.onclick = function() {
+        applyPreset(editor, b.preset);
+        editor.focus();
+      };
+    } else {
+      btn.onclick = function() {
+        if (b.cmd === 'formatBlock') {
+          document.execCommand('formatBlock', false, b.val);
+        } else {
+          document.execCommand(b.cmd, false, null);
+        }
+        editor.focus();
+      };
+    }
     toolbar.appendChild(btn);
   });
+}
+
+function applyPreset(editor, type) {
+  var sel = window.getSelection();
+  var text = sel.toString() || '在此输入内容';
+  var html = '';
+  switch(type) {
+    case 'title':
+      html = '<div class="brand-title">' + text + '</div>';
+      break;
+    case 'subtitle':
+      html = '<div class="brand-subtitle">' + text + '</div>';
+      break;
+    case 'highlight':
+      html = '<span class="brand-highlight">' + text + '</span>';
+      break;
+    case 'tip':
+      html = '<div class="brand-tip">💡 ' + text + '</div>';
+      break;
+    case 'divider':
+      html = '<hr class="brand-divider">';
+      break;
+  }
+  document.execCommand('insertHTML', false, html);
 }
 // ===== End Rich Text Editor =====
 
