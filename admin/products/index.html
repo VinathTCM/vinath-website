@@ -610,6 +610,8 @@ function initRTE(editorId, toolbarId) {
   var editor = document.getElementById(editorId);
   var toolbar = document.getElementById(toolbarId);
   if (!editor || !toolbar) return;
+  // 防重复初始化：每次调用先清空工具栏，避免保存后按钮越积越多
+  toolbar.innerHTML = '';
 
   var buttons = [
     { cmd: 'bold', label: 'B', title: '加粗', style: 'font-weight:700' },
