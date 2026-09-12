@@ -5019,10 +5019,9 @@ window.escapeHtml = function(s){
 
 </script>
 <script>
+<script>
 // ===== 运费设置弹窗 =====
 document.addEventListener('DOMContentLoaded', function(){
-// ===== 运费设置弹窗 =====
-
   var overlay = document.getElementById('shippingModalOverlay');
   if(!overlay) return;
   var btn = document.getElementById('shippingSettingsBtn');
@@ -5038,11 +5037,10 @@ document.addEventListener('DOMContentLoaded', function(){
     msg.textContent = text;
     msg.style.color = isError ? '#c0392b' : '#27ae60';
     msg.style.display = 'block';
-    setTimeout msg.style.display = 'none'; }, 3000);
+    setTimeout(function(){ msg.style.display = 'none'; }, 3000);
   }
   function openModal(){
     overlay.style.display = 'flex';
-    // Load current settings
     fetch(API_BASE + '/site-settings/shipping_settings')
       .then(function(r){ return r.json(); })
       .then(function(data){
@@ -5054,7 +5052,7 @@ document.addEventListener('DOMContentLoaded', function(){
           westIn.value = 8; eastIn.value = 18; freeIn.value = 100;
         }
       })
-      .catch westIn.value = 8; eastIn.value = 18; freeIn.value = 100; });
+      .catch(function(){ westIn.value = 8; eastIn.value = 18; freeIn.value = 100; });
   }
   function closeModal(){ overlay.style.display = 'none'; }
   function saveSettings(){
@@ -5080,7 +5078,6 @@ document.addEventListener('DOMContentLoaded', function(){
   if(cancelBtn) cancelBtn.addEventListener('click', closeModal);
   if(saveBtn) saveBtn.addEventListener('click', saveSettings);
   overlay.addEventListener('click', function(e){ if(e.target === overlay) closeModal(); });
-
 });
 </script>
 
