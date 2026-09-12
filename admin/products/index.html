@@ -141,6 +141,23 @@ tbody tr.stock-warn:hover td, tbody tr.stock-crit:hover td{ filter:brightness(.9
 .pricing-saved-hint{ margin-left:12px; font-size:12.5px; color:var(--clay); }
 .field input[type=text], .field input[type=number], .field textarea{ width:100%; padding:11px 13px; border:1.5px solid var(--line); border-radius:10px; font-size:15px; font-family:inherit; color:var(--ink); }
 .field textarea{ resize:vertical; min-height:64px; line-height:1.6; }
+/* Rich Text Editor */
+.rte-wrap{ border:1.5px solid var(--line); border-radius:10px; overflow:hidden; }
+.rte-toolbar{ display:flex; flex-wrap:wrap; gap:4px; padding:8px 10px; background:var(--cream); border-bottom:1px solid var(--line); align-items:center; }
+.rte-toolbar button{ min-width:32px; height:30px; padding:0 8px; border:1px solid var(--line); border-radius:6px; background:#fff; cursor:pointer; font-size:13px; color:var(--ink); display:inline-flex; align-items:center; justify-content:center; transition:all .15s; }
+.rte-toolbar button:hover{ background:var(--clay); color:#fff; border-color:var(--clay); }
+.rte-toolbar button.active{ background:var(--clay); color:#fff; border-color:var(--clay); }
+.rte-toolbar select{ height:30px; padding:0 6px; border:1px solid var(--line); border-radius:6px; background:#fff; font-size:13px; cursor:pointer; }
+.rte-toolbar .rte-sep{ width:1px; height:20px; background:var(--line); margin:0 4px; }
+.rte-editor{ min-height:120px; padding:12px 14px; font-size:15px; line-height:1.7; color:var(--ink); outline:none; background:#fff; }
+.rte-editor:focus{ border-color:var(--clay); }
+.rte-editor:empty:before{ content:attr(data-placeholder); color:var(--ink-soft); }
+.rte-editor h1{ font-size:24px; font-weight:700; margin:12px 0 8px; }
+.rte-editor h2{ font-size:20px; font-weight:700; margin:10px 0 6px; }
+.rte-editor h3{ font-size:17px; font-weight:600; margin:8px 0 5px; }
+.rte-editor p{ margin:6px 0; }
+.rte-editor ul, .rte-editor ol{ margin:6px 0; padding-left:24px; }
+.rte-editor blockquote{ border-left:3px solid var(--clay); padding-left:12px; margin:8px 0; color:var(--ink-soft); }
 .field input:focus, .field textarea:focus{ outline:none; border-color:var(--clay); }
 .two-col{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 .seg{ display:flex; gap:6px; flex-wrap:wrap; }
@@ -322,8 +339,11 @@ tbody tr.stock-warn:hover td, tbody tr.stock-crit:hover td{ filter:brightness(.9
       <div class="warn" id="nameWarn">请填写商品名</div>
     </div>
     <div class="field">
-      <label>商品简介</label>
-      <textarea id="fDesc" placeholder="一句话说明这个商品适合什么情况使用"></textarea>
+      <label>商品简介（支持富文本：加粗/字号/颜色/对齐/列表）</label>
+      <div class="rte-wrap" id="descRTE">
+        <div class="rte-toolbar" id="descToolbar"></div>
+        <div class="rte-editor" id="fDesc" contenteditable="true" data-placeholder="一句话说明这个商品适合什么情况使用"></div>
+      </div>
     </div>
     <div class="field">
       <label>类型</label>
@@ -384,8 +404,11 @@ tbody tr.stock-warn:hover td, tbody tr.stock-crit:hover td{ filter:brightness(.9
       </div>
     </div>
     <div class="field">
-      <label>用法</label>
-      <textarea id="fUsage" placeholder="具体煎服/外敷方法、频率、疗程"></textarea>
+      <label>用法（支持富文本）</label>
+      <div class="rte-wrap" id="usageRTE">
+        <div class="rte-toolbar" id="usageToolbar"></div>
+        <div class="rte-editor" id="fUsage" contenteditable="true" data-placeholder="具体煎服/外敷方法、频率、疗程"></div>
+      </div>
     </div>
     <div class="field">
       <div class="field-row">
@@ -571,6 +594,83 @@ window.scrollTo(0,0);
   var authToken = null;
   try { authToken = sessionStorage.getItem('vinath_auth_token'); } catch(e){}
 
+
+// ===== Rich Text Editor =====
+function initRTE(editorId, toolbarId) {
+  var editor = document.getElementById(editorId);
+  var toolbar = document.getElementById(toolbarId);
+  if (!editor || !toolbar) return;
+
+  var buttons = [
+    { cmd: 'bold', label: 'B', title: '加粗', style: 'font-weight:700' },
+    { cmd: 'italic', label: 'I', title: '斜体', style: 'font-style:italic' },
+    { cmd: 'underline', label: 'U', title: '下划线', style: 'text-decoration:underline' },
+    { cmd: 'strikeThrough', label: 'S', title: '删除线', style: 'text-decoration:line-through' },
+    { sep: true },
+    { type: 'fontSize', label: '字号' },
+    { type: 'foreColor', label: '字色' },
+    { type: 'backColor', label: '底色' },
+    { sep: true },
+    { cmd: 'justifyLeft', label: '左', title: '左对齐' },
+    { cmd: 'justifyCenter', label: '中', title: '居中' },
+    { cmd: 'justifyRight', label: '右', title: '右对齐' },
+    { sep: true },
+    { cmd: 'insertUnorderedList', label: '• 列表', title: '无序列表' },
+    { cmd: 'insertOrderedList', label: '1. 列表', title: '有序列表' },
+    { sep: true },
+    { cmd: 'formatBlock', val: 'h2', label: 'H2', title: '大标题' },
+    { cmd: 'formatBlock', val: 'h3', label: 'H3', title: '中标题' },
+    { cmd: 'formatBlock', val: 'p', label: 'P', title: '正文' },
+    { sep: true },
+    { cmd: 'undo', label: '↶', title: '撤销' },
+    { cmd: 'redo', label: '↷', title: '重做' },
+    { cmd: 'removeFormat', label: '清除', title: '清除格式' },
+  ];
+
+  buttons.forEach(function(b) {
+    if (b.sep) {
+      var sep = document.createElement('span');
+      sep.className = 'rte-sep';
+      toolbar.appendChild(sep);
+      return;
+    }
+    if (b.type === 'fontSize') {
+      var sel = document.createElement('select');
+      sel.title = '字号';
+      sel.innerHTML = '<option value="">字号</option><option value="1">小</option><option value="3">正常</option><option value="5">大</option><option value="6">特大</option><option value="7">超大</option>';
+      sel.onchange = function() { if (sel.value) document.execCommand('fontSize', false, sel.value); sel.value=''; editor.focus(); };
+      toolbar.appendChild(sel);
+      return;
+    }
+    if (b.type === 'foreColor' || b.type === 'backColor') {
+      var inp = document.createElement('input');
+      inp.type = 'color';
+      inp.title = b.label;
+      inp.style.cssText = 'width:30px;height:30px;padding:0;border:1px solid var(--line);border-radius:6px;cursor:pointer;background:#fff;';
+      inp.onchange = function() { document.execCommand(b.type, false, inp.value); editor.focus(); };
+      toolbar.appendChild(inp);
+      return;
+    }
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = b.label;
+    btn.title = b.title || b.label;
+    if (b.style) btn.style.cssText = b.style;
+    btn.setAttribute('data-cmd', b.cmd);
+    btn.onmousedown = function(e) { e.preventDefault(); };
+    btn.onclick = function() {
+      if (b.cmd === 'formatBlock') {
+        document.execCommand('formatBlock', false, b.val);
+      } else {
+        document.execCommand(b.cmd, false, null);
+      }
+      editor.focus();
+    };
+    toolbar.appendChild(btn);
+  });
+}
+// ===== End Rich Text Editor =====
+
   async function initFromBackend(){
     if(!authToken){ showToast('登录状态已失效，请重新登录'); return; }
     try {
@@ -591,6 +691,9 @@ window.scrollTo(0,0);
       console.error('连接后端失败:', e);
       showToast('暂时无法连接服务器');
     }
+    // 初始化富文本编辑器
+    initRTE('fDesc', 'descToolbar');
+    initRTE('fUsage', 'usageToolbar');
     buildTypeFilters();
     renderProducts();
   }
@@ -1084,10 +1187,10 @@ window.scrollTo(0,0);
     document.getElementById('nameWarn').classList.remove('show');
     if(id === null){
       document.getElementById('panelTitle').textContent = '新增商品';
-      fName.value = ''; fNameEn.value = ''; fDesc.value = ''; fPrice.value = ''; fTrial.value = ''; fTrialPerFull.value = '';
+      fName.value = ''; fNameEn.value = ''; fDesc.innerHTML = ''; fPrice.value = ''; fTrial.value = ''; fTrialPerFull.value = '';
       fCost.value = ''; fCostTrial.value = ''; fWholesale.value = ''; fWholesaleTrial.value = ''; fCoupon.value = ''; fCouponTrial.value = '';
       wholesaleAutoFilled = {full:true, trial:true}; couponAutoFilled = {full:true, trial:true};
-      document.getElementById('fForm').value = ''; document.getElementById('fUsage').value = '';
+      document.getElementById('fForm').value = ''; document.getElementById('fUsage').innerHTML = '';
       currentHerbs = []; renderHerbList();
       setType('plaster');
       currentActive = true; currentFeatured = false; currentJourneys = [];
@@ -1100,7 +1203,7 @@ window.scrollTo(0,0);
     } else {
       var p = PRODUCTS.find(function(x){ return x.id==id; });
       document.getElementById('panelTitle').textContent = '编辑商品';
-      fName.value = p.name; fNameEn.value = p.nameEn || ''; fDesc.value = p.desc || ''; fPrice.value = p.price; fTrial.value = p.trial; fTrialPerFull.value = (p.trialPerFull || '');
+      fName.value = p.name; fNameEn.value = p.nameEn || ''; fDesc.innerHTML = p.desc || ''; fPrice.value = p.price; fTrial.value = p.trial; fTrialPerFull.value = (p.trialPerFull || '');
       fCost.value = p.cost || ''; fCostTrial.value = p.costTrial || '';
       fWholesale.value = p.wholesale || ''; fWholesaleTrial.value = p.wholesaleTrial || '';
       fCoupon.value = p.couponPrice || ''; fCouponTrial.value = p.couponPriceTrial || '';
@@ -1108,7 +1211,7 @@ window.scrollTo(0,0);
       // manual and don't silently recompute over it; empty means still open to auto-suggestion
       wholesaleAutoFilled = {full: !p.wholesale, trial: !p.wholesaleTrial};
       couponAutoFilled = {full: !p.couponPrice, trial: !p.couponPriceTrial};
-      document.getElementById('fForm').value = p.form || ''; document.getElementById('fUsage').value = p.usage || '';
+      document.getElementById('fForm').value = p.form || ''; document.getElementById('fUsage').innerHTML = p.usage || '';
       currentHerbs = (p.herbs || []).slice(); renderHerbList();
       setType(p.type);
       currentActive = p.active; currentFeatured = !!p.featured; currentJourneys = p.journeys.slice();
@@ -1150,8 +1253,8 @@ window.scrollTo(0,0);
       wholesalePrice: Number(fWholesale.value) || 0, wholesaleTrialPrice: Number(fWholesaleTrial.value) || 0,
       couponPrice: Number(fCoupon.value) || 0, couponTrialPrice: Number(fCouponTrial.value) || 0,
       stockQty: Math.max(0, Math.round(Number(fStockQty.value) || 0)),
-      description: fDesc.value.trim(), form: document.getElementById('fForm').value.trim(),
-      usageNote: document.getElementById('fUsage').value.trim(),
+      description: fDesc.innerHTML.trim(), form: document.getElementById('fForm').value.trim(),
+      usageNote: document.getElementById('fUsage').innerHTML.trim(),
       active: currentActive, featured: currentFeatured, images: currentImgs.slice(), herbs: currentHerbs.slice()
     };
     var btn = this;
