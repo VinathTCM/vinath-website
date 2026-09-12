@@ -967,7 +967,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       window.location.href = withCart('/product/?id=' + p.id, cartItems);
     };
     qvName.textContent = p.name;
-    qvDesc.textContent = p.desc;
+    qvDesc.innerHTML = p.desc;
     qvOosMsg.innerHTML = p.inStock ? '' : '<div class="qv-oos">这款暂时缺货，补货后会自动恢复上架。</div>';
     qvVariants.innerHTML =
       '<div class="qv-variant on" data-v="full"><div class="vv-lbl">正装</div><div class="vv-price">MYR '+p.price+'</div></div>'
