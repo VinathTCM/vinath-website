@@ -5040,7 +5040,7 @@ document.addEventListener('DOMContentLoaded', function(){
   }
   function openModal(){
     overlay.style.display = 'flex';
-    fetch(API_BASE + '/site-settings/shipping_settings')
+    fetch('https://api.vinathtcm.com/api/site-settings/shipping_settings')
       .then(function(r){ return r.json(); })
       .then(function(data){
         if(data){
@@ -5061,7 +5061,7 @@ document.addEventListener('DOMContentLoaded', function(){
       east: parseFloat(eastIn.value) || 0,
       freeThreshold: parseFloat(freeIn.value) || 0
     };
-    fetch(API_BASE + '/admin/site-settings/shipping_settings', {
+    fetch('https://api.vinathtcm.com/api/admin/site-settings/shipping_settings', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
       body: JSON.stringify(payload)
