@@ -1502,13 +1502,16 @@ For any questions about our certifications or product safety, please contact us 
 
   var docs = await getPolicyDocs();
 
-  document.getElementById('policyTabs').innerHTML = POLICY_DOCS.map(function(key){
+  var tabsEl = document.getElementById('policyTabs');
+  if(tabsEl) tabsEl.innerHTML = POLICY_DOCS.map(function(key){
     return '<a href="#'+key+'" class="policy-tab" data-doc="'+key+'">'+escapeHtml(docs[key].title)+'</a>';
   }).join('');
-  document.getElementById('footerLinks').innerHTML = POLICY_DOCS.map(function(key){
+  var footerLinksEl = document.getElementById('footerLinks');
+  if(footerLinksEl) footerLinksEl.innerHTML = POLICY_DOCS.map(function(key){
     return '<a href="#'+key+'" data-doc="'+key+'">'+escapeHtml(docs[key].title)+'</a>';
   }).join('');
-  document.getElementById('policyDocs').innerHTML = POLICY_DOCS.map(function(key){
+  var docsEl = document.getElementById('policyDocs');
+  if(docsEl) docsEl.innerHTML = POLICY_DOCS.map(function(key){
     var doc = docs[key];
     return '<article class="policy-doc" id="doc-'+key+'">'
       + '<h1>'+escapeHtml(doc.title)+'</h1>'
