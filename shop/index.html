@@ -188,6 +188,9 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .vh-toast{ position:fixed; left:50%; bottom:22px; transform:translate(-50%,10px); background:rgba(40,31,22,.94); color:#FDF8F0; font-size:15px; padding:11px 20px;
   border-radius:20px; opacity:0; transition:opacity .25s, transform .25s; pointer-events:none; z-index:70; max-width:88vw; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .vh-toast.show{ opacity:1; transform:translate(-50%,0); }
+
+.prod-price-sub{ font-size:11px; color:var(--espresso-soft); opacity:.75; margin-top:2px; }
+.feat-price-sub{ font-size:11px; color:rgba(255,255,255,.8); margin-top:2px; }
 </style>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=20260911logo4">
 <link rel="icon" href="/favicon.ico?v=20260911logo4" sizes="any">
@@ -653,7 +656,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + (hasImg ? '<span class="prod-dl" data-dlid="'+p.id+'" title="下载图片（带水印）"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>' : '')
       + '</div>'
       + '<div class="prod-name">'+p.name+'</div>'
-      + '<div class="prod-price">MYR '+p.trial+' 起</div>'
+      + '<div class="prod-price">试用装 RM '+p.trial+' 起</div><div class="prod-price-sub">正装'+(p.trial_per_full||7)+'包 约RM'+(p.price/(p.trial_per_full||7)).toFixed(2)+'/包</div>'
       + '</div>';
   }
 
@@ -807,7 +810,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         + '<div class="feat-pin">当季主打</div>'
         + '<span class="prod-wish'+(wished?' on':'')+'" data-wid="'+p.id+'" style="top:12px;right:12px;">'+WISH_HEART_SVG+'</span>'
         + (hasImg ? '<span class="prod-dl" data-dlid="'+p.id+'" title="下载图片（带水印）" style="top:12px;right:46px;opacity:1;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>' : '')
-        + '<div class="feat-body'+(hasImg?'':' feat-body-plain')+'"><div class="feat-name">'+p.name+'</div><div class="feat-price">MYR '+p.trial+' 起</div></div>'
+        + '<div class="feat-body'+(hasImg?'':' feat-body-plain')+'"><div class="feat-name">'+p.name+'</div><div class="feat-price">试用装 RM '+p.trial+' 起</div><div class="feat-price-sub">正装'+(p.trial_per_full||7)+'包 约RM'+(p.price/(p.trial_per_full||7)).toFixed(2)+'/包</div></div>'
         + '</div>';
     });
     featGrid.innerHTML = html || '<div class="prod-empty">暂无精选商品</div>';
