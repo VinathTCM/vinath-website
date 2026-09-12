@@ -285,6 +285,7 @@
       'footer.support': '支持中心',
       'footer.track_order': '订单追踪',
       'footer.track_booking': '预约追踪',
+      'footer.policy': '政策与条款',
       'footer.contact': '联系我们',
       'footer.follow': '关注我们',
 
@@ -567,6 +568,7 @@
       'footer.support': 'Support',
       'footer.track_order': 'Track Order',
       'footer.track_booking': 'Track Booking',
+      'footer.policy': 'Policies & Terms',
       'footer.contact': 'Contact Us',
       'footer.follow': 'Follow Us',
 
