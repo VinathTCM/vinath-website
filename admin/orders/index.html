@@ -5073,7 +5073,7 @@ document.addEventListener('DOMContentLoaded', function(){
       if(r.ok){ showMsg('保存成功！前台结算页将自动使用新运费', false); }
       else { showMsg('保存失败，请确认已登录大管理员', true); }
     })
-    .catch showMsg('网络错误', true); });
+    .catch(function(){ showMsg('网络错误', true); });
   }
   if(btn) btn.addEventListener('click', openModal);
   if(closeBtn) closeBtn.addEventListener('click', closeModal);
