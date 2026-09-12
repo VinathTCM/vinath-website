@@ -1009,7 +1009,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   qvOosMsg.innerHTML = p.inStock ? '' : '<div class="qv-oos">This item is out of stock and will be relisted automatically once restocked.</div>';
   qvVariants.innerHTML =
    '<div class="qv-variant on" data-v="full"><div class="vv-lbl">Full Size</div><div class="vv-price">MYR '+p.price+'</div></div>'
-   + '<div class="qv-variant" data-v="trial"><div class="vv-lbl">Trial Size</div><div class="vv-price">MYR '+p.trial+'</div></div>';
+   + '<div class="qv-variant" data-v="trial"><div class="vv-lbl">Trial Size</div><div class="vv-price">MYR '+p.trial+'</div></div>'
+   + '<div class="qv-conversion" style="margin-top:8px;font-size:12px;color:var(--espresso-soft);text-align:center;">'+((p.trialPerFull || 7) + ' trial packs = 1 full pack')+'</div>';
   qvVariants.querySelectorAll('.qv-variant').forEach(function(v){
    v.addEventListener('click', function(){
     selectedVariant = this.getAttribute('data-v');
