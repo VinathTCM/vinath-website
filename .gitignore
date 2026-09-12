@@ -19,3 +19,4 @@ node_modules/
 *.db-shm
 # runtime product backups
 backend/backups/
+_*.py
