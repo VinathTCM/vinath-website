@@ -452,6 +452,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     backendProducts.forEach(function(p){
      PRODUCTS.push({ id:p.id, name:p.name, nameEn:p.nameEn, type:p.type, price:p.price,
       trial:(typeof p.trial_price === 'number' ? p.trial_price : p.price),
+          trialPerFull:(p.trialPerFull || 7),
       trialPerFull:p.trialPerFull,
       desc:p.description, descEn:p.descriptionEn, active:p.active, inStock:p.stock_qty > 0, stockQty:p.stock_qty,
       featured:p.featured, imgs:p.images||[], form:p.form||'', herbs:p.herbs||[], usage:p.usage_note||'', usageEn:p.usageNoteEn||'',
@@ -644,7 +645,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
    var hasImg = p.imgs && p.imgs[0];
    return '<div class="related-card" data-id="'+p.id+'">'
     + '<div class="related-thumb">' + (hasImg ? '<img src="'+p.imgs[0]+'" alt="'+p.name+'">' : '<div class="pt-icon">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>') + '</div>'
-    + '<div class="related-name">'+(p.nameEn||p.name)+'</div><div class="related-price">Trial from RM '+p.trial+'</div><div class="related-price-sub">Full size '+(p.trial_per_full||7)+' sachets ~RM'+(p.price/(p.trial_per_full||7)).toFixed(2)+'/sachet</div></div>';
+    + '<div class="related-name">'+(p.nameEn||p.name)+'</div><div class="related-price">Trial from RM '+p.trial+'</div><div class="related-price-sub">Full size '+(p.trialPerFull||7)+' sachets ~RM'+(p.price/(p.trialPerFull||7)).toFixed(2)+'/sachet</div></div>';
   }).join('');
   return '<div class="pd-section"><div class="pd-section-title">Similar Products · '+TYPE_LABEL[product.type]+'</div><div class="related-grid">'+cards+'</div></div>';
  }

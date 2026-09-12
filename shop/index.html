@@ -557,7 +557,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       var products = await res.json();
       var mapped = products.map(function(p){
         return { id:p.id, name:p.name, nameEn:p.nameEn, type:p.type, price:p.price,
-          trial:(typeof p.trial_price === 'number' ? p.trial_price : p.price), // 没设试用价就用常规价兜底，
+          trial:(typeof p.trial_price === 'number' ? p.trial_price : p.price),
+          trialPerFull:(p.trialPerFull || 7), // 没设试用价就用常规价兜底，
                                                                                   // 避免页面上出现"MYR null"
           desc:p.description, active:p.active, inStock:p.stock_qty > 0, stockQty:p.stock_qty,
           featured:p.featured, imgs:p.images||[], form:'', herbs:[], usage:p.usage_note||'',
@@ -656,7 +657,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + (hasImg ? '<span class="prod-dl" data-dlid="'+p.id+'" title="下载图片（带水印）"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>' : '')
       + '</div>'
       + '<div class="prod-name">'+p.name+'</div>'
-      + '<div class="prod-price">试用装 RM '+p.trial+' 起</div><div class="prod-price-sub">正装'+(p.trial_per_full||7)+'包 约RM'+(p.price/(p.trial_per_full||7)).toFixed(2)+'/包</div>'
+      + '<div class="prod-price">试用装 RM '+p.trial+' 起</div><div class="prod-price-sub">正装'+(p.trialPerFull||7)+'包 约RM'+(p.price/(p.trialPerFull||7)).toFixed(2)+'/包</div>'
       + '</div>';
   }
 
@@ -810,7 +811,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         + '<div class="feat-pin">当季主打</div>'
         + '<span class="prod-wish'+(wished?' on':'')+'" data-wid="'+p.id+'" style="top:12px;right:12px;">'+WISH_HEART_SVG+'</span>'
         + (hasImg ? '<span class="prod-dl" data-dlid="'+p.id+'" title="下载图片（带水印）" style="top:12px;right:46px;opacity:1;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>' : '')
-        + '<div class="feat-body'+(hasImg?'':' feat-body-plain')+'"><div class="feat-name">'+p.name+'</div><div class="feat-price">试用装 RM '+p.trial+' 起</div><div class="feat-price-sub">正装'+(p.trial_per_full||7)+'包 约RM'+(p.price/(p.trial_per_full||7)).toFixed(2)+'/包</div></div>'
+        + '<div class="feat-body'+(hasImg?'':' feat-body-plain')+'"><div class="feat-name">'+p.name+'</div><div class="feat-price">试用装 RM '+p.trial+' 起</div><div class="feat-price-sub">正装'+(p.trialPerFull||7)+'包 约RM'+(p.price/(p.trialPerFull||7)).toFixed(2)+'/包</div></div>'
         + '</div>';
     });
     featGrid.innerHTML = html || '<div class="prod-empty">暂无精选商品</div>';
@@ -965,7 +966,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     qvVariants.innerHTML =
       '<div class="qv-variant on" data-v="full"><div class="vv-lbl">正装</div><div class="vv-price">MYR '+p.price+'</div></div>'
       + '<div class="qv-variant" data-v="trial"><div class="vv-lbl">试用装</div><div class="vv-price">MYR '+p.trial+'</div></div>';
-      + '<div class="qv-conversion" style="margin-top:8px;font-size:12px;color:var(--espresso-soft);text-align:center;">'+((p.trial_per_full || 7) + ' 个试用装 = 1 个正装')+'</div>';
+      + '<div class="qv-conversion" style="margin-top:8px;font-size:12px;color:var(--espresso-soft);text-align:center;">'+((p.trialPerFull || 7) + ' 个试用装 = 1 个正装')+'</div>';
     qvVariants.querySelectorAll('.qv-variant').forEach(function(v){
       v.addEventListener('click', function(){
         selectedVariant = this.getAttribute('data-v');
