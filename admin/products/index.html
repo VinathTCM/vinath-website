@@ -742,6 +742,20 @@ function applyPreset(editor, type) {
       console.error('连接后端失败:', e);
       showToast('暂时无法连接服务器');
     }
+    // 从后端获取商品分类，和内容管理的商品分类保持一致
+    try {
+      var catRes = await fetch(API_BASE + '/categories');
+      if(catRes.ok){
+        var categories = await catRes.json();
+        if(categories && categories.length > 0){
+          SHOP_CATEGORIES = categories.map(function(c){ return {key:c.key, name:c.name}; });
+          TYPE_LABEL = {};
+          SHOP_CATEGORIES.forEach(function(c){ TYPE_LABEL[c.key] = c.name; });
+        }
+      }
+    } catch(e){
+      // 获取分类失败时保持默认分类，不影响使用
+    }
     // 初始化富文本编辑器
     initRTE('fDesc', 'descToolbar');
     initRTE('fUsage', 'usageToolbar');
@@ -1270,18 +1284,20 @@ function applyPreset(editor, type) {
       fStockQty.value = typeof p.stockQty === 'number' ? p.stockQty : 0;
       featToggle.classList.toggle('on', currentFeatured); featLbl.textContent = currentFeatured ? '精选中' : '未精选';
       // 列表只返回第一张图，编辑时单独拉取全部图片，避免保存时丢失其他图片
+      currentImgs = (p.imgs || []).slice();
+      renderGallery();
       try {
         var detailRes = await fetch(API_BASE + '/products/' + id);
         if(detailRes.ok){
           var detail = await detailRes.json();
-          currentImgs = (detail.images || []).slice();
-        } else {
-          currentImgs = (p.imgs || []).slice();
+          if(detail.images && detail.images.length > currentImgs.length){
+            currentImgs = detail.images.slice();
+            renderGallery();
+          }
         }
       } catch(e) {
-        currentImgs = (p.imgs || []).slice();
+        // 获取失败时保持列表返回的图片，不影响编辑
       }
-      renderGallery();
       buildJourneyChips();
       buildTagPicker(p.tags);
     }
