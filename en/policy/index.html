@@ -623,7 +623,8 @@ If you have any questions about this legal notice, please contact us via:
  document.getElementById('policyTabs').innerHTML = POLICY_DOCS.map(function(key){
   return '<a href="#'+key+'" class="policy-tab" data-doc="'+key+'">'+escapeHtml(docs[key].title)+'</a>';
  }).join('');
- document.getElementById('footerLinks').innerHTML = POLICY_DOCS.map(function(key){
+ var footerLinksEl = document.getElementById('footerLinks');
+ if(footerLinksEl) footerLinksEl.innerHTML = POLICY_DOCS.map(function(key){
   return '<a href="#'+key+'" data-doc="'+key+'">'+escapeHtml(docs[key].title)+'</a>';
  }).join('');
  document.getElementById('policyDocs').innerHTML = POLICY_DOCS.map(function(key){
