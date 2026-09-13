@@ -910,11 +910,12 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   }, {passive:true});
   document.getElementById('qvHero').addEventListener('touchmove', function(e){
     if(!qvTouching) return;
+    e.preventDefault();
     qvDx = e.touches[0].clientX - qvSx;
     var eff = qvDx;
     if((imgIdx===0 && qvDx>0) || (imgIdx===qvImgs.length-1 && qvDx<0)) eff = qvDx*0.35;
     qvTrack.style.transform = 'translateX(calc(-'+(imgIdx*100)+'% + '+eff+'px))';
-  }, {passive:true});
+  }, {passive:false});
   document.getElementById('qvHero').addEventListener('touchend', function(){
     qvTouching=false; qvTrack.style.transition='';
     if(Math.abs(qvDx)>40){ qvDx<0 ? goImg(imgIdx+1) : goImg(imgIdx-1); } else { renderQvImage(); }
@@ -1002,8 +1003,9 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     qvAdd.textContent = p.inStock ? '加入购物车' : '暂时缺货';
     qvOverlay.classList.add('open');
     qvSheet.classList.add('open');
+    document.body.style.overflow = 'hidden';
   }
-  function closeQuickView(){ qvOverlay.classList.remove('open'); qvSheet.classList.remove('open'); }
+  function closeQuickView(){ qvOverlay.classList.remove('open'); qvSheet.classList.remove('open'); document.body.style.overflow = ''; }
   document.getElementById('qvClose').addEventListener('click', closeQuickView);
   qvOverlay.addEventListener('click', closeQuickView);
 
