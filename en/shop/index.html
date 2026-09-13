@@ -107,7 +107,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .prod-group-cond{ font-size:15px; font-weight:700; color:var(--espresso); }
 .prod-group-count{ font-size:12px; color:var(--espresso-soft); margin-left:auto; }
 .prod-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(140px,1fr)); gap:14px; }
-.prod-card{ cursor:pointer; }
+.prod-card{ cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
 .prod-thumb{ width:100%; aspect-ratio:4/3; border-radius:14px; overflow:hidden; position:relative; box-shadow:0 3px 12px var(--shadow); }
 .prod-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
 .prod-thumb .pt-icon{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:var(--tan-deep); opacity:.85; }
@@ -197,6 +197,13 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .feat-card .img-ref{ position:absolute; top:34px; right:10px; background:rgba(255,255,255,.85); color:var(--espresso-soft); font-size:9px; padding:2px 6px; border-radius:8px; font-weight:500; z-index:3; }
 
 .qv-img-disclaimer{ position:absolute; bottom:10px; right:10px; background:rgba(255,255,255,.88); color:var(--espresso); font-size:10px; padding:3px 8px; border-radius:8px; font-weight:500; z-index:5; }
+
+/* 移动端：下载按钮默认显示，避免第一次点击只触发hover */
+@media (pointer:coarse) {
+  .prod-dl{ opacity:1 !important; }
+  .prod-card:hover .prod-dl, .prod-card:active .prod-dl{ opacity:1 !important; }
+}
+
 </style>
  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=20260911logo4">
 <link rel="icon" href="/favicon.ico?v=20260911logo4" sizes="any">
