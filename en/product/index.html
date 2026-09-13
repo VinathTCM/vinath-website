@@ -523,7 +523,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
        var fullProduct = JSON.parse(xhr.responseText);
        if(fullProduct.images && fullProduct.images.length > 0){
          var p = PRODUCTS_BY_ID[productId];
-         if(p){ p.imgs = fullProduct.images.slice(); }
+         if(p){
+           p.imgs = fullProduct.images.slice();
+           p.images = fullProduct.images.slice(); // Also update images field so buildHero gets all images
+         }
        }
      }
    } catch(e){ console.error('Failed to fetch product details: ', e); }
@@ -598,6 +601,34 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   if(nextBtn) nextBtn.classList.toggle('hide', imgIdx===pdImgs.length-1 || pdImgs.length<2);
  }
  function goPdImg(i){ imgIdx = Math.max(0, Math.min(pdImgs.length-1, i)); renderPdImage(); }
+
+ // Mobile touch swipe for image carousel
+ var pdSx=0, pdDx=0, pdTouching=false;
+ document.addEventListener('touchstart', function(e){
+   var hero = document.getElementById('pdHero');
+   if(!hero || !hero.contains(e.target)) return;
+   pdSx=e.touches[0].clientX; pdDx=0; pdTouching=true;
+   var track = document.getElementById('pdTrack');
+   if(track) track.style.transition='none';
+ }, {passive:true});
+ document.addEventListener('touchmove', function(e){
+   if(!pdTouching) return;
+   var hero = document.getElementById('pdHero');
+   if(!hero || !hero.contains(e.target)) return;
+   pdDx = e.touches[0].clientX - pdSx;
+   var eff = pdDx;
+   if((imgIdx===0 && pdDx>0) || (imgIdx===pdImgs.length-1 && pdDx<0)) eff = pdDx*0.35;
+   var track = document.getElementById('pdTrack');
+   if(track) track.style.transform = 'translateX(calc(-'+(imgIdx*100)+'% + '+eff+'px))';
+ }, {passive:true});
+ document.addEventListener('touchend', function(){
+   if(!pdTouching) return;
+   pdTouching=false;
+   var track = document.getElementById('pdTrack');
+   if(track) track.style.transition='';
+   if(Math.abs(pdDx)>40){ pdDx<0 ? goPdImg(imgIdx+1) : goPdImg(imgIdx-1); } else { renderPdImage(); }
+   pdDx=0;
+ });
 
  function buildHero(){
   var hasImgs = (product.images || product.imgs) && (product.images || product.imgs).length;

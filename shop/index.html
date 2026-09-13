@@ -935,9 +935,27 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     selectedVariant = 'full';
     setQty(1);
     var meta = TYPE_META[p.type];
+    // 商品列表只返回第一张图，打开弹窗时单独拉取全部图片
     var hasImgs = p.imgs && p.imgs.length;
     qvImgs = hasImgs ? p.imgs.slice() : [null];
     imgIdx = 0;
+    // 异步获取全部图片，获取到后更新显示
+    fetch(API_BASE + '/products/' + id)
+      .then(function(r){ return r.json(); })
+      .then(function(full){
+        if(full.images && full.images.length > qvImgs.length){
+          qvImgs = full.images.slice();
+          p.imgs = full.images.slice();
+          p.images = full.images.slice();
+          imgIdx = 0;
+          qvTrack.innerHTML = qvImgs.map(function(src){
+            return '<div class="qv-hero-slide">' + (src ? '<img src="'+src+'" alt="'+p.name+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';"><div class="pt-icon" style="display:none;">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>' : '<div class="pt-icon">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>') + '</div>';
+          }).join('');
+          qvDots.innerHTML = qvImgs.length>1 ? qvImgs.map(function(_,i){ return '<span class="qv-dot'+(i===0?' on':'')+'"></span>'; }).join('') : '';
+          renderQvImage();
+        }
+      })
+      .catch(function(){});
     qvTrack.style.transition = 'none';
     qvTrack.innerHTML = qvImgs.map(function(src){
       return '<div class="qv-hero-slide">' + (src ? '<img src="'+src+'" alt="'+p.name+'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';"><div class="pt-icon" style="display:none;">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>' : '<div class="pt-icon">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>') + '</div>';
