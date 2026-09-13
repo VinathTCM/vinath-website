@@ -433,23 +433,6 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     } catch(e){ console.error('连接后端失败:', e); }
   })();
 
-  // 商品列表只返回第一张图，详情页单独拉取当前商品的全部图片
-  (function loadFullProductImagesSync(){
-    if(!productId) return;
-    try {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', API_BASE + '/products/' + productId, false);
-      xhr.send(null);
-      if(xhr.status === 200){
-        var fullProduct = JSON.parse(xhr.responseText);
-        if(fullProduct.images && fullProduct.images.length > 0){
-          var p = PRODUCTS_BY_ID[productId];
-          if(p){ p.imgs = fullProduct.images.slice(); }
-        }
-      }
-    } catch(e){ console.error('获取商品详情失败:', e); }
-  })();
-
   var TAG_LOOKUP = {};
   Object.keys(TAG_DATA).forEach(function(journey){
     TAG_DATA[journey].forEach(function(g){
@@ -487,6 +470,21 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   var params = new URLSearchParams(window.location.search);
   var productId = params.get('id');
+  // 商品列表只返回第一张图，详情页单独拉取当前商品的全部图片
+  if(productId){
+    try {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', API_BASE + '/products/' + productId, false);
+      xhr.send(null);
+      if(xhr.status === 200){
+        var fullProduct = JSON.parse(xhr.responseText);
+        if(fullProduct.images && fullProduct.images.length > 0){
+          var p = PRODUCTS_BY_ID[productId];
+          if(p){ p.imgs = fullProduct.images.slice(); }
+        }
+      }
+    } catch(e){ console.error('获取商品详情失败:', e); }
+  }
   // ---- 收藏/心愿单: per-browser/per-device, same as the shopping cart (no login system exists) ----
   var WISHLIST_KEY = 'vinath_wishlist';
   function getWishlist(){

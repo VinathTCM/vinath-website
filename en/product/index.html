@@ -476,23 +476,6 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   } catch(e){ console.error('Failed to connect to backend: ', e); }
  })();
 
- // Product list only returns first image; detail page fetches all images separately
- (function loadFullProductImagesSync(){
-   if(!productId) return;
-   try {
-     var xhr = new XMLHttpRequest();
-     xhr.open('GET', API_BASE + '/products/' + productId, false);
-     xhr.send(null);
-     if(xhr.status === 200){
-       var fullProduct = JSON.parse(xhr.responseText);
-       if(fullProduct.images && fullProduct.images.length > 0){
-         var p = PRODUCTS_BY_ID[productId];
-         if(p){ p.imgs = fullProduct.images.slice(); }
-       }
-     }
-   } catch(e){ console.error('Failed to fetch product details: ', e); }
- })();
-
  var TAG_LOOKUP = {};
  Object.keys(TAG_DATA).forEach(function(journey){
   TAG_DATA[journey].forEach(function(g){
@@ -530,6 +513,21 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
  var params = new URLSearchParams(window.location.search);
  var productId = params.get('id');
+ // Product list only returns first image; detail page fetches all images separately
+ if(productId){
+   try {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', API_BASE + '/products/' + productId, false);
+     xhr.send(null);
+     if(xhr.status === 200){
+       var fullProduct = JSON.parse(xhr.responseText);
+       if(fullProduct.images && fullProduct.images.length > 0){
+         var p = PRODUCTS_BY_ID[productId];
+         if(p){ p.imgs = fullProduct.images.slice(); }
+       }
+     }
+   } catch(e){ console.error('Failed to fetch product details: ', e); }
+ }
  // ---- 收藏/心愿单: per-browser/per-device, same as the shopping cart (no login system exists) ----
  var WISHLIST_KEY = 'vinath_wishlist';
  function getWishlist(){
