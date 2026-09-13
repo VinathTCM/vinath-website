@@ -585,8 +585,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
  function goPdImg(i){ imgIdx = Math.max(0, Math.min(pdImgs.length-1, i)); renderPdImage(); }
 
  function buildHero(){
-  var hasImgs = product.imgs && product.imgs.length;
-  pdImgs = hasImgs ? product.imgs.slice() : [null];
+  var hasImgs = (product.images || product.imgs) && (product.images || product.imgs).length;
+  pdImgs = hasImgs ? (product.images || product.imgs).slice() : [null];
   var slides = pdImgs.map(function(src){
    return '<div class="pd-hero-slide">' + (src ? '<img src="'+src+'" alt="'+product.name+'">' : '<div class="pt-icon">'+(ICON[product.type]||GENERIC_CAT_ICON)+'</div>') + '</div>';
   }).join('');
