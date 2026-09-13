@@ -31,6 +31,15 @@ function serializeAdminProduct(p){
     wholesalePrice:p.wholesale_price, wholesaleTrialPrice:p.wholesale_trial_price,
     couponPrice:p.coupon_price, couponTrialPrice:p.coupon_trial_price };
 }
+// 管理员列表专用：只返回第一张图片，大幅减少API响应体积（编辑时再单独拉全部图片）
+function serializeAdminProductList(p){
+  const allImages = JSON.parse(p.images||'[]');
+  return {
+    ...serializeAdminProduct(p),
+    images: allImages.slice(0, 1),
+    imageCount: allImages.length
+  };
+}
 
 // ---- 公开接口：客户端商店/商品详情页调用，不需要登录 ----
 router.get('/products', (req, res) => {
@@ -52,7 +61,7 @@ router.get('/categories', (req, res) => {
 // ---- 管理接口：需要大管理员登录，对应之前"商品管理"后台的功能 ----
 router.get('/admin/products', authMiddleware, requireRole('SENIOR'), (req, res) => {
   const rows = db.prepare('SELECT * FROM products ORDER BY created_at DESC').all();
-  res.json(rows.map(serializeAdminProduct));
+  res.json(rows.map(serializeAdminProductList));
 });
 
 function productFieldsFromBody(b){

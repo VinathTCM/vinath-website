@@ -1233,7 +1233,7 @@ function applyPreset(editor, type) {
     featLbl.textContent = currentFeatured ? '精选中' : '未精选';
   });
 
-  function openPanel(id){
+  async function openPanel(id){
     editingId = id;
     document.getElementById('nameWarn').classList.remove('show');
     if(id === null){
@@ -1269,7 +1269,19 @@ function applyPreset(editor, type) {
       activeToggle.classList.toggle('on', p.active); activeLbl.textContent = p.active ? '上架中' : '已下架';
       fStockQty.value = typeof p.stockQty === 'number' ? p.stockQty : 0;
       featToggle.classList.toggle('on', currentFeatured); featLbl.textContent = currentFeatured ? '精选中' : '未精选';
-      currentImgs = (p.imgs || []).slice(); renderGallery();
+      // 列表只返回第一张图，编辑时单独拉取全部图片，避免保存时丢失其他图片
+      try {
+        var detailRes = await fetch(API_BASE + '/products/' + id);
+        if(detailRes.ok){
+          var detail = await detailRes.json();
+          currentImgs = (detail.images || []).slice();
+        } else {
+          currentImgs = (p.imgs || []).slice();
+        }
+      } catch(e) {
+        currentImgs = (p.imgs || []).slice();
+      }
+      renderGallery();
       buildJourneyChips();
       buildTagPicker(p.tags);
     }
