@@ -281,6 +281,10 @@ tbody tr:hover{ background:#FBFAF7; }
   </div>
 
   <div id="tab-categories" style="display:none;">
+    <div class="toolbar" style="margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+      <button class="btn-primary" id="saveCategoriesBtn">保存分类</button>
+      <span id="catSaveStatus" style="font-size:13px;color:var(--ink-soft);"></span>
+    </div>
     <div id="catList"></div>
     <div class="add-cat-row">
       <input type="text" id="newCatInput" placeholder="新分类中文名，例如：外用系列">
@@ -1032,15 +1036,32 @@ window.scrollTo(0,0);
     saveShopCategories(SHOP_CATEGORIES_SEED);
     return SHOP_CATEGORIES_SEED;
   }
-  function saveShopCategories(list){
+  function saveShopCategories(list, showToast){
     try { localStorage.setItem(SHOP_CATEGORIES_KEY, JSON.stringify(list)); } catch(e){}
+    var statusEl = document.getElementById('catSaveStatus');
+    if(statusEl) statusEl.textContent = '保存中...';
     try {
       fetch(API_BASE + '/admin/site-settings/shop_categories', {
         method:'PUT',
         headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},
         body:JSON.stringify(list)
-      }).catch(function(e){ console.warn('shop_categories save failed', e); });
-    } catch(e){}
+      }).then(function(r){
+        if(r.ok){
+          if(statusEl) statusEl.textContent = '✓ 已保存';
+          if(showToast) showAdminToast('分类已保存');
+          setTimeout(function(){ if(statusEl) statusEl.textContent = ''; }, 3000);
+        } else {
+          if(statusEl) statusEl.textContent = '✗ 保存失败，请重试';
+          if(showToast) showAdminToast('保存失败，请重试');
+        }
+      }).catch(function(e){
+        console.warn('shop_categories save failed', e);
+        if(statusEl) statusEl.textContent = '✗ 保存失败：' + e.message;
+        if(showToast) showAdminToast('保存失败：' + e.message);
+      });
+    } catch(e){
+      if(statusEl) statusEl.textContent = '✗ 保存失败';
+    }
   }
   function categoryProductCount(key){
     return getProductCatalogForPicker().filter(function(p){ return p.type===key && p.active; }).length;
@@ -1503,6 +1524,9 @@ window.scrollTo(0,0);
       });
     });
   }
+  document.getElementById('saveCategoriesBtn').addEventListener('click', function(){
+    saveShopCategories(CATEGORIES, true);
+  });
   document.getElementById('addCatBtn').addEventListener('click', function(){
     var input = document.getElementById('newCatInput');
     var inputEn = document.getElementById('newCatInputEn');
