@@ -57,6 +57,21 @@
     .footer-top { flex-direction:column; gap:20px; align-items:flex-start; }
     .footer-bottom { flex-direction:column; align-items:flex-start; gap:6px; }
   }
+
+  /* Brand styles for policy content */
+  .policy-doc h1 { font-family:'Noto Serif SC', serif; font-weight:600; font-size:clamp(28px,4vw,40px); margin-bottom:8px; color:var(--forest); }
+  .policy-doc h2 { font-family:'Noto Serif SC', serif; font-weight:600; font-size:22px; margin:36px 0 16px; color:var(--forest); border-bottom:2px solid var(--gold); padding-bottom:8px; }
+  .policy-doc h3 { font-family:'Noto Serif SC', serif; font-weight:600; font-size:18px; margin:28px 0 12px; color:var(--forest-light); }
+  .policy-doc h4 { font-family:'Noto Serif SC', serif; font-weight:600; font-size:16px; margin:20px 0 10px; color:var(--gold); }
+  .policy-doc p { font-size:15.5px; line-height:1.9; opacity:.85; margin-bottom:14px; text-align:justify; text-justify:inter-ideograph; }
+  .policy-doc ul, .policy-doc ol { margin:0 0 16px 24px; }
+  .policy-doc li { font-size:15.5px; line-height:1.9; opacity:.85; margin-bottom:6px; text-align:justify; text-justify:inter-ideograph; }
+  .policy-doc strong { color:var(--forest); font-weight:600; }
+  .policy-doc hr { border:none; border-top:1px dashed rgba(38,54,43,.2); margin:28px 0; }
+  .policy-doc .brand-tip { background:var(--sage-mist); border-left:3px solid var(--gold); padding:16px 20px; border-radius:0 8px 8px 0; margin:20px 0; }
+  .policy-doc .brand-tip p { margin-bottom:8px; }
+  .policy-doc .brand-divider { border:none; border-top:1px dashed rgba(38,54,43,.2); margin:28px 0; }
+
 </style>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=20260911logo4">
 <link rel="icon" href="/favicon.ico?v=20260911logo4" sizes="any">
@@ -1484,15 +1499,42 @@ For any questions about our certifications or product safety, please contact us 
     var lines = text.replace(/\r\n/g,'\n').split('\n');
     var html = '';
     var para = [];
+    var listType = null;
     function flush(){
       if(para.length){ html += '<p>'+para.join('\n')+'</p>'; para = []; }
     }
+    function closeList(){
+      if(listType){ html += '</'+listType+'>'; listType = null; }
+    }
+    function inlineFormat(text){
+      // **bold**
+      text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      // *italic*
+      text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
+      return text;
+    }
     lines.forEach(function(line){
-      if(line.trim()===''){ flush(); }
-      else if(line.indexOf('## ')===0){ flush(); html += '<h3>'+line.slice(3)+'</h3>'; }
-      else { para.push(line); }
+      var trimmed = line.trim();
+      if(trimmed===''){ flush(); closeList(); }
+      else if(trimmed.indexOf('#### ')===0){ flush(); closeList(); html += '<h4>'+inlineFormat(trimmed.slice(5))+'</h4>'; }
+      else if(trimmed.indexOf('### ')===0){ flush(); closeList(); html += '<h3>'+inlineFormat(trimmed.slice(4))+'</h3>'; }
+      else if(trimmed.indexOf('## ')===0){ flush(); closeList(); html += '<h2>'+inlineFormat(trimmed.slice(3))+'</h2>'; }
+      else if(trimmed.indexOf('# ')===0){ flush(); closeList(); html += '<h1>'+inlineFormat(trimmed.slice(2))+'</h1>'; }
+      else if(trimmed==='---'){ flush(); closeList(); html += '<hr class="brand-divider">'; }
+      else if(/^\d+\.\s/.test(trimmed)){
+        flush();
+        if(listType!=='ol'){ closeList(); html += '<ol>'; listType='ol'; }
+        html += '<li>'+inlineFormat(trimmed.replace(/^\d+\.\s/,''))+'</li>';
+      }
+      else if(/^[-*]\s/.test(trimmed)){
+        flush();
+        if(listType!=='ul'){ closeList(); html += '<ul>'; listType='ul'; }
+        html += '<li>'+inlineFormat(trimmed.replace(/^[-*]\s/,''))+'</li>';
+      }
+      else { closeList(); para.push(inlineFormat(line)); }
     });
     flush();
+    closeList();
     return html;
   }
 
