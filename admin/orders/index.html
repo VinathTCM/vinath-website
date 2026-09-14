@@ -541,20 +541,24 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
 
 <div class="login-overlay" id="loginOverlay">
   <div class="login-box" id="loginBoxMain">
-    <h2>请选择当前操作的管理员</h2>
-    <div class="sub">选好之后，页面会按这位管理员的权限显示内容。</div>
-    <div class="login-list" id="loginList"></div>
-  </div>
-  <div class="login-box" id="loginBoxPwd" style="display:none;">
-    <h2 id="pwdBoxTitle">请输入密码</h2>
-    <div class="sub" id="pwdBoxSub"></div>
-    <div class="field" style="margin:18px 0;"><input type="password" id="pwdInput" placeholder="密码" style="width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:15px;box-sizing:border-box;"></div>
-    <div class="field" id="pwdConfirmRow" style="margin:0 0 18px;display:none;"><input type="password" id="pwdConfirmInput" placeholder="再输入一次密码" style="width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:15px;box-sizing:border-box;"></div>
-    <div class="warn" id="pwdWarn" style="display:none;margin-bottom:14px;"></div>
-    <button type="button" class="btn-primary" id="pwdSubmitBtn" style="width:100%;">确定</button>
+    <h2>管理员登录</h2>
+    <div class="sub">输入姓名或编号，再输入密码即可登录</div>
+    <div class="field" style="margin:18px 0 14px;">
+      <label style="display:block;font-size:13px;font-weight:600;color:var(--espresso-soft);margin-bottom:6px;">姓名 / 编号</label>
+      <input type="text" id="loginNameInput" placeholder="例如：龚诗宏 / 龚诗宏医师 / 19941128" style="width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:15px;box-sizing:border-box;" autocomplete="username">
+    </div>
+    <div class="field" style="margin:0 0 14px;">
+      <label style="display:block;font-size:13px;font-weight:600;color:var(--espresso-soft);margin-bottom:6px;">密码</label>
+      <input type="password" id="loginPwdInput" placeholder="密码" style="width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:15px;box-sizing:border-box;" autocomplete="current-password">
+    </div>
+    <div class="field" id="loginPwdConfirmRow" style="margin:0 0 14px;display:none;">
+      <label style="display:block;font-size:13px;font-weight:600;color:var(--espresso-soft);margin-bottom:6px;">再输入一次密码</label>
+      <input type="password" id="loginPwdConfirmInput" placeholder="再输入一次密码" style="width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:15px;box-sizing:border-box;">
+    </div>
+    <div class="warn" id="loginWarn" style="display:none;margin-bottom:14px;"></div>
+    <button type="button" class="btn-primary" id="loginSubmitBtn" style="width:100%;">登录</button>
     <div style="display:flex;justify-content:space-between;margin-top:14px;">
-      <span class="switch-btn" id="pwdForgotLink" style="cursor:pointer;">忘记密码？</span>
-      <span class="switch-btn" id="pwdBackLink" style="cursor:pointer;">← 换一个人</span>
+      <span class="switch-btn" id="loginForgotLink" style="cursor:pointer;">忘记密码？</span>
     </div>
   </div>
 </div>
@@ -1253,42 +1257,156 @@ window.escapeHtml = function(s){
     } catch(e){}
   }
 
-  function showPasswordStep(type, id, name){
-    pendingLoginType = type; pendingLoginId = id; pendingLoginName = name;
-    document.getElementById('loginBoxMain').style.display = 'none';
-    document.getElementById('loginBoxPwd').style.display = '';
-    document.getElementById('pwdInput').value = '';
-    document.getElementById('pwdConfirmInput').value = '';
-    document.getElementById('pwdWarn').style.display = 'none';
-    // [stated] 不知道后端是不是已经给这个账号设置过密码，先按"输入密码"来问，
-    // 真正提交的时候后端说"还没设置过"，再切换成"首次登录设置密码"的样子
-    document.getElementById('pwdBoxTitle').textContent = '请输入密码';
-    document.getElementById('pwdBoxSub').textContent = name+' · 请输入密码登录';
-    document.getElementById('pwdConfirmRow').style.display = 'none';
-    document.getElementById('pwdForgotLink').style.display = '';
-    document.getElementById('pwdInput').focus();
+  // ---- 管理员列表缓存（用于用户名/编号智能匹配） ----
+  var cachedAdminList = [];
+  var adminListLoaded = false;
+
+  // 编号映射表（前端硬编码，不更改数据库）
+  var ADMIN_ID_MAP = {
+    '19941128': 'gong',
+    '19991120': 'yu'
+  };
+
+  async function loadAdminListForLogin(){
+    if(adminListLoaded) return cachedAdminList;
+    try {
+      var res = await fetch(API_BASE + '/auth/login-options');
+      if(res.ok){
+        cachedAdminList = await res.json();
+        adminListLoaded = true;
+      }
+    } catch(e){ console.error('加载管理员列表失败:', e); }
+    return cachedAdminList;
   }
 
-  document.getElementById('pwdBackLink').addEventListener('click', function(){
-    document.getElementById('loginBoxMain').style.display = '';
-    document.getElementById('loginBoxPwd').style.display = 'none';
-  });
-  document.getElementById('pwdForgotLink').addEventListener('click', function(){
-    alert('密码找回需要真正的邮箱/短信验证服务，现在这个阶段还没有接入这个能力。\n\n请联系另一位大管理员，让TA登录后在"管理员"页面帮您重置密码——重置后，下次登录会重新要求您设置一个新密码。');
-  });
+  // 根据用户输入智能匹配管理员
+  function findAdminByInput(input){
+    if(!input) return null;
+    var q = input.trim();
+    if(!q) return null;
 
-  async function attemptPwdSubmit(){
-    var pwd = document.getElementById('pwdInput').value;
-    var warnEl = document.getElementById('pwdWarn');
-    var submitBtn = document.getElementById('pwdSubmitBtn');
-    if(!pwd){ warnEl.textContent = '请输入密码'; warnEl.style.display = ''; return; }
-
-    var isRegisterMode = document.getElementById('pwdConfirmRow').style.display !== 'none';
-    if(isRegisterMode){
-      var confirmPwd = document.getElementById('pwdConfirmInput').value;
-      if(pwd.length < 4){ warnEl.textContent = '密码至少要4位'; warnEl.style.display = ''; return; }
-      if(pwd !== confirmPwd){ warnEl.textContent = '两次输入的密码不一样'; warnEl.style.display = ''; return; }
+    // 1. 先匹配编号映射表
+    if(ADMIN_ID_MAP[q]){
+      var mappedId = ADMIN_ID_MAP[q];
+      var byId = cachedAdminList.find(function(a){ return a.id === mappedId; });
+      if(byId) return byId;
     }
+
+    // 2. 精确匹配管理员id
+    var exactId = cachedAdminList.find(function(a){ return a.id === q; });
+    if(exactId) return exactId;
+
+    // 3. 精确匹配姓名
+    var exactName = cachedAdminList.find(function(a){ return a.name === q; });
+    if(exactName) return exactName;
+
+    // 4. 去掉"医师"后缀后匹配姓名（如"龚诗宏医师" -> "龚诗宏"）
+    var qWithoutDoctor = q.replace(/医师$/, '').replace(/医生$/, '').trim();
+    if(qWithoutDoctor && qWithoutDoctor !== q){
+      var nameWithoutDoctor = cachedAdminList.find(function(a){ return a.name === qWithoutDoctor; });
+      if(nameWithoutDoctor) return nameWithoutDoctor;
+    }
+
+    // 5. 匹配姓氏+医师（如"余医师" -> 姓"余"的管理员）
+    var surnameMatch = q.match(/^([一-龥])医师$/);
+    if(surnameMatch){
+      var surname = surnameMatch[1];
+      var surnameAdmins = cachedAdminList.filter(function(a){
+        return a.name && a.name.charAt(0) === surname;
+      });
+      if(surnameAdmins.length === 1) return surnameAdmins[0];
+      if(surnameAdmins.length > 1) return { _ambiguous: true, candidates: surnameAdmins };
+    }
+
+    // 6. 模糊匹配姓名包含
+    var fuzzy = cachedAdminList.filter(function(a){
+      return a.name && a.name.indexOf(q) >= 0;
+    });
+    if(fuzzy.length === 1) return fuzzy[0];
+
+    return null;
+  }
+
+  function getAdminType(admin){
+    return admin.role === 'SENIOR' ? 'senior' : 'junior';
+  }
+
+  // 显示首次登录设置密码的界面
+  function showRegisterMode(adminName){
+    document.getElementById('loginPwdConfirmRow').style.display = '';
+    document.getElementById('loginPwdInput').value = '';
+    document.getElementById('loginPwdConfirmInput').value = '';
+    document.getElementById('loginWarn').textContent = adminName + ' · 这是第一次登录，请设置一个密码，以后登录都要用这个密码';
+    document.getElementById('loginWarn').style.display = '';
+    document.getElementById('loginWarn').style.color = '#6b7280';
+    document.getElementById('loginWarn').style.background = '#f3f4f6';
+  }
+
+  // 新的登录提交函数
+  async function attemptLoginSubmit(){
+    var nameInput = document.getElementById('loginNameInput').value.trim();
+    var pwd = document.getElementById('loginPwdInput').value;
+    var warnEl = document.getElementById('loginWarn');
+    var submitBtn = document.getElementById('loginSubmitBtn');
+
+    if(!nameInput){
+      warnEl.textContent = '请输入姓名或编号';
+      warnEl.style.display = '';
+      warnEl.style.color = '#B0503A';
+      warnEl.style.background = '#fef2f2';
+      return;
+    }
+    if(!pwd){
+      warnEl.textContent = '请输入密码';
+      warnEl.style.display = '';
+      warnEl.style.color = '#B0503A';
+      warnEl.style.background = '#fef2f2';
+      return;
+    }
+
+    var isRegisterMode = document.getElementById('loginPwdConfirmRow').style.display !== 'none';
+    if(isRegisterMode){
+      var confirmPwd = document.getElementById('loginPwdConfirmInput').value;
+      if(pwd.length < 4){
+        warnEl.textContent = '密码至少要4位';
+        warnEl.style.display = '';
+        warnEl.style.color = '#B0503A';
+        warnEl.style.background = '#fef2f2';
+        return;
+      }
+      if(pwd !== confirmPwd){
+        warnEl.textContent = '两次输入的密码不一样';
+        warnEl.style.display = '';
+        warnEl.style.color = '#B0503A';
+        warnEl.style.background = '#fef2f2';
+        return;
+      }
+    }
+
+    // 先确保管理员列表已加载
+    await loadAdminListForLogin();
+
+    // 智能匹配管理员
+    var matched = findAdminByInput(nameInput);
+    if(!matched){
+      warnEl.textContent = '找不到这个管理员，请检查姓名或编号是否正确';
+      warnEl.style.display = '';
+      warnEl.style.color = '#B0503A';
+      warnEl.style.background = '#fef2f2';
+      return;
+    }
+    if(matched._ambiguous){
+      var names = matched.candidates.map(function(a){ return a.name; }).join('、');
+      warnEl.textContent = '有多个同姓的管理员（' + names + '），请输入完整姓名';
+      warnEl.style.display = '';
+      warnEl.style.color = '#B0503A';
+      warnEl.style.background = '#fef2f2';
+      return;
+    }
+
+    pendingLoginType = getAdminType(matched);
+    pendingLoginId = matched.id;
+    pendingLoginName = matched.name;
 
     submitBtn.disabled = true;
     try {
@@ -1300,23 +1418,22 @@ window.escapeHtml = function(s){
       });
       var data = await res.json();
       if(!res.ok){
-        // 后端明确说这个账号还没设置过密码——切换界面到"首次登录设置密码"，让TA重新填一次
-        if(!isRegisterMode && data.error && data.error.indexOf('还没设置密码')!==-1){
-          document.getElementById('pwdBoxTitle').textContent = '首次登录，请设置密码';
-          document.getElementById('pwdBoxSub').textContent = pendingLoginName+' · 这是第一次登录，请设置一个密码，以后登录都要用这个密码';
-          document.getElementById('pwdConfirmRow').style.display = '';
-          document.getElementById('pwdInput').value = '';
+        // 后端明确说这个账号还没设置过密码——切换到首次登录设置密码
+        if(!isRegisterMode && data.error && data.error.indexOf('还没设置密码') !== -1){
+          showRegisterMode(pendingLoginName);
           submitBtn.disabled = false;
           return;
         }
         warnEl.textContent = data.error || '登录失败，请重试';
         warnEl.style.display = '';
+        warnEl.style.color = '#B0503A';
+        warnEl.style.background = '#fef2f2';
         submitBtn.disabled = false;
         return;
       }
       authToken = data.token;
       try { sessionStorage.setItem('vinath_auth_token', authToken); } catch(e){}
-      var admin = pendingLoginType==='senior'
+      var admin = pendingLoginType === 'senior'
         ? {type:'senior', id:data.admin.id, name:data.admin.name}
         : {type:'junior', id:data.admin.id, name:data.admin.name, regions:data.admin.regions||[], adminType:data.admin.role.toLowerCase()};
       completeLogin(admin);
@@ -1324,13 +1441,22 @@ window.escapeHtml = function(s){
       console.error(e);
       warnEl.textContent = '连不上服务器，请确认后端是否已启动';
       warnEl.style.display = '';
+      warnEl.style.color = '#B0503A';
+      warnEl.style.background = '#fef2f2';
     }
     submitBtn.disabled = false;
   }
-  document.getElementById('pwdSubmitBtn').addEventListener('click', attemptPwdSubmit);
-  ['pwdInput','pwdConfirmInput'].forEach(function(id){
-    document.getElementById(id).addEventListener('keydown', function(e){ if(e.key==='Enter') attemptPwdSubmit(); });
+
+  document.getElementById('loginSubmitBtn').addEventListener('click', attemptLoginSubmit);
+  ['loginNameInput','loginPwdInput','loginPwdConfirmInput'].forEach(function(id){
+    document.getElementById(id).addEventListener('keydown', function(e){ if(e.key==='Enter') attemptLoginSubmit(); });
   });
+  document.getElementById('loginForgotLink').addEventListener('click', function(){
+    alert('密码找回需要真正的邮箱/短信验证服务，现在这个阶段还没有接入这个能力。\n\n请联系另一位大管理员，让TA登录后在"管理员"页面帮您重置密码——重置后，下次登录会重新要求您设置一个新密码。');
+  });
+
+  // 页面加载时预加载管理员列表
+  loadAdminListForLogin();
 
   function openChangePasswordPanel(){
     var cur = getCurrentAdmin();
@@ -1390,41 +1516,13 @@ window.escapeHtml = function(s){
     if(cur){ if(wrapEl) wrapEl.style.display = ''; document.getElementById('loginOverlay').classList.add('hide'); applyRoleUI(); return; }
     if(wrapEl) wrapEl.style.display = 'none';
     document.getElementById('loginOverlay').classList.remove('hide');
-    document.getElementById('loginBoxMain').style.display = '';
-    document.getElementById('loginBoxPwd').style.display = 'none';
-    var accounts = [];
-    var fetchFailed = false;
-    try {
-      var res = await fetch(API_BASE + '/auth/login-options');
-      if(res.ok){ accounts = await res.json(); } else { fetchFailed = true; }
-    } catch(e){ console.error('拉取登录选项失败:', e); fetchFailed = true; }
-    if(fetchFailed){
-      // [stated bug fix] 之前这里请求失败时accounts留空数组,大管理员列表就渲染成完全空白，
-      // 小管理员那半边则错误地显示"还没有小管理员账号"——这句话是给"真的一个账号都没有"
-      // 这种正常空状态准备的，套在"请求失败、根本不知道有没有账号"这种情况下语义是错的，
-      // 会让人误以为系统里压根没有配置任何管理员账号，看不出是网络/服务器问题。
-      document.getElementById('loginList').innerHTML =
-        '<div class="login-empty-junior" style="color:#B0503A;">连不上后端服务器，暂时看不到任何账号——请确认后端服务是否已经启动，或者检查网络连接后刷新页面重试。</div>';
-      return;
-    }
-    var seniors = accounts.filter(function(a){ return a.role==='SENIOR'; });
-    var juniors = accounts.filter(function(a){ return a.role!=='SENIOR'; });
-    var html = seniors.map(function(a){
-      return '<div class="login-item" data-type="senior" data-id="'+a.id+'"><div><div class="login-item-name">'+a.name+'</div><div class="login-item-role senior">大管理员 · 全部权限</div></div></div>';
-    }).join('');
-    html += juniors.length ? juniors.map(function(j){
-      var type = j.role.toLowerCase();
-      var roleText = type==='fulfillment' ? 'II类·出货员 · 处理全部商品订单' : (type==='support' ? 'III类·客服 · 负责及时回复消息' : 'I类·执业医师 · '+j.regions.length+' 个地区');
-      return '<div class="login-item" data-type="junior" data-id="'+j.id+'"><div><div class="login-item-name">'+j.name+'</div><div class="login-item-role">'+roleText+'</div></div></div>';
-    }).join('') : '<div class="login-empty-junior">还没有小管理员账号——大管理员登录后可以在"管理员"tab里新增</div>';
-    document.getElementById('loginList').innerHTML = html;
-    document.querySelectorAll('#loginList .login-item').forEach(function(item){
-      item.addEventListener('click', function(){
-        var type = this.getAttribute('data-type'), id = this.getAttribute('data-id');
-        var name = this.querySelector('.login-item-name').textContent;
-        showPasswordStep(type, id, name);
-      });
-    });
+    // 预加载管理员列表，用于用户名/编号智能匹配
+    loadAdminListForLogin();
+    // 聚焦到用户名输入框
+    setTimeout(function(){
+      var nameInput = document.getElementById('loginNameInput');
+      if(nameInput) nameInput.focus();
+    }, 100);
   }
 
   // tabs each role is allowed to see. 大管理员 sees everything (handled separately below).
