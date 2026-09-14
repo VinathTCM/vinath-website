@@ -148,6 +148,13 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .related-price-sub{ font-size:11px; color:var(--espresso-soft); opacity:.75; margin-top:1px; }
 
 .pd-img-disclaimer{ position:absolute; bottom:12px; right:12px; background:rgba(255,255,255,.88); color:var(--espresso); font-size:11px; padding:4px 10px; border-radius:10px; font-weight:500; z-index:5; }
+
+.pd-diet-badges{ display:flex; flex-wrap:wrap; gap:10px; margin:0 0 16px; padding:12px 16px; background:var(--white-warm); border:1px solid var(--line); border-radius:12px; }
+.pd-diet-badge{ display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:var(--espresso); }
+.pd-diet-badge .db-icon{ font-size:17px; line-height:1; }
+.pd-diet-badge .db-text{ line-height:1.35; }
+.pd-diet-badge .db-sub{ font-size:11px; color:var(--espresso-soft); font-weight:500; display:block; margin-top:1px; }
+@media (max-width:420px){ .pd-diet-badges{ padding:10px 12px; gap:8px; } .pd-diet-badge{ font-size:12px; } .pd-diet-badge .db-icon{ font-size:15px; } }
 </style>
  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=20260911logo4">
 <link rel="icon" href="/favicon.ico?v=20260911logo4" sizes="any">
@@ -702,6 +709,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
    + '<div class="pd-stepper"><div class="pd-step-btn" id="pdMinus">－</div><div class="pd-qty-num" id="pdQtyNum">1</div><div class="pd-step-btn" id="pdPlus">＋</div></div></div>';
 
   if(!product.inStock) html += '<div class="pd-oos-msg">This item is temporarily out of stock and will be relisted automatically once restocked.</div>';
+  var dietBadges = '<div class="pd-diet-badges"><div class="pd-diet-badge"><span class="db-icon">🌱</span><span class="db-text">Vegan 纯素</span></div><div class="pd-diet-badge"><span class="db-icon">🚫🥩</span><span class="db-text">No Pork 无猪肉<span class="db-sub">Bebas Babi</span></span></div><div class="pd-diet-badge"><span class="db-icon">🚫🍷</span><span class="db-text">No Alcohol 无酒精<span class="db-sub">Bebas Alkohol</span></span></div></div>';
+  html += dietBadges;
   html += '<button class="pd-add" id="pdAdd"'+(product.inStock?'':' disabled')+'>'+(product.inStock?'Add to Cart':'Temporarily Out of Stock')+'</button>';
 
   html += buildFormulaSection();
