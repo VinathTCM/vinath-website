@@ -2054,7 +2054,8 @@ window.escapeHtml = function(s){
     var counts = [0,0,0];
     var cancelCount = 0;
     bookings.forEach(function(b){ if(b.cancelled) cancelCount++; else counts[b.status]++; });
-    var html = '<span class="filter-chip'+(bookingFilter===null?' on':'')+'" data-s="">全部 '+bookings.length+'</span>';
+    var activeCount = bookings.filter(function(b){ return !b.cancelled; }).length;
+    var html = '<span class="filter-chip'+(bookingFilter===null?' on':'')+'" data-s="">全部 '+activeCount+'</span>';
     BOOKING_STATUS.forEach(function(label,i){
       html += '<span class="filter-chip'+(bookingFilter===('s'+i)?' on':'')+'" data-s="s'+i+'">'+label+' '+counts[i]+'</span>';
     });
@@ -2072,6 +2073,8 @@ window.escapeHtml = function(s){
   var bookingIdSortDir = null; // null | 'asc' | 'desc'
   function renderBookings(){
     var list = BOOKINGS.filter(function(b){
+      // "全部"默认不显示已取消的预约，已取消的只在"已取消"标签下显示
+      if(bookingFilter===null && b.cancelled) return false;
       if(bookingFilter==='cancel' && !b.cancelled) return false;
       if(bookingFilter && bookingFilter!=='cancel'){
         var idx = Number(bookingFilter.slice(1));
@@ -2108,7 +2111,7 @@ window.escapeHtml = function(s){
           + '</tr>';
       }).join('');
     }
-    document.getElementById('bookingCount').textContent = visibleBookings().length;
+    document.getElementById('bookingCount').textContent = list.length;
     document.getElementById('arrowBookingId').textContent = bookingIdSortDir ? (bookingIdSortDir==='asc' ? '↓' : '↑') : '';
     tbody.querySelectorAll('.row-edit').forEach(function(b){
       b.addEventListener('click', function(){
