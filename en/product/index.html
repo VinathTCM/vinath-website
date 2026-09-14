@@ -640,15 +640,17 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   return Math.round(t*100)/100;
  }
  function fmtGrams(v){ return (Math.round(v*100)/100).toString(); }
- // Professional TCM assessment: serving size based on herb total, formula nature, and form (Malaysian soup-cooking standard)
+ // Professional TCM assessment: only tea and soup series show suggested serving size (topical/plaster/foot-soak/external-wash do not)
  function getServingSize(product){
   if(!product) return '';
   var type = product.type || product.form || '';
   var name = product.name || '';
-  // Topical products do not need serving size
-  if(type.indexOf('plaster')>=0 || type.indexOf('topical')>=0 || type.indexOf('soak')>=0 || type.indexOf('mask')>=0) return '';
+  // Whitelist: only tea and soup series show serving size
+  var isTea = (type === 'tea' || type.indexOf('tea')>=0);
+  var isSoup = (type === 'soup' || type === 'soak' || (name.indexOf('Soup')>=0 && name.indexOf('Foot')<0 && name.indexOf('Bath')<0 && name.indexOf('Wash')<0));
+  if(!isTea && !isSoup) return '';
   // Tea is one serving per pack
-  if(type === 'tea' || type.indexOf('tea')>=0){
+  if(isTea){
    return '1 serving per pack';
   }
   // Soup series based on herb total (Malaysian style: one pack cooks one pot for family)
