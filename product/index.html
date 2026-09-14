@@ -599,19 +599,30 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     return Math.round(t*100)/100;
   }
   function fmtGrams(v){ return (Math.round(v*100)/100).toString(); }
-  // 专业中医药专家评估：根据药材总量、配方性质、剂型判断每包适合人数
+  // 专业中医药专家评估：根据药材总量、配方性质、剂型判断每包适合人数（马来西亚煲汤习惯）
   function getServingSize(product){
     if(!product) return '';
     var type = product.type || product.form || '';
     var name = product.name || '';
     // 外用产品不标注食用人数
     if(type.indexOf('贴')>=0 || type.indexOf('外用')>=0 || type.indexOf('坐浴')>=0 || type.indexOf('面膜')>=0) return '';
-    // 四神汤等药食同源食疗方，性质平和可1-2人分享
-    if(name.indexOf('四神')>=0 || name.indexOf('健脾')>=0){
-      return _curLang==='en' ? '1-2 servings per pack (gentle food-therapy formula, can be shared)' : '1-2人/包（食疗方，性质平和可与家人分享）';
+    // 茶饮为1人份
+    if(type === 'tea' || type.indexOf('茶')>=0){
+      return _curLang==='en' ? '1 serving per pack' : '1人/包';
     }
-    // 其他汤药/茶饮均为1人一次量
-    return _curLang==='en' ? '1 serving per pack' : '1人/包';
+    // 汤药系列按药材总量判断（马来西亚煲汤习惯，一包煮一锅）
+    var grams = product.herbs ? totalHerbGrams(product.herbs) : 0;
+    // 四神汤等药食同源食疗方，性质平和可全家分享
+    if(name.indexOf('四神')>=0 || name.indexOf('健脾')>=0){
+      return _curLang==='en' ? '3-4 servings per pack (gentle food-therapy soup, great for family sharing)' : '3-4人/包（食疗汤方，性质平和适合全家分享）';
+    }
+    if(grams >= 40){
+      return _curLang==='en' ? '3-4 servings per pack' : '3-4人/包';
+    } else if(grams >= 30){
+      return _curLang==='en' ? '2-3 servings per pack' : '2-3人/包';
+    } else {
+      return _curLang==='en' ? '2 servings per pack' : '2人/包';
+    }
   }
   function buildFormulaSection(){
     if(!product.herbs || !product.herbs.length) return '';
