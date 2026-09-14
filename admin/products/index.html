@@ -751,6 +751,13 @@ function applyPreset(editor, type) {
           SHOP_CATEGORIES = categories.map(function(c){ return {key:c.key, name:c.name}; });
           TYPE_LABEL = {};
           SHOP_CATEGORIES.forEach(function(c){ TYPE_LABEL[c.key] = c.name; });
+          // 重新渲染类型选择器（编辑面板中的分段按钮）
+          if(typeSeg){
+            typeSeg.innerHTML = SHOP_CATEGORIES.map(function(c){ return '<div class="seg-btn" data-type="'+c.key+'">'+c.name+'</div>'; }).join('');
+            typeSeg.querySelectorAll('.seg-btn').forEach(function(b){ b.addEventListener('click', function(){ setType(this.getAttribute('data-type')); }); });
+          }
+          // 保存到localStorage，下次加载直接使用
+          try { localStorage.setItem(SHOP_CATEGORIES_KEY, JSON.stringify(SHOP_CATEGORIES)); } catch(e){}
         }
       }
     } catch(e){
