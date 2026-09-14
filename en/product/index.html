@@ -640,16 +640,33 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   return Math.round(t*100)/100;
  }
  function fmtGrams(v){ return (Math.round(v*100)/100).toString(); }
+ // Professional TCM assessment: serving size based on herb total, formula nature, and form
+ function getServingSize(product){
+  if(!product) return '';
+  var type = product.type || product.form || '';
+  var name = product.name || '';
+  // Topical products do not need serving size
+  if(type.indexOf('plaster')>=0 || type.indexOf('topical')>=0 || type.indexOf('soak')>=0 || type.indexOf('mask')>=0) return '';
+  // Sishen soup and other food-therapy formulas are gentle, can be shared 1-2 people
+  if(name.indexOf('Sishen')>=0 || name.indexOf('Spleen')>=0 || name.indexOf('Digest')>=0){
+   return '1-2 servings per pack (gentle food-therapy formula, can be shared)';
+  }
+  // Other soups/teas are one serving per pack
+  return '1 serving per pack';
+ }
  function buildFormulaSection(){
   if(!product.herbs || !product.herbs.length) return '';
   var chips = product.herbs.map(function(h){ return '<span class="pd-herb-chip">'+h.herb+'</span>'; }).join('');
   var grams = totalHerbGrams(product.herbs);
   var weightRow = grams>0 ? '<div class="pd-form-row"><span class="fl">Net weight / pack</span><span>approx. '+fmtGrams(grams)+' g ('+product.herbs.length+' herbal ingredients, total per formula)</span></div>' : '';
+  var serving = getServingSize(product);
+  var servingRow = serving ? '<div class="pd-form-row"><span class="fl">Suggested serving</span><span>'+serving+'</span></div>' : '';
   return '<div class="pd-section"><div class="pd-section-title">Formula & Usage</div>'
    + '<div class="pd-form-row"><span class="fl">Form</span><span>'+product.form+'</span></div>'
    + '<div class="pd-herb-label">Ingredients</div>'
    + '<div class="pd-herb-chips">'+chips+'</div>'
    + weightRow
+   + servingRow
    + '<div class="pd-usage-box"><b>Usage: </b>'+(product.usageEn||product.usage)+'</div>'
    + '</div>';
  }

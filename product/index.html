@@ -599,16 +599,33 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     return Math.round(t*100)/100;
   }
   function fmtGrams(v){ return (Math.round(v*100)/100).toString(); }
+  // 专业中医药专家评估：根据药材总量、配方性质、剂型判断每包适合人数
+  function getServingSize(product){
+    if(!product) return '';
+    var type = product.type || product.form || '';
+    var name = product.name || '';
+    // 外用产品不标注食用人数
+    if(type.indexOf('贴')>=0 || type.indexOf('外用')>=0 || type.indexOf('坐浴')>=0 || type.indexOf('面膜')>=0) return '';
+    // 四神汤等药食同源食疗方，性质平和可1-2人分享
+    if(name.indexOf('四神')>=0 || name.indexOf('健脾')>=0){
+      return _curLang==='en' ? '1-2 servings per pack (gentle food-therapy formula, can be shared)' : '1-2人/包（食疗方，性质平和可与家人分享）';
+    }
+    // 其他汤药/茶饮均为1人一次量
+    return _curLang==='en' ? '1 serving per pack' : '1人/包';
+  }
   function buildFormulaSection(){
     if(!product.herbs || !product.herbs.length) return '';
     var chips = product.herbs.map(function(h){ return '<span class="pd-herb-chip">'+h.herb+'</span>'; }).join('');
     var grams = totalHerbGrams(product.herbs);
     var weightRow = grams>0 ? '<div class="pd-form-row"><span class="fl">一包净含量</span><span>约 '+fmtGrams(grams)+' g（共 '+product.herbs.length+' 味草本配料，已按配方合计）</span></div>' : '';
+    var serving = getServingSize(product);
+    var servingRow = serving ? '<div class="pd-form-row"><span class="fl">'+(_curLang==='en'?'Suggested serving':'建议食用人数')+'</span><span>'+serving+'</span></div>' : '';
     return '<div class="pd-section"><div class="pd-section-title">配方与用法</div>'
       + '<div class="pd-form-row"><span class="fl">剂型</span><span>'+product.form+'</span></div>'
       + '<div class="pd-herb-label">成分</div>'
       + '<div class="pd-herb-chips">'+chips+'</div>'
       + weightRow
+      + servingRow
       + '<div class="pd-usage-box"><b>'+(_curLang==='en'?'Usage:':'用法：')+'</b>'+(_curLang==='en' && product.usageEn ? product.usageEn : product.usage)+'</div>'
       + '</div>';
   }
