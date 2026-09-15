@@ -1881,7 +1881,7 @@ window.escapeHtml = function(s){
       }).join('');
       tbody.innerHTML = rowsHtml;
     }
-    document.getElementById('orderCount').textContent = visibleOrders().length;
+    document.getElementById('orderCount').textContent = list.length + wholesaleList.length;
     document.getElementById('arrowOrderId').textContent = orderIdSortDir ? (orderIdSortDir==='asc' ? '↓' : '↑') : '';
     // [stated bug fix] wholesale rows used to carry BOTH .row-edit (for styling) and a second
     // .row-wholesale-view class (for its own click binding) — but querySelectorAll('.row-edit')

@@ -55,7 +55,7 @@ router.post('/orders', (req, res) => {
       var regularPrice = it.isTrial && product.trial_price ? product.trial_price : product.price;
       var couponPrice = it.isTrial ? product.coupon_trial_price : product.coupon_price;
       var finalPrice = (couponValid && couponPrice != null) ? couponPrice : regularPrice;
-      validatedItems.push({ name: product.name, qty: it.qty, price: finalPrice });
+      validatedItems.push({ productId: product.id, name: product.name, qty: it.qty, price: finalPrice, isTrial: !!it.isTrial });
       db.prepare('UPDATE products SET stock_qty = stock_qty - ? WHERE id = ?').run(it.qty, product.id);
     }
 
@@ -168,6 +168,38 @@ router.delete('/admin/payment-methods/:id', authMiddleware, requireRole('SENIOR'
 
 // ===== 软删除 / 回收箱（仅大管理员）=====
 
+// 回退订单库存（删除订单时调用，恢复库存）
+function restoreOrderStock(orderId){
+  const row = db.prepare('SELECT items FROM orders WHERE id = ?').get(orderId);
+  if(!row) return;
+  try {
+    const items = JSON.parse(row.items);
+    for(const it of items){
+      if(it.productId && it.qty){
+        db.prepare('UPDATE products SET stock_qty = stock_qty + ? WHERE id = ?').run(it.qty, it.productId);
+      }
+    }
+  } catch(e){
+    console.error('回退库存失败:', e);
+  }
+}
+
+// 扣减订单库存（恢复订单时调用，再次扣减库存）
+function deductOrderStock(orderId){
+  const row = db.prepare('SELECT items FROM orders WHERE id = ?').get(orderId);
+  if(!row) return;
+  try {
+    const items = JSON.parse(row.items);
+    for(const it of items){
+      if(it.productId && it.qty){
+        db.prepare('UPDATE products SET stock_qty = stock_qty - ? WHERE id = ?').run(it.qty, it.productId);
+      }
+    }
+  } catch(e){
+    console.error('扣减库存失败:', e);
+  }
+}
+
 // 软删除订单（移入回收箱，30天内可恢复）
 router.delete('/admin/orders/:id', authMiddleware, requireRole('SENIOR'), (req, res) => {
   const row = db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.id);
@@ -176,7 +208,9 @@ router.delete('/admin/orders/:id', authMiddleware, requireRole('SENIOR'), (req, 
   db.prepare('UPDATE orders SET deleted_at = ?, deleted_by = ? WHERE id = ?').run(
     new Date().toISOString(), req.admin.name, req.params.id
   );
-  logAdminAction(req, 'soft_delete', 'order', req.params.id, '移入回收箱');
+  // 软删除时回退库存
+  restoreOrderStock(req.params.id);
+  logAdminAction(req, 'soft_delete', 'order', req.params.id, '移入回收箱，库存已回退');
   res.json({ ok: true });
 });
 
@@ -193,7 +227,9 @@ router.post('/admin/orders/:id/restore', authMiddleware, requireRole('SENIOR'), 
   if(!row) return res.status(404).json({ error: '订单不存在' });
   if(!row.deleted_at) return res.status(400).json({ error: '该订单不在回收箱中' });
   db.prepare('UPDATE orders SET deleted_at = NULL, deleted_by = NULL WHERE id = ?').run(req.params.id);
-  logAdminAction(req, 'restore', 'order', req.params.id, '从回收箱恢复');
+  // 恢复订单时再次扣减库存
+  deductOrderStock(req.params.id);
+  logAdminAction(req, 'restore', 'order', req.params.id, '从回收箱恢复，库存已扣减');
   res.json({ ok: true });
 });
 
@@ -201,8 +237,12 @@ router.post('/admin/orders/:id/restore', authMiddleware, requireRole('SENIOR'), 
 router.delete('/admin/orders/:id/permanent', authMiddleware, requireRole('SENIOR'), (req, res) => {
   const row = db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.id);
   if(!row) return res.status(404).json({ error: '订单不存在' });
+  // 永久删除时，如果订单还没有被软删除（库存还没回退），先回退库存
+  if(!row.deleted_at){
+    restoreOrderStock(req.params.id);
+  }
   db.prepare('DELETE FROM orders WHERE id = ?').run(req.params.id);
-  logAdminAction(req, 'permanent_delete', 'order', req.params.id, '回收箱永久删除');
+  logAdminAction(req, 'permanent_delete', 'order', req.params.id, '回收箱永久删除，库存已回退');
   res.json({ ok: true });
 });
 
