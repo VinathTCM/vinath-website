@@ -23,6 +23,24 @@ const db = new Database(DB_FILE);
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
+// 安全地为 admins 表添加登录安全字段（检查列是否存在，不存在才添加，不影响现有数据）
+(function addLoginSecurityColumns(){
+  try {
+    const cols = db.prepare("PRAGMA table_info(admins)").all();
+    const colNames = cols.map(c => c.name);
+    if(!colNames.includes('login_failures')){
+      db.prepare('ALTER TABLE admins ADD COLUMN login_failures INTEGER DEFAULT 0').run();
+      console.log('✅ 已添加 login_failures 列');
+    }
+    if(!colNames.includes('locked_until')){
+      db.prepare('ALTER TABLE admins ADD COLUMN locked_until TEXT').run();
+      console.log('✅ 已添加 locked_until 列');
+    }
+  } catch(e){
+    console.warn('添加登录安全列时出错（不影响功能）:', e.message);
+  }
+})();
+
 db.exec(`
   CREATE TABLE IF NOT EXISTS admins (
     id TEXT PRIMARY KEY,

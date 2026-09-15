@@ -12,8 +12,12 @@ const router = express.Router();
 
 router.post('/register', async (req, res) => {
   const { adminId, password } = req.body;
-  if(!adminId || !password || password.length < 4){
-    return res.status(400).json({ error: '参数不完整，密码至少4位' });
+  if(!adminId || !password || password.length < 8){
+    return res.status(400).json({ error: '参数不完整，密码至少8位' });
+  }
+  // 密码强度检查：必须包含大小写字母和数字
+  if(!/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/[0-9]/.test(password)){
+    return res.status(400).json({ error: '密码必须包含大小写字母和数字' });
   }
   const admin = db.prepare('SELECT * FROM admins WHERE id = ?').get(adminId);
   if(!admin) return res.status(404).json({ error: '找不到这个管理员账号' });
@@ -31,8 +35,30 @@ router.post('/login', async (req, res) => {
   if(!admin || !admin.password_hash){
     return res.status(401).json({ error: '账号不存在或还没设置密码' });
   }
+
+  // 检查账号是否被锁定
+  if(admin.locked_until && new Date(admin.locked_until) > new Date()){
+    const remainMin = Math.ceil((new Date(admin.locked_until) - new Date()) / 60000);
+    return res.status(429).json({ error: '账号已被临时锁定，请' + remainMin + '分钟后再试' });
+  }
+
   const valid = await bcrypt.compare(password, admin.password_hash);
-  if(!valid) return res.status(401).json({ error: '密码不对' });
+  if(!valid){
+    // 登录失败，增加失败计数
+    const newFailures = (admin.login_failures || 0) + 1;
+    if(newFailures >= 5){
+      // 连续失败5次，锁定15分钟
+      const lockedUntil = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+      db.prepare('UPDATE admins SET login_failures = ?, locked_until = ? WHERE id = ?').run(newFailures, lockedUntil, adminId);
+      return res.status(429).json({ error: '连续登录失败次数过多，账号已被临时锁定15分钟' });
+    } else {
+      db.prepare('UPDATE admins SET login_failures = ? WHERE id = ?').run(newFailures, adminId);
+      return res.status(401).json({ error: '密码不对，还剩' + (5 - newFailures) + '次机会' });
+    }
+  }
+
+  // 登录成功，重置失败计数和锁定状态
+  db.prepare('UPDATE admins SET login_failures = 0, locked_until = NULL WHERE id = ?').run(adminId);
 
   const token = signToken(admin);
   res.json({ token, admin: { id: admin.id, name: admin.name, role: admin.role, regions: JSON.parse(admin.regions || '[]') } });
@@ -40,8 +66,12 @@ router.post('/login', async (req, res) => {
 
 router.post('/change-password', authMiddleware, async (req, res) => {
   const { oldPassword, newPassword } = req.body;
-  if(!newPassword || newPassword.length < 4){
-    return res.status(400).json({ error: '新密码至少4位' });
+  if(!newPassword || newPassword.length < 8){
+    return res.status(400).json({ error: '新密码至少8位' });
+  }
+  // 密码强度检查：必须包含大小写字母和数字
+  if(!/[a-z]/.test(newPassword) || !/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword)){
+    return res.status(400).json({ error: '新密码必须包含大小写字母和数字' });
   }
   const admin = db.prepare('SELECT * FROM admins WHERE id = ?').get(req.admin.sub);
   const valid = await bcrypt.compare(oldPassword, admin.password_hash);
