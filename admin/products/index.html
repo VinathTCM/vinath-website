@@ -507,6 +507,13 @@ window.scrollTo(0,0);
     if(toastTimer) clearTimeout(toastTimer);
     toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2800);
   }
+  // 从字符串中提取中文部分（用于类型列只显示中文）
+  function extractChinese(str) {
+    if(!str) return '';
+    var match = String(str).match(/[\u4e00-\u9fa5]+/g);
+    if(match && match.length > 0) return match.join('');
+    return str;
+  }
   var SHOP_CATEGORIES_KEY = 'vinath_shop_categories';
   var SHOP_CATEGORIES_SEED = [
     {key:'plaster', name:'膏药系列'},
@@ -517,14 +524,18 @@ window.scrollTo(0,0);
   function getShopCategories(){
     try {
       var raw = localStorage.getItem(SHOP_CATEGORIES_KEY);
-      if(raw) return JSON.parse(raw);
+      if(raw) {
+        var cats = JSON.parse(raw);
+        // 确保分类名称只显示中文
+        return cats.map(function(c){ return {key:c.key, name: extractChinese(c.name)}; });
+      }
     } catch(e){}
     try { localStorage.setItem(SHOP_CATEGORIES_KEY, JSON.stringify(SHOP_CATEGORIES_SEED)); } catch(e){}
     return SHOP_CATEGORIES_SEED;
   }
   var SHOP_CATEGORIES = getShopCategories();
   var TYPE_LABEL = {};
-  SHOP_CATEGORIES.forEach(function(c){ TYPE_LABEL[c.key] = c.name; });
+  SHOP_CATEGORIES.forEach(function(c){ TYPE_LABEL[c.key] = extractChinese(c.name); });
   var JOURNEYS = ['女性调理','中医塑体','美容养颜','日常养生','舒缓疼痛','优质睡眠'];
 
   var TAG_DATA = {
@@ -748,12 +759,12 @@ function applyPreset(editor, type) {
       if(catRes.ok){
         var categories = await catRes.json();
         if(categories && categories.length > 0){
-          SHOP_CATEGORIES = categories.map(function(c){ return {key:c.key, name:c.name}; });
+          SHOP_CATEGORIES = categories.map(function(c){ return {key:c.key, name: extractChinese(c.name)}; });
           TYPE_LABEL = {};
-          SHOP_CATEGORIES.forEach(function(c){ TYPE_LABEL[c.key] = c.name; });
+          SHOP_CATEGORIES.forEach(function(c){ TYPE_LABEL[c.key] = extractChinese(c.name); });
           // 重新渲染类型选择器（编辑面板中的分段按钮）
           if(typeSeg){
-            typeSeg.innerHTML = SHOP_CATEGORIES.map(function(c){ return '<div class="seg-btn" data-type="'+c.key+'">'+c.name+'</div>'; }).join('');
+            typeSeg.innerHTML = SHOP_CATEGORIES.map(function(c){ return '<div class="seg-btn" data-type="'+c.key+'">'+extractChinese(c.name)+'</div>'; }).join('');
             typeSeg.querySelectorAll('.seg-btn').forEach(function(b){ b.addEventListener('click', function(){ setType(this.getAttribute('data-type')); }); });
           }
           // 保存到localStorage，下次加载直接使用
@@ -791,7 +802,7 @@ function applyPreset(editor, type) {
   function buildTypeFilters(){
     var html = '<span class="filter-chip' + (activeFilter===null?' on':'') + '" data-t="">全部</span>';
     Object.keys(TYPE_LABEL).forEach(function(t){
-      html += '<span class="filter-chip' + (activeFilter===t?' on':'') + '" data-t="'+t+'">'+TYPE_LABEL[t]+'</span>';
+      html += '<span class="filter-chip' + (activeFilter===t?' on':'') + '" data-t="'+t+'">'+extractChinese(TYPE_LABEL[t])+'</span>';
     });
     typeFilters.innerHTML = html;
     typeFilters.querySelectorAll('.filter-chip').forEach(function(c){
@@ -940,7 +951,7 @@ function applyPreset(editor, type) {
   var fCoupon = document.getElementById('fCoupon');
   var fCouponTrial = document.getElementById('fCouponTrial');
   var typeSeg = document.getElementById('typeSeg');
-  typeSeg.innerHTML = SHOP_CATEGORIES.map(function(c){ return '<div class="seg-btn" data-type="'+c.key+'">'+c.name+'</div>'; }).join('');
+  typeSeg.innerHTML = SHOP_CATEGORIES.map(function(c){ return '<div class="seg-btn" data-type="'+c.key+'">'+extractChinese(c.name)+'</div>'; }).join('');
   var journeyChipsEl = document.getElementById('journeyChips');
   var activeToggle = document.getElementById('activeToggle');
   var activeLbl = document.getElementById('activeLbl');
