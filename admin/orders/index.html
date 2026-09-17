@@ -820,6 +820,7 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
           <span class="cancel-edit-link" id="cancelEditLink">取消编辑</span>
         </div>
         <input type="text" id="newJuniorName" placeholder="新管理员姓名，例如：陈店长">
+        <input type="text" id="newJuniorUsername" placeholder="登录用户名（英文/数字，用于登录），例如：chen01" style="margin-top:8px;">
         <div class="admin-type-row">
           <div class="admin-type-opt on" data-type="practitioner">
             <b>I类 · 执业中医师</b>
@@ -1299,6 +1300,10 @@ window.escapeHtml = function(s){
     // 3. 精确匹配姓名
     var exactName = cachedAdminList.find(function(a){ return a.name === q; });
     if(exactName) return exactName;
+
+    // 3.5 精确匹配username
+    var exactUsername = cachedAdminList.find(function(a){ return a.username && a.username.toLowerCase() === q.toLowerCase(); });
+    if(exactUsername) return exactUsername;
 
     // 4. 去掉"医师"后缀后匹配姓名（如"龚诗宏医师" -> "龚诗宏"）
     var qWithoutDoctor = q.replace(/医师$/, '').replace(/医生$/, '').trim();
@@ -4064,6 +4069,7 @@ window.escapeHtml = function(s){
     if(!j) return;
     editingJuniorId = id;
     document.getElementById('newJuniorName').value = j.name;
+    document.getElementById('newJuniorUsername').value = j.username || '';
     newJuniorType = j.role.toLowerCase();
     document.querySelectorAll('.admin-type-opt').forEach(function(o){
       o.classList.toggle('on', o.getAttribute('data-type')===newJuniorType);
@@ -4087,6 +4093,7 @@ window.escapeHtml = function(s){
   function cancelEditJunior(){
     editingJuniorId = null;
     document.getElementById('newJuniorName').value = '';
+    document.getElementById('newJuniorUsername').value = '';
     newJuniorType = 'practitioner';
     document.querySelectorAll('.admin-type-opt').forEach(function(o){ o.classList.toggle('on', o.getAttribute('data-type')==='practitioner'); });
     document.getElementById('juniorAreaPickerWrap').style.display = '';
@@ -4105,6 +4112,7 @@ window.escapeHtml = function(s){
   document.getElementById('cancelEditLink').addEventListener('click', cancelEditJunior);
   document.getElementById('addJuniorBtn').addEventListener('click', async function(){
     var name = document.getElementById('newJuniorName').value.trim();
+    var usernameVal = document.getElementById('newJuniorUsername').value.trim();
     var errEl = document.getElementById('juniorAddError');
     // II类 (打包出货员) doesn't need a region — they handle every order regardless of area
     if(!name || (newJuniorType==='practitioner' && !juniorPickedRegions.length)){
@@ -4121,7 +4129,7 @@ window.escapeHtml = function(s){
       if(editingJuniorId){
         var res = await fetch(API_BASE + '/auth/admin/admins/' + editingJuniorId, {
           method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
-          body: JSON.stringify({ name: name, regions: juniorPickedRegions, licenseExpiry: newJuniorType==='practitioner' ? licenseVal : '' })
+          body: JSON.stringify({ name: name, username: usernameVal, regions: juniorPickedRegions, licenseExpiry: newJuniorType==='practitioner' ? licenseVal : '' })
         });
         if(!res.ok){ var err = await res.json(); errEl.textContent = err.error || '保存失败'; errEl.classList.add('show'); btn.disabled = false; return; }
         if(newJuniorType==='practitioner') syncServiceAreasFromJunior({regions:juniorPickedRegions});
@@ -4137,7 +4145,7 @@ window.escapeHtml = function(s){
       } else {
         var res2 = await fetch(API_BASE + '/auth/admin/admins', {
           method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
-          body: JSON.stringify({ name: name, role: newJuniorType.toUpperCase(), regions: juniorPickedRegions, licenseExpiry: licenseVal, specialty: specialtyVal })
+          body: JSON.stringify({ name: name, username: usernameVal, role: newJuniorType.toUpperCase(), regions: juniorPickedRegions, licenseExpiry: licenseVal, specialty: specialtyVal })
         });
         if(!res2.ok){ var err2 = await res2.json(); errEl.textContent = err2.error || '新增失败'; errEl.classList.add('show'); btn.disabled = false; return; }
         var created = await res2.json();
@@ -4148,6 +4156,7 @@ window.escapeHtml = function(s){
           savePractitionerProfiles(profiles2);
         }
         document.getElementById('newJuniorName').value = '';
+        document.getElementById('newJuniorUsername').value = '';
         juniorPickedRegions = [];
         newJuniorAvatar = '';
         document.getElementById('juniorAvatarBox').innerHTML = '<span>点击上传头像</span>';

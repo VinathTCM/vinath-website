@@ -36,6 +36,10 @@ db.pragma('foreign_keys = ON');
       db.prepare('ALTER TABLE admins ADD COLUMN locked_until TEXT').run();
       console.log('✅ 已添加 locked_until 列');
     }
+    if(!colNames.includes('username')){
+      db.prepare('ALTER TABLE admins ADD COLUMN username TEXT').run();
+      console.log('✅ 已添加 username 列');
+    }
   } catch(e){
     console.warn('添加登录安全列时出错（不影响功能）:', e.message);
   }

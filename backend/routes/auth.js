@@ -96,7 +96,7 @@ router.get('/me', authMiddleware, (req, res) => {
 });
 
 router.get('/admins', authMiddleware, requireRole('SENIOR'), (req, res) => {
-  const admins = db.prepare('SELECT id, name, role, regions, accepting_orders, coupon_code, license_expiry, avatar, specialty, title, creds, moh_reg_no, apc_no, description, tags FROM admins').all();
+  const admins = db.prepare('SELECT id, name, username, role, regions, accepting_orders, coupon_code, license_expiry, avatar, specialty, title, creds, moh_reg_no, apc_no, description, tags FROM admins').all();
   res.json(admins.map(a => ({
     id: a.id, name: a.name, role: a.role, regions: JSON.parse(a.regions || '[]'),
     acceptingOrders: !!a.accepting_orders, couponCode: a.coupon_code, licenseExpiry: a.license_expiry,
@@ -108,7 +108,7 @@ router.get('/admins', authMiddleware, requireRole('SENIOR'), (req, res) => {
 // ---- 公开接口：客户端居家会诊选医师用，不需要登录，只给看得见摸得着的展示字段 ----
 router.get('/practitioners', (req, res) => {
   const rows = db.prepare(`
-    SELECT id, name, role, regions, accepting_orders, license_expiry, moh_reg_no, apc_no, avatar, specialty, title, creds, description, tags FROM admins
+    SELECT id, name, username, role, regions, accepting_orders, license_expiry, moh_reg_no, apc_no, avatar, specialty, title, creds, description, tags FROM admins
     WHERE role IN ('SENIOR','PRACTITIONER')
   `).all();
   res.json(rows.map(a => ({
@@ -148,7 +148,7 @@ router.put('/admin/admins/:id/credentials', authMiddleware, requireRole('SENIOR'
 // ---- 公开接口：登录界面用，列出全部真实存在的账号（不分大小管理员），不需要登录就能看到"有哪些人可以登录"
 // 这是纯展示用途——真正登录还是要走 /login，光知道id和名字登不进去 ----
 router.get('/login-options', (req, res) => {
-  const rows = db.prepare('SELECT id, name, role, regions, accepting_orders, license_expiry FROM admins ORDER BY (role=\'SENIOR\') DESC, rowid ASC').all();
+  const rows = db.prepare('SELECT id, name, username, role, regions, accepting_orders, license_expiry FROM admins ORDER BY (role=\'SENIOR\') DESC, rowid ASC').all();
   res.json(rows.map(a => ({ id: a.id, name: a.name, role: a.role, regions: JSON.parse(a.regions || '[]'), acceptingOrders: !!a.accepting_orders, licenseExpiry: a.license_expiry })));
 });
 
@@ -161,7 +161,7 @@ function genJuniorId(){
 
 // ---- 小管理员（I类执业医师/II类出货员/III类客服）完整管理：只有大管理员能操作 ----
 router.post('/admin/admins', authMiddleware, requireRole('SENIOR'), (req, res) => {
-  const { name, role, regions, licenseExpiry, specialty } = req.body;
+  const { name, username, role, regions, licenseExpiry, specialty } = req.body;
   if(!name || !['PRACTITIONER','FULFILLMENT','SUPPORT'].includes(role)){
     return res.status(400).json({ error: '姓名和角色类型是必填的' });
   }
@@ -170,9 +170,9 @@ router.post('/admin/admins', authMiddleware, requireRole('SENIOR'), (req, res) =
   }
   const id = genJuniorId();
   db.prepare(`
-    INSERT INTO admins (id, name, role, regions, accepting_orders, license_expiry, specialty)
-    VALUES (?, ?, ?, ?, 1, ?, ?)
-  `).run(id, name, role, JSON.stringify(role==='PRACTITIONER' ? regions : []), role==='PRACTITIONER' ? (licenseExpiry||null) : null, specialty||null);
+    INSERT INTO admins (id, name, username, role, regions, accepting_orders, license_expiry, specialty)
+    VALUES (?, ?, ?, ?, ?, 1, ?, ?)
+  `).run(id, name, username||null, role, JSON.stringify(role==='PRACTITIONER' ? regions : []), role==='PRACTITIONER' ? (licenseExpiry||null) : null, specialty||null);
   logAdminAction(req, 'create', 'admin_account', id, name+'（'+role+'）');
   res.status(201).json({ id, name, role });
 });
@@ -181,11 +181,12 @@ router.put('/admin/admins/:id', authMiddleware, requireRole('SENIOR'), (req, res
   const existing = db.prepare('SELECT * FROM admins WHERE id = ?').get(req.params.id);
   if(!existing) return res.status(404).json({ error: '账号不存在' });
   if(existing.role === 'SENIOR') return res.status(403).json({ error: '大管理员账号不能通过这个接口修改' });
-  const { name, regions, licenseExpiry, specialty, avatar } = req.body;
+  const { name, username, regions, licenseExpiry, specialty, avatar } = req.body;
   db.prepare(`
-    UPDATE admins SET name = ?, regions = ?, license_expiry = ?, specialty = ?, avatar = ? WHERE id = ?
+    UPDATE admins SET name = ?, username = ?, regions = ?, license_expiry = ?, specialty = ?, avatar = ? WHERE id = ?
   `).run(
     name ?? existing.name,
+    username !== undefined ? username : existing.username,
     regions ? JSON.stringify(existing.role==='PRACTITIONER' ? regions : []) : existing.regions,
     licenseExpiry !== undefined ? licenseExpiry : existing.license_expiry,
     specialty !== undefined ? specialty : existing.specialty,
