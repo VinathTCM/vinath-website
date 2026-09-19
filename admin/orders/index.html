@@ -1091,9 +1091,9 @@ window.escapeHtml = function(s){
         ORDERS.length = 0;
         orders.forEach(function(o){
           var owner = cachedCouponOwners.find(function(c){ return c.code===o.coupon_code; });
-          ORDERS.push({ id:o.order_no, date:(o.created_at||'').slice(0,10), contact:o.contact, name:o.recipient_name,
+          ORDERS.push({ id:o.order_no||('ORD'+o.id), date:(o.created_at||'').slice(0,10), contact:o.contact||'', name:o.recipient_name||'未知客户',
             address:o.address, city:o.city, postcode:o.postcode, state:o.state, region:o.region,
-            items:o.items, shipping:o.shipping, payMethod:o.pay_method, status:o.status,
+            items:Array.isArray(o.items)?o.items:[], shipping:o.shipping, payMethod:o.pay_method, status:(o.status===null||o.status===undefined)?0:o.status,
             couponCode:o.coupon_code, couponOwner:owner ? owner.name : null,
             paymentVerified:o.paymentVerified, paymentScreenshot:o.payment_screenshot,
             _backendId:o.id // 真正调用后端更新接口时要用这个内部id，不是给人看的订单号
@@ -1122,7 +1122,7 @@ window.escapeHtml = function(s){
     renderSummary(); renderTodayTasks();
   }
 
-  function orderSubtotal(o){ return o.items.reduce(function(s,i){ return s+i.qty*i.price; },0); }
+  function orderSubtotal(o){ return (Array.isArray(o.items)?o.items:[]).reduce(function(s,i){ return s+(Number(i.qty)||0)*(Number(i.price)||0); },0); }
   function orderShipping(o){ return orderSubtotal(o) >= 100 ? 0 : o.shipping; }
   function orderTotal(o){ return orderSubtotal(o) + orderShipping(o); }
   // [stated bug fix] 结算页面告诉客户"提交后订单会标记为待核实付款"，但订单状态那几个字
@@ -1837,7 +1837,7 @@ window.escapeHtml = function(s){
   function renderOrders(){
     var list = ORDERS.filter(function(o){
       if(orderFilter!==null && o.status!==orderFilter) return false;
-      if(orderSearchQ && o.id.toLowerCase().indexOf(orderSearchQ)===-1 && o.contact.toLowerCase().indexOf(orderSearchQ)===-1) return false;
+      if(orderSearchQ && String(o.id||'').toLowerCase().indexOf(orderSearchQ)===-1 && String(o.contact||'').toLowerCase().indexOf(orderSearchQ)===-1) return false;
       if(!matchesCurrentRegions(o.city)) return false;
       return true;
     });
@@ -1858,7 +1858,7 @@ window.escapeHtml = function(s){
       tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state">没有符合条件的订单</div></td></tr>';
     } else {
       var rowsHtml = list.map(function(o){
-        var itemsSummary = o.items.map(function(i){ return i.name+' ×'+i.qty; }).join('，');
+        var itemsSummary = (Array.isArray(o.items)?o.items:[]).map(function(i){ return (i.name||'商品')+' ×'+(i.qty||0); }).join('，') || '—';
         return '<tr>'
           + '<td><span class="pname">'+o.id+'</span></td>'
           + '<td>'+o.date+'</td>'
@@ -1872,7 +1872,7 @@ window.escapeHtml = function(s){
           + '</tr>';
       }).join('');
       rowsHtml += wholesaleList.map(function(o){
-        var itemsSummary = o.items.map(function(i){ return i.name+' ×'+i.qty; }).join('，');
+        var itemsSummary = (Array.isArray(o.items)?o.items:[]).map(function(i){ return (i.name||'商品')+' ×'+(i.qty||0); }).join('，') || '—';
         return '<tr class="row-wholesale">'
           + '<td><span class="pname">'+o.id+'</span><span class="admin-type-badge practitioner" style="margin-left:6px;">拿货订单</span></td>'
           + '<td>'+o.date+'</td>'
@@ -2086,7 +2086,7 @@ window.escapeHtml = function(s){
         var idx = Number(bookingFilter.slice(1));
         if(b.cancelled || b.status!==idx) return false;
       }
-      if(bookingSearchQ && b.id.toLowerCase().indexOf(bookingSearchQ)===-1 && b.contact.toLowerCase().indexOf(bookingSearchQ)===-1) return false;
+      if(bookingSearchQ && String(b.id||'').toLowerCase().indexOf(bookingSearchQ)===-1 && String(b.contact||'').toLowerCase().indexOf(bookingSearchQ)===-1) return false;
       if(!matchesCurrentRegions(b.area)) return false;
       return true;
     });

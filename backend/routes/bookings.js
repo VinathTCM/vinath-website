@@ -27,7 +27,11 @@ function genBookingNo(){
 }
 
 function serializeBooking(b){
-  return { ...b, treatments: JSON.parse(b.treatments || '[]'), cancelled: !!b.cancelled };
+  // 防御：treatments 损坏时回退为空数组；status 缺失时默认0（待确认）
+  var treatments = [];
+  try { treatments = JSON.parse(b.treatments || '[]'); } catch(e){ treatments = []; }
+  if(!Array.isArray(treatments)) treatments = [];
+  return { ...b, treatments: treatments, cancelled: !!b.cancelled, status: (b.status===null||b.status===undefined)?0:b.status };
 }
 
 // 客户填手机号是"0123456789"这种本地写法，黑名单存的可能是不带开头0的格式——

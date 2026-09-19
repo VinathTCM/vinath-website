@@ -25,7 +25,11 @@ function genOrderNo(){
 }
 
 function serializeOrder(o){
-  return { ...o, items: JSON.parse(o.items), paymentVerified: !!o.payment_verified };
+  // 防御：items 损坏/为空时回退为空数组，避免前端 null.map() 导致整表渲染崩溃空白
+  var items = [];
+  try { items = JSON.parse(o.items); } catch(e){ items = []; }
+  if(!Array.isArray(items)) items = [];
+  return { ...o, items: items, paymentVerified: !!o.payment_verified };
 }
 
 // ---- 客户下单：真正"接单"的入口，不需要登录，前端购物车结算页面调这个 ----
