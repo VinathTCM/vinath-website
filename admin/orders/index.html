@@ -1104,7 +1104,7 @@ window.escapeHtml = function(s){
         var bookings = await bookingsRes.json();
         BOOKINGS.length = 0;
         bookings.forEach(function(b){
-          BOOKINGS.push({ id:b.booking_no, date:(b.created_at||'').slice(0,10), name:b.customer_name, contact:b.customer_phone,
+          BOOKINGS.push({ id:b.booking_no, date:(b.created_at||'').slice(0,10), name:b.customer_name||'未知客户', contact:b.customer_phone||'-',
             method:'whatsapp', doctor:b.practitioner_name, apptDate:b.appt_date, apptDateISO:b.appt_date_iso,
             slot:(b.slot||'ASAP'), area:b.area, addressDetail:b.address_detail, need:b.need, status:b.status,
             cancelled:b.cancelled, doctorNote:b.doctor_note, treatments:normArrField(b.treatments),

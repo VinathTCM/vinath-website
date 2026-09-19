@@ -105,7 +105,7 @@ router.get('/admin/bookings', authMiddleware, requireRole('SENIOR', 'PRACTITIONE
   let rows;
   const baseQuery = `
     SELECT bookings.*, customers.phone AS customer_phone, customers.name AS customer_name
-    FROM bookings JOIN customers ON bookings.customer_id = customers.id
+    FROM bookings LEFT JOIN customers ON bookings.customer_id = customers.id
   `;
   if(req.admin.role === 'SENIOR'){
     rows = db.prepare(baseQuery + ' WHERE bookings.deleted_at IS NULL ORDER BY bookings.created_at DESC').all();
@@ -198,7 +198,7 @@ router.get('/admin/bookings/trash', authMiddleware, requireRole('SENIOR'), (req,
   const cutoff = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
   const rows = db.prepare(`
     SELECT bookings.*, customers.phone AS customer_phone, customers.name AS customer_name
-    FROM bookings JOIN customers ON bookings.customer_id = customers.id
+    FROM bookings LEFT JOIN customers ON bookings.customer_id = customers.id
     WHERE bookings.deleted_at IS NOT NULL AND bookings.deleted_at >= ?
     ORDER BY bookings.deleted_at DESC
   `).all(cutoff);
