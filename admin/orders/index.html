@@ -1192,7 +1192,8 @@ window.escapeHtml = function(s){
   function visibleBookings(){
     var cur = getCurrentAdmin();
     if(cur && cur.type==='junior' && (cur.adminType==='fulfillment' || cur.adminType==='support')) return []; // II类、III类都不处理预约
-    return BOOKINGS.filter(function(b){ return matchesCurrentRegions(b.area); });
+    // 只统计未取消的预约，和列表"全部"标签的显示逻辑保持一致
+    return BOOKINGS.filter(function(b){ return !b.cancelled && matchesCurrentRegions(b.area); });
   }
 
   var pendingLoginType = null, pendingLoginId = null, pendingLoginName = null;
