@@ -1834,6 +1834,14 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       var padX = Math.round(1.5 / 25.4 * 96) * scale;
       var padY = Math.round(1 / 25.4 * 96) * scale;
       var lines = [];
+      function alignOf(el){
+        var n = el;
+        while(n && n.style){
+          if(n.style.textAlign) return n.style.textAlign;
+          n = n.parentNode;
+        }
+        return 'left';
+      }
       (function scan(el){
         var st = el.style;
         if(st.borderTop && /dashed/i.test(st.borderTop)){ lines.push({dash:true}); return; }
@@ -1845,13 +1853,32 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
           lines.push({left:l, right:r, fs:fs, fw:fw, color:color});
           return;
         }
-        if(el.children && el.children.length > 0){
+        var hasBlock = Array.prototype.some.call(el.children, function(c){
+          return c.nodeName === 'DIV' || c.nodeName === 'P' || c.nodeName === 'BR'
+            || (c.style && (c.style.display === 'block' || c.style.display === 'flex'));
+        });
+        if(hasBlock){
+          var own = '';
+          Array.prototype.forEach.call(el.childNodes, function(n){
+            if(n.nodeType === 3 && (n.textContent || '').trim()){ own += n.textContent; }
+          });
+          if(own.trim()){ lines.push({text:own, align:alignOf(el), fs:fs, fw:fw, color:color}); }
           Array.prototype.forEach.call(el.children, scan);
           return;
         }
-        var parts = textParts(el);
-        var align = (st.textAlign === 'center') ? 'center' : 'left';
-        for(var i=0;i<parts.length;i++){ lines.push({text:parts[i], align:align, fs:fs, fw:fw, color:color}); }
+        // 纯 inline 内容（文本 + span/sup 等）：整元素取一行，样式取有字号的子元素
+        var tx = el.textContent || '';
+        if(tx.trim()){
+          var styled = null;
+          Array.prototype.forEach.call(el.children, function(c){
+            if(!styled && c.textContent && c.textContent.trim()) styled = c;
+          });
+          if(styled && styled.style){
+            var v = parseFloat(styled.style.fontSize); if(!isNaN(v)) fs = v;
+            if(styled.style.fontWeight === '700' || styled.style.fontWeight === 'bold') fw = 700;
+          }
+          lines.push({text:tx, align:alignOf(el), fs:fs, fw:fw, color:color});
+        }
       })(root);
       var lineH = function(fs){ return Math.round(fs * 1.3 * scale); };
       var cv = document.createElement('canvas');
