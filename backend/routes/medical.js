@@ -198,4 +198,84 @@ router.get('/admin/medical-records/access-log', authMiddleware, requireRole('SEN
   res.json(rows);
 });
 
+// 修改患者姓名 / 手机号：用于更正当初着急写错的信息。按"原手机号"定位这个人，
+// 事务内同步更新其所有 病历 / 处方 / 收据 的姓名与手机号——只改一条会让同一人的记录分裂、复诊搜索不到。
+// 与"删除患者"一样仅 SENIOR 可操作；小管理员写错可请大管理员更正
+router.post('/admin/medical-records/patient/update', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const { oldPhone, newPhone, newName } = req.body;
+  if(!oldPhone) return res.status(400).json({ error: '缺少原手机号' });
+  const cleanNewPhone = String(newPhone || '').trim().replace(/[^0-9]/g, '');
+  const cleanNewName = String(newName || '').trim();
+  if(!cleanNewPhone || !cleanNewName) return res.status(400).json({ error: '请填写正确的新手机号和姓名' });
+  const hasRecords = db.prepare("SELECT COUNT(*) as c FROM medical_records WHERE patient_phone = ? AND data NOT LIKE '%\"_deleted\":%'").get(oldPhone).c;
+  if(!hasRecords) return res.status(404).json({ error: '找不到这个患者的病历' });
+  // 改手机号时，新号下不能已有"别人"的病历，否则会把两个不同的人合并
+  if(cleanNewPhone !== oldPhone){
+    const clash = db.prepare("SELECT COUNT(*) as c FROM medical_records WHERE patient_phone = ? AND data NOT LIKE '%\"_deleted\":%'").get(cleanNewPhone).c;
+    if(clash) return res.status(409).json({ error: '新手机号下已有其他患者的病历，无法合并' });
+  }
+  const apply = db.transaction(() => {
+    const rec = db.prepare('UPDATE medical_records SET patient_phone = ?, patient_name = ? WHERE patient_phone = ?')
+      .run(cleanNewPhone, cleanNewName, oldPhone);
+    const rx = db.prepare('UPDATE prescriptions SET patient_phone = ?, patient_name = ? WHERE patient_phone = ?')
+      .run(cleanNewPhone, cleanNewName, oldPhone);
+    const rc = db.prepare('UPDATE receipts SET patient_phone = ?, patient_name = ? WHERE patient_phone = ?')
+      .run(cleanNewPhone, cleanNewName, oldPhone);
+    return { records: rec.changes, prescriptions: rx.changes, receipts: rc.changes };
+  });
+  try {
+    const updated = apply();
+    logAccess(req, 'update-patient', null, oldPhone);
+    res.json({ ok: true, updated });
+  } catch(e){
+    console.error('修改患者信息失败:', e);
+    res.status(500).json({ error: '修改失败，请稍后重试' });
+  }
+});
+
+function pad2(n){ return String(n).padStart(2, '0'); }
+// 把 Date 转成 SQLite CURRENT_TIMESTAMP 同款的 UTC 字符串 'YYYY-MM-DD HH:MM:SS'
+function toSqliteUtc(d){
+  return d.getUTCFullYear() + '-' + pad2(d.getUTCMonth()+1) + '-' + pad2(d.getUTCDate())
+    + ' ' + pad2(d.getUTCHours()) + ':' + pad2(d.getUTCMinutes()) + ':' + pad2(d.getUTCSeconds());
+}
+
+// 病历账本：按日期范围聚合"已开具收据"的全部明细，供某日/月/季/年账本导出。
+// 数据源是 receipts（实际已开票、已收款记录），line_items 带 category，可区分 处方(rx)/治疗(treatment)/商品(product)/折扣(discount)。
+// 马来西亚为 UTC+8，查询边界把本地 00:00~次日00:00 换算成 UTC，避免跨天单据算错日子
+router.get('/admin/medical-records/ledger', authMiddleware, requireModuleAccess('medicalRecords'), (req, res) => {
+  const { from, to } = req.query;
+  if(!from || !to || !/^\d{4}-\d{2}-\d{2}$/.test(from) || !/^\d{4}-\d{2}-\d{2}$/.test(to)){
+    return res.status(400).json({ error: '请提供正确的起止日期（YYYY-MM-DD）' });
+  }
+  let start, end;
+  try {
+    start = new Date(from + 'T00:00:00+08:00');
+    end = new Date(to + 'T00:00:00+08:00');
+    if(isNaN(start.getTime()) || isNaN(end.getTime())) throw new Error('bad date');
+    end.setDate(end.getDate() + 1); // 范围为 [from 00:00, to 次日 00:00)
+  } catch(e){
+    return res.status(400).json({ error: '日期格式不正确' });
+  }
+  let rows = db.prepare('SELECT * FROM receipts WHERE issued_at >= ? AND issued_at < ? ORDER BY issued_at ASC')
+    .all(toSqliteUtc(start), toSqliteUtc(end));
+  // 小管理员的账本只统计自己开具的收据
+  if(req.admin.role === 'PRACTITIONER'){
+    rows = rows.filter(function(r){ return r.practitioner_id === req.admin.sub; });
+  }
+  const entries = rows.map(function(r){
+    let lineItems = [];
+    try { lineItems = JSON.parse(r.line_items || '[]'); } catch(e){ lineItems = []; }
+    return {
+      receiptNo: r.receipt_no, issuedAt: r.issued_at,
+      patientName: r.patient_name, patientPhone: r.patient_phone,
+      practitionerName: r.practitioner_name_snapshot, diagnosis: r.tcm_diagnosis_snapshot,
+      paymentMethod: r.payment_method, paymentStatus: r.payment_status,
+      lineItems: lineItems, total: Number(r.total_amount) || 0
+    };
+  });
+  const grandTotal = entries.reduce(function(s, e){ return s + e.total; }, 0);
+  res.json({ from: from, to: to, count: entries.length, entries: entries, grandTotal: Number(grandTotal.toFixed(2)) });
+});
+
 module.exports = router;

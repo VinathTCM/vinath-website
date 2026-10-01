@@ -30,8 +30,10 @@ router.post('/admin/receipts', authMiddleware, requireModuleAccess('receipts'), 
   if(!practitionerNameSnapshot) return res.status(400).json({ error: '请选择医师' });
 
   // 兼容两种明细输入：分类金额对象（原有），或项目明细数组（病历页价目表直选）
+  // 明细额外保留 category（rx 处方药材 / treatment 治疗 / product 商品 / discount 折扣）与 nameEn，
+  // 这样账本导出、双语发票才能按类型分列；折扣行 price 为负数，下面 total 的求和会自动扣减
   let detailItems = (lineItems || []).filter(function(it){ return it && it.name && String(it.name).trim(); })
-    .map(function(it){ return { name: String(it.name).trim(), qty: Number(it.qty) || 1, price: Number(it.price) || 0 }; });
+    .map(function(it){ return { name: String(it.name).trim(), nameEn: it.nameEn ? String(it.nameEn).trim() : '', category: it.category ? String(it.category).trim() : '', qty: Number(it.qty) || 1, price: Number(it.price) || 0 }; });
   const totalAmount = detailItems.length
     ? detailItems.reduce(function(s, it){ return s + it.price * it.qty; }, 0)
     : ['consultation','transport','medication','other'].reduce((s,k) => s + (Number(items && items[k]) || 0), 0);

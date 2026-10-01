@@ -139,4 +139,18 @@ router.put('/admin/prescriptions/:id/status', authMiddleware, requireModuleAcces
   res.json({ ok: true });
 });
 
+// 删除处方：主要用于删除误产生的"空处方"（只开了治疗/商品却被强制建了一条没有药材的处方），
+// 也可删除开错的处方。SENIOR 可删任意处方；PRACTITIONER 只能删"自己开具、且患者仍在可见范围内"的处方
+router.delete('/admin/prescriptions/:id', authMiddleware, requireModuleAccess('prescriptions'), (req, res) => {
+  const rxRow = db.prepare('SELECT * FROM prescriptions WHERE id = ?').get(req.params.id);
+  if(!rxRow) return res.status(404).json({ error: '处方不存在' });
+  if(req.admin.role !== 'SENIOR'){
+    if(rxRow.practitioner_id !== req.admin.sub) return res.status(403).json({ error: '只能删除自己开具的处方' });
+    const visiblePhones = visiblePatientPhonesFor(req.admin.sub, Date.now());
+    if(visiblePhones.indexOf(rxRow.patient_phone) === -1) return res.status(403).json({ error: '该患者已不在你的可见范围内' });
+  }
+  db.prepare('DELETE FROM prescriptions WHERE id = ?').run(req.params.id);
+  res.json({ ok: true });
+});
+
 module.exports = router;
