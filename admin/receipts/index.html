@@ -536,32 +536,37 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       var bin = atob(jpeg), len = bin.length;
       var imgW = cv.width, imgH = cv.height;
       var content = 'q ' + pageW + ' 0 0 ' + pageH + ' 0 0 cm /Im0 Do Q';
-      var objects = [
-        '<< /Type /Catalog /Pages 2 0 R >>',
-        '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
-        '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + pageW + ' ' + pageH + '] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>',
-        '<< /Type /XObject /Subtype /Image /Width ' + imgW + ' /Height ' + imgH + ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' + len + ' >>',
-        '<< /Length ' + content.length + ' >>'
-      ];
-      var pdf = '%PDF-1.4\n';
-      var offsets = [], pos = pdf.length;
-      function writeObj(num, body, stream){
-        var head = num + ' 0 obj\n' + body + '\n';
-        if(stream !== undefined){ head += 'stream\n'; stream = stream + '\nendstream\n'; }
-        head += 'endobj\n';
-        offsets[num] = pos; pos += head.length;
-        pdf += head;
+      var offsets = [];
+      var chunks = [], pos = 0;
+      function ascii(s){ var u = new Uint8Array(s.length); for(var i=0;i<s.length;i++){ u[i] = s.charCodeAt(i) & 0xff; } return u; }
+      function binBytes(s){ var u = new Uint8Array(s.length); for(var i=0;i<s.length;i++){ u[i] = s.charCodeAt(i) & 0xff; } return u; }
+      function pushStr(s){ var b = ascii(s); chunks.push(b); pos += b.length; }
+      function pushObj(num, body, stream){
+        offsets[num] = pos;
+        pushStr(num + ' 0 obj\n' + body + '\n');
+        if(stream !== undefined){
+          pushStr('stream\n');
+          var bb = binBytes(stream); chunks.push(bb); pos += bb.length;
+          pushStr('\nendstream\n');
+        }
+        pushStr('endobj\n');
       }
-      writeObj(1, objects[0]);
-      writeObj(2, objects[1]);
-      writeObj(3, objects[2]);
-      writeObj(4, objects[3], bin);
-      writeObj(5, objects[4], content);
+      pushStr('%PDF-1.4\n');
+      pushObj(1, '<< /Type /Catalog /Pages 2 0 R >>');
+      pushObj(2, '<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
+      pushObj(3, '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + pageW + ' ' + pageH + '] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>');
+      pushObj(4, '<< /Type /XObject /Subtype /Image /Width ' + imgW + ' /Height ' + imgH + ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' + len + ' >>', bin);
+      pushObj(5, '<< /Length ' + content.length + ' >>', content);
       var xrefPos = pos;
-      pdf += 'xref\n0 6\n0000000000 65535 f \n';
-      for(var i=1;i<=5;i++){ pdf += ('0000000000' + offsets[i]).slice(-10) + ' 00000 n \n'; }
-      pdf += 'trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n' + xrefPos + '\n%%EOF';
-      return new Blob([pdf], {type: 'application/pdf'});
+      pushStr('xref\n0 6\n0000000000 65535 f \n');
+      for(var i=1;i<=5;i++){ pushStr(('0000000000' + offsets[i]).slice(-10) + ' 00000 n \n'); }
+      pushStr('trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n' + xrefPos + '\n%%EOF');
+      var total = 0;
+      chunks.forEach(function(c){ total += c.length; });
+      var out = new Uint8Array(total);
+      var o = 0;
+      chunks.forEach(function(c){ out.set(c, o); o += c.length; });
+      return new Blob([out], {type: 'application/pdf'});
     }
     function exportThermalPdf(root, filename){
       if(!root) return false;
