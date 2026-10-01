@@ -461,6 +461,117 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     // 一小条（像截图）。检测到 iPad 时把 58mm 内容铺满纸张宽度并放大字号，
     // 打印出完整可读的票据；Windows/桌面 Chrome 保持 58mm 热敏真小票不变。
     function isIpadSafari(){ return (/Macintosh|iPad/.test(navigator.userAgent)) && ('ontouchend' in document); }
+    // iPadOS Safari 打印对话框无法关闭页眉/页脚（系统限制），导出的 PDF 底部会带
+    // "日期/网址/页码"一行。iPad 上 58mm 小票改为直接生成无页脚的 PDF 文件下载。
+    function textParts(el){
+      var parts = [], cur = '';
+      (function walk(n){
+        if(n.nodeType === 3){ cur += n.nodeValue; }
+        else if(n.nodeName === 'BR'){ parts.push(cur); cur = ''; }
+        else { for(var i=0;i<n.childNodes.length;i++) walk(n.childNodes[i]); }
+      })(el);
+      if(cur !== '' || parts.length === 0) parts.push(cur);
+      return parts;
+    }
+    function renderThermalCanvas(root){
+      var scale = 2;
+      var W = Math.round(58 / 25.4 * 96) * scale;
+      var padX = Math.round(2.5 / 25.4 * 96) * scale;
+      var padY = Math.round(2 / 25.4 * 96) * scale;
+      var lines = [];
+      (function scan(el){
+        var st = el.style;
+        if(st.borderTop && /dashed/i.test(st.borderTop)){ lines.push({dash:true}); return; }
+        var fs = parseFloat(st.fontSize) || 9;
+        var fw = (st.fontWeight === '700' || st.fontWeight === 'bold') ? 700 : 400;
+        var color = st.color || '#000';
+        if(st.display === 'flex' && el.children.length >= 2){
+          var l = el.children[0].textContent || '', r = el.children[1].textContent || '';
+          lines.push({left:l, right:r, fs:fs, fw:fw, color:color});
+          return;
+        }
+        var parts = textParts(el);
+        var align = (st.textAlign === 'center') ? 'center' : 'left';
+        for(var i=0;i<parts.length;i++){ lines.push({text:parts[i], align:align, fs:fs, fw:fw, color:color}); }
+      })(root);
+      var lineH = function(fs){ return Math.round(fs * 1.45 * scale); };
+      var totalH = padY * 2;
+      lines.forEach(function(ln){ totalH += ln.dash ? Math.round(2 * scale) : lineH(ln.fs); });
+      var cv = document.createElement('canvas');
+      cv.width = W; cv.height = totalH;
+      var ctx = cv.getContext('2d');
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, totalH);
+      ctx.textBaseline = 'top';
+      var y = padY;
+      function fontOf(ln){ return (ln.fw === 700 ? '700 ' : '') + (ln.fs * scale) + 'px "Courier New","PingFang SC","Microsoft YaHei",monospace'; }
+      lines.forEach(function(ln){
+        if(ln.dash){
+          ctx.strokeStyle = '#000'; ctx.lineWidth = 1; ctx.setLineDash([4 * scale, 3 * scale]);
+          ctx.beginPath(); ctx.moveTo(padX, y + Math.round(1 * scale)); ctx.lineTo(W - padX, y + Math.round(1 * scale)); ctx.stroke();
+          ctx.setLineDash([]); y += Math.round(2 * scale); return;
+        }
+        ctx.font = fontOf(ln); ctx.fillStyle = ln.color;
+        var h = lineH(ln.fs);
+        if(ln.left !== undefined){
+          ctx.textAlign = 'left'; ctx.fillText(ln.left || '', padX, y);
+          ctx.textAlign = 'right'; ctx.fillText(ln.right || '', W - padX, y);
+        } else {
+          ctx.textAlign = ln.align || 'left';
+          var x = (ln.align === 'center') ? W / 2 : padX;
+          ctx.fillText(ln.text || '', x, y);
+        }
+        y += h;
+      });
+      return cv;
+    }
+    function canvasToPdfBlob(cv){
+      var mmToPt = 2.8346456693;
+      var pageW = Math.round(58 * mmToPt);
+      var pageH = Math.round(cv.height / cv.width * 58 * mmToPt);
+      var jpeg = cv.toDataURL('image/jpeg', 0.93).split(',')[1];
+      var bin = atob(jpeg), len = bin.length;
+      var imgW = cv.width, imgH = cv.height;
+      var content = 'q ' + pageW + ' 0 0 ' + pageH + ' 0 0 cm /Im0 Do Q';
+      var objects = [
+        '<< /Type /Catalog /Pages 2 0 R >>',
+        '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+        '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + pageW + ' ' + pageH + '] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>',
+        '<< /Type /XObject /Subtype /Image /Width ' + imgW + ' /Height ' + imgH + ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' + len + ' >>',
+        '<< /Length ' + content.length + ' >>'
+      ];
+      var pdf = '%PDF-1.4\n';
+      var offsets = [], pos = pdf.length;
+      function writeObj(num, body, stream){
+        var head = num + ' 0 obj\n' + body + '\n';
+        if(stream !== undefined){ head += 'stream\n'; stream = stream + '\nendstream\n'; }
+        head += 'endobj\n';
+        offsets[num] = pos; pos += head.length;
+        pdf += head;
+      }
+      writeObj(1, objects[0]);
+      writeObj(2, objects[1]);
+      writeObj(3, objects[2]);
+      writeObj(4, objects[3], bin);
+      writeObj(5, objects[4], content);
+      var xrefPos = pos;
+      pdf += 'xref\n0 6\n0000000000 65535 f \n';
+      for(var i=1;i<=5;i++){ pdf += ('0000000000' + offsets[i]).slice(-10) + ' 00000 n \n'; }
+      pdf += 'trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n' + xrefPos + '\n%%EOF';
+      return new Blob([pdf], {type: 'application/pdf'});
+    }
+    function exportThermalPdf(root, filename){
+      if(!root) return false;
+      try {
+        var cv = renderThermalCanvas(root);
+        var blob = canvasToPdfBlob(cv);
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = 'VINATH_' + (filename || 'receipt') + '.pdf';
+        document.body.appendChild(a); a.click();
+        setTimeout(function(){ a.remove(); URL.revokeObjectURL(url); }, 200);
+        return true;
+      } catch(e){ return false; }
+    }
     function adaptThermalForIpad(root){
       if(!isIpadSafari() || !root) return;
       var scale = 1.35;
@@ -560,7 +671,14 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       setPrintPageSize('58');
       document.body.classList.add('print-58');
       setTimeout(function(){
-        adaptThermalForIpad(document.querySelector('.sheet-58'));
+        var root58 = document.querySelector('.sheet-58');
+        if(isIpadSafari() && root58){
+          var ok = exportThermalPdf(root58, (rc && rc.receipt_no) || 'receipt');
+          document.body.classList.remove('print-58');
+          if(ok){ showToast('已生成无页脚小票 PDF'); } else { showToast('生成 PDF 失败，请重试'); }
+          return;
+        }
+        adaptThermalForIpad(root58);
         window.print();
       }, 250);
     });
