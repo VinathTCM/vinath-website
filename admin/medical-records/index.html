@@ -1780,9 +1780,8 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       st.id = 'printAreaCss';
       st.textContent = [
         '@media print{',
-        '  body.print-58 > *:not(#printArea), body.print-a4 > *:not(#printArea){ display:none !important; }',
-        '  body.print-58 #printArea, body.print-a4 #printArea{ display:block !important; }',
-        '  body.print-58 #printArea .sheet-58, body.print-a4 #printArea .sheet-a4{ display:block !important; }',
+        '  body > :not(#printArea){ display:none !important; }',
+        '  #printArea{ display:block !important; }',
         '}'
       ].join('\n');
       document.head.appendChild(st);
