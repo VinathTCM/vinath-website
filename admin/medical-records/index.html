@@ -1874,8 +1874,11 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
             if(!styled && c.textContent && c.textContent.trim()) styled = c;
           });
           if(styled && styled.style){
-            var v = parseFloat(styled.style.fontSize); if(!isNaN(v)) fs = v;
-            if(styled.style.fontWeight === '700' || styled.style.fontWeight === 'bold') fw = 700;
+            if(isNaN(parseFloat(st.fontSize))){
+              var v = parseFloat(styled.style.fontSize); if(!isNaN(v)) fs = v;
+            }
+            if((styled.style.fontWeight === '700' || styled.style.fontWeight === 'bold')
+               && st.fontWeight !== '700' && st.fontWeight !== 'bold'){ fw = 700; }
           }
           lines.push({text:tx, align:alignOf(el), fs:fs, fw:fw, color:color});
         }
