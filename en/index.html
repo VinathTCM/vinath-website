@@ -483,6 +483,12 @@
    position: relative !important;
    z-index: 1 !important;
   }
+  .hero .cta-meet-row { margin-top: 18px !important; }
+  .hero .cta-meet-row .btn-cta-meet {
+   min-width: min(360px, 90vw) !important;
+   font-size: 20px !important;
+   letter-spacing: 1px !important;
+  }
   .hero .btn-cta-meet:hover {
    transform: translateY(-3px) !important;
    box-shadow: 0 14px 30px rgba(30, 70, 55, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -10px 22px rgba(110, 220, 180, 0.18) !important;
@@ -703,8 +709,10 @@
  </div>
  <div class="cta-row">
   <button class="btn btn-primary" id="startJourneyBtn" data-i18n="home.hero.cta1">Start Your Journey</button>
-  <a class="btn btn-cta-meet" id="meetNowBtn" href="/en/consult/"><span>Meet Now</span></a>
   <button class="btn btn-secondary" id="exploreShopBtn" data-i18n="home.hero.cta2">Explore Products</button>
+ </div>
+ <div class="cta-row cta-meet-row">
+  <a class="btn btn-cta-meet" id="meetNowBtn" href="/en/consult/"><span>Meet Now</span></a>
  </div>
 </section>
 
