@@ -490,6 +490,10 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
           lines.push({left:l, right:r, fs:fs, fw:fw, color:color});
           return;
         }
+        if(el.children && el.children.length > 0){
+          Array.prototype.forEach.call(el.children, scan);
+          return;
+        }
         var parts = textParts(el);
         var align = (st.textAlign === 'center') ? 'center' : 'left';
         for(var i=0;i<parts.length;i++){ lines.push({text:parts[i], align:align, fs:fs, fw:fw, color:color}); }
@@ -564,11 +568,17 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       try {
         var cv = renderThermalCanvas(root);
         var blob = canvasToPdfBlob(cv);
+        var name = 'VINATH_' + (filename || 'receipt') + '.pdf';
+        var file = new File([blob], name, {type: 'application/pdf'});
+        if(navigator.canShare && navigator.canShare({files: [file]})){
+          navigator.share({files: [file], title: name}).then(function(){}, function(){});
+          return true;
+        }
         var url = URL.createObjectURL(blob);
         var a = document.createElement('a');
-        a.href = url; a.download = 'VINATH_' + (filename || 'receipt') + '.pdf';
+        a.href = url; a.download = name; a.target = '_blank'; a.rel = 'noopener';
         document.body.appendChild(a); a.click();
-        setTimeout(function(){ a.remove(); URL.revokeObjectURL(url); }, 200);
+        setTimeout(function(){ a.remove(); URL.revokeObjectURL(url); }, 500);
         return true;
       } catch(e){ return false; }
     }
