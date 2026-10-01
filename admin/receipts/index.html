@@ -457,6 +457,23 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       if(!pg){ pg = document.createElement('style'); pg.id = 'printPageCss'; document.head.appendChild(pg); }
       pg.textContent = (size === '58') ? '@page{size:58mm auto;margin:0;}' : '@page{size:A4;margin:12mm;}';
     }
+    // iPad/iPadOS Safari 不支持 @page{size:58mm}，默认按 A4/Letter 纸打印会把小票缩成
+    // 一小条（像截图）。检测到 iPad 时把 58mm 内容铺满纸张宽度并放大字号，
+    // 打印出完整可读的票据；Windows/桌面 Chrome 保持 58mm 热敏真小票不变。
+    function isIpadSafari(){ return (/Macintosh|iPad/.test(navigator.userAgent)) && ('ontouchend' in document); }
+    function adaptThermalForIpad(root){
+      if(!isIpadSafari() || !root) return;
+      var scale = 1.35;
+      (function up(el){
+        var m = (el.getAttribute && (el.getAttribute('style')||'')).match(/font-size:([\d.]+)px/);
+        if(m){ el.style.fontSize = (parseFloat(m[1]) * scale).toFixed(1) + 'px'; }
+        if(el.children){ Array.prototype.forEach.call(el.children, up); }
+      })(root);
+      root.style.width = '100%';
+      root.style.padding = '4mm 6mm';
+      root.style.fontSize = ((parseFloat(root.style.fontSize) || 9) * scale).toFixed(1) + 'px';
+      root.style.lineHeight = '1.6';
+    }
     var hasDetail = rc.lineItems && rc.lineItems.length > 0;
     var itemRows = hasDetail ? rc.lineItems.map(function(it){
       var priceTxt = it.price > 0 ? 'RM '+it.price.toFixed(2) : '另计';
@@ -542,7 +559,11 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     document.getElementById('print58Btn').addEventListener('click', function(){
       setPrintPageSize('58');
       document.body.classList.add('print-58');
-      setTimeout(function(){ window.print(); document.body.classList.remove('print-58'); }, 250);
+      setTimeout(function(){
+        adaptThermalForIpad(document.querySelector('.sheet-58'));
+        window.print();
+        document.body.classList.remove('print-58');
+      }, 250);
     });
   }
 
