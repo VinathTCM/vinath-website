@@ -187,8 +187,7 @@
     text-shadow:0 1px 0 rgba(255,255,255,.5);
     padding:20px 64px; overflow:visible;
   }
-  .cta-meet-row { margin-top:18px; }
-  .cta-meet-row .btn-cta-meet { min-width:min(360px, 90vw); font-size:20px; letter-spacing:1px; }
+  .cta-row .btn-cta-meet { flex:0 0 100%; font-size:20px; letter-spacing:1px; }
   .btn-cta-meet::before {
     content:''; position:absolute; inset:-4px; border-radius:100px;
     background:radial-gradient(closest-side, rgba(130,220,185,.35), rgba(130,220,185,0) 72%);
@@ -655,11 +654,9 @@
     <img class="hero-media-img" id="heroMediaImg" alt="茶杯中缓缓升起的蒸汽">
   </div>
   <div class="cta-row">
+    <a class="btn btn-cta-meet" id="meetNowBtn" href="/consult/"><span>相约</span></a>
     <button class="btn btn-primary" id="startJourneyBtn" data-i18n="home.hero.cta1">开启你的旅程</button>
     <button class="btn btn-secondary" id="exploreShopBtn" data-i18n="home.hero.cta2">探索产品</button>
-  </div>
-  <div class="cta-row cta-meet-row">
-    <a class="btn btn-cta-meet" id="meetNowBtn" href="/consult/"><span>相约</span></a>
   </div>
 </section>
 

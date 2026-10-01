@@ -483,9 +483,8 @@
    position: relative !important;
    z-index: 1 !important;
   }
-  .hero .cta-meet-row { margin-top: 18px !important; }
-  .hero .cta-meet-row .btn-cta-meet {
-   min-width: min(360px, 90vw) !important;
+  .hero .cta-row .btn-cta-meet {
+   flex: 0 0 100% !important;
    font-size: 20px !important;
    letter-spacing: 1px !important;
   }
@@ -708,11 +707,9 @@
   <img class="hero-media-img" id="heroMediaImg" alt="Steam slowly rising from a teacup">
  </div>
  <div class="cta-row">
+  <a class="btn btn-cta-meet" id="meetNowBtn" href="/en/consult/"><span>Meet Now</span></a>
   <button class="btn btn-primary" id="startJourneyBtn" data-i18n="home.hero.cta1">Start Your Journey</button>
   <button class="btn btn-secondary" id="exploreShopBtn" data-i18n="home.hero.cta2">Explore Products</button>
- </div>
- <div class="cta-row cta-meet-row">
-  <a class="btn btn-cta-meet" id="meetNowBtn" href="/en/consult/"><span>Meet Now</span></a>
  </div>
 </section>
 
