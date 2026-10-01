@@ -1349,10 +1349,10 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     // 某商品在某规格下的当前单价；已应用优惠码时取优惠价（coupon_*），否则取正常价
     function productUnitPrice(p, form){
       if(form === 'trial'){
-        if(rxDraft.couponApplied && p.coupon_trial_price != null && p.coupon_trial_price !== '') return Number(p.coupon_trial_price);
+        if(rxDraft.couponApplied && p.couponPriceTrial != null && p.couponPriceTrial !== '') return Number(p.couponPriceTrial);
         return Number(p.trial_price);
       }
-      if(rxDraft.couponApplied && p.coupon_price != null && p.coupon_price !== '') return Number(p.coupon_price);
+      if(rxDraft.couponApplied && p.couponPrice != null && p.couponPrice !== '') return Number(p.couponPrice);
       return Number(p.price);
     }
     function renderRxProductSelect(){
@@ -1365,7 +1365,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       Object.keys(groups).forEach(function(type){
         html += '<optgroup label="'+escapeHtml(type)+'">';
         groups[type].forEach(function(p){
-          var dispName = p.name + (p.name_en ? ' ('+p.name_en+')' : '');
+          var dispName = p.name + (p.nameEn ? ' ('+p.nameEn+')' : '');
           if(p.trial_price != null && p.trial_price !== ''){
             html += '<option value="'+escapeHtml(p.id)+'|trial">'+escapeHtml(dispName+' · 试用装')+' — RM'+productUnitPrice(p,'trial').toFixed(2)+'</option>';
           }
@@ -1622,7 +1622,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       var pid = parts[0], form = parts[1] || 'full';
       var p = SHOP_PRODUCTS.find(function(x){ return x.id === pid; });
       if(!p){ showToast('商品信息缺失'); return; }
-      rxDraft.products.push({ productId: p.id, name: p.name, nameEn: p.name_en||'', form: form, qty: 1, unitPrice: productUnitPrice(p, form) });
+      rxDraft.products.push({ productId: p.id, name: p.name, nameEn: p.nameEn||'', form: form, qty: 1, unitPrice: productUnitPrice(p, form) });
       renderRxProductList(); renderAmountSummary();
     });
     // 优惠码：拉取全部有效码校验；命中则商品切优惠价，无效则恢复正常价
@@ -1632,7 +1632,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       var code = (inp.value || '').trim().toUpperCase();
       if(!code){ showToast('请输入优惠码'); return; }
       try {
-        var res = await fetch(API_BASE + '/coupon-codes');
+        var res = await fetch(API_BASE + '/auth/coupon-codes');
         var codes = res.ok ? await res.json() : [];
         var hit = codes.find(function(c){ return c.code === code; });
         if(!hit){
