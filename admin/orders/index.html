@@ -339,7 +339,7 @@ tbody tr:hover{ background:#FBFAF7; }
      项目多时按内容自然分页。 */
   body > :not(.print-receipt):not(.print-receipt-thermal){ display:none !important; }
   .print-receipt{ display:block; position:static; width:100%; padding:36px 44px; box-sizing:border-box; }
-  .print-receipt-thermal{ display:block; position:static; width:58mm; padding:0; }
+  .print-receipt-thermal{ display:block; position:static; width:48mm; padding:0; }
 }
 .receipt-brandrow{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:26px; }
 .receipt-brand{ font-family:var(--font-serif); font-weight:700; font-size:21px; letter-spacing:.1em; }
@@ -362,19 +362,19 @@ tbody tr:hover{ background:#FBFAF7; }
 .export-btn-group .btn-export{ flex:1; font-size:12.5px; padding:12px 6px; }
 
 /* ---- 58mm thermal-printer receipt format ---- */
-.thermal{ width:58mm; box-sizing:border-box; padding:2mm 2.5mm; font-family:'Courier New',Consolas,monospace; font-size:9.5px; line-height:1.5; color:#000; }
+.thermal{ width:48mm; box-sizing:border-box; padding:0.5mm 1.5mm; font-family:'Courier New',Consolas,monospace; font-size:12px; line-height:1.3; color:#000; }
 .thermal .t-center{ text-align:center; }
-.thermal .t-brand{ font-size:14px; font-weight:700; letter-spacing:.04em; }
-.thermal .t-brand .tm{ font-size:7px; vertical-align:super; }
-.thermal .t-sub{ font-size:7.5px; margin-top:2px; }
-.thermal .t-div{ border-top:1px dashed #000; margin:5px 0; }
-.thermal .t-row{ display:flex; justify-content:space-between; gap:6px; margin:1.5px 0; }
+.thermal .t-brand{ font-size:15px; font-weight:700; letter-spacing:.04em; }
+.thermal .t-brand .tm{ font-size:8px; vertical-align:super; }
+.thermal .t-sub{ font-size:10px; margin-top:1px; }
+.thermal .t-div{ border-top:1px dashed #000; margin:2px 0; }
+.thermal .t-row{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:4px; margin:1px 0; }
 .thermal .t-row .l{ color:#333; }
-.thermal .t-item{ margin:3px 0; }
+.thermal .t-item{ margin:2px 0; }
 .thermal .t-item-name{ font-weight:700; }
-.thermal .t-item-sub{ display:flex; justify-content:space-between; padding-left:3px; color:#333; }
-.thermal .t-total{ font-weight:700; font-size:11.5px; display:flex; justify-content:space-between; margin-top:5px; }
-.thermal .t-ftr{ font-size:7px; text-align:center; margin-top:10px; line-height:1.6; color:#333; }
+.thermal .t-item-sub{ display:flex; justify-content:space-between; flex-wrap:wrap; padding-left:3px; color:#333; }
+.thermal .t-total{ font-weight:700; font-size:13px; display:flex; justify-content:space-between; flex-wrap:wrap; margin-top:2px; }
+.thermal .t-ftr{ font-size:9px; text-align:center; margin-top:6px; line-height:1.5; color:#333; }
 .thermal .t-ftr .my{ font-weight:700; }
 
 /* ---- sales analytics ---- */

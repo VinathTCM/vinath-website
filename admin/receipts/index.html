@@ -455,7 +455,15 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     function setPrintPageSize(size){
       var pg = document.getElementById('printPageCss');
       if(!pg){ pg = document.createElement('style'); pg.id = 'printPageCss'; document.head.appendChild(pg); }
-      pg.textContent = (size === '58') ? '@page{size:58mm auto;margin:0;}' : '@page{size:A4;margin:12mm;}';
+      if(size === '58'){
+        // 58mm 热敏纸有效打印宽度约 48mm；纸高贴合小票内容，避免上下留白过多
+        var s = document.querySelector('.sheet-58');
+        var hMm = 120;
+        if(s && s.offsetHeight){ hMm = Math.round(s.offsetHeight / 96 * 25.4) + 8; }
+        pg.textContent = '@page{size:48mm ' + hMm + 'mm;margin:0;}';
+      } else {
+        pg.textContent = '@page{size:A4;margin:12mm;}';
+      }
     }
     // iPad/iPadOS Safari 不支持 @page{size:58mm}，默认按 A4/Letter 纸打印会把小票缩成
     // 一小条（像截图）。检测到 iPad 时把 58mm 内容铺满纸张宽度并放大字号，
@@ -475,14 +483,14 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     }
     function renderThermalCanvas(root){
       var scale = 2;
-      var W = Math.round(58 / 25.4 * 96) * scale;
-      var padX = Math.round(2.5 / 25.4 * 96) * scale;
-      var padY = Math.round(2 / 25.4 * 96) * scale;
+      var W = Math.round(48 / 25.4 * 96) * scale;
+      var padX = Math.round(1.5 / 25.4 * 96) * scale;
+      var padY = Math.round(1 / 25.4 * 96) * scale;
       var lines = [];
       (function scan(el){
         var st = el.style;
         if(st.borderTop && /dashed/i.test(st.borderTop)){ lines.push({dash:true}); return; }
-        var fs = parseFloat(st.fontSize) || 9;
+        var fs = parseFloat(st.fontSize) || 12;
         var fw = (st.fontWeight === '700' || st.fontWeight === 'bold') ? 700 : 400;
         var color = st.color || '#000';
         if(st.display === 'flex' && el.children.length >= 2){
@@ -498,40 +506,60 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
         var align = (st.textAlign === 'center') ? 'center' : 'left';
         for(var i=0;i<parts.length;i++){ lines.push({text:parts[i], align:align, fs:fs, fw:fw, color:color}); }
       })(root);
-      var lineH = function(fs){ return Math.round(fs * 1.45 * scale); };
-      var totalH = padY * 2;
-      lines.forEach(function(ln){ totalH += ln.dash ? Math.round(2 * scale) : lineH(ln.fs); });
+      var lineH = function(fs){ return Math.round(fs * 1.3 * scale); };
       var cv = document.createElement('canvas');
-      cv.width = W; cv.height = totalH;
+      cv.width = W;
       var ctx = cv.getContext('2d');
+      function fontOf(ln){ return (ln.fw === 700 ? '700 ' : '') + (ln.fs * scale) + 'px "Courier New","PingFang SC","Microsoft YaHei",monospace'; }
+      var availW = W - padX * 2;
+      var totalH = padY * 2;
+      lines.forEach(function(ln){
+        if(ln.dash){ totalH += Math.round(2 * scale); return; }
+        var f = fontOf(ln); ctx.font = f;
+        var h = lineH(ln.fs);
+        totalH += h;
+        if(ln.left !== undefined){
+          if(ctx.measureText(ln.left).width + ctx.measureText(ln.right).width > availW){ totalH += h; }
+        }
+      });
+      cv.height = totalH;
       ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, totalH);
       ctx.textBaseline = 'top';
       var y = padY;
-      function fontOf(ln){ return (ln.fw === 700 ? '700 ' : '') + (ln.fs * scale) + 'px "Courier New","PingFang SC","Microsoft YaHei",monospace'; }
       lines.forEach(function(ln){
         if(ln.dash){
           ctx.strokeStyle = '#000'; ctx.lineWidth = 1; ctx.setLineDash([4 * scale, 3 * scale]);
           ctx.beginPath(); ctx.moveTo(padX, y + Math.round(1 * scale)); ctx.lineTo(W - padX, y + Math.round(1 * scale)); ctx.stroke();
           ctx.setLineDash([]); y += Math.round(2 * scale); return;
         }
-        ctx.font = fontOf(ln); ctx.fillStyle = ln.color;
+        var f = fontOf(ln);
+        ctx.font = f; ctx.fillStyle = ln.color;
         var h = lineH(ln.fs);
         if(ln.left !== undefined){
-          ctx.textAlign = 'left'; ctx.fillText(ln.left || '', padX, y);
-          ctx.textAlign = 'right'; ctx.fillText(ln.right || '', W - padX, y);
+          var wl = ctx.measureText(ln.left).width, wr = ctx.measureText(ln.right).width;
+          ctx.textAlign = 'left';
+          ctx.fillText(ln.left || '', padX, y);
+          if(wl + wr <= availW){
+            ctx.textAlign = 'right'; ctx.fillText(ln.right || '', W - padX, y);
+            y += h;
+          } else {
+            ctx.textAlign = 'right';
+            ctx.fillText(ln.right || '', W - padX, y + h);
+            y += h * 2;
+          }
         } else {
           ctx.textAlign = ln.align || 'left';
           var x = (ln.align === 'center') ? W / 2 : padX;
           ctx.fillText(ln.text || '', x, y);
+          y += h;
         }
-        y += h;
       });
       return cv;
     }
     function canvasToPdfBlob(cv){
       var mmToPt = 2.8346456693;
-      var pageW = Math.round(58 * mmToPt);
-      var pageH = Math.round(cv.height / cv.width * 58 * mmToPt);
+      var pageW = Math.round(48 * mmToPt);
+      var pageH = Math.round(cv.height / cv.width * 48 * mmToPt);
       var jpeg = cv.toDataURL('image/jpeg', 0.93).split(',')[1];
       var bin = atob(jpeg), len = bin.length;
       var imgW = cv.width, imgH = cv.height;
@@ -647,35 +675,35 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       + '<div class="receipt-disclaimer">This receipt is generated by the VINATH internal system to record the charges for your home-visit TCM service and may be used as proof of payment for company or insurance reimbursement. This receipt is not yet connected to the LHDN e-Invoice system and does not carry the legal effect of a formal electronic invoice. If an official e-Invoice is required, please contact us separately.</div>'
 
       + '</div>'
-      + '<div class="sheet-58" style="display:none;width:58mm;box-sizing:border-box;padding:2mm 2.5mm;font-family:\'Courier New\',Consolas,monospace;font-size:9.5px;line-height:1.5;color:#000;">'
-      + '<div style="text-align:center;"><span style="font-weight:700;font-size:13px;">VINATH<sup style="font-size:7px;">TM</sup></span></div>'
+      + '<div class="sheet-58" style="display:none;width:48mm;box-sizing:border-box;padding:0.5mm 1.5mm;font-family:\'Courier New\',Consolas,monospace;font-size:12px;line-height:1.3;color:#000;">'
+      + '<div style="text-align:center;"><span style="font-weight:700;font-size:15px;">VINATH<sup style="font-size:8px;">TM</sup></span></div>'
       + '<div style="text-align:center;">Johor, Malaysia</div>'
       + '<div style="text-align:center;">VINATH TCM HEALTH CARE</div>'
       + (biz.taxId ? '<div style="text-align:center;">Tax Reg. No. '+escapeHtml(biz.taxId)+'</div>' : '')
-      + '<div style="border-top:1px dashed #000;margin:1.5mm 0;"></div>'
+      + '<div style="border-top:1px dashed #000;margin:0.8mm 0;"></div>'
       + '<div style="text-align:center;font-weight:700;">RECEIPT</div>'
-      + '<div style="display:flex;justify-content:space-between;"><span>No.</span><span>'+escapeHtml(rc.receiptNo)+'</span></div>'
-      + '<div style="display:flex;justify-content:space-between;"><span>Date</span><span>'+rc.issuedAt.slice(0,16)+'</span></div>'
-      + '<div style="border-top:1px dashed #000;margin:1.5mm 0;"></div>'
-      + '<div style="display:flex;justify-content:space-between;"><span>Patient</span><span>'+escapeHtml(rc.patientName)+'</span></div>'
-      + '<div style="display:flex;justify-content:space-between;"><span>Contact</span><span>+60 '+String(rc.patientPhone||'').replace(/^0/,'')+'</span></div>'
-      + (rc.practitionerNameSnapshot ? '<div style="display:flex;justify-content:space-between;"><span>Practitioner</span><span>'+escapeHtml(rc.practitionerNameSnapshot)+'</span></div>' : '')
-      + '<div style="border-top:1px dashed #000;margin:1.5mm 0;"></div>'
+      + '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span>No.</span><span style="margin-left:auto;text-align:right;">'+escapeHtml(rc.receiptNo)+'</span></div>'
+      + '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span>Date</span><span style="margin-left:auto;text-align:right;">'+rc.issuedAt.slice(0,16)+'</span></div>'
+      + '<div style="border-top:1px dashed #000;margin:0.8mm 0;"></div>'
+      + '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span>Patient</span><span style="margin-left:auto;text-align:right;">'+escapeHtml(rc.patientName)+'</span></div>'
+      + '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span>Contact</span><span style="margin-left:auto;text-align:right;">+60 '+String(rc.patientPhone||'').replace(/^0/,'')+'</span></div>'
+      + (rc.practitionerNameSnapshot ? '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span>Practitioner</span><span style="margin-left:auto;text-align:right;">'+escapeHtml(rc.practitionerNameSnapshot)+'</span></div>' : '')
+      + '<div style="border-top:1px dashed #000;margin:0.8mm 0;"></div>'
       + (hasDetail ? rc.lineItems.map(function(it){
           var nm = escapeHtml(itName(it));
           if(it.price > 0){
             return '<div style="margin-top:1mm;"><div>'+nm+'</div>'
-              + '<div style="display:flex;justify-content:space-between;"><span>x'+(it.qty||1)+' @ RM '+(Number(it.price)||0).toFixed(2)+'</span><span>RM '+(Number(it.price)*(it.qty||1)).toFixed(2)+'</span></div></div>';
+              + '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span>x'+(it.qty||1)+' @ RM '+(Number(it.price)||0).toFixed(2)+'</span><span style="margin-left:auto;text-align:right;">RM '+(Number(it.price)*(it.qty||1)).toFixed(2)+'</span></div></div>';
           }
           return '<div style="margin-top:1mm;"><div>'+nm+'</div>'
             + '<div style="text-align:right;color:#555;">(billed separately)</div></div>';
         }).join('') : Object.keys(FEE_LABELS).filter(function(k){ return rc.items[k] > 0; }).map(function(k){
-          return '<div style="display:flex;justify-content:space-between;margin-top:1mm;"><span>'+FEE_LABELS[k]+'</span><span>RM '+Number(rc.items[k]).toFixed(2)+'</span></div>';
+          return '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;margin-top:1mm;"><span>'+FEE_LABELS[k]+'</span><span style="margin-left:auto;text-align:right;">RM '+Number(rc.items[k]).toFixed(2)+'</span></div>';
         }).join(''))
-      + '<div style="border-top:1px dashed #000;margin:1.5mm 0;"></div>'
-      + '<div style="display:flex;justify-content:space-between;font-weight:700;"><span>TOTAL</span><span>RM '+Number(rc.totalAmount).toFixed(2)+'</span></div>'
-      + (hasDetail && rc.lineItems.some(function(it){ return it.price === 0; }) ? '<div style="font-size:9px;margin-top:1mm;">Herbal fee billed separately</div>' : '')
-      + '<div style="border-top:1px dashed #000;margin:1.5mm 0;"></div>'
+      + '<div style="border-top:1px dashed #000;margin:0.8mm 0;"></div>'
+      + '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;font-weight:700;"><span>TOTAL</span><span style="margin-left:auto;text-align:right;">RM '+Number(rc.totalAmount).toFixed(2)+'</span></div>'
+      + (hasDetail && rc.lineItems.some(function(it){ return it.price === 0; }) ? '<div style="font-size:11px;margin-top:1mm;">Herbal fee billed separately</div>' : '')
+      + '<div style="border-top:1px dashed #000;margin:0.8mm 0;"></div>'
       + '<div>Proof of service only. Questions via WhatsApp: +601145799499.<br>Copyright &copy; 2026 VINATH TCM HEALTH CARE.<br>All rights reserved. Malaysia</div>'
       + '</div></div>';
     document.getElementById('app').innerHTML = html;
@@ -693,6 +721,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
           if(ok){ showToast('已生成无页脚小票 PDF'); } else { showToast('生成 PDF 失败，请重试'); }
           return;
         }
+        setPrintPageSize('58'); // 小票已渲染，重新按实际内容高度设定打印纸高
         adaptThermalForIpad(root58);
         window.print();
       }, 250);
