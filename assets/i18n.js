@@ -951,47 +951,96 @@
     container.id = 'vinath-lang-switcher';
     container.style.cssText = [
       'position:fixed',
-      'top:12px',
+      'top:56px',
       'right:12px',
-      'z-index:99999',
-      'display:flex',
-      'gap:2px',
-      'background:rgba(255,255,255,0.95)',
-      'border-radius:20px',
-      'padding:3px',
-      'box-shadow:0 2px 10px rgba(0,0,0,0.15)',
+      'z-index:85',
       'font-family:system-ui,-apple-system,sans-serif',
-      'font-size:12px',
-      'backdrop-filter:blur(8px)'
+      'font-size:12px'
     ].join(';');
+
+    // 触发按钮（默认收起：地球图标 + 当前语言）
+    var trigger = document.createElement('button');
+    trigger.id = 'vinath-lang-current';
+    trigger.type = 'button';
+    trigger.setAttribute('aria-haspopup', 'true');
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.style.cssText = [
+      'display:flex', 'align-items:center', 'gap:5px',
+      'border:1px solid rgba(0,0,0,0.10)',
+      'background:rgba(255,255,255,0.96)',
+      'padding:6px 10px',
+      'border-radius:16px',
+      'cursor:pointer',
+      'color:#333',
+      'font-weight:600',
+      'font-size:12px',
+      'box-shadow:0 2px 10px rgba(0,0,0,0.12)',
+      'backdrop-filter:blur(8px)',
+      'transition:all 0.2s'
+    ].join(';');
+    trigger.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span id="vinath-lang-current-label"></span>';
+
+    // 语言下拉菜单
+    var menu = document.createElement('div');
+    menu.id = 'vinath-lang-menu';
+    menu.style.cssText = [
+      'position:absolute', 'top:calc(100% + 6px)', 'right:0',
+      'min-width:96px',
+      'background:rgba(255,255,255,0.98)',
+      'border:1px solid rgba(0,0,0,0.08)',
+      'border-radius:12px',
+      'padding:4px',
+      'box-shadow:0 8px 24px rgba(0,0,0,0.15)',
+      'display:none'
+    ].join(';');
+
+    function openMenu() {
+      menu.style.display = 'block';
+      trigger.setAttribute('aria-expanded', 'true');
+    }
+    function closeMenu() {
+      menu.style.display = 'none';
+      trigger.setAttribute('aria-expanded', 'false');
+    }
 
     LANGS.forEach(function(lang) {
       var btn = document.createElement('button');
       btn.className = 'vinath-lang-btn';
+      btn.type = 'button';
       btn.setAttribute('data-lang', lang);
-      btn.textContent = t('lang.' + lang);
       btn.style.cssText = [
-        'border:none',
-        'background:transparent',
-        'padding:4px 10px',
-        'border-radius:15px',
-        'cursor:pointer',
-        'color:#666',
-        'font-weight:500',
-        'font-size:12px',
-        'transition:all 0.2s'
+        'display:flex', 'width:100%', 'align-items:center',
+        'border:none', 'background:transparent',
+        'padding:8px 10px', 'border-radius:8px',
+        'cursor:pointer', 'color:#555',
+        'font-weight:500', 'font-size:12px',
+        'text-align:left'
       ].join(';');
-      btn.addEventListener('click', function() {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        closeMenu();
         setLang(lang);
       });
-      container.appendChild(btn);
+      menu.appendChild(btn);
     });
 
+    trigger.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (menu.style.display === 'block') closeMenu(); else openMenu();
+    });
+    document.addEventListener('click', function(e) {
+      if (menu.style.display === 'block' && !container.contains(e.target)) closeMenu();
+    });
+
+    container.appendChild(trigger);
+    container.appendChild(menu);
     document.body.appendChild(container);
     updateLangSwitcher();
   }
 
   function updateLangSwitcher() {
+    var label = document.getElementById('vinath-lang-current-label');
+    if (label) label.textContent = t('lang.' + currentLang);
     var container = document.getElementById('vinath-lang-switcher');
     if (!container) return;
     container.querySelectorAll('.vinath-lang-btn').forEach(function(btn) {
@@ -1003,7 +1052,7 @@
         btn.style.fontWeight = '600';
       } else {
         btn.style.background = 'transparent';
-        btn.style.color = '#666';
+        btn.style.color = '#555';
         btn.style.fontWeight = '500';
       }
     });

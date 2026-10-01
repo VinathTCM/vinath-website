@@ -717,7 +717,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + (hasImg ? '<span class="prod-dl" data-dlid="'+p.id+'" title="Download image (with VINATH watermark)"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>' : '')
    + '</div>'
    + '<div class="prod-name">'+(p.nameEn||p.name)+'</div>'
-   + '<div class="prod-price">Trial from RM '+p.trial+'</div><div class="prod-price-sub">Full size '+(p.trialPerFull||7)+' sachets ~RM'+(p.price/(p.trialPerFull||7)).toFixed(2)+'/sachet</div>'
+   + '<div class="prod-price">Trial from RM '+p.trial+'</div><div class="prod-price-sub">Full size = '+(p.trialPerFull||7)+' trial packs · ~RM'+(p.price/(p.trialPerFull||7)).toFixed(2)+'/pack</div>'
    + '</div>';
  }
 
@@ -871,7 +871,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     + '<div class="feat-pin">Seasonal Picks</div>'
     + '<span class="prod-wish'+(wished?' on':'')+'" data-wid="'+p.id+'" style="top:12px;right:12px;">'+WISH_HEART_SVG+'</span>'
         + (hasImg ? '<span class="prod-dl" data-dlid="'+p.id+'" title="Download image (with VINATH watermark)" style="top:12px;right:46px;opacity:1;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>' : '')
-    + '<div class="feat-body'+(hasImg?'':' feat-body-plain')+'"><div class="feat-name">'+(p.nameEn||p.name)+'</div><div class="feat-price">Trial from RM '+p.trial+'</div><div class="feat-price-sub">Full size '+(p.trialPerFull||7)+' sachets ~RM'+(p.price/(p.trialPerFull||7)).toFixed(2)+'/sachet</div></div>'
+    + '<div class="feat-body'+(hasImg?'':' feat-body-plain')+'"><div class="feat-name">'+(p.nameEn||p.name)+'</div><div class="feat-price">Trial from RM '+p.trial+'</div><div class="feat-price-sub">Full size = '+(p.trialPerFull||7)+' trial packs · ~RM'+(p.price/(p.trialPerFull||7)).toFixed(2)+'/pack</div></div>'
     + '</div>';
   });
   featGrid.innerHTML = html || '<div class="prod-empty">No featured products yet</div>';
@@ -1045,7 +1045,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   qvVariants.innerHTML =
    '<div class="qv-variant on" data-v="full"><div class="vv-lbl">Full Size</div><div class="vv-price">MYR '+p.price+'</div></div>'
    + '<div class="qv-variant" data-v="trial"><div class="vv-lbl">Trial Size</div><div class="vv-price">MYR '+p.trial+'</div></div>'
-   + '<div class="qv-conversion" style="margin-top:8px;font-size:12px;color:var(--espresso-soft);text-align:center;">'+((p.trialPerFull || 7) + ' trial packs = 1 full pack')+'</div>';
+   + '<div class="qv-conversion" style="margin-top:8px;font-size:12px;color:var(--espresso-soft);text-align:center;">'+('1 full pack contains the equivalent of '+(p.trialPerFull || 7)+' trial packs (same total amount)')+'</div>';
   qvVariants.querySelectorAll('.qv-variant').forEach(function(v){
    v.addEventListener('click', function(){
     selectedVariant = this.getAttribute('data-v');

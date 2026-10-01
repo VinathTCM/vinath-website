@@ -670,9 +670,13 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     if(!related.length) return '';
     var cards = related.slice(0, 8).map(function(p){
       var hasImg = p.imgs && p.imgs[0];
+      var _n = p.trialPerFull||7;
+      var _sub = _curLang==='en'
+        ? 'Full size = '+_n+' trial packs · ~RM'+(p.price/_n).toFixed(2)+'/pack'
+        : '正装含相当于 '+_n+' 份试用装 · 约RM'+(p.price/_n).toFixed(2)+'/份';
       return '<div class="related-card" data-id="'+p.id+'">'
         + '<div class="related-thumb">' + (hasImg ? '<img src="'+p.imgs[0]+'" alt="'+p.name+'">' : '<div class="pt-icon">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>') + '</div>'
-        + '<div class="related-name">'+p.name+'</div><div class="related-price">试用装 RM '+p.trial+' 起</div><div class="related-price-sub">正装'+(p.trialPerFull||7)+'包 约RM'+(p.price/(p.trialPerFull||7)).toFixed(2)+'/包</div></div>';
+        + '<div class="related-name">'+p.name+'</div><div class="related-price">试用装 RM '+p.trial+' 起</div><div class="related-price-sub">'+_sub+'</div></div>';
     }).join('');
     return '<div class="pd-section"><div class="pd-section-title">同类商品 · '+TYPE_LABEL[product.type]+'</div><div class="related-grid">'+cards+'</div></div>';
   }
@@ -690,7 +694,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="pd-variant" data-v="trial"><div class="vv-lbl">试用装</div><div class="vv-price">MYR '+product.trial+'</div></div>'
       + '</div>';
     if(product.trialPerFull && Number(product.trialPerFull) >= 2){
-      html += '<div class="pd-size-note">1 份正装 = '+Number(product.trialPerFull)+' 份试用装（用量完全等同），可按需要的用量选择。</div>';
+      var _pn = Number(product.trialPerFull);
+      html += '<div class="pd-size-note">'+(_curLang==='en'
+        ? '1 Full Size contains the equivalent of '+_pn+' Trial Packs (same total amount). Choose based on how much you need.'
+        : '正装 1 份含相当于 '+_pn+' 份试用装的用量（总量完全等同），可按需要的用量选择。')+'</div>';
     }
 
     html += '<div class="pd-qty-row"><div class="pd-qty-label">数量</div>'

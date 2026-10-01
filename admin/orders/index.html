@@ -1869,7 +1869,7 @@ window.escapeHtml = function(s){
           + '<td class="price-cell">MYR '+orderTotal(o).toFixed(2)+'</td>'
           + '<td>'+(o.region==='west'?'西马':'东马')+'</td>'
           + '<td><span class="badge '+orderStatusBadgeClass(o)+'">'+orderStatusLabel(o)+'</span></td>'
-          + '<td><button class="row-edit" data-id="'+o.id+'">查看</button>'+((cur&&cur.type==='senior')?'<button class="row-edit row-del-btn" data-id="'+o.id+'" data-type="order" style="color:#c0392b;border-color:#c0392b;margin-left:4px;">删除</button>':'')+'</td>'
+          + '<td><button class="row-edit" data-id="'+o.id+'">查看</button>'+((cur&&cur.type==='senior')?'<button class="row-edit row-del-btn" data-id="'+o._backendId+'" data-type="order" style="color:#c0392b;border-color:#c0392b;margin-left:4px;">删除</button>':'')+'</td>'
           + '</tr>';
       }).join('');
       rowsHtml += wholesaleList.map(function(o){
@@ -1883,7 +1883,7 @@ window.escapeHtml = function(s){
           + '<td class="price-cell">MYR '+o.total.toFixed(2)+'</td>'
           + '<td>'+(o.region==='west'?'西马':'东马')+'</td>'
           + '<td><span class="badge badge-o'+(o.status||0)+'">'+wholesaleStatusLabel(o)+'</span></td>'
-          + '<td><button class="row-edit" data-id="'+o.id+'" data-wholesale="1">查看</button>'+((cur&&cur.type==='senior')?'<button class="row-edit row-del-btn" data-id="'+o.id+'" data-type="order" style="color:#c0392b;border-color:#c0392b;margin-left:4px;">删除</button>':'')+'</td>'
+          + '<td><button class="row-edit" data-id="'+o.id+'" data-wholesale="1">查看</button>'+((cur&&cur.type==='senior')?'<button class="row-edit row-del-btn" data-id="'+o._backendId+'" data-type="order" style="color:#c0392b;border-color:#c0392b;margin-left:4px;">删除</button>':'')+'</td>'
           + '</tr>';
       }).join('');
       tbody.innerHTML = rowsHtml;
@@ -2115,7 +2115,7 @@ window.escapeHtml = function(s){
           + '<td>'+escapeHtml(b.area)+'</td>'
           + '<td>'+badge+'</td>'
           + '<td>'+reviewCell+'</td>'
-          + '<td><button class="row-edit" data-id="'+b.id+'">查看</button>'+((cur&&cur.type==='senior')?'<button class="row-edit row-del-btn" data-id="'+b.id+'" data-type="booking" style="color:#c0392b;border-color:#c0392b;margin-left:4px;">删除</button>':'')+'</td>'
+          + '<td><button class="row-edit" data-id="'+b.id+'">查看</button>'+((cur&&cur.type==='senior')?'<button class="row-edit row-del-btn" data-id="'+b._backendId+'" data-type="booking" style="color:#c0392b;border-color:#c0392b;margin-left:4px;">删除</button>':'')+'</td>'
           + '</tr>';
       }).join('');
     }

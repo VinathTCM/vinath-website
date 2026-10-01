@@ -713,7 +713,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
    var hasImg = p.imgs && p.imgs[0];
    return '<div class="related-card" data-id="'+p.id+'">'
     + '<div class="related-thumb">' + (hasImg ? '<img src="'+p.imgs[0]+'" alt="'+p.name+'">' : '<div class="pt-icon">'+(ICON[p.type]||GENERIC_CAT_ICON)+'</div>') + '</div>'
-    + '<div class="related-name">'+(p.nameEn||p.name)+'</div><div class="related-price">Trial from RM '+p.trial+'</div><div class="related-price-sub">Full size '+(p.trialPerFull||7)+' sachets ~RM'+(p.price/(p.trialPerFull||7)).toFixed(2)+'/sachet</div></div>';
+    + '<div class="related-name">'+(p.nameEn||p.name)+'</div><div class="related-price">Trial from RM '+p.trial+'</div><div class="related-price-sub">Full size = '+(p.trialPerFull||7)+' trial packs · ~RM'+(p.price/(p.trialPerFull||7)).toFixed(2)+'/pack</div></div>';
   }).join('');
   return '<div class="pd-section"><div class="pd-section-title">Similar Products · '+TYPE_LABEL[product.type]+'</div><div class="related-grid">'+cards+'</div></div>';
  }
@@ -732,7 +732,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
    + '<div class="pd-variant" data-v="trial"><div class="vv-lbl">Trial Size</div><div class="vv-price">MYR '+product.trial+'</div></div>'
    + '</div>';
   if(product.trialPerFull && Number(product.trialPerFull) >= 2){
-    html += '<div class="pd-size-note">1 Full Size = '+Number(product.trialPerFull)+' Trial Sizes (equivalent amount). Choose based on how much you need.</div>';
+    html += '<div class="pd-size-note">1 Full Size contains the equivalent of '+Number(product.trialPerFull)+' Trial Packs (same total amount). Choose based on how much you need.</div>';
   }
 
   html += '<div class="pd-qty-row"><div class="pd-qty-label">Quantity</div>'
