@@ -165,7 +165,7 @@
     font-size:18.5px; line-height:1.8; color:var(--warm-black); opacity:.7;
     max-width:440px; margin-bottom:40px; font-weight:400;
   }
-  .cta-row { display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:40px; width:max-content; max-width:100%; margin-left:auto; margin-right:auto; }
+  .cta-row { display:grid; grid-template-columns:repeat(2, auto); gap:14px; justify-content:center; margin-top:40px; width:max-content; max-width:100%; margin-left:auto; margin-right:auto; }
   .btn {
     font-family:var(--font-body); font-size:17px; font-weight:600;
     padding:17px 32px; border-radius:100px; cursor:pointer; border:1px solid transparent;
@@ -187,7 +187,7 @@
     text-shadow:0 1px 0 rgba(255,255,255,.5);
     padding:20px 64px; overflow:visible;
   }
-  .cta-row .btn-cta-meet { flex:0 0 100%; font-size:20px; letter-spacing:1px; }
+  .cta-row .btn-cta-meet { grid-column:1 / -1; justify-self:stretch; width:100%; font-size:20px; letter-spacing:1px; }
   .btn-cta-meet::before {
     content:''; position:absolute; inset:-4px; border-radius:100px;
     background:radial-gradient(closest-side, rgba(130,220,185,.35), rgba(130,220,185,0) 72%);
@@ -487,7 +487,7 @@
     }
     @media (max-width: 600px) {
       .hero .cta-row {
-        flex-direction: column !important;
+        grid-template-columns: 1fr !important;
         width: 100% !important;
       }
       .hero .btn {
