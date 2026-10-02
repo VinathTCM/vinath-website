@@ -680,14 +680,14 @@
       <p class="process-sub" data-i18n="process.sub">From booking to follow-up, we make TCM care effortless.</p>
     </div>
     <div class="process-steps">
-      <div class="process-step">
+      <a class="process-step" href="/consult/">
         <div class="step-number">01</div>
         <div class="step-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
         </div>
         <h3 data-i18n="process.step1.title">Book Appointment</h3>
         <p data-i18n="process.step1.desc">Choose your preferred date, time, and service type online or via WhatsApp.</p>
-      </div>
+      </a>
       <div class="process-step">
         <div class="step-number">02</div>
         <div class="step-icon">
@@ -763,6 +763,9 @@
       position: relative;
     }
     .process-step {
+      display: block;
+      text-decoration: none;
+      color: inherit;
       background: var(--warm-white);
       border-radius: 16px;
       padding: 28px 20px;
