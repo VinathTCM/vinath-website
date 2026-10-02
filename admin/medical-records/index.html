@@ -2249,8 +2249,7 @@ function fillPrintArea(receipt, size, lang){
         + '<div style="font-size:16px;font-weight:700;margin-bottom:4px;">发票已保存</div>'
         + '<div style="font-size:13px;color:#6B7280;margin-bottom:16px;">' + escapeHtml(receipt.receipt_no) + ' · ' + money(receipt.total_amount) + '</div>'
         + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
-        + '<button class="btn-primary" id="print58BiBtn" style="padding:11px;font-size:13px;">58mm 双语小票</button>'
-        + '<button class="btn-primary" id="print58EnBtn" style="padding:11px;font-size:13px;">58mm 英语小票</button>'
+        + '<button class="btn-primary" id="print58Btn" style="padding:11px;font-size:13px;">58mm 英语小票</button>'
         + '<button class="btn-primary" id="printA4BiBtn" style="padding:11px;font-size:13px;background:#3A3F42;">A4 双语发票</button>'
         + '<button class="btn-primary" id="printA4EnBtn" style="padding:11px;font-size:13px;background:#3A3F42;">A4 英语发票</button>'
         + '</div>'
@@ -2258,8 +2257,7 @@ function fillPrintArea(receipt, size, lang){
         + '</div>';
       document.body.appendChild(ov);
       ov.addEventListener('click', function(ev){ if(ev.target === ov){ ov.remove(); view = 'timeline'; render(); } });
-      ov.querySelector('#print58BiBtn').addEventListener('click', function(){ doPrintReceipt(receipt, '58', 'bi'); });
-      ov.querySelector('#print58EnBtn').addEventListener('click', function(){ doPrintReceipt(receipt, '58', 'en'); });
+      ov.querySelector('#print58Btn').addEventListener('click', function(){ doPrintReceipt(receipt, '58', 'en'); });
       ov.querySelector('#printA4BiBtn').addEventListener('click', function(){ doPrintReceipt(receipt, 'a4', 'bi'); });
       ov.querySelector('#printA4EnBtn').addEventListener('click', function(){ doPrintReceipt(receipt, 'a4', 'en'); });
       ov.querySelector('#printCloseBtn').addEventListener('click', function(){ ov.remove(); view = 'timeline'; render(); });
@@ -2275,14 +2273,12 @@ function fillPrintArea(receipt, size, lang){
         if(size === '58'){
           var root58 = document.getElementById('printArea').querySelector('.sheet-58');
           if(isMobileDevice() && root58){
-            // 手机/平板经 app 打印会按固定标签长度截断。iPad 导无页脚 PDF；
-            // Android/iPhone 导完整 PNG 长图，用番茄标签图片连续打印
+            // 手机/平板：导出 58mm 无页脚 PDF 文件（可保存后用任意小票/标签工具打印）
             var fn = receipt.receipt_no || 'receipt';
-            // iPad 与手机统一：导出完整 PNG 长图并弹出分享，直接跳转番茄标签图片打印
-            var ok = exportThermalImage(root58, fn);
+            var ok = exportThermalPdf(root58, fn);
             document.body.classList.remove('print-58','print-a4');
             view = 'timeline'; render();
-            if(ok){ showToast('已生成小票长图，请在分享中选番茄标签（连续/小票模式）直接打印'); } else { showToast('生成长图失败，请重试'); }
+            if(ok){ showToast('已生成小票 PDF，可保存后直接打印'); } else { showToast('生成 PDF 失败，请重试'); }
             return;
           }
           setPrintPageSize('58'); // 小票已渲染，重新按实际内容高度设定打印纸高
