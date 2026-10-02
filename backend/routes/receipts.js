@@ -51,4 +51,10 @@ router.post('/admin/receipts', authMiddleware, requireModuleAccess('receipts'), 
   res.status(201).json(serializeReceipt(row));
 });
 
+router.delete('/admin/receipts/:id', authMiddleware, requireModuleAccess('receipts'), (req, res) => {
+  const info = db.prepare('DELETE FROM receipts WHERE id = ?').run(req.params.id);
+  if(!info.changes) return res.status(404).json({ error: '收据不存在' });
+  res.json({ ok: true, deleted: info.changes });
+});
+
 module.exports = router;
