@@ -888,6 +888,30 @@
   </div>
 </section>
 
+<!-- 机构合作招商 -->
+<section class="partner-band">
+  <div class="partner-inner">
+    <div class="eyebrow" data-i18n="partnership.eyebrow">机构合作</div>
+    <h2 class="partner-title" data-i18n="partnership.title">欢迎机构与我们合作</h2>
+    <p class="partner-sub" data-i18n="partnership.subtitle">为您的客户提供专业的中医养生保健服务与产品支持</p>
+    <div class="partner-orgs" data-i18n="partnership.orgs">合作对象：养老院 · 康复中心 · 健身房 · 中药店 · 美容院</div>
+    <a class="partner-cta" id="waPartner" href="https://wa.me/601145799499?text=%E6%82%A8%E5%A5%BD%EF%BC%8C%E6%88%91%E4%BB%AC%E6%9C%BA%E6%9E%84%E6%83%B3%E4%BA%86%E8%A7%A3%E4%B8%8E%20VINATH%20TCM%20%E7%9A%84%E5%90%88%E4%BD%9C%E6%96%B9%E5%BC%8F%E3%80%82" target="_blank" rel="noopener" data-i18n="partnership.cta">洽谈合作</a>
+  </div>
+  <style>
+    .partner-band { background:var(--forest); color:var(--warm-white); padding:86px 5% 96px; }
+    .partner-inner { max-width:760px; margin:0 auto; text-align:center; }
+    .partner-band .eyebrow { color:var(--gold); margin-bottom:16px; }
+    .partner-title { font-family:var(--font-display); font-size:clamp(26px,4vw,40px); font-weight:500; letter-spacing:.01em; line-height:1.25; margin-bottom:18px; }
+    .partner-sub { font-size:clamp(14px,2vw,17px); line-height:1.75; opacity:.78; margin-bottom:20px; }
+    .partner-orgs { font-family:var(--font-mono); font-size:clamp(12px,1.6vw,14px); letter-spacing:.04em; opacity:.62; margin-bottom:38px; }
+    .partner-cta { display:inline-flex; align-items:center; justify-content:center; gap:8px; background:var(--gold); color:var(--warm-white);
+      font-family:var(--font-body); font-weight:600; font-size:16px; text-decoration:none; padding:16px 44px; border-radius:100px;
+      box-shadow:0 14px 34px rgba(0,0,0,.22); transition:transform .22s ease, box-shadow .22s ease, background .22s ease; }
+    .partner-cta:hover { transform:translateY(-3px); box-shadow:0 20px 40px rgba(0,0,0,.3); background:#BF9455; }
+    @media (max-width:560px){ .partner-band { padding:66px 6% 76px; } .partner-cta { width:100%; } }
+  </style>
+</section>
+
 <footer>
   <div class="footer-grid">
     <!-- 第1列：服务项目 -->
@@ -1179,6 +1203,8 @@
         var el = document.getElementById(id);
         if(el) el.href = el.href.replace('60123456789', whatsapp);
       });
+      var wp = document.getElementById('waPartner');
+      if(wp) wp.href = wp.href.replace('601145799499', whatsapp);
     });
   })();
   (async function(){

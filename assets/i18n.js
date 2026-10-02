@@ -99,6 +99,13 @@
       'consult.yourInfo': '你的信息',
       'consult.agree': '我同意',
       'consult.submit': '提交预约',
+      // 机构合作
+      'partnership.eyebrow': '机构合作',
+      'partnership.title': '欢迎机构与我们合作',
+      'partnership.subtitle': '为您的客户提供专业的中医养生保健服务与产品支持',
+      'partnership.orgs': '合作对象：养老院 · 康复中心 · 健身房 · 中药店 · 美容院',
+      'partnership.cta': '洽谈合作',
+      'partnership.wa': '您好，我们机构想了解与 VINATH TCM 的合作方式。',
       // 关于
       'about.title': '关于我们',
       'about.story': '品牌故事',
@@ -382,6 +389,13 @@
       'consult.yourInfo': 'Your Information',
       'consult.agree': 'I agree',
       'consult.submit': 'Submit Booking',
+      // Partnership
+      'partnership.eyebrow': 'Partnership',
+      'partnership.title': 'Partner With VINATH TCM',
+      'partnership.subtitle': 'Bring trusted TCM wellness services and herbal care to your community',
+      'partnership.orgs': 'Nursing Homes · Rehabilitation Centres · Gyms · TCM Herbal Shops · Beauty Salons',
+      'partnership.cta': 'Let\'s Talk',
+      'partnership.wa': 'Hello, our organisation would like to explore a partnership with VINATH TCM.',
       // About
       'about.title': 'About Us',
       'about.story': 'Our Story',
@@ -665,6 +679,13 @@
       'consult.yourInfo': 'Maklumat Anda',
       'consult.agree': 'Saya bersetuju',
       'consult.submit': 'Hantar Tempahan',
+      // Partnership
+      'partnership.eyebrow': 'Kerjasama',
+      'partnership.title': 'Jalinkan Kerjasama Dengan VINATH TCM',
+      'partnership.subtitle': 'Bawa perkhidmatan kesihatan TCM kepada komuniti anda',
+      'partnership.orgs': 'Rumah Jaga · Pusat Pemulihan · Gim · Kedai Herba TCM · Salon Kecantikan',
+      'partnership.cta': 'Hubungi Kami',
+      'partnership.wa': 'Helo, organisasi kami ingin mengetahui kerjasama dengan VINATH TCM.',
       // About
       'about.title': 'Tentang Kami',
       'about.story': 'Cerita Kami',

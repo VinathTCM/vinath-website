@@ -230,7 +230,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
  <div class="content">
   <h1 class="hc-title">Home Consultation</h1>
-  <div class="hc-sub">Book a licensed TCM Practitioner home visit, enjoy wellness without leaving home</div>
+  <div class="hc-sub-row">
+    <div class="hc-sub">Book a licensed TCM Practitioner home visit, enjoy wellness without leaving home</div>
+    <button class="hc-price-btn" id="priceBtn" style="display:none;">Home Visit Price List</button>
+  </div>
 
   <div id="instantCtaArea"></div>
   <div class="hc-steps" id="hcSteps"></div>
@@ -238,11 +241,48 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
  </div>
 </div>
 
+<!-- Home Visit price list lightbox -->
+<div class="hc-lightbox" id="priceLightbox" style="display:none;">
+  <div class="hc-lb-head">
+    <span>Home Visit Price List</span>
+    <button type="button" class="hc-lb-close" id="lbClose" aria-label="Close">×</button>
+  </div>
+  <div class="hc-lb-stage" id="lbStage">
+    <button type="button" class="hc-lb-nav hc-lb-prev" id="lbPrev" aria-label="Previous">‹</button>
+    <div class="hc-lb-view" id="lbView">
+      <img id="lbImg" alt="Home visit price list">
+      <div class="hc-lb-dots" id="lbDots"></div>
+    </div>
+    <button type="button" class="hc-lb-nav hc-lb-next" id="lbNext" aria-label="Next">›</button>
+  </div>
+  <div class="hc-lb-hint" id="lbHint"></div>
+</div>
+
 <div class="vh-toast" id="toast"></div>
 <style>
 .vh-toast{ position:fixed; left:50%; bottom:22px; transform:translate(-50%,10px); background:rgba(40,31,22,.94); color:#FDF8F0; font-size:15px; padding:11px 20px;
  border-radius:20px; opacity:0; transition:opacity .25s, transform .25s; pointer-events:none; z-index:70; max-width:88vw; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .vh-toast.show{ opacity:1; transform:translate(-50%,0); }
+.hc-sub-row{ display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:28px; }
+.hc-sub-row .hc-sub{ margin-bottom:0; flex:1; min-width:0; }
+.hc-price-btn{ flex:none; border:1.5px solid var(--tan-deep); background:transparent; color:var(--tan-deep); font-family:inherit; font-size:13.5px; font-weight:600;
+  padding:8px 16px; border-radius:100px; cursor:pointer; transition:background .18s, color .18s, transform .12s; white-space:nowrap; }
+.hc-price-btn:hover{ background:var(--tan-deep); color:#fff; }
+.hc-price-btn:active{ transform:scale(.95); }
+.hc-lightbox{ position:fixed; inset:0; z-index:9500; background:rgba(30,24,18,.92); display:flex; flex-direction:column; }
+.hc-lb-head{ display:flex; align-items:center; justify-content:space-between; padding:14px 18px; color:#FDF8F0; font-family:var(--font-serif); font-weight:700; font-size:16px; }
+.hc-lb-close{ background:none; border:none; color:#FDF8F0; font-size:26px; line-height:1; cursor:pointer; padding:0 6px; }
+.hc-lb-stage{ flex:1; display:flex; align-items:center; justify-content:center; gap:6px; min-height:0; padding:0 8px 8px; }
+.hc-lb-view{ flex:1; min-width:0; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; }
+.hc-lb-view img{ max-width:100%; max-height:100%; object-fit:contain; border-radius:8px; box-shadow:0 10px 30px rgba(0,0,0,.35); background:#fff; }
+.hc-lb-nav{ flex:none; width:42px; height:42px; border-radius:50%; border:none; background:rgba(255,255,255,.14); color:#FDF8F0; font-size:26px; line-height:1;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .15s; }
+.hc-lb-nav:hover{ background:rgba(255,255,255,.28); }
+.hc-lb-nav[hidden]{ visibility:hidden; }
+.hc-lb-dots{ display:flex; gap:7px; justify-content:center; margin-top:10px; flex:none; }
+.hc-lb-dots span{ width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.35); }
+.hc-lb-dots span.on{ background:#F4C95D; }
+.hc-lb-hint{ text-align:center; color:rgba(255,255,255,.6); font-size:12px; padding:0 16px 14px; }
 </style>
 
 <div class="hc-modal-overlay" id="contactModal">
@@ -1205,6 +1245,62 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
  fetchServiceAreasFromApi();
  render();
  renderInstantCta();
+})();
+</script>
+<script>
+// Home Visit price list: shows images uploaded under admin > Content > Price List (auto WEBP; swipe / arrows when multiple)
+(function(){
+  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+  var imgs = [];
+  var idx = 0;
+  var btn = document.getElementById('priceBtn');
+  var lb = document.getElementById('priceLightbox');
+  var img = document.getElementById('lbImg');
+  var prev = document.getElementById('lbPrev');
+  var next = document.getElementById('lbNext');
+  var dots = document.getElementById('lbDots');
+  var hint = document.getElementById('lbHint');
+  var touchX = null;
+
+  function render(){
+    if(!imgs.length) return;
+    img.src = imgs[idx];
+    prev.hidden = imgs.length < 2;
+    next.hidden = imgs.length < 2;
+    dots.innerHTML = imgs.map(function(_, i){ return '<span class="'+(i===idx?'on':'')+'"></span>'; }).join('');
+    hint.textContent = imgs.length > 1 ? ('Page ' + (idx + 1) + ' / ' + imgs.length + ' · swipe to browse') : '';
+  }
+  function open(){ lb.style.display = 'flex'; document.body.style.overflow = 'hidden'; render(); }
+  function close(){ lb.style.display = 'none'; document.body.style.overflow = ''; }
+  function step(d){ idx = (idx + d + imgs.length) % imgs.length; render(); }
+
+  btn.addEventListener('click', open);
+  document.getElementById('lbClose').addEventListener('click', close);
+  lb.addEventListener('click', function(e){ if(e.target === lb) close(); });
+  prev.addEventListener('click', function(){ step(-1); });
+  next.addEventListener('click', function(){ step(1); });
+  document.addEventListener('keydown', function(e){
+    if(lb.style.display === 'none') return;
+    if(e.key === 'Escape') close();
+    else if(e.key === 'ArrowLeft') step(-1);
+    else if(e.key === 'ArrowRight') step(1);
+  });
+  var view = document.getElementById('lbView');
+  view.addEventListener('touchstart', function(e){ touchX = e.touches[0].clientX; }, {passive:true});
+  view.addEventListener('touchend', function(e){
+    if(touchX === null) return;
+    var dx = e.changedTouches[0].clientX - touchX;
+    if(Math.abs(dx) > 40) step(dx < 0 ? 1 : -1);
+    touchX = null;
+  }, {passive:true});
+
+  fetch(API_BASE + '/site-settings/consult_price_images')
+    .then(function(r){ return r.ok ? r.json() : []; })
+    .then(function(list){
+      imgs = (Array.isArray(list) ? list : []).filter(function(s){ return s && typeof s === 'string'; });
+      if(imgs.length) btn.style.display = '';
+    })
+    .catch(function(){});
 })();
 </script>
 <style>

@@ -254,6 +254,7 @@ tbody tr:hover{ background:#FBFAF7; }
     <div class="tab" data-tab="policy">政策页面</div>
     <div class="tab" data-tab="bizinfo">基本信息</div>
     <div class="tab" data-tab="payment">支付方式</div>
+    <div class="tab" data-tab="pricelist">价格表</div>
   </div>
 
   <div id="tab-journeys">
@@ -341,6 +342,17 @@ tbody tr:hover{ background:#FBFAF7; }
     </div>
     <div id="paymentList"></div>
     <div class="note" style="margin-top:20px;"><b>提示：</b>这里配置的付款方式，会显示在客户结算页面——客户选好付款方式后，转账/扫码完成付款，再上传付款截图作为凭证，订单会标记为"待核实付款"，需要人工核对截图后手动确认。这个流程不涉及任何第三方支付网关，也就不需要走那些机构的商户审核、也不会有交易抽成，但相应地，"付款是否真的到账"这一步需要你们自己核对，不是系统自动确认的。</div>
+  </div>
+
+  <div id="tab-pricelist" style="display:none;">
+    <div class="toolbar" style="margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <button class="btn-primary" id="priceListUploadBtn">+ 上传价格表图片</button>
+      <input type="file" id="priceListFile" accept="image/*" multiple style="display:none;">
+      <button class="btn-primary" id="savePriceListBtn">保存</button>
+      <span id="priceListStatus" style="font-size:13px;color:var(--ink-soft);"></span>
+    </div>
+    <div id="priceListGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;"></div>
+    <div class="note" style="margin-top:20px;"><b>提示：</b>上传后会自动压缩转成 WEBP 格式再保存，前台「居家会诊」页面的"居家会诊价格"按钮会展示这些图片（多张时可左右切换）。上传的图片不要包含医疗功效承诺等敏感字眼，保持价格表信息即可。保存后点"保存"按钮才会生效。</div>
   </div>
 
   <div class="admin-footer">
@@ -2914,6 +2926,100 @@ Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.
     btn.disabled = false;
   });
 
+  // ---- 居家会诊价格表图片（前台 consult 页"居家会诊价格"按钮展示；自动转 WEBP 存库）----
+  var priceListImages = [];
+  var PRICE_LIST_KEY = 'consult_price_images';
+  async function loadPriceList(){
+    var grid = document.getElementById('priceListGrid');
+    var st = document.getElementById('priceListStatus');
+    try {
+      var res = await fetch(API_BASE + '/site-settings/' + PRICE_LIST_KEY);
+      priceListImages = (res.ok && (await res.json())) || [];
+      st.textContent = '';
+    } catch(e){ priceListImages = []; st.textContent = '拉取失败，请检查网络'; }
+    renderPriceListGrid();
+  }
+  function renderPriceListGrid(){
+    var grid = document.getElementById('priceListGrid');
+    grid.innerHTML = priceListImages.map(function(src, i){
+      return '<div style="position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;">'
+        + '<img src="'+src+'" style="width:100%;display:block;object-fit:cover;">'
+        + '<button type="button" data-rm="'+i+'" style="position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(59,46,34,.75);color:#fff;font-size:14px;cursor:pointer;line-height:1;">×</button>'
+        + '</div>';
+    }).join('') || '<div style="grid-column:1/-1;color:var(--ink-soft);font-size:13.5px;padding:18px 0;">还没有价格表图片，点"上传价格表图片"添加。</div>';
+    Array.prototype.forEach.call(grid.querySelectorAll('[data-rm]'), function(btn){
+      btn.addEventListener('click', function(){
+        priceListImages.splice(Number(this.getAttribute('data-rm')), 1);
+        renderPriceListGrid();
+      });
+    });
+  }
+  function fileToWebp(file){
+    return new Promise(function(resolve, reject){
+      var reader = new FileReader();
+      reader.onload = function(){
+        var img = new Image();
+        img.onload = function(){
+          // 最大边 1400px，webp 0.82：价格表以文字为主，够清晰且体积小
+          var scale = Math.min(1, 1400 / Math.max(img.width, img.height));
+          var w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+          var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+          cv.getContext('2d').drawImage(img, 0, 0, w, h);
+          cv.toBlob(function(blob){
+            if(!blob){ reject(new Error('webp 转换失败')); return; }
+            var r2 = new FileReader();
+            r2.onload = function(){ resolve(r2.result); };
+            r2.onerror = function(){ reject(new Error('读取失败')); };
+            r2.readAsDataURL(blob);
+          }, 'image/webp', 0.82);
+        };
+        img.onerror = function(){ reject(new Error('图片解码失败')); };
+        img.src = reader.result;
+      };
+      reader.onerror = function(){ reject(new Error('文件读取失败')); };
+      reader.readAsDataURL(file);
+    });
+  }
+  function initPriceList(){
+    var fileInput = document.getElementById('priceListFile');
+    document.getElementById('priceListUploadBtn').addEventListener('click', function(){ fileInput.click(); });
+    fileInput.addEventListener('change', async function(){
+      var files = Array.prototype.slice.call(fileInput.files || []);
+      if(!files.length) return;
+      var st = document.getElementById('priceListStatus');
+      st.textContent = '正在压缩转 WEBP…';
+      var total = priceListImages.length + files.length;
+      for(var i = 0; i < files.length; i++){
+        try {
+          var dataUrl = await fileToWebp(files[i]);
+          priceListImages.push(dataUrl);
+          st.textContent = '已处理 ' + (i + 1) + ' / ' + files.length;
+        } catch(e){ st.textContent = '第 ' + (i + 1) + ' 张处理失败：' + e.message; }
+      }
+      fileInput.value = '';
+      if(priceListImages.length > 10){
+        priceListImages = priceListImages.slice(0, 10);
+        st.textContent = '最多保留 10 张，已截断';
+      }
+      renderPriceListGrid();
+      setTimeout(function(){ st.textContent = ''; }, 2500);
+    });
+    document.getElementById('savePriceListBtn').addEventListener('click', async function(){
+      var btn = this; btn.disabled = true;
+      var st = document.getElementById('priceListStatus');
+      st.textContent = '保存中…';
+      try {
+        await fetch(API_BASE + '/admin/site-settings/' + PRICE_LIST_KEY, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+          body: JSON.stringify(priceListImages)
+        });
+        st.textContent = '已保存 · 前台"居家会诊价格"按钮现在会显示这些图片';
+      } catch(e){ st.textContent = '保存失败，请检查网络后重试'; }
+      btn.disabled = false;
+    });
+  }
+  initPriceList();
+
   // ---- panel + tabs ----
   var overlay = document.getElementById('overlay');
   var panel = document.getElementById('panel');
@@ -2934,6 +3040,8 @@ Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.
       if(key==='policy') renderPolicyTabs();
       document.getElementById('tab-bizinfo').style.display = key==='bizinfo' ? '' : 'none';
       document.getElementById('tab-payment').style.display = key==='payment' ? '' : 'none';
+      document.getElementById('tab-pricelist').style.display = key==='pricelist' ? '' : 'none';
+      if(key==='pricelist') loadPriceList();
       if(key==='journeys') loadJourneysData();
       if(key==='announce') loadAnnouncements();
       if(key==='bizinfo') renderBizInfo();
