@@ -3174,7 +3174,7 @@ window.escapeHtml = function(s){
       var raw = localStorage.getItem('vinath_business_info');
       if(raw){ var info = JSON.parse(raw); if(info.taxId) return info.taxId; }
     } catch(e){}
-    return 'IG55173378000'; // fallback if 内容管理's 基本信息 tab has never been opened yet
+    return 'D61151043100'; // fallback if 内容管理's 基本信息 tab has never been opened yet
   }
   var COMPANY_TAX_ID = getCompanyTaxId();
   function bl(en, cn, lang){ return lang==='en' ? en : (en+' / '+cn); }

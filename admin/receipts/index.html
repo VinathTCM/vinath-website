@@ -457,10 +457,16 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       if(!pg){ pg = document.createElement('style'); pg.id = 'printPageCss'; document.head.appendChild(pg); }
       if(size === '58'){
         // 58mm 热敏纸有效打印宽度约 48mm，便携机常见仅 44-46mm，按 44mm 留足余量；
-        // 纸高贴合小票内容，避免上下留白过多
+        // 纸高贴合小票内容，避免上下留白过多。sheet 在屏幕上 display:none，
+        // 需临时移出屏幕可见后量取真实高度，否则纸高默认 120mm 会把长小票下半部裁掉
         var s = document.querySelector('.sheet-58');
         var hMm = 120;
-        if(s && s.offsetHeight){ hMm = Math.round(s.offsetHeight / 96 * 25.4) + 8; }
+        if(s){
+          var pd = s.style.display, pp = s.style.position, pl = s.style.left, pt2 = s.style.top;
+          s.style.display = 'block'; s.style.position = 'absolute'; s.style.left = '-9999px'; s.style.top = '0';
+          if(s.scrollHeight){ hMm = Math.round(s.scrollHeight / 96 * 25.4) + 8; }
+          s.style.display = pd; s.style.position = pp; s.style.left = pl; s.style.top = pt2;
+        }
         pg.textContent = '@page{size:44mm ' + hMm + 'mm;margin:0;}';
       } else {
         pg.textContent = '@page{size:A4;margin:12mm;}';
