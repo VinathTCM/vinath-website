@@ -366,7 +366,7 @@ tbody tr:hover{ background:#FBFAF7; }
 .thermal .t-center{ text-align:center; }
 .thermal .t-brand{ font-size:15px; font-weight:700; letter-spacing:.04em; }
 .thermal .t-brand .tm{ font-size:8px; vertical-align:super; }
-.thermal .t-sub{ font-size:10px; margin-top:1px; }
+.thermal .t-sub{ font-size:10px; margin-top:1px; word-break:break-word; }
 .thermal .t-div{ border-top:1px dashed #000; margin:2px 0; }
 .thermal .t-row{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:4px; margin:1px 0; }
 .thermal .t-row .l{ color:#333; }
@@ -3405,8 +3405,9 @@ window.escapeHtml = function(s){
       + '<div class="thermal">'
       + '<div class="t-center"><div class="t-brand">VINATH<span class="tm">TM</span></div>'
       + '<div class="t-sub">Johor, Malaysia</div>'
-      + '<div class="t-sub">'+COMPANY_EN+'</div>'
-      + '<div class="t-sub">Tax Reg. No. '+COMPANY_TAX_ID+'</div></div>'
+      + '<div class="t-sub">VINATH TCM</div>'
+      + '<div class="t-sub">HEALTH CARE</div>'
+      + '<div class="t-sub">TIN: '+COMPANY_TAX_ID+'</div></div>'
       + '<div class="t-div"></div>'
       + '<div class="t-center" style="font-weight:700;">RECEIPT</div>'
       + '<div class="t-row"><span class="l">'+'No.'+'</span><span>'+b.id+'</span></div>'

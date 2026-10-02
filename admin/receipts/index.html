@@ -579,10 +579,21 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
             y += h * 2;
           }
         } else {
+          var txt = ln.text || '';
           ctx.textAlign = ln.align || 'left';
           var x = (ln.align === 'center') ? W / 2 : padX;
-          ctx.fillText(ln.text || '', x, y);
-          y += h;
+          if(ctx.measureText(txt).width > availW){
+            // 超宽文本按单词折行，保持原对齐，避免右侧被裁
+            var words = txt.split(' '), cur = '';
+            for(var wi = 0; wi < words.length; wi++){
+              var t2 = cur ? cur + ' ' + words[wi] : words[wi];
+              if(ctx.measureText(t2).width > availW && cur){ ctx.fillText(cur, x, y); y += h; cur = words[wi]; }
+              else { cur = t2; }
+            }
+            if(cur){ ctx.fillText(cur, x, y); y += h; }
+          } else {
+            ctx.fillText(txt, x, y); y += h;
+          }
         }
       });
       return cv;
@@ -707,10 +718,11 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
 
       + '</div>'
       + '<div class="sheet-58" style="display:none;width:44mm;box-sizing:border-box;padding:0.5mm 1.5mm;font-family:\'Courier New\',Consolas,\'Microsoft YaHei\',\'PingFang SC\',monospace;font-size:12px;line-height:1.3;color:#000;">'
-      + '<div style="text-align:center;"><span style="font-weight:700;font-size:15px;">VINATH<sup style="font-size:8px;">TM</sup></span></div>'
-      + '<div style="text-align:center;">Johor, Malaysia</div>'
-      + '<div style="text-align:center;">VINATH TCM HEALTH CARE</div>'
-      + (biz.taxId ? '<div style="text-align:center;">Tax Reg. No. '+escapeHtml(biz.taxId)+'</div>' : '')
+      + '<div style="text-align:center;word-break:break-word;"><span style="font-weight:700;font-size:15px;">VINATH<sup style="font-size:8px;">TM</sup></span></div>'
+      + '<div style="text-align:center;word-break:break-word;">Johor, Malaysia</div>'
+      + '<div style="text-align:center;word-break:break-word;">VINATH TCM</div>'
+      + '<div style="text-align:center;word-break:break-word;">HEALTH CARE</div>'
+      + (biz.taxId ? '<div style="text-align:center;word-break:break-word;">TIN: '+escapeHtml(biz.taxId)+'</div>' : '')
       + '<div style="border-top:1px dashed #000;margin:0.8mm 0;"></div>'
       + '<div style="text-align:center;font-weight:700;">RECEIPT</div>'
       + '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span>No.</span><span style="margin-left:auto;text-align:right;">'+escapeHtml(rc.receiptNo)+'</span></div>'
