@@ -2236,7 +2236,7 @@ function fillPrintArea(receipt, size, lang){
         });
         if(!res.ok){ var ej = await res.json().catch(function(){ return {}; }); showToast('发票保存失败：' + (ej.error || res.status)); return; }
         var receipt = await res.json();
-        if(size){ doPrintReceipt(receipt, size); } else { showPrintChooser(receipt); }
+        if(size){ doPrintReceipt(receipt, size, size === '58' ? 'en' : 'bi'); } else { showPrintChooser(receipt); }
       } catch(e){ showToast('发票保存失败，请检查网络'); }
     }
     function showPrintChooser(receipt){
