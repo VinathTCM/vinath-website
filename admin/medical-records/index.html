@@ -2060,6 +2060,13 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       if(lang === 'en') return en;
       return en + (cn ? ' / ' + cn : '');
     }
+    // 英文小票/发票里医师姓名用英文名（后台管理员快照是中文名）
+    var PRACTITIONER_EN = { '龚诗宏':'Vincent Kiing', '龚诗宏医师':'Vincent Kiing', '余采恩':'Natalia Yii', '余采恩医师':'Natalia Yii' };
+    function practitionerName(raw, lang){
+      var s = raw || '';
+      if(lang === 'en' && PRACTITIONER_EN[s]) return PRACTITIONER_EN[s];
+      return s;
+    }
     // 项目名：lineItem 带 name（中文）与 nameEn（英文）
     function itemName(it, lang){
       var cn = it.name || '', en = it.nameEn || '';
@@ -2089,7 +2096,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       var dts = fmtLocal(receipt.issued_at) || '';
       var pname = escapeHtml(receipt.patient_name || '');
       var pphone = '+60 ' + escapeHtml(String(receipt.patient_phone || '').replace(/^0/,''));
-      var pract = receipt.practitioner_name_snapshot ? escapeHtml(receipt.practitioner_name_snapshot) : '';
+      var pract = practitionerName(receipt.practitioner_name_snapshot, lang) ? escapeHtml(practitionerName(receipt.practitioner_name_snapshot, lang)) : '';
       var dash = '<div style="border-top:1px dashed #000;margin:0.8mm 0;"></div>';
       return '<div class="sheet-58" style="display:none;width:48mm;box-sizing:border-box;padding:0.5mm 1mm;font-family:\'Courier New\',Consolas,\'Microsoft YaHei\',\'PingFang SC\',monospace;font-size:12px;line-height:1.3;color:#000;">'
         + '<div style="text-align:center;word-break:break-word;"><span style="font-weight:700;font-size:15px;">VINATH<sup style="font-size:8px;">TM</sup></span></div>'
@@ -2140,7 +2147,7 @@ function sheetA4Html(receipt, biz, lang){
         + '<div><div><b>' + bl('Patient','患者',lang) + ': </b>' + escapeHtml(receipt.patient_name || '') + '</div>'
         + '<div><b>' + bl('Phone','电话',lang) + ': </b>+60 ' + escapeHtml((receipt.patient_phone||'').replace(/^0/,'')) + '</div></div>'
         + '<div style="text-align:right;"><div><b>' + bl('Date','日期',lang) + ': </b>' + fmtLocal(receipt.issued_at) + '</div>'
-        + '<div><b>' + bl('Attended by','看诊医师',lang) + ': </b>' + escapeHtml(receipt.practitioner_name_snapshot || '') + '</div></div>'
+        + '<div><b>' + bl('Attended by','看诊医师',lang) + ': </b>' + escapeHtml(practitionerName(receipt.practitioner_name_snapshot, lang) || '') + '</div></div>'
         + '</div>'
         + '<table style="width:100%;border-collapse:collapse;font-size:13px;">'
         + '<tr style="background:#f2f2f2;"><th style="padding:8px 6px;text-align:left;border-bottom:2px solid #333;">' + bl('Item','项目',lang) + '</th>'
