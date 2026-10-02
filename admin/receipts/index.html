@@ -492,7 +492,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       return parts;
     }
     function renderThermalCanvas(root){
-      var scale = 2;
+      var scale = 4;
       var W = Math.round(48 / 25.4 * 96) * scale;
       var padX = Math.round(1 / 25.4 * 96) * scale;
       var padY = Math.round(1 / 25.4 * 96) * scale;
@@ -792,13 +792,9 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
         var root58 = document.querySelector('.sheet-58');
         if(isMobileDevice() && root58){
           var fnm = (rc && rc.receipt_no) || 'receipt';
-          var ok = isIpadSafari() ? exportThermalPdf(root58, fnm) : exportThermalImage(root58, fnm);
+          var ok = exportThermalImage(root58, fnm);
           document.body.classList.remove('print-58');
-          if(isIpadSafari()){
-            if(ok){ showToast('已生成无页脚小票 PDF'); } else { showToast('生成 PDF 失败，请重试'); }
-          } else {
-            if(ok){ showToast('已生成小票长图，请用番茄标签图片打印（选连续/小票模式）'); } else { showToast('生成长图失败，请重试'); }
-          }
+          if(ok){ showToast('已生成小票长图，请在分享中选番茄标签（连续/小票模式）直接打印'); } else { showToast('生成长图失败，请重试'); }
           return;
         }
         setPrintPageSize('58'); // 小票已渲染，重新按实际内容高度设定打印纸高

@@ -1841,7 +1841,9 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       return parts;
     }
     function renderThermalCanvas(root){
-      var scale = 2;
+      // scale=4：输出约 384dpi（48mm 宽 724px），番茄标签适应纸宽时下采样到打印机
+      // 203dpi/384点，下采样整齐、文字最清晰；早期 scale=2 仅191dpi 会被轻微放大发虚
+      var scale = 4;
       var W = Math.round(48 / 25.4 * 96) * scale;
       var padX = Math.round(1 / 25.4 * 96) * scale;
       var padY = Math.round(1 / 25.4 * 96) * scale;
@@ -2276,14 +2278,11 @@ function fillPrintArea(receipt, size, lang){
             // 手机/平板经 app 打印会按固定标签长度截断。iPad 导无页脚 PDF；
             // Android/iPhone 导完整 PNG 长图，用番茄标签图片连续打印
             var fn = receipt.receipt_no || 'receipt';
-            var ok = isIpadSafari() ? exportThermalPdf(root58, fn) : exportThermalImage(root58, fn);
+            // iPad 与手机统一：导出完整 PNG 长图并弹出分享，直接跳转番茄标签图片打印
+            var ok = exportThermalImage(root58, fn);
             document.body.classList.remove('print-58','print-a4');
             view = 'timeline'; render();
-            if(isIpadSafari()){
-              if(ok){ showToast('已生成无页脚小票 PDF'); } else { showToast('生成 PDF 失败，请重试'); }
-            } else {
-              if(ok){ showToast('已生成小票长图，请用番茄标签图片打印（选连续/小票模式）'); } else { showToast('生成长图失败，请重试'); }
-            }
+            if(ok){ showToast('已生成小票长图，请在分享中选番茄标签（连续/小票模式）直接打印'); } else { showToast('生成长图失败，请重试'); }
             return;
           }
           setPrintPageSize('58'); // 小票已渲染，重新按实际内容高度设定打印纸高
