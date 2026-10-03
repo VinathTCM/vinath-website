@@ -126,6 +126,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .wish-filter-chip svg{ flex:none; }
 .prod-name{ font-family:var(--font-serif); font-weight:700; font-size:14.5px; margin-top:9px; }
 .prod-price{ font-size:13px; color:var(--tan-deep); font-weight:600; margin-top:2px; }
+.price-orig{ text-decoration:line-through; color:var(--espresso-soft); opacity:.72; font-weight:500; margin-right:3px; }
+.coupon-tag{ font-size:10.5px; color:#fff; background:var(--clay); border-radius:4px; padding:1px 5px; margin-left:4px; vertical-align:1px; font-weight:600; letter-spacing:.03em; }
 .prod-empty{ font-size:14px; color:var(--espresso-soft); padding:20px 0; text-align:center; }
 
 /* ---- featured section ---- */
@@ -580,6 +582,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
           trial:(typeof p.trial_price === 'number' ? p.trial_price : p.price),
           trialPerFull:(p.trialPerFull || 7), // 没设试用价就用常规价兜底，
                                                                                   // 避免页面上出现"MYR null"
+          couponPrice:(typeof p.couponPrice === 'number' ? p.couponPrice : null),
+          couponPriceTrial:(typeof p.couponPriceTrial === 'number' ? p.couponPriceTrial : null),
           desc:p.description, active:p.active, inStock:p.stock_qty > 0, stockQty:p.stock_qty,
           featured:p.featured, imgs:p.images||[], form:'', herbs:[], usage:p.usage_note||'',
           journeys:[], tags:[] // 后端目前还没有存这两个字段——原本是给症状标签匹配功能用的，
@@ -677,7 +681,9 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + (hasImg ? '<span class="prod-dl" data-dlid="'+p.id+'" title="下载图片（带水印）"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>' : '')
       + '</div>'
       + '<div class="prod-name">'+p.name+'</div>'
-      + '<div class="prod-price">试用装 RM '+p.trial+' 起</div><div class="prod-price-sub">正装含相当于 '+(p.trialPerFull||7)+' 份试用装 · 约RM'+(p.price/(p.trialPerFull||7)).toFixed(2)+'/份</div>'
+      + '<div class="prod-price">试用装 '+(p.couponPriceTrial!=null && p.couponPriceTrial < p.trial
+          ? '<span class="price-orig">RM '+p.trial+'</span>RM '+p.couponPriceTrial
+          : 'RM '+p.trial)+' 起'+(p.couponPriceTrial!=null && p.couponPriceTrial < p.trial ? '<span class="coupon-tag">优惠码价</span>' : '')+'</div><div class="prod-price-sub">正装含相当于 '+(p.trialPerFull||7)+' 份试用装 · 约RM'+(p.price/(p.trialPerFull||7)).toFixed(2)+'/份</div>'
       + '</div>';
   }
 
@@ -1003,9 +1009,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     qvDesc.innerHTML = p.desc;
     qvOosMsg.innerHTML = p.inStock ? '' : '<div class="qv-oos">这款暂时缺货，补货后会自动恢复上架。</div>';
     qvVariants.innerHTML =
-      '<div class="qv-variant on" data-v="full"><div class="vv-lbl">正装</div><div class="vv-price">MYR '+p.price+'</div></div>'
-      + '<div class="qv-variant" data-v="trial"><div class="vv-lbl">试用装</div><div class="vv-price">MYR '+p.trial+'</div></div>'
-      + '<div class="qv-conversion" style="margin-top:8px;font-size:12px;color:var(--espresso-soft);text-align:center;">'+('1 个正装含相当于 '+(p.trialPerFull || 7)+' 个试用装（总量等同）')+'</div>';
+      '<div class="qv-variant on" data-v="full"><div class="vv-lbl">正装</div><div class="vv-price">MYR '+(p.couponPrice!=null && p.couponPrice < p.price ? '<span class="price-orig">'+p.price+'</span> '+p.couponPrice : p.price)+'</div></div>'
+      + '<div class="qv-variant" data-v="trial"><div class="vv-lbl">试用装</div><div class="vv-price">MYR '+(p.couponPriceTrial!=null && p.couponPriceTrial < p.trial ? '<span class="price-orig">'+p.trial+'</span> '+p.couponPriceTrial : p.trial)+'</div></div>'
+      + '<div class="qv-conversion" style="margin-top:8px;font-size:12px;color:var(--espresso-soft);text-align:center;">'+('1 个正装含相当于 '+(p.trialPerFull || 7)+' 个试用装（总量等同）')+'</div>'
+      + ((p.couponPrice!=null && p.couponPrice < p.price) || (p.couponPriceTrial!=null && p.couponPriceTrial < p.trial) ? '<div class="qv-conversion" style="margin-top:4px;font-size:11.5px;color:var(--clay);text-align:center;">结算时使用优惠码，即可享划线优惠价</div>' : '');
     qvVariants.querySelectorAll('.qv-variant').forEach(function(v){
       v.addEventListener('click', function(){
         selectedVariant = this.getAttribute('data-v');

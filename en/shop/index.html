@@ -126,6 +126,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .wish-filter-chip svg{ flex:none; }
 .prod-name{ font-family:var(--font-serif); font-weight:700; font-size:14.5px; margin-top:9px; }
 .prod-price{ font-size:13px; color:var(--tan-deep); font-weight:600; margin-top:2px; }
+.price-orig{ text-decoration:line-through; color:var(--espresso-soft); opacity:.72; font-weight:500; margin-right:3px; }
+.coupon-tag{ font-size:10.5px; color:#fff; background:var(--clay); border-radius:4px; padding:1px 5px; margin-left:4px; vertical-align:1px; font-weight:600; letter-spacing:.03em; }
 .prod-empty{ font-size:14px; color:var(--espresso-soft); padding:20px 0; text-align:center; }
 
 /* ---- featured section ---- */
@@ -620,6 +622,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
      trial:(typeof p.trial_price === 'number' ? p.trial_price : p.price),
           trialPerFull:(p.trialPerFull || 7), // 没设试用价就用常规价兜底, 
                                          // 避免页面上出现"MYR null"
+     couponPrice:(typeof p.couponPrice === 'number' ? p.couponPrice : null),
+     couponPriceTrial:(typeof p.couponPriceTrial === 'number' ? p.couponPriceTrial : null),
      desc:p.description, active:p.active, inStock:p.stock_qty > 0, stockQty:p.stock_qty,
      featured:p.featured, imgs:p.images||[], form:'', herbs:[], usage:p.usage_note||'',
      journeys:[], tags:[] // 后端目前还没有存这两pcs字段——原本是给Symptoms标签匹配功能用的, 
@@ -717,7 +721,9 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + (hasImg ? '<span class="prod-dl" data-dlid="'+p.id+'" title="Download image (with VINATH watermark)"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>' : '')
    + '</div>'
    + '<div class="prod-name">'+(p.nameEn||p.name)+'</div>'
-   + '<div class="prod-price">Trial from RM '+p.trial+'</div><div class="prod-price-sub">Full size = '+(p.trialPerFull||7)+' trial packs · ~RM'+(p.price/(p.trialPerFull||7)).toFixed(2)+'/pack</div>'
+   + '<div class="prod-price">Trial from '+(p.couponPriceTrial!=null && p.couponPriceTrial < p.trial
+     ? '<span class="price-orig">RM '+p.trial+'</span>RM '+p.couponPriceTrial
+     : 'RM '+p.trial)+(p.couponPriceTrial!=null && p.couponPriceTrial < p.trial ? '<span class="coupon-tag">Coupon Price</span>' : '')+'</div><div class="prod-price-sub">Full size = '+(p.trialPerFull||7)+' trial packs · ~RM'+(p.price/(p.trialPerFull||7)).toFixed(2)+'/pack</div>'
    + '</div>';
  }
 
@@ -1043,9 +1049,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   qvDesc.innerHTML = p.desc;
   qvOosMsg.innerHTML = p.inStock ? '' : '<div class="qv-oos">This item is out of stock and will be relisted automatically once restocked.</div>';
   qvVariants.innerHTML =
-   '<div class="qv-variant on" data-v="full"><div class="vv-lbl">Full Size</div><div class="vv-price">MYR '+p.price+'</div></div>'
-   + '<div class="qv-variant" data-v="trial"><div class="vv-lbl">Trial Size</div><div class="vv-price">MYR '+p.trial+'</div></div>'
-   + '<div class="qv-conversion" style="margin-top:8px;font-size:12px;color:var(--espresso-soft);text-align:center;">'+('1 full pack contains the equivalent of '+(p.trialPerFull || 7)+' trial packs (same total amount)')+'</div>';
+   '<div class="qv-variant on" data-v="full"><div class="vv-lbl">Full Size</div><div class="vv-price">MYR '+(p.couponPrice!=null && p.couponPrice < p.price ? '<span class="price-orig">'+p.price+'</span> '+p.couponPrice : p.price)+'</div></div>'
+   + '<div class="qv-variant" data-v="trial"><div class="vv-lbl">Trial Size</div><div class="vv-price">MYR '+(p.couponPriceTrial!=null && p.couponPriceTrial < p.trial ? '<span class="price-orig">'+p.trial+'</span> '+p.couponPriceTrial : p.trial)+'</div></div>'
+   + '<div class="qv-conversion" style="margin-top:8px;font-size:12px;color:var(--espresso-soft);text-align:center;">'+('1 full pack contains the equivalent of '+(p.trialPerFull || 7)+' trial packs (same total amount)')+'</div>'
+   + ((p.couponPrice!=null && p.couponPrice < p.price) || (p.couponPriceTrial!=null && p.couponPriceTrial < p.trial) ? '<div class="qv-conversion" style="margin-top:4px;font-size:11.5px;color:var(--clay);text-align:center;">Apply your discount code at checkout to enjoy the strikethrough price</div>' : '');
   qvVariants.querySelectorAll('.qv-variant').forEach(function(v){
    v.addEventListener('click', function(){
     selectedVariant = this.getAttribute('data-v');

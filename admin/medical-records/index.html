@@ -1355,6 +1355,10 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       if(rxDraft.couponApplied && p.couponPrice != null && p.couponPrice !== '') return Number(p.couponPrice);
       return Number(p.price);
     }
+    // 某商品在某规格下的正常价（未应用优惠码时的原价），用于划线对比显示
+    function productNormalPrice(p, form){
+      return form === 'trial' ? Number(p.trial_price) : Number(p.price);
+    }
     function renderRxProductSelect(){
       var sel = document.getElementById('rxProductSel');
       if(!sel) return;
@@ -1380,11 +1384,15 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       if(!el) return;
       el.innerHTML = rxDraft.products.length ? rxDraft.products.map(function(pr, i){
         var subtotal = (Number(pr.unitPrice)||0) * (Number(pr.qty)||1);
+        var orig = (Number(pr.origPrice)||0);
+        var priceHtml = (rxDraft.couponApplied && orig > (Number(pr.unitPrice)||0))
+          ? '<s style="opacity:.55;color:var(--ink-soft);">RM'+orig.toFixed(2)+'</s> RM'+(Number(pr.unitPrice)||0).toFixed(2)
+          : 'RM'+(Number(pr.unitPrice)||0).toFixed(2);
         var label = pr.name + (pr.form==='trial'?' · 试用装':' · 正装') + (pr.nameEn?' ('+pr.nameEn+')':'');
         return '<div class="herb-item-row">'
           + '<span style="min-width:150px;font-size:13px;font-weight:600;">'+escapeHtml(label)+'</span>'
           + '<input type="number" min="1" style="width:60px;" data-prd-qty="'+i+'" value="'+(Number(pr.qty)||1)+'">'
-          + '<span style="font-size:13px;color:var(--ink-soft);white-space:nowrap;">× RM'+(Number(pr.unitPrice)||0).toFixed(2)+' = RM'+subtotal.toFixed(2)+'</span>'
+          + '<span style="font-size:13px;color:var(--ink-soft);white-space:nowrap;">× '+priceHtml+' = RM'+subtotal.toFixed(2)+'</span>'
           + '<button type="button" class="remove-herb" data-prd-rm="'+i+'">×</button>'
           + '</div>';
       }).join('') : '<div style="font-size:12.5px;color:var(--ink-soft);">还没有添加商品——从上方选择试用装或正装后点"添加"</div>';
@@ -1422,6 +1430,8 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       if(!box) return;
       var treatSum = rxDraft.treatments.reduce(function(s,t){ return s + (Number(t.price)||0)*(Number(t.qty)||1); }, 0);
       var prodSum = rxDraft.products.reduce(function(s,p){ return s + (Number(p.unitPrice)||0)*(Number(p.qty)||1); }, 0);
+      var prodOrigSum = rxDraft.products.reduce(function(s,p){ return s + (Number(p.origPrice)||Number(p.unitPrice)||0)*(Number(p.qty)||1); }, 0);
+      var couponSavings = rxDraft.couponApplied ? (prodOrigSum - prodSum) : 0;
       var rxSum = rxHerbSubtotal();
       var manualInp = document.getElementById('rxManualDiscInput');
       var manual = Number(manualInp && manualInp.value) || 0;
@@ -1432,6 +1442,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       box.innerHTML = sumRow('中药处方小计', rxSum)
         + sumRow('治疗项目小计', treatSum)
         + sumRow('商品项目小计', prodSum)
+        + (couponSavings > 0 ? sumRow('优惠码折扣', -couponSavings) : '')
         + (manual > 0 ? sumRow('手动折扣', -manual) : '')
         + sumRow('应收合计', grand, true);
     }
@@ -1610,7 +1621,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     function repriceProducts(){
       rxDraft.products.forEach(function(pr){
         var p = SHOP_PRODUCTS.find(function(x){ return x.id === pr.productId; });
-        if(p) pr.unitPrice = productUnitPrice(p, pr.form);
+        if(p){ pr.origPrice = productNormalPrice(p, pr.form); pr.unitPrice = productUnitPrice(p, pr.form); }
       });
       renderRxProductSelect(); renderRxProductList();
     }
@@ -1622,7 +1633,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       var pid = parts[0], form = parts[1] || 'full';
       var p = SHOP_PRODUCTS.find(function(x){ return x.id === pid; });
       if(!p){ showToast('商品信息缺失'); return; }
-      rxDraft.products.push({ productId: p.id, name: p.name, nameEn: p.nameEn||'', form: form, qty: 1, unitPrice: productUnitPrice(p, form) });
+      rxDraft.products.push({ productId: p.id, name: p.name, nameEn: p.nameEn||'', form: form, qty: 1, unitPrice: productUnitPrice(p, form), origPrice: productNormalPrice(p, form) });
       renderRxProductList(); renderAmountSummary();
     });
     // 优惠码：拉取全部有效码校验；命中则商品切优惠价，无效则恢复正常价

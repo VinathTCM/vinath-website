@@ -95,6 +95,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .pd-variant.on{ border-color:var(--clay); background:rgba(188,110,78,.07); }
 .pd-variant .vv-lbl{ font-size:12.5px; color:var(--espresso-soft); font-weight:600; }
 .pd-variant .vv-price{ font-family:var(--font-serif); font-weight:700; font-size:17px; margin-top:3px; }
+.price-orig{ text-decoration:line-through; color:var(--espresso-soft); opacity:.72; font-weight:500; font-family:var(--font-en),sans-serif; font-size:13.5px; margin-right:3px; }
+.coupon-tag{ font-size:10.5px; color:#fff; background:var(--clay); border-radius:4px; padding:1px 5px; margin-left:4px; vertical-align:1px; font-weight:600; letter-spacing:.03em; }
 .pd-size-note{ font-size:14.5px; font-weight:600; color:var(--clay); background:rgba(188,110,78,.10); border:1.5px solid rgba(188,110,78,.32); border-radius:12px; padding:12px 15px; margin:-6px 0 16px; line-height:1.55; }
 
 .pd-qty-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
@@ -431,6 +433,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
             trial:(typeof p.trial_price === 'number' ? p.trial_price : p.price),
           trialPerFull:(p.trialPerFull || 7),
             trialPerFull:p.trialPerFull,
+            couponPrice:(typeof p.couponPrice === 'number' ? p.couponPrice : null),
+            couponPriceTrial:(typeof p.couponPriceTrial === 'number' ? p.couponPriceTrial : null),
             desc:p.description, descEn:p.descriptionEn, active:p.active, inStock:p.stock_qty > 0, stockQty:p.stock_qty,
             featured:p.featured, imgs:p.images||[], form:p.form||'', herbs:p.herbs||[], usage:p.usage_note||'', usageEn:p.usageNoteEn||'',
             journeys:[], tags:[] });
@@ -690,8 +694,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     html += '<div class="pd-desc">'+(_curLang==='en' && product.descEn ? product.descEn : product.desc)+'</div>';
 
     html += '<div class="pd-variants">'
-      + '<div class="pd-variant on" data-v="full"><div class="vv-lbl">正装</div><div class="vv-price">MYR '+product.price+'</div></div>'
-      + '<div class="pd-variant" data-v="trial"><div class="vv-lbl">试用装</div><div class="vv-price">MYR '+product.trial+'</div></div>'
+      + '<div class="pd-variant on" data-v="full"><div class="vv-lbl">正装</div><div class="vv-price">MYR '+(product.couponPrice!=null && product.couponPrice < product.price ? '<span class="price-orig">'+product.price+'</span> '+product.couponPrice : product.price)+(product.couponPrice!=null && product.couponPrice < product.price ? '<span class="coupon-tag">优惠码价</span>' : '')+'</div></div>'
+      + '<div class="pd-variant" data-v="trial"><div class="vv-lbl">试用装</div><div class="vv-price">MYR '+(product.couponPriceTrial!=null && product.couponPriceTrial < product.trial ? '<span class="price-orig">'+product.trial+'</span> '+product.couponPriceTrial : product.trial)+(product.couponPriceTrial!=null && product.couponPriceTrial < product.trial ? '<span class="coupon-tag">优惠码价</span>' : '')+'</div></div>'
       + '</div>';
     if(product.trialPerFull && Number(product.trialPerFull) >= 2){
       var _pn = Number(product.trialPerFull);

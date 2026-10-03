@@ -90,6 +90,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 /* ---- summary ---- */
 .summary-card{ background:var(--white-warm); border:1px solid var(--line); border-radius:16px; padding:18px 20px; margin-top:22px; }
 .summary-row{ display:flex; justify-content:space-between; font-size:14px; color:var(--espresso-soft); padding:4px 0; }
+.orig-strike{ text-decoration:line-through; opacity:.6; }
 .coupon-row{ display:flex; gap:8px; margin-bottom:12px; }
 .coupon-row input{ flex:1; min-width:0; padding:10px 13px; border:1.5px solid var(--line); border-radius:10px; font-size:13.5px; font-family:inherit; text-transform:uppercase; }
 .coupon-row button{ flex:none; background:var(--espresso); color:#fff; border:none; border-radius:10px; padding:0 16px; font-size:13px; font-weight:600; cursor:pointer; }
@@ -948,6 +949,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
    + '</div>'
    + '<div class="coupon-error" id="couponError"></div>'
    + '<div class="summary-row"><span>Selected Products</span><span>'+checkedCount+' items</span></div>'
+   + (couponSavings > 0 ? '<div class="summary-row"><span>Original Subtotal</span><span class="orig-strike">MYR '+origSubtotal.toFixed(2)+'</span></div>' : '')
    + (couponSavings > 0 ? '<div class="summary-row coupon-discount-row"><span>Discount Code</span><span>− MYR '+couponSavings.toFixed(2)+'</span></div>' : '')
    + '<div class="summary-row"><span>Shipping</span><span>'+(addressForm.state ? 'MYR '+ship : 'Please select an address') +'</span></div>'
    + '<div class="summary-row total"><span>Total</span><span class="sr-price">MYR '+grandTotal.toFixed(2)+'</span></div>'
