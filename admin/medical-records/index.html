@@ -1901,7 +1901,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       var cv = document.createElement('canvas');
       cv.width = W;
       var ctx = cv.getContext('2d');
-      function fontOf(ln){ return (ln.fw === 700 ? '700 ' : '') + (ln.fs * scale) + 'px "Courier New","PingFang SC","Microsoft YaHei",monospace'; }
+      function fontOf(ln){ return (ln.fw === 700 ? '700 ' : '') + (ln.fs * scale) + 'px "Arial Narrow","Helvetica Neue",Arial,"PingFang SC","Microsoft YaHei",sans-serif'; }
       var availW = W - padX * 2;
       var totalH = padY * 2;
       lines.forEach(function(ln){
@@ -1911,6 +1911,15 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
         totalH += h;
         if(ln.left !== undefined){
           if(ctx.measureText(ln.left).width + ctx.measureText(ln.right).width > availW){ totalH += h; }
+        } else if(ln.text !== undefined && ctx.measureText(ln.text).width > availW){
+          // 与绘制阶段折行逻辑一致：预计算额外行数，避免总高度不足导致底部内容被裁
+          var words = ln.text.split(' '), cur = '', extra = 0;
+          for(var wi = 0; wi < words.length; wi++){
+            var t2 = cur ? cur + ' ' + words[wi] : words[wi];
+            if(ctx.measureText(t2).width > availW && cur){ cur = words[wi]; extra++; }
+            else { cur = t2; }
+          }
+          totalH += extra * h;
         }
       });
       cv.height = totalH;
@@ -1962,7 +1971,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     function canvasToPdfBlob(cv){
       var mmToPt = 2.8346456693;
       var pageW = Math.round(48 * mmToPt);
-      var pageH = Math.round(cv.height / cv.width * 44 * mmToPt);
+      var pageH = Math.round(cv.height / cv.width * 48 * mmToPt);
       var jpeg = cv.toDataURL('image/jpeg', 0.93).split(',')[1];
       var bin = atob(jpeg), len = bin.length;
       var imgW = cv.width, imgH = cv.height;
