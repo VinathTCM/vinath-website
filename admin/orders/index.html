@@ -342,7 +342,7 @@ tbody tr:hover{ background:#FBFAF7; }
   .print-receipt-thermal{ display:block; position:static; width:48mm; padding:0; }
 }
 .receipt-brandrow{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:26px; }
-.receipt-brand{ font-family:var(--font-serif); font-weight:700; font-size:21px; letter-spacing:.1em; }
+.receipt-brand{ font-family:var(--font-serif); font-weight:700; font-size:18px; letter-spacing:.06em; }
 .receipt-brand-sub{ font-size:11px; color:#888; margin-top:3px; letter-spacing:.06em; }
 .receipt-doctype{ text-align:right; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:#888; }
 .receipt-no{ text-align:right; font-size:12px; color:#888; margin-top:3px; }
@@ -362,9 +362,9 @@ tbody tr:hover{ background:#FBFAF7; }
 .export-btn-group .btn-export{ flex:1; font-size:12.5px; padding:12px 6px; }
 
 /* ---- 58mm thermal-printer receipt format ---- */
-.thermal{ width:48mm; box-sizing:border-box; padding:0.5mm 1mm; font-family:'Courier New',Consolas,'Microsoft YaHei','PingFang SC',monospace; font-size:12px; line-height:1.3; color:#000; }
+.thermal{ width:48mm; box-sizing:border-box; padding:0.5mm 1mm; font-family:'Arial Narrow','Helvetica Neue',Arial,'PingFang SC','Microsoft YaHei',sans-serif; font-stretch:condensed; font-size:12px; line-height:1.3; color:#000; }
 .thermal .t-center{ text-align:center; }
-.thermal .t-brand{ font-size:15px; font-weight:700; letter-spacing:.04em; }
+.thermal .t-brand{ font-size:14px; font-weight:700; letter-spacing:.02em; }
 .thermal .t-brand .tm{ font-size:8px; vertical-align:super; }
 .thermal .t-sub{ font-size:10px; margin-top:1px; word-break:break-word; }
 .thermal .t-div{ border-top:1px dashed #000; margin:2px 0; }
@@ -3169,6 +3169,7 @@ window.escapeHtml = function(s){
 
   // ---- shared bilingual/English export helpers, used by every print export below ----
   var COMPANY_EN = 'VINATH TCM HEALTH CARE';
+  var COMPANY_SSM = '202603075504 (003834208-U)';
   function getCompanyTaxId(){
     try {
       var raw = localStorage.getItem('vinath_business_info');
@@ -3255,9 +3256,9 @@ window.escapeHtml = function(s){
     return en || chineseName;
   }
   function exportHeader(lang, docTypeEn, docTypeCn, docNo, docDate){
-    return '<div class="receipt-brandrow"><div><div class="receipt-brand">VINATH<span class="tm">TM</span></div>'
+    return '<div class="receipt-brandrow"><div><div class="receipt-brand">VINATH TCM HEALTH CARE</div>'
       + '<div class="receipt-brand-sub">健康，本该简单 · Easy Health</div>'
-      + '<div class="receipt-brand-sub" style="margin-top:6px;">'+COMPANY_EN+' &nbsp;·&nbsp; Tax Reg. No. '+COMPANY_TAX_ID+'</div>'
+      + '<div class="receipt-brand-sub" style="margin-top:6px;">Reg No: '+COMPANY_SSM+' &nbsp;·&nbsp; TIN: '+COMPANY_TAX_ID+'</div>'
       + '<div class="receipt-brand-sub">'+'WhatsApp +601145799499 &nbsp;·&nbsp; Johor, Malaysia'+'</div></div>'
       + '<div><div class="receipt-doctype">'+docTypeEn+'</div>'
       + '<div class="receipt-no">'+'No.'+' '+docNo+'</div>'
@@ -3265,7 +3266,7 @@ window.escapeHtml = function(s){
   }
   function exportFooter(lang, noteEn, noteCn){
     return '<div class="receipt-ftr">'+noteEn+'</div>'
-      + '<div class="receipt-ftr2"><div>VINATH TCM HEALTH CARE · Tax Reg. No. '+COMPANY_TAX_ID+' · WhatsApp +601145799499</div>'
+      + '<div class="receipt-ftr2"><div>VINATH TCM HEALTH CARE · Reg No: '+COMPANY_SSM+' · TIN: '+COMPANY_TAX_ID+' · WhatsApp +601145799499</div>'
       + '<div>Johor, Malaysia</div>'
       + '<div>Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.</div><div class="my">Malaysia</div></div>';
   }
@@ -3403,11 +3404,10 @@ window.escapeHtml = function(s){
     }).join('');
     var html = ''
       + '<div class="thermal">'
-      + '<div class="t-center"><div class="t-brand">VINATH<span class="tm">TM</span></div>'
-      + '<div class="t-sub">Johor, Malaysia</div>'
-      + '<div class="t-sub">VINATH TCM</div>'
-      + '<div class="t-sub">HEALTH CARE</div>'
-      + '<div class="t-sub">TIN: '+COMPANY_TAX_ID+'</div></div>'
+      + '<div class="t-center"><div class="t-brand">VINATH TCM HEALTH CARE</div>'
+      + '<div class="t-sub">Reg No: '+COMPANY_SSM+'</div>'
+      + '<div class="t-sub">TIN: '+COMPANY_TAX_ID+'</div>'
+      + '<div class="t-sub">Johor, Malaysia</div></div>'
       + '<div class="t-div"></div>'
       + '<div class="t-center" style="font-weight:700;">RECEIPT</div>'
       + '<div class="t-row"><span class="l">'+'No.'+'</span><span>'+b.id+'</span></div>'
