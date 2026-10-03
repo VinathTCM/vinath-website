@@ -837,7 +837,9 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         + '<div class="feat-pin">当季主打</div>'
         + '<span class="prod-wish'+(wished?' on':'')+'" data-wid="'+p.id+'" style="top:12px;right:12px;">'+WISH_HEART_SVG+'</span>'
         + (hasImg ? '<span class="prod-dl" data-dlid="'+p.id+'" title="下载图片（带水印）" style="top:12px;right:46px;opacity:1;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></span>' : '')
-        + '<div class="feat-body'+(hasImg?'':' feat-body-plain')+'"><div class="feat-name">'+p.name+'</div><div class="feat-price">试用装 RM '+p.trial+' 起</div><div class="feat-price-sub">正装含相当于 '+(p.trialPerFull||7)+' 份试用装 · 约RM'+(p.price/(p.trialPerFull||7)).toFixed(2)+'/份</div></div>'
+        + '<div class="feat-body'+(hasImg?'':' feat-body-plain')+'"><div class="feat-name">'+p.name+'</div><div class="feat-price">试用装 '+(p.couponPriceTrial!=null && p.couponPriceTrial < p.trial
+          ? '<span class="price-orig">RM '+p.trial+'</span>RM '+p.couponPriceTrial
+          : 'RM '+p.trial)+' 起'+(p.couponPriceTrial!=null && p.couponPriceTrial < p.trial ? '<span class="coupon-tag">优惠码价</span>' : '')+'</div><div class="feat-price-sub">正装含相当于 '+(p.trialPerFull||7)+' 份试用装 · 约RM'+(p.price/(p.trialPerFull||7)).toFixed(2)+'/份</div></div>'
         + '</div>';
     });
     featGrid.innerHTML = html || '<div class="prod-empty">暂无精选商品</div>';
