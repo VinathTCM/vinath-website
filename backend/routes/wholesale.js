@@ -29,7 +29,7 @@ router.post('/admin/wholesale-orders', authMiddleware, requireRole('SENIOR', 'PR
       if(!product) throw { status: 400, message: `商品 ${it.productId} 不存在或已下架` };
       if(!product.wholesale_price) throw { status: 400, message: `「${product.name}」没有设置拿货价，无法拿货` };
       if(product.stock_qty < it.qty) throw { status: 409, message: `「${product.name}」库存不足，剩余 ${product.stock_qty} 件` };
-      validatedItems.push({ name: product.name, qty: it.qty, price: product.wholesale_price });
+      validatedItems.push({ productId: it.productId, name: product.name, qty: it.qty, price: product.wholesale_price });
       subtotal += product.wholesale_price * it.qty;
       db.prepare('UPDATE products SET stock_qty = stock_qty - ? WHERE id = ?').run(it.qty, product.id);
     }
@@ -56,9 +56,9 @@ router.post('/admin/wholesale-orders', authMiddleware, requireRole('SENIOR', 'PR
 router.get('/admin/wholesale-orders', authMiddleware, requireRole('SENIOR', 'PRACTITIONER', 'FULFILLMENT'), (req, res) => {
   let rows;
   if(req.admin.role === 'PRACTITIONER'){
-    rows = db.prepare('SELECT * FROM wholesale_orders WHERE ordered_by_id = ? ORDER BY created_at DESC').all(req.admin.sub);
+    rows = db.prepare('SELECT * FROM wholesale_orders WHERE ordered_by_id = ? AND deleted_at IS NULL ORDER BY created_at DESC').all(req.admin.sub);
   } else {
-    rows = db.prepare('SELECT * FROM wholesale_orders ORDER BY created_at DESC').all();
+    rows = db.prepare('SELECT * FROM wholesale_orders WHERE deleted_at IS NULL ORDER BY created_at DESC').all();
   }
   res.json(rows.map(serializeWholesaleOrder));
 });
@@ -68,6 +68,71 @@ router.put('/admin/wholesale-orders/:id/status', authMiddleware, requireRole('SE
   if(![0,1,2,3].includes(status)) return res.status(400).json({ error: '状态值不对' });
   const result = db.prepare('UPDATE wholesale_orders SET status = ? WHERE id = ?').run(status, req.params.id);
   if(result.changes === 0) return res.status(404).json({ error: '订单不存在' });
+  res.json({ ok: true });
+});
+
+// 软删除拿货订单（移入回收箱，30天内可恢复）——删除时回退拿货库存
+function restoreWholesaleStock(orderId){
+  try {
+    const row = db.prepare('SELECT items FROM wholesale_orders WHERE id = ?').get(orderId);
+    if(!row) return;
+    const items = JSON.parse(row.items);
+    for(const it of items){
+      if(it.productId && it.qty){
+        db.prepare('UPDATE products SET stock_qty = stock_qty + ? WHERE id = ?').run(it.qty, it.productId);
+      }
+    }
+  } catch(e){ console.error('回退拿货库存失败:', e); }
+}
+function deductWholesaleStock(orderId){
+  try {
+    const row = db.prepare('SELECT items FROM wholesale_orders WHERE id = ?').get(orderId);
+    if(!row) return;
+    const items = JSON.parse(row.items);
+    for(const it of items){
+      if(it.productId && it.qty){
+        db.prepare('UPDATE products SET stock_qty = stock_qty - ? WHERE id = ?').run(it.qty, it.productId);
+      }
+    }
+  } catch(e){ console.error('恢复拿货库存扣减失败:', e); }
+}
+
+router.delete('/admin/wholesale-orders/:id', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const row = db.prepare('SELECT * FROM wholesale_orders WHERE id = ?').get(req.params.id);
+  if(!row) return res.status(404).json({ error: '拿货订单不存在' });
+  if(row.deleted_at) return res.status(400).json({ error: '该拿货订单已在回收箱中' });
+  db.prepare('UPDATE wholesale_orders SET deleted_at = ?, deleted_by = ? WHERE id = ?').run(
+    new Date().toISOString(), req.admin.name, req.params.id
+  );
+  restoreWholesaleStock(req.params.id);
+  res.json({ ok: true });
+});
+
+// 拿货订单回收箱列表（已删除且30天内）
+router.get('/admin/wholesale-orders/trash', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const cutoff = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
+  const rows = db.prepare('SELECT * FROM wholesale_orders WHERE deleted_at IS NOT NULL AND deleted_at >= ? ORDER BY deleted_at DESC').all(cutoff);
+  res.json(rows.map(serializeWholesaleOrder));
+});
+
+// 恢复拿货订单（从回收箱）
+router.post('/admin/wholesale-orders/:id/restore', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const row = db.prepare('SELECT * FROM wholesale_orders WHERE id = ?').get(req.params.id);
+  if(!row) return res.status(404).json({ error: '拿货订单不存在' });
+  if(!row.deleted_at) return res.status(400).json({ error: '该拿货订单不在回收箱中' });
+  db.prepare('UPDATE wholesale_orders SET deleted_at = NULL, deleted_by = NULL WHERE id = ?').run(req.params.id);
+  deductWholesaleStock(req.params.id);
+  res.json({ ok: true });
+});
+
+// 永久删除拿货订单（回收箱里彻底删除）
+router.delete('/admin/wholesale-orders/:id/permanent', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const row = db.prepare('SELECT * FROM wholesale_orders WHERE id = ?').get(req.params.id);
+  if(!row) return res.status(404).json({ error: '拿货订单不存在' });
+  if(!row.deleted_at){
+    restoreWholesaleStock(req.params.id);
+  }
+  db.prepare('DELETE FROM wholesale_orders WHERE id = ?').run(req.params.id);
   res.json({ ok: true });
 });
 

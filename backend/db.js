@@ -913,6 +913,8 @@ db.exec(`
   ensureColumn('bookings', 'deleted_by', 'TEXT');
   ensureColumn('orders', 'deleted_at', 'TEXT');
   ensureColumn('orders', 'deleted_by', 'TEXT');
+  ensureColumn('wholesale_orders', 'deleted_at', 'TEXT');
+  ensureColumn('wholesale_orders', 'deleted_by', 'TEXT');
 })();
 
 // 启动时清理回收箱中超过30天的记录（永久删除）
@@ -925,6 +927,10 @@ db.exec(`
   try {
     const oInfo = db.prepare("DELETE FROM orders WHERE deleted_at IS NOT NULL AND deleted_at < ?").run(cutoff);
     if(oInfo.changes) console.log('[回收箱] 已永久删除 ' + oInfo.changes + ' 条超过30天的订单记录');
+  } catch(e){}
+  try {
+    const wInfo = db.prepare("DELETE FROM wholesale_orders WHERE deleted_at IS NOT NULL AND deleted_at < ?").run(cutoff);
+    if(wInfo.changes) console.log('[回收箱] 已永久删除 ' + wInfo.changes + ' 条超过30天的拿货订单记录');
   } catch(e){}
 })();
 

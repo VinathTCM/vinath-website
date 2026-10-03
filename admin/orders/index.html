@@ -647,6 +647,13 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
         <tbody id="trashBookingTbody"><tr><td colspan="8"><div class="empty-state">加载中...</div></td></tr></tbody>
       </table>
     </div>
+    <div class="closure-card">
+      <div class="closure-card-title">已删除的拿货订单</div>
+      <table class="data-table" style="width:100%;">
+        <thead><tr><th>拿货单号</th><th>小管理员</th><th>金额</th><th>删除时间</th><th>删除人</th><th>剩余天数</th><th>操作</th></tr></thead>
+        <tbody id="trashWholesaleTbody"><tr><td colspan="7"><div class="empty-state">加载中...</div></td></tr></tbody>
+      </table>
+    </div>
   </div>
 
   <div id="tab-settings" style="display:none;">
@@ -1883,7 +1890,7 @@ window.escapeHtml = function(s){
           + '<td class="price-cell">MYR '+o.total.toFixed(2)+'</td>'
           + '<td>'+(o.region==='west'?'西马':'东马')+'</td>'
           + '<td><span class="badge badge-o'+(o.status||0)+'">'+wholesaleStatusLabel(o)+'</span></td>'
-          + '<td><button class="row-edit" data-id="'+o.id+'" data-wholesale="1">查看</button>'+((cur&&cur.type==='senior')?'<button class="row-edit row-del-btn" data-id="'+o._backendId+'" data-type="order" style="color:#c0392b;border-color:#c0392b;margin-left:4px;">删除</button>':'')+'</td>'
+          + '<td><button class="row-edit" data-id="'+o.id+'" data-wholesale="1">查看</button>'+((cur&&cur.type==='senior')?'<button class="row-edit row-del-btn" data-id="'+o._backendId+'" data-type="wholesale" style="color:#c0392b;border-color:#c0392b;margin-left:4px;">删除</button>':'')+'</td>'
           + '</tr>';
       }).join('');
       tbody.innerHTML = rowsHtml;
@@ -5027,14 +5034,17 @@ window.escapeHtml = function(s){
 
   // ===== 软删除 / 回收箱 =====
   function softDeleteItem(type, id){
-    var label = type==='order' ? '订单' : '预约';
+    var label = type==='order' ? '订单' : (type==='wholesale' ? '拿货订单' : '预约');
     if(!confirm('确认删除此' + label + '（' + id + '）？\n\n删除后将进入回收箱，30天内可恢复，超期自动永久删除。')) return;
-    var url = API_BASE + '/admin/' + (type==='order' ? 'orders' : 'bookings') + '/' + id;
+    var seg = type==='order' ? 'orders' : (type==='wholesale' ? 'wholesale-orders' : 'bookings');
+    var url = API_BASE + '/admin/' + seg + '/' + id;
     fetch(url, { method:'DELETE', headers:{ 'Authorization':'Bearer ' + authToken } })
       .then(function(res){ if(!res.ok) return res.json().then(function(e){ throw new Error(e.error||'删除失败'); }); return res.json(); })
       .then(function(){
         showToast('已移入回收箱');
-        if(type==='order') renderOrders(); else renderBookings();
+        if(type==='order') renderOrders();
+        else if(type==='wholesale'){ renderOrders(); renderWholesaleGrid(); renderWholesaleHistory(); }
+        else renderBookings();
       })
       .catch(function(e){ showToast('删除失败：' + e.message); });
   }
@@ -5057,12 +5067,14 @@ window.escapeHtml = function(s){
   async function renderTrash(){
     var headers = { 'Authorization':'Bearer ' + authToken };
     try {
-      var [oRes, bRes] = await Promise.all([
+      var [oRes, bRes, wRes] = await Promise.all([
         fetch(API_BASE + '/admin/orders/trash', { headers: headers }),
-        fetch(API_BASE + '/admin/bookings/trash', { headers: headers })
+        fetch(API_BASE + '/admin/bookings/trash', { headers: headers }),
+        fetch(API_BASE + '/admin/wholesale-orders/trash', { headers: headers })
       ]);
       var orders = oRes.ok ? await oRes.json() : [];
       var bookings = bRes.ok ? await bRes.json() : [];
+      var wholesales = wRes.ok ? await wRes.json() : [];
 
       var oTbody = document.getElementById('trashOrderTbody');
       if(oTbody){
@@ -5107,6 +5119,29 @@ window.escapeHtml = function(s){
           bindTrashActions(bTbody);
         }
       }
+
+      var wTbody = document.getElementById('trashWholesaleTbody');
+      if(wTbody){
+        if(!wholesales.length){
+          wTbody.innerHTML = '<tr><td colspan="7"><div class="empty-state">回收箱为空</div></td></tr>';
+        } else {
+          wTbody.innerHTML = wholesales.map(function(w){
+            var wItems = w.items || [];
+            var itemSummary = wItems.map(function(i){ return i.name+' ×'+i.qty; }).join('，');
+            return '<tr>'
+              + '<td><span class="pname">'+w.id+'</span></td>'
+              + '<td>'+escapeHtml(w.ordered_by_name||'-')+'<br><span style="font-size:12px;color:var(--ink-soft);">'+itemSummary+'</span></td>'
+              + '<td class="price-cell">MYR '+(w.total||0).toFixed(2)+'</td>'
+              + '<td>'+fmtDateTime(w.deleted_at)+'</td>'
+              + '<td>'+escapeHtml(w.deleted_by||'-')+'</td>'
+              + '<td>'+daysRemaining(w.deleted_at)+'</td>'
+              + '<td><button class="row-edit trash-restore" data-id="'+w.id+'" data-type="wholesale">恢复</button>'
+              + '<button class="row-edit trash-perm" data-id="'+w.id+'" data-type="wholesale" style="color:#c0392b;border-color:#c0392b;margin-left:4px;">永久删除</button></td>'
+              + '</tr>';
+          }).join('');
+          bindTrashActions(wTbody);
+        }
+      }
     } catch(e){
       showToast('回收箱加载失败：' + e.message);
     }
@@ -5122,9 +5157,10 @@ window.escapeHtml = function(s){
   }
 
   function restoreItem(type, id){
-    var label = type==='order' ? '订单' : '预约';
+    var label = type==='order' ? '订单' : (type==='wholesale' ? '拿货订单' : '预约');
     if(!confirm('确认恢复此' + label + '（' + id + '）？恢复后将重新出现在正常列表中。')) return;
-    var url = API_BASE + '/admin/' + (type==='order' ? 'orders' : 'bookings') + '/' + id + '/restore';
+    var seg = type==='order' ? 'orders' : (type==='wholesale' ? 'wholesale-orders' : 'bookings');
+    var url = API_BASE + '/admin/' + seg + '/' + id + '/restore';
     fetch(url, { method:'POST', headers:{ 'Authorization':'Bearer ' + authToken } })
       .then(function(res){ if(!res.ok) return res.json().then(function(e){ throw new Error(e.error||'恢复失败'); }); return res.json(); })
       .then(function(){ showToast('已恢复'); renderTrash(); })
@@ -5132,9 +5168,10 @@ window.escapeHtml = function(s){
   }
 
   function permanentDeleteItem(type, id){
-    var label = type==='order' ? '订单' : '预约';
+    var label = type==='order' ? '订单' : (type==='wholesale' ? '拿货订单' : '预约');
     if(!confirm('确认永久删除此' + label + '（' + id + '）？\n\n此操作不可撤销，数据将彻底删除！')) return;
-    var url = API_BASE + '/admin/' + (type==='order' ? 'orders' : 'bookings') + '/' + id + '/permanent';
+    var seg = type==='order' ? 'orders' : (type==='wholesale' ? 'wholesale-orders' : 'bookings');
+    var url = API_BASE + '/admin/' + seg + '/' + id + '/permanent';
     fetch(url, { method:'DELETE', headers:{ 'Authorization':'Bearer ' + authToken } })
       .then(function(res){ if(!res.ok) return res.json().then(function(e){ throw new Error(e.error||'删除失败'); }); return res.json(); })
       .then(function(){ showToast('已永久删除'); renderTrash(); })
