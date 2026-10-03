@@ -5042,9 +5042,9 @@ window.escapeHtml = function(s){
       .then(function(res){ if(!res.ok) return res.json().then(function(e){ throw new Error(e.error||'删除失败'); }); return res.json(); })
       .then(function(){
         showToast('已移入回收箱');
-        if(type==='order') renderOrders();
-        else if(type==='wholesale'){ renderOrders(); renderWholesaleGrid(); renderWholesaleHistory(); }
-        else renderBookings();
+        if(type==='order') loadOrdersAndBookingsFromBackend(true);
+        else if(type==='wholesale') loadOrdersAndBookingsFromBackend(true).then(function(){ renderWholesaleGrid(); renderWholesaleHistory(); });
+        else loadOrdersAndBookingsFromBackend(true);
       })
       .catch(function(e){ showToast('删除失败：' + e.message); });
   }
@@ -5163,7 +5163,7 @@ window.escapeHtml = function(s){
     var url = API_BASE + '/admin/' + seg + '/' + id + '/restore';
     fetch(url, { method:'POST', headers:{ 'Authorization':'Bearer ' + authToken } })
       .then(function(res){ if(!res.ok) return res.json().then(function(e){ throw new Error(e.error||'恢复失败'); }); return res.json(); })
-      .then(function(){ showToast('已恢复'); renderTrash(); })
+      .then(function(){ showToast('已恢复'); loadOrdersAndBookingsFromBackend(true).then(function(){ renderTrash(); renderWholesaleGrid(); renderWholesaleHistory(); }); })
       .catch(function(e){ showToast('恢复失败：' + e.message); });
   }
 
@@ -5174,7 +5174,7 @@ window.escapeHtml = function(s){
     var url = API_BASE + '/admin/' + seg + '/' + id + '/permanent';
     fetch(url, { method:'DELETE', headers:{ 'Authorization':'Bearer ' + authToken } })
       .then(function(res){ if(!res.ok) return res.json().then(function(e){ throw new Error(e.error||'删除失败'); }); return res.json(); })
-      .then(function(){ showToast('已永久删除'); renderTrash(); })
+      .then(function(){ showToast('已永久删除'); loadOrdersAndBookingsFromBackend(true).then(function(){ renderTrash(); renderWholesaleGrid(); renderWholesaleHistory(); }); })
       .catch(function(e){ showToast('删除失败：' + e.message); });
   }
 
