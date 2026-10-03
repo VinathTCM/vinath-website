@@ -770,8 +770,6 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       + '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span>No.</span><span style="margin-left:auto;text-align:right;">'+escapeHtml(rc.receiptNo)+'</span></div>'
       + '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span>Date</span><span style="margin-left:auto;text-align:right;">'+rc.issuedAt.slice(0,16)+'</span></div>'
       + '<div style="border-top:1px dashed #000;margin:0.8mm 0;"></div>'
-      + '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span>Patient</span><span style="margin-left:auto;text-align:right;">'+escapeHtml(rc.patientName)+'</span></div>'
-      + '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span>Contact</span><span style="margin-left:auto;text-align:right;">+60 '+String(rc.patientPhone||'').replace(/^0/,'')+'</span></div>'
       + (rc.practitionerNameSnapshot ? '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span>Practitioner</span><span style="margin-left:auto;text-align:right;">'+escapeHtml(docDisplay(rc.practitionerNameSnapshot))+'</span></div>' : '')
       + '<div style="border-top:1px dashed #000;margin:0.8mm 0;"></div>'
       + (hasDetail ? rc.lineItems.map(function(it){
