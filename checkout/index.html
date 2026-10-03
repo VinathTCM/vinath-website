@@ -843,10 +843,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="os-order-no">订单号 <b>'+completedOrder.orderNo+'</b></div>'+ '<div style="background:#FFF8E1;border:1px solid #FFD54F;border-radius:10px;padding:10px 14px;margin-top:10px;font-size:13px;color:#795548;text-align:left;line-height:1.5;margin-bottom:16px;">&#128247; 请截图或保存这个<b>订单号</b>——后续查询订单物流时需要用到。</div>'
       + '<div class="os-summary-card">';
     completedOrder.items.forEach(function(it){
-      html += '<div class="os-item"><span>'+it.product.name+' × '+it.qty+'</span><span>MYR '+(unitPrice(it)*it.qty)+'</span></div>';
+      html += '<div class="os-item"><span>'+it.product.name+' × '+it.qty+'</span><span>MYR '+(unitPrice(it)*it.qty).toFixed(2)+'</span></div>';
     });
-    html += '<div class="os-item"><span>运费'+(st?'（'+(st.region==='east'?'东马':'西马')+'）':'')+'</span><span>MYR '+(completedOrder.shipping||0)+'</span></div>';
-    html += '<div class="os-item total"><span>合计</span><span>MYR '+completedOrder.total+'</span></div>'
+    html += '<div class="os-item"><span>运费'+(st?'（'+(st.region==='east'?'东马':'西马')+'）':'')+'</span><span>MYR '+((completedOrder.shipping||0)).toFixed(2)+'</span></div>';
+    html += '<div class="os-item total"><span>合计</span><span>MYR '+Number(completedOrder.total).toFixed(2)+'</span></div>'
       + '</div>';
     if(addr && st){
       html += '<div class="os-summary-card os-addr-card"><div class="os-addr-label">收货地址</div>'
@@ -1140,7 +1140,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         if(checkoutBtn.disabled) return;
         var checkedItems = cart.filter(function(it){ return it.checked && it.product.inStock; });
         var ship = shippingFee();
-        var total = checkedItems.reduce(function(s,it){ return s+unitPrice(it)*it.qty; }, 0) + ship;
+        var total = Math.round((checkedItems.reduce(function(s,it){ return s+unitPrice(it)*it.qty; }, 0) + ship) * 100) / 100;
         pendingOrder = {items: checkedItems, total: total, shipping: ship, contact: contactValue, address: Object.assign({}, addressForm)};
         if(rememberAddr){ saveAddress(addressForm); } else { clearSavedAddress(); }
         editingAddress = false;

@@ -880,10 +880,10 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
    + '<div class="os-order-no">Order Number <b>'+completedOrder.orderNo+'</b></div>'+ '<div style="background:#FFF8E1;border:1px solid #FFD54F;border-radius:10px;padding:10px 14px;margin-top:10px;font-size:13px;color:#795548;text-align:left;line-height:1.5;margin-bottom:16px;">&#128247; Please screenshot or save this <b>Order Number</b> — you will need it to track your order later.</div>'
    + '<div class="os-summary-card">';
   completedOrder.items.forEach(function(it){
-   html += '<div class="os-item"><span>'+it.product.name+' × '+it.qty+'</span><span>MYR '+(unitPrice(it)*it.qty)+'</span></div>';
+   html += '<div class="os-item"><span>'+it.product.name+' × '+it.qty+'</span><span>MYR '+(unitPrice(it)*it.qty).toFixed(2)+'</span></div>';
   });
-  html += '<div class="os-item"><span>Shipping'+(st?'('+(st.region==='east'?'East Malaysia':'West Malaysia')+')':'')+'</span><span>MYR '+(completedOrder.shipping||0)+'</span></div>';
-  html += '<div class="os-item total"><span>Total</span><span>MYR '+completedOrder.total+'</span></div>'
+  html += '<div class="os-item"><span>Shipping'+(st?'('+(st.region==='east'?'East Malaysia':'West Malaysia')+')':'')+'</span><span>MYR '+((completedOrder.shipping||0)).toFixed(2)+'</span></div>';
+  html += '<div class="os-item total"><span>Total</span><span>MYR '+Number(completedOrder.total).toFixed(2)+'</span></div>'
    + '</div>';
   if(addr && st){
    html += '<div class="os-summary-card os-addr-card"><div class="os-addr-label">Delivery Address</div>'
@@ -1177,7 +1177,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     if(checkoutBtn.disabled) return;
     var checkedItems = cart.filter(function(it){ return it.checked && it.product.inStock; });
     var ship = shippingFee();
-    var total = checkedItems.reduce(function(s,it){ return s+unitPrice(it)*it.qty; }, 0) + ship;
+    var total = Math.round((checkedItems.reduce(function(s,it){ return s+unitPrice(it)*it.qty; }, 0) + ship) * 100) / 100;
     pendingOrder = {items: checkedItems, total: total, shipping: ship, contact: contactValue, address: Object.assign({}, addressForm)};
     if(rememberAddr){ saveAddress(addressForm); } else { clearSavedAddress(); }
     editingAddress = false;

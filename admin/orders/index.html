@@ -2006,6 +2006,8 @@ window.escapeHtml = function(s){
     var orders = cachedWholesaleOrders;
     var o = orders.find(function(x){ return x.id===id; });
     if(!o) return;
+    var cur = getCurrentAdmin();
+    var canInvoice = ((o.status||0) >= 1) || (cur && cur.role === 'SENIOR');
     document.getElementById('panelTitle').textContent = '拿货订单详情';
     var shipLabel = o.shipping === 0 ? shipFreeNoteZh(o.region) : '运费（'+(o.region==='west'?'西马':'东马')+'）';
     var itemsHtml = o.items.map(function(i){
@@ -2027,11 +2029,14 @@ window.escapeHtml = function(s){
       + ORDER_STATUS.map(function(label,i){ return '<div class="status-step-btn'+((o.status||0)===i?' on':'')+'" data-i="'+i+'">'+label+'</div>'; }).join('')
       + '</div></div>'
       + '<div class="detail-section" style="margin-bottom:6px;">'
-      + '<div class="export-btn-group"><button class="btn-export" id="exportWInvBtnBi">打印发票 · 双语</button><button class="btn-export" id="exportWInvBtnEn">Invoice · English</button><button class="btn-export" id="exportWPackBtnBi">导出装箱清单 · 双语</button><button class="btn-export" id="exportWPackBtnEn">Packing Slip · English</button><button class="btn-export" id="exportWTrackBtn">打印快递单号</button></div>'
+      + (canInvoice
+          ? '<div class="export-btn-group"><button class="btn-export" id="exportWInvBtnBi">打印发票 · 双语</button><button class="btn-export" id="exportWInvBtnEn">Invoice · English</button><button class="btn-export" id="exportWPackBtnBi">导出装箱清单 · 双语</button><button class="btn-export" id="exportWPackBtnEn">Packing Slip · English</button><button class="btn-export" id="exportWTrackBtn">打印快递单号</button></div>'
+          : '<div class="export-btn-group"><button class="btn-export" id="exportWPackBtnBi">导出装箱清单 · 双语</button><button class="btn-export" id="exportWPackBtnEn">Packing Slip · English</button><button class="btn-export" id="exportWTrackBtn">打印快递单号</button></div><div class="export-hint" style="color:#b8860b;margin-top:8px;">发票将在管理员确认收款后开放打印</div>')
       + '<div class="export-hint">发票给小管理员做进货凭证（金额为批发进货价）；装箱清单打包核对用，也可以打印出来放进包裹里，方便'+o.orderedByName+'收货后清点商品。</div></div>';
     document.getElementById('panelBody').innerHTML = html;
     document.querySelectorAll('#wholesaleStepper .status-step-btn').forEach(function(b){
       b.addEventListener('click', async function(){
+        if(!(cur && cur.role === 'SENIOR')){ showToast('只有大管理员可以变更拿货订单状态'); return; }
         var newStatus = Number(this.getAttribute('data-i'));
         o.status = newStatus;
         document.querySelectorAll('#wholesaleStepper .status-step-btn').forEach(function(x){ x.classList.remove('on'); });
@@ -2047,8 +2052,10 @@ window.escapeHtml = function(s){
         }
       });
     });
-    document.getElementById('exportWInvBtnBi').addEventListener('click', function(){ printWholesaleInvoice(o, 'bi'); });
-    document.getElementById('exportWInvBtnEn').addEventListener('click', function(){ printWholesaleInvoice(o, 'en'); });
+    if(canInvoice){
+      document.getElementById('exportWInvBtnBi').addEventListener('click', function(){ printWholesaleInvoice(o, 'bi'); });
+      document.getElementById('exportWInvBtnEn').addEventListener('click', function(){ printWholesaleInvoice(o, 'en'); });
+    }
     document.getElementById('exportWPackBtnBi').addEventListener('click', function(){ printWholesalePackingSlip(o, 'bi'); });
     document.getElementById('exportWPackBtnEn').addEventListener('click', function(){ printWholesalePackingSlip(o, 'en'); });
     document.getElementById('exportWTrackBtn').addEventListener('click', function(){
@@ -2345,7 +2352,11 @@ window.escapeHtml = function(s){
     box.innerHTML = mine.length ? mine.slice().reverse().map(function(o){
       var itemSummary = o.items.map(function(it){ return it.name+' ×'+it.qty; }).join('，');
       return '<div class="wholesale-history-row"><div><b>'+o.id+'</b> · '+o.date+'<br><span style="color:var(--ink-soft);">'+itemSummary+'</span></div>'
-        + '<div style="text-align:right;">MYR '+o.total.toFixed(2)+'<br><span class="wholesale-history-status">'+wholesaleStatusLabel(o)+'</span><br><button class="btn-export" style="margin-top:6px;" data-winv="'+o.id+'" type="button">打印发票</button></div></div>';
+        + '<div style="text-align:right;">MYR '+o.total.toFixed(2)+'<br><span class="wholesale-history-status">'+wholesaleStatusLabel(o)+'</span><br>'
+        + (((o.status||0) >= 1) || (cur && cur.role === 'SENIOR')
+            ? '<button class="btn-export" style="margin-top:6px;" data-winv="'+o.id+'" type="button">打印发票</button>'
+            : '<span style="display:inline-block;margin-top:8px;font-size:12px;color:#b8860b;">管理员确认收款后可打印发票</span>')
+        + '</div></div>';
     }).join('') : '<div class="wholesale-empty">还没有拿货记录</div>';
     box.querySelectorAll('[data-winv]').forEach(function(btn){
       btn.addEventListener('click', function(){
