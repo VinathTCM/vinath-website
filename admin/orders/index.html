@@ -2027,8 +2027,8 @@ window.escapeHtml = function(s){
       + ORDER_STATUS.map(function(label,i){ return '<div class="status-step-btn'+((o.status||0)===i?' on':'')+'" data-i="'+i+'">'+label+'</div>'; }).join('')
       + '</div></div>'
       + '<div class="detail-section" style="margin-bottom:6px;">'
-      + '<div class="export-btn-group"><button class="btn-export" id="exportWPackBtnBi">导出装箱清单 · 双语</button><button class="btn-export" id="exportWPackBtnEn">Packing Slip · English</button><button class="btn-export" id="exportWTrackBtn">打印快递单号</button></div>'
-      + '<div class="export-hint">打包核对用，也可以打印出来放进包裹里，方便'+o.orderedByName+'收货后清点商品。</div></div>';
+      + '<div class="export-btn-group"><button class="btn-export" id="exportWInvBtnBi">打印发票 · 双语</button><button class="btn-export" id="exportWInvBtnEn">Invoice · English</button><button class="btn-export" id="exportWPackBtnBi">导出装箱清单 · 双语</button><button class="btn-export" id="exportWPackBtnEn">Packing Slip · English</button><button class="btn-export" id="exportWTrackBtn">打印快递单号</button></div>'
+      + '<div class="export-hint">发票给小管理员做进货凭证（金额为批发进货价）；装箱清单打包核对用，也可以打印出来放进包裹里，方便'+o.orderedByName+'收货后清点商品。</div></div>';
     document.getElementById('panelBody').innerHTML = html;
     document.querySelectorAll('#wholesaleStepper .status-step-btn').forEach(function(b){
       b.addEventListener('click', async function(){
@@ -2047,6 +2047,8 @@ window.escapeHtml = function(s){
         }
       });
     });
+    document.getElementById('exportWInvBtnBi').addEventListener('click', function(){ printWholesaleInvoice(o, 'bi'); });
+    document.getElementById('exportWInvBtnEn').addEventListener('click', function(){ printWholesaleInvoice(o, 'en'); });
     document.getElementById('exportWPackBtnBi').addEventListener('click', function(){ printWholesalePackingSlip(o, 'bi'); });
     document.getElementById('exportWPackBtnEn').addEventListener('click', function(){ printWholesalePackingSlip(o, 'en'); });
     document.getElementById('exportWTrackBtn').addEventListener('click', function(){
@@ -2342,8 +2344,14 @@ window.escapeHtml = function(s){
     box.innerHTML = mine.length ? mine.slice().reverse().map(function(o){
       var itemSummary = o.items.map(function(it){ return it.name+' ×'+it.qty; }).join('，');
       return '<div class="wholesale-history-row"><div><b>'+o.id+'</b> · '+o.date+'<br><span style="color:var(--ink-soft);">'+itemSummary+'</span></div>'
-        + '<div style="text-align:right;">MYR '+o.total.toFixed(2)+'<br><span class="wholesale-history-status">'+wholesaleStatusLabel(o)+'</span></div></div>';
+        + '<div style="text-align:right;">MYR '+o.total.toFixed(2)+'<br><span class="wholesale-history-status">'+wholesaleStatusLabel(o)+'</span><br><button class="btn-export" style="margin-top:6px;" data-winv="'+o.id+'" type="button">打印发票</button></div></div>';
     }).join('') : '<div class="wholesale-empty">还没有拿货记录</div>';
+    box.querySelectorAll('[data-winv]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var o = mine.find(function(x){ return x.id === this.getAttribute('data-winv'); });
+        if(o) printWholesaleInvoice(o, 'bi');
+      });
+    });
   }
 
   function treatTotal(b){ return b.treatments.reduce(function(s,t){ return s+t.qty*t.price; },0); }
@@ -3317,6 +3325,36 @@ window.escapeHtml = function(s){
       + '<tr class="receipt-total-row"><td colspan="3">'+'Total'+'</td><td class="num">MYR '+o.total.toFixed(2)+'</td></tr>'
       + '</tbody></table>'
       + exportFooter(lang, 'Internal wholesale restock order — please verify item quantities before packing.', 'VINATH（JOHOR）· 内部拿货订单，请核对商品件数后装箱');
+    document.getElementById('printReceipt').innerHTML = html;
+    window.print();
+  }
+  // 拿货订单的正式批发发票——给小管理员的进货凭证，金额按拿货价计，便于对方入账报税与对账
+  function printWholesaleInvoice(o, lang){
+    preparePrint('normal');
+    var itemsHtml = o.items.map(function(i){
+      return '<tr><td>'+blItem(i.name,lang)+'</td><td class="num">'+i.qty+'</td><td class="num">MYR '+i.price.toFixed(2)+'</td><td class="num">MYR '+(i.qty*i.price).toFixed(2)+'</td></tr>';
+    }).join('');
+    var shipLabel = o.shipping === 0 ? (lang==='en'?'Shipping (Free over MYR100)':'运费（满 MYR100 免运费）') : (lang==='en'?'Shipping ('+(o.region==='west'?'West Malaysia':'East Malaysia')+')':'运费（'+(o.region==='west'?'西马':'东马')+'）');
+    var docEn = lang==='en' ? 'WHOLESALE INVOICE' : 'Wholesale Invoice';
+    var docCn = lang==='en' ? 'Wholesale Invoice' : '批发发票';
+    var html = ''
+      + exportHeader(lang, docEn, docCn, o.order_no || o.id, o.date)
+      + '<div class="receipt-meta-grid">'
+      + '<div><div class="receipt-meta-lbl">'+'Billed To'+'</div><div class="receipt-meta-val">'+escapeHtml(o.orderedByName)+' (Practitioner)</div></div>'
+      + '<div><div class="receipt-meta-lbl">'+'Payment Method'+'</div><div class="receipt-meta-val">'+escapeHtml(o.payMethod||'—')+'</div></div>'
+      + '<div><div class="receipt-meta-lbl">'+'Delivery Region'+'</div><div class="receipt-meta-val">'+(o.region==='west'?'West Malaysia':'East Malaysia')+'</div></div>'
+      + '<div style="grid-column:1/-1;"><div class="receipt-meta-lbl">'+'Delivery Address'+'</div><div class="receipt-meta-val">'+(o.address?escapeHtml(o.address):'—')+'</div></div>'
+      + '<div><div class="receipt-meta-lbl">'+'Order Date'+'</div><div class="receipt-meta-val">'+ddmmyyyy(o.date)+'</div></div>'
+      + '</div>'
+      + '<table class="receipt-table"><thead><tr><th>'+'Product'+'</th><th class="num">'+'Qty'+'</th><th class="num">'+'Wholesale Price'+'</th><th class="num">'+'Subtotal'+'</th></tr></thead><tbody>'
+      + itemsHtml
+      + '<tr><td colspan="3">'+shipLabel+'</td><td class="num">MYR '+o.shipping.toFixed(2)+'</td></tr>'
+      + '<tr class="receipt-total-row"><td colspan="3">'+'Total'+'</td><td class="num">MYR '+(o.total!=null?o.total.toFixed(2):((Number(o.subtotal)||0)+(Number(o.shipping)||0)).toFixed(2))+'</td></tr>'
+      + '</tbody></table>'
+      + '<div class="receipt-ftr">'+(lang==='en'
+          ? 'This invoice records the wholesale (restock) purchase at the wholesale price shown. Please keep it for your records and tax filing. For enquiries, WhatsApp +601145799499.'
+          : '本发票为按批发进货价开具的拿货凭证，请妥善保存用于入账与报税。如有疑问请 WhatsApp +601145799499。')+'</div>'
+      + exportFooter(lang, 'Wholesale invoice — prices shown are wholesale (restock) prices.', 'VINATH（JOHOR）· 批发发票，所示价格均为批发进货价');
     document.getElementById('printReceipt').innerHTML = html;
     window.print();
   }

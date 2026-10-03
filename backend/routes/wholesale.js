@@ -6,7 +6,7 @@ const { authMiddleware, requireRole } = require('../middleware/auth');
 const router = express.Router();
 
 function serializeWholesaleOrder(o){
-  return { ...o, items: JSON.parse(o.items) };
+  return { ...o, items: JSON.parse(o.items), total: (Number(o.subtotal)||0) + (Number(o.shipping)||0) };
 }
 function genWholesaleOrderNo(){
   const d = new Date();
