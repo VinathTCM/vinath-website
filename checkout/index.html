@@ -503,7 +503,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       var raw = localStorage.getItem('vinath_shipping_settings');
       if(raw) return JSON.parse(raw);
     } catch(e){}
-    return {west:8, east:18, freeThreshold:100};
+    return {west:8, east:18, freeThreshold:100, westFreeThreshold:null, eastFreeThreshold:null};
   }
   var SHIP_FEE = (function(){ var s = getShippingSettings(); return {west:s.west, east:s.east}; })();
   var STATE_BY_CODE = {};
@@ -550,8 +550,14 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   }
   function shippingFee(){
     if(!addressForm.state || !STATE_BY_CODE[addressForm.state]) return 0;
-    if(cartSubtotal() >= getShippingSettings().freeThreshold) return 0;
-    return SHIP_FEE[STATE_BY_CODE[addressForm.state].region];
+    var st = STATE_BY_CODE[addressForm.state];
+    var s = getShippingSettings();
+    var t = st.region === 'east'
+      ? (s.eastFreeThreshold != null ? s.eastFreeThreshold : s.freeThreshold)
+      : (s.westFreeThreshold != null ? s.westFreeThreshold : s.freeThreshold);
+    // 门槛 >0 才参与免邮判断：填 0 表示该地区不包邮
+    if(t > 0 && cartSubtotal() >= t) return 0;
+    return SHIP_FEE[st.region];
   }
 
   var DISCLAIMER_HTML = '我已阅读并理解以下说明，确认购买：<b>本店商品由执业中医师团队调配，选用药食同源材料，不添加防腐剂及化学药物成分。中医强调辨证论治、因人而异，固定配方仅供日常调理参考，未必完全贴合每个人的体质与情况。</b>如需更精准的个性化方案，建议通过「相约」预约一对一咨询。';

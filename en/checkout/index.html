@@ -540,7 +540,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var raw = localStorage.getItem('vinath_shipping_settings');
     if(raw) return JSON.parse(raw);
    } catch(e){}
-   return {west:8, east:18, freeThreshold:100};
+   return {west:8, east:18, freeThreshold:100, westFreeThreshold:null, eastFreeThreshold:null};
  }
  var SHIP_FEE = (function(){ var s = getShippingSettings(); return {west:s.west, east:s.east}; })();
  var STATE_BY_CODE = {};
@@ -587,8 +587,14 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
  }
  function shippingFee(){
   if(!addressForm.state || !STATE_BY_CODE[addressForm.state]) return 0;
-  if(cartSubtotal() >= getShippingSettings().freeThreshold) return 0;
-  return SHIP_FEE[STATE_BY_CODE[addressForm.state].region];
+  var st = STATE_BY_CODE[addressForm.state];
+  var s = getShippingSettings();
+  var t = st.region === 'east'
+    ? (s.eastFreeThreshold != null ? s.eastFreeThreshold : s.freeThreshold)
+    : (s.westFreeThreshold != null ? s.westFreeThreshold : s.freeThreshold);
+  // threshold > 0 enables free shipping; 0 means no free shipping for that region
+  if(t > 0 && cartSubtotal() >= t) return 0;
+  return SHIP_FEE[st.region];
  }
 
  var DISCLAIMER_HTML = 'I have read and understood the following statement and confirm my purchase: <b>Products in this store are blended by a team of licensed TCM practitioners using medicinal-food ingredients, with no preservatives or chemical drugs added. TCM emphasizes syndrome differentiation and individualized care; fixed formulas are for daily wellness reference only and may not fully suit every person\'s constitution and condition.</b> For a more precise personalized plan, book a one-to-one consultation via "Meet Now".';

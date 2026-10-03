@@ -1123,7 +1123,7 @@ window.escapeHtml = function(s){
   }
 
   function orderSubtotal(o){ return (Array.isArray(o.items)?o.items:[]).reduce(function(s,i){ return s+(Number(i.qty)||0)*(Number(i.price)||0); },0); }
-  function orderShipping(o){ return orderSubtotal(o) >= 100 ? 0 : o.shipping; }
+  function orderShipping(o){ return orderSubtotal(o) >= shipFreeThreshold(o.region || 'west') ? 0 : (o.shipping||0); }
   function orderTotal(o){ return orderSubtotal(o) + orderShipping(o); }
   // [stated bug fix] 结算页面告诉客户"提交后订单会标记为待核实付款"，但订单状态那几个字
   // 一直只有"已提交/备货中/已发货/已送达"这4种，没有一个真正叫"待核实付款"的状态——
@@ -1917,7 +1917,7 @@ window.escapeHtml = function(s){
     var o = ORDERS.find(function(x){ return x.id===id; });
     document.getElementById('panelTitle').textContent = '订单详情';
     var shipFee = orderShipping(o);
-    var shipLabel = shipFee === 0 ? '运费（满 MYR100 免运费）' : '运费（'+(o.region==='west'?'西马':'东马')+'）';
+    var shipLabel = shipFee === 0 ? shipFreeNoteZh(o.region) : '运费（'+(o.region==='west'?'西马':'东马')+'）';
     var itemsHtml = o.items.map(function(i){
       return '<div class="detail-item-row"><span>'+i.name+' ×'+i.qty+'</span><span>MYR '+(i.qty*i.price).toFixed(2)+'</span></div>';
     }).join('') + '<div class="detail-item-row"><span>'+shipLabel+'</span><span>MYR '+shipFee.toFixed(2)+'</span></div>'
@@ -2007,7 +2007,7 @@ window.escapeHtml = function(s){
     var o = orders.find(function(x){ return x.id===id; });
     if(!o) return;
     document.getElementById('panelTitle').textContent = '拿货订单详情';
-    var shipLabel = o.shipping === 0 ? '运费（满 MYR100 免运费）' : '运费（'+(o.region==='west'?'西马':'东马')+'）';
+    var shipLabel = o.shipping === 0 ? shipFreeNoteZh(o.region) : '运费（'+(o.region==='west'?'西马':'东马')+'）';
     var itemsHtml = o.items.map(function(i){
       return '<div class="detail-item-row"><span>'+i.name+' ×'+i.qty+'</span><span>MYR '+(i.qty*i.price).toFixed(2)+'</span></div>';
     }).join('') + '<div class="detail-item-row"><span>'+shipLabel+'</span><span>MYR '+o.shipping.toFixed(2)+'</span></div>'
@@ -2164,11 +2164,12 @@ window.escapeHtml = function(s){
   // 订单管理 regardless of who's logged in there — same same-browser-only caveat as everything
   // else without a real backend. ----
   function getShippingSettings(){
+    if(SHIP_FREE_CACHE) return SHIP_FREE_CACHE;
     try {
       var raw = localStorage.getItem('vinath_shipping_settings');
       if(raw) return JSON.parse(raw);
     } catch(e){}
-    return {west:8, east:18, freeThreshold:100};
+    return {west:8, east:18, freeThreshold:100, westFreeThreshold:null, eastFreeThreshold:null};
   }
   var WHOLESALE_ORDERS_KEY = 'vinath_wholesale_orders';
   var wholesaleCart = {}; // {productId: qty}
@@ -2290,8 +2291,8 @@ window.escapeHtml = function(s){
   }
   function updateWholesaleTotalBox(){
     var subtotal = wholesaleItemsSubtotal();
-    var ship = getShippingSettings(); var shipFee = subtotal >= ship.freeThreshold ? 0 : (wholesaleRegion==='west' ? ship.west : ship.east);
-    var shipLabel = shipFee===0 ? '运费（满 MYR100 免运费）' : '运费（'+(wholesaleRegion==='west'?'西马':'东马')+'）';
+    var ship = getShippingSettings(); var shipFreeT = wholesaleRegion==='east' ? (ship.eastFreeThreshold!=null?ship.eastFreeThreshold:ship.freeThreshold) : (ship.westFreeThreshold!=null?ship.westFreeThreshold:ship.freeThreshold); var shipFee = shipFreeT>0 && subtotal >= shipFreeT ? 0 : (wholesaleRegion==='west' ? ship.west : ship.east);
+    var shipLabel = shipFee===0 ? shipFreeNoteZh(wholesaleRegion) : '运费（'+(wholesaleRegion==='west'?'西马':'东马')+'）';
     document.getElementById('wholesaleTotalBox').innerHTML =
       '<div class="wholesale-total-row"><span>商品合计</span><span>MYR '+subtotal.toFixed(2)+'</span></div>'
       + '<div class="wholesale-total-row"><span>'+shipLabel+'</span><span>MYR '+shipFee.toFixed(2)+'</span></div>'
@@ -2310,7 +2311,7 @@ window.escapeHtml = function(s){
     });
     if(!items.length) return;
     var subtotal = wholesaleItemsSubtotal();
-    var ship = getShippingSettings(); var shipFee = subtotal >= ship.freeThreshold ? 0 : (wholesaleRegion==='west' ? ship.west : ship.east);
+    var ship = getShippingSettings(); var shipFreeT = wholesaleRegion==='east' ? (ship.eastFreeThreshold!=null?ship.eastFreeThreshold:ship.freeThreshold) : (ship.westFreeThreshold!=null?ship.westFreeThreshold:ship.freeThreshold); var shipFee = shipFreeT>0 && subtotal >= shipFreeT ? 0 : (wholesaleRegion==='west' ? ship.west : ship.east);
     var submitBtn = this;
     submitBtn.disabled = true;
     try {
@@ -3279,13 +3280,36 @@ window.escapeHtml = function(s){
       + '<div>Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.</div><div class="my">Malaysia</div></div>';
   }
 
+  // 运费包邮门槛缓存：西马/东马各自的门槛（后台"运费设置"保存后这里也同步刷新）
+  var SHIP_FREE_CACHE = null;
+  function shipFreeThreshold(region){
+    var s = SHIP_FREE_CACHE || {};
+    if(region === 'east'){
+      return s.eastFreeThreshold != null ? s.eastFreeThreshold : (s.freeThreshold != null ? s.freeThreshold : 100);
+    }
+    return s.westFreeThreshold != null ? s.westFreeThreshold : (s.freeThreshold != null ? s.freeThreshold : 100);
+  }
+  function shipFreeNoteEn(region){
+    return 'Shipping (Free over RM' + shipFreeThreshold(region) + ')';
+  }
+  function shipFreeNoteZh(region){
+    return '运费（' + (region === 'east' ? '东马' : '西马') + '满 RM' + shipFreeThreshold(region) + ' 免运费）';
+  }
+  function loadShipSettingsCache(){
+    fetch('https://api.vinathtcm.com/api/site-settings/shipping_settings')
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if(d) SHIP_FREE_CACHE = d; })
+      .catch(function(){});
+  }
+  loadShipSettingsCache();
+
   function printPackingSlip(o, lang){
     preparePrint('normal');
     var itemsHtml = o.items.map(function(i){
       return '<tr><td>'+blItem(i.name,lang)+'</td><td class="num">'+i.qty+'</td><td class="num">MYR '+i.price.toFixed(2)+'</td><td class="num">MYR '+(i.qty*i.price).toFixed(2)+'</td></tr>';
     }).join('');
     var shipFee = orderShipping(o);
-    var shipLabel = shipFee === 0 ? 'Shipping (Free over MYR100)' : 'Shipping ('+(o.region==='west'?'West Malaysia':'East Malaysia')+')';
+    var shipLabel = shipFee === 0 ? shipFreeNoteEn(o.region) : 'Shipping ('+(o.region==='west'?'West Malaysia':'East Malaysia')+')';
     var html = ''
       + exportHeader(lang, 'Packing Slip', '装箱清单', o.id, o.date)
       + '<div class="receipt-meta-grid">'
@@ -3309,7 +3333,7 @@ window.escapeHtml = function(s){
     var itemsHtml = o.items.map(function(i){
       return '<tr><td>'+blItem(i.name,lang)+'</td><td class="num">'+i.qty+'</td><td class="num">MYR '+i.price.toFixed(2)+'</td><td class="num">MYR '+(i.qty*i.price).toFixed(2)+'</td></tr>';
     }).join('');
-    var shipLabel = o.shipping === 0 ? 'Shipping (Free over MYR100)' : 'Shipping ('+(o.region==='west'?'West Malaysia':'East Malaysia')+')';
+    var shipLabel = o.shipping === 0 ? shipFreeNoteEn(o.region) : 'Shipping ('+(o.region==='west'?'West Malaysia':'East Malaysia')+')';
     var html = ''
       + exportHeader(lang, 'Packing Slip (Wholesale)', '装箱清单（拿货订单）', o.id, o.date)
       + '<div class="receipt-meta-grid">'
@@ -3334,7 +3358,7 @@ window.escapeHtml = function(s){
     var itemsHtml = o.items.map(function(i){
       return '<tr><td>'+blItem(i.name,lang)+'</td><td class="num">'+i.qty+'</td><td class="num">MYR '+i.price.toFixed(2)+'</td><td class="num">MYR '+(i.qty*i.price).toFixed(2)+'</td></tr>';
     }).join('');
-    var shipLabel = o.shipping === 0 ? (lang==='en'?'Shipping (Free over MYR100)':'运费（满 MYR100 免运费）') : (lang==='en'?'Shipping ('+(o.region==='west'?'West Malaysia':'East Malaysia')+')':'运费（'+(o.region==='west'?'西马':'东马')+'）');
+    var shipLabel = o.shipping === 0 ? (lang==='en'?shipFreeNoteEn(o.region):shipFreeNoteZh(o.region)) : (lang==='en'?'Shipping ('+(o.region==='west'?'West Malaysia':'East Malaysia')+')':'运费（'+(o.region==='west'?'西马':'东马')+'）');
     var docEn = lang==='en' ? 'WHOLESALE INVOICE' : 'Wholesale Invoice';
     var docCn = lang==='en' ? 'Wholesale Invoice' : '批发发票';
     var html = ''
@@ -5198,7 +5222,8 @@ document.addEventListener('DOMContentLoaded', function(){
   var msg = document.getElementById('shippingMsg');
   var westIn = document.getElementById('shipWestInput');
   var eastIn = document.getElementById('shipEastInput');
-  var freeIn = document.getElementById('shipFreeInput');
+  var westFreeIn = document.getElementById('shipWestFreeInput');
+  var eastFreeIn = document.getElementById('shipEastFreeInput');
 
   function showMsg(text, isError){
     msg.textContent = text;
@@ -5214,12 +5239,13 @@ document.addEventListener('DOMContentLoaded', function(){
         if(data){
           westIn.value = data.west != null ? data.west : 8;
           eastIn.value = data.east != null ? data.east : 18;
-          freeIn.value = data.freeThreshold != null ? data.freeThreshold : 100;
+          westFreeIn.value = data.westFreeThreshold != null ? data.westFreeThreshold : (data.freeThreshold != null ? data.freeThreshold : 100);
+          eastFreeIn.value = data.eastFreeThreshold != null ? data.eastFreeThreshold : (data.freeThreshold != null ? data.freeThreshold : 100);
         } else {
-          westIn.value = 8; eastIn.value = 18; freeIn.value = 100;
+          westIn.value = 8; eastIn.value = 18; westFreeIn.value = 100; eastFreeIn.value = 100;
         }
       })
-      .catch(function(){ westIn.value = 8; eastIn.value = 18; freeIn.value = 100; });
+      .catch(function(){ westIn.value = 8; eastIn.value = 18; westFreeIn.value = 100; eastFreeIn.value = 100; });
   }
   function closeModal(){ overlay.style.display = 'none'; }
   function saveSettings(){
@@ -5227,7 +5253,9 @@ document.addEventListener('DOMContentLoaded', function(){
     var payload = {
       west: parseFloat(westIn.value) || 0,
       east: parseFloat(eastIn.value) || 0,
-      freeThreshold: parseFloat(freeIn.value) || 0
+      freeThreshold: parseFloat(westFreeIn.value) || 0,
+      westFreeThreshold: parseFloat(westFreeIn.value) || 0,
+      eastFreeThreshold: parseFloat(eastFreeIn.value) || 0
     };
     fetch('https://api.vinathtcm.com/api/admin/site-settings/shipping_settings', {
       method: 'PUT',
@@ -5265,8 +5293,12 @@ document.addEventListener('DOMContentLoaded', function(){
       <input type="number" id="shipEastInput" step="0.01" min="0" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;box-sizing:border-box;">
     </div>
     <div style="margin-bottom:24px;">
-      <label style="display:block;font-size:13px;color:#666;margin-bottom:6px;">满多少包邮（RM，填0表示不包邮）</label>
-      <input type="number" id="shipFreeInput" step="0.01" min="0" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;box-sizing:border-box;">
+      <label style="display:block;font-size:13px;color:#666;margin-bottom:6px;">西马满多少包邮（RM，填0表示西马不包邮）</label>
+      <input type="number" id="shipWestFreeInput" step="0.01" min="0" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;box-sizing:border-box;">
+    </div>
+    <div style="margin-bottom:24px;">
+      <label style="display:block;font-size:13px;color:#666;margin-bottom:6px;">东马满多少包邮（RM，填0表示东马不包邮）</label>
+      <input type="number" id="shipEastFreeInput" step="0.01" min="0" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:15px;box-sizing:border-box;">
     </div>
     <div style="display:flex;gap:10px;">
       <button type="button" id="shippingSaveBtn" style="flex:1;background:#332A21;color:#fff;border:none;padding:12px;border-radius:10px;font-size:15px;cursor:pointer;">保存</button>

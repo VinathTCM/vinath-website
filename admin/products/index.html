@@ -299,8 +299,12 @@ tbody tr.stock-warn:hover td, tbody tr.stock-crit:hover td{ filter:brightness(.9
           <div class="pricing-input-wrap"><span>MYR</span><input type="number" id="shipEastInput" min="0" step="0.5"></div>
         </div>
         <div class="field" style="flex:1;">
-          <label>免运费门槛（订单满这个金额免运费）</label>
-          <div class="pricing-input-wrap"><span>MYR</span><input type="number" id="shipFreeThresholdInput" min="0" step="10"></div>
+          <label>西马免运费门槛（满这个金额免运费，0=不包邮）</label>
+          <div class="pricing-input-wrap"><span>MYR</span><input type="number" id="shipWestFreeInput" min="0" step="10"></div>
+        </div>
+        <div class="field" style="flex:1;">
+          <label>东马免运费门槛（满这个金额免运费，0=不包邮）</label>
+          <div class="pricing-input-wrap"><span>MYR</span><input type="number" id="shipEastFreeInput" min="0" step="10"></div>
         </div>
       </div>
       <button type="button" class="btn-primary" id="saveShippingBtn">保存运费设置</button>
@@ -981,7 +985,7 @@ function applyPreset(editor, type) {
       var raw = localStorage.getItem(SHIPPING_KEY);
       if(raw) return JSON.parse(raw);
     } catch(e){}
-    return {west:8, east:18, freeThreshold:100};
+    return {west:8, east:18, freeThreshold:100, westFreeThreshold:null, eastFreeThreshold:null};
   }
   function saveShippingSettings(s){ try { localStorage.setItem(SHIPPING_KEY, JSON.stringify(s)); } catch(e){} }
 
@@ -993,15 +997,28 @@ function applyPreset(editor, type) {
     var ship = getShippingSettings();
     document.getElementById('shipWestInput').value = ship.west;
     document.getElementById('shipEastInput').value = ship.east;
-    document.getElementById('shipFreeThresholdInput').value = ship.freeThreshold;
+    document.getElementById('shipWestFreeInput').value = ship.westFreeThreshold != null ? ship.westFreeThreshold : ship.freeThreshold;
+    document.getElementById('shipEastFreeInput').value = ship.eastFreeThreshold != null ? ship.eastFreeThreshold : ship.freeThreshold;
   }
   document.getElementById('saveShippingBtn').addEventListener('click', function(){
+    var westFree = Math.max(0, Number(document.getElementById('shipWestFreeInput').value) || 0);
+    var eastFree = Math.max(0, Number(document.getElementById('shipEastFreeInput').value) || 0);
     var s = {
       west: Math.max(0, Number(document.getElementById('shipWestInput').value) || 0),
       east: Math.max(0, Number(document.getElementById('shipEastInput').value) || 0),
-      freeThreshold: Math.max(0, Number(document.getElementById('shipFreeThresholdInput').value) || 0)
+      freeThreshold: westFree,
+      westFreeThreshold: westFree,
+      eastFreeThreshold: eastFree
     };
     saveShippingSettings(s);
+    var token = sessionStorage.getItem('vinath_auth_token');
+    if(token){
+      fetch('https://api.vinathtcm.com/api/admin/site-settings/shipping_settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify(s)
+      }).catch(function(){});
+    }
     document.getElementById('shippingSavedHint').textContent = '已保存';
     setTimeout(function(){ document.getElementById('shippingSavedHint').textContent = ''; }, 2000);
   });
