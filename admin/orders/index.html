@@ -2007,7 +2007,8 @@ window.escapeHtml = function(s){
     var o = orders.find(function(x){ return x.id===id; });
     if(!o) return;
     var cur = getCurrentAdmin();
-    var canInvoice = ((o.status||0) >= 1) || (cur && cur.role === 'SENIOR');
+    var isSenior = cur && (cur.role === 'SENIOR' || cur.type === 'senior');
+    var canInvoice = ((o.status||0) >= 1) || isSenior;
     document.getElementById('panelTitle').textContent = '拿货订单详情';
     var shipLabel = o.shipping === 0 ? shipFreeNoteZh(o.region) : '运费（'+(o.region==='west'?'西马':'东马')+'）';
     var itemsHtml = o.items.map(function(i){
@@ -2036,7 +2037,7 @@ window.escapeHtml = function(s){
     document.getElementById('panelBody').innerHTML = html;
     document.querySelectorAll('#wholesaleStepper .status-step-btn').forEach(function(b){
       b.addEventListener('click', async function(){
-        if(!(cur && cur.role === 'SENIOR')){ showToast('只有大管理员可以变更拿货订单状态'); return; }
+        if(!(cur && (cur.role === 'SENIOR' || cur.type === 'senior'))){ showToast('只有大管理员可以变更拿货订单状态'); return; }
         var newStatus = Number(this.getAttribute('data-i'));
         o.status = newStatus;
         document.querySelectorAll('#wholesaleStepper .status-step-btn').forEach(function(x){ x.classList.remove('on'); });
@@ -2353,7 +2354,7 @@ window.escapeHtml = function(s){
       var itemSummary = o.items.map(function(it){ return it.name+' ×'+it.qty; }).join('，');
       return '<div class="wholesale-history-row"><div><b>'+o.id+'</b> · '+o.date+'<br><span style="color:var(--ink-soft);">'+itemSummary+'</span></div>'
         + '<div style="text-align:right;">MYR '+o.total.toFixed(2)+'<br><span class="wholesale-history-status">'+wholesaleStatusLabel(o)+'</span><br>'
-        + (((o.status||0) >= 1) || (cur && cur.role === 'SENIOR')
+        + (((o.status||0) >= 1) || (cur && (cur.role === 'SENIOR' || cur.type === 'senior'))
             ? '<button class="btn-export" style="margin-top:6px;" data-winv="'+o.id+'" type="button">打印发票</button>'
             : '<span style="display:inline-block;margin-top:8px;font-size:12px;color:#b8860b;">管理员确认收款后可打印发票</span>')
         + '</div></div>';
