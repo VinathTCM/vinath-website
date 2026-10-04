@@ -102,7 +102,9 @@ h1{ font-family:var(--font-serif); font-size:22px; margin:0 0 4px; }
 .rx-enable-row{ display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:700; color:var(--ink); cursor:pointer; margin-bottom:4px; }
 .rx-enable-row input{ width:17px; height:17px; accent-color:var(--clay); }
 .herb-item-row{ display:grid; grid-template-columns:1.6fr .8fr 1.4fr auto; gap:8px; margin-bottom:8px; align-items:center; }
-@media (max-width:640px){ .herb-item-row{ grid-template-columns:1fr; } }
+.herb-item-row.herb-num{ grid-template-columns:30px 1.6fr .8fr 1.4fr auto; }
+.herb-item-row .herb-no{ font-size:13px; font-weight:700; color:var(--ink-soft); text-align:center; user-select:none; }
+@media (max-width:640px){ .herb-item-row{ grid-template-columns:1fr; } .herb-item-row.herb-num{ grid-template-columns:30px 1fr; } }
 .herb-item-row input{ padding:8px 10px; border:1.5px solid var(--line); border-radius:8px; font-family:inherit; font-size:13px; }
 .remove-herb{ background:none; border:none; color:var(--ink-soft); cursor:pointer; font-size:17px; }
 .rx-from-formula{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
@@ -1516,7 +1518,8 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       var el = document.getElementById('rxHerbList');
       if(!el) return;
       el.innerHTML = rxDraft.items.map(function(it, i){
-        return '<div class="herb-item-row">'
+        return '<div class="herb-item-row herb-num">'
+          + '<span class="herb-no">'+(i+1)+'</span>'
           + '<div style="position:relative;min-width:0;">'
           + '<input type="text" placeholder="药材名称（支持拼音/单字联想）" data-rxh-name="'+i+'" value="'+escapeHtml(it.herbName)+'" style="width:100%;box-sizing:border-box;">'
           + '<div class="rhx-s" data-rhs="'+i+'" style="display:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #ddd;border-radius:8px;max-height:180px;overflow:auto;z-index:60;box-shadow:0 6px 18px rgba(0,0,0,.12);"></div>'
@@ -2430,7 +2433,8 @@ function fillPrintArea(receipt, size, lang){
 
     function renderHerb2(){
       document.getElementById('rxHerbList2').innerHTML = rx.items.map(function(it, i){
-        return '<div class="herb-item-row">'
+        return '<div class="herb-item-row herb-num">'
+          + '<span class="herb-no">'+(i+1)+'</span>'
           + '<input type="text" placeholder="药材名称" data-rx2n="'+i+'" value="'+escapeHtml(it.herbName)+'">'
           + '<input type="text" placeholder="剂量(g)" data-rx2d="'+i+'" value="'+it.dosageGrams+'">'
           + '<input type="text" placeholder="煎法备注（选填）" data-rx2o="'+i+'" value="'+it.notes+'">'
