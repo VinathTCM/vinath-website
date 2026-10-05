@@ -1,7 +1,7 @@
 // routes/prescriptions.js —— 电子处方：SENIOR+PRACTITIONER可用，关联预约时自动把处方摘要写入那条预约的treatments
 const express = require('express');
 const db = require('../db');
-const { authMiddleware, requireModuleAccess } = require('../middleware/auth');
+const { authMiddleware, requireModuleAccess, requireRole } = require('../middleware/auth');
 const { visiblePatientPhonesFor } = require('./visibility');
 
 const router = express.Router();
@@ -39,12 +39,13 @@ router.post('/admin/prescriptions', authMiddleware, requireModuleAccess('prescri
   const validItems = (items||[]).filter(it => it.herbName && it.herbName.trim() && it.dosageGrams);
   const rxDoses = Math.max(1, Number(doses) || 1);
   const rxDispense = dispenseMode || 'herb_pickup';
-  // 中药计价：单味药按价格库（RM/克 × 克数）；未定价的药材不计算并提示
-  const herbTotal = validItems.reduce(function(sum, it){
+  // 中药计价：单味药按价格库（RM/克 × 克数），每剂药材费 × 剂数 = 应收药材费；未定价的药材不计算并提示
+  const herbTotalPerDose = validItems.reduce(function(sum, it){
     const row = db.prepare('SELECT price_per_g FROM herb_prices WHERE herb_name = ?').get(String(it.herbName).trim());
     if(row){ it.pricePerG = row.price_per_g; return sum + (row.price_per_g || 0) * (Number(it.dosageGrams) || 0); }
     it.pricePerG = null; return sum;
   }, 0);
+  const herbTotal = herbTotalPerDose * rxDoses;
   const pricedMissing = validItems.filter(function(it){ return it.pricePerG === null; }).map(function(it){ return it.herbName; });
   // 代煎费 RM8/剂：只有饮片(decoction)且选了代煎（自取或代送）才收
   const needsDecoct = formulaType === 'decoction' && (rxDispense === 'decoct_pickup' || rxDispense === 'decoct_delivery');
@@ -107,12 +108,13 @@ router.put('/admin/prescriptions/:id', authMiddleware, requireModuleAccess('pres
   const validItems = (items||[]).filter(it => it.herbName && it.herbName.trim() && it.dosageGrams);
   const rxDoses = Math.max(1, Number(doses) || 1);
   const rxDispense = dispenseMode || existing.dispense_mode || 'herb_pickup';
-  // 中药计价：单味药按价格库（RM/克 × 克数）；未定价的药材不计算并提示
-  const herbTotal = validItems.reduce(function(sum, it){
+  // 中药计价：单味药按价格库（RM/克 × 克数），每剂药材费 × 剂数 = 应收药材费；未定价的药材不计算并提示
+  const herbTotalPerDose = validItems.reduce(function(sum, it){
     const row = db.prepare('SELECT price_per_g FROM herb_prices WHERE herb_name = ?').get(String(it.herbName).trim());
     if(row){ it.pricePerG = row.price_per_g; return sum + (row.price_per_g || 0) * (Number(it.dosageGrams) || 0); }
     it.pricePerG = null; return sum;
   }, 0);
+  const herbTotal = herbTotalPerDose * rxDoses;
   const pricedMissing = validItems.filter(function(it){ return it.pricePerG === null; }).map(function(it){ return it.herbName; });
   const needsDecoct = formulaType === 'decoction' && (rxDispense === 'decoct_pickup' || rxDispense === 'decoct_delivery');
   const decoctFee = needsDecoct ? 8 * rxDoses : 0;
@@ -127,6 +129,26 @@ router.put('/admin/prescriptions/:id', authMiddleware, requireModuleAccess('pres
   result.doses = rxDoses;
   result.dispenseMode = rxDispense;
   result.pricedMissing = pricedMissing;
+  res.json(result);
+});
+
+// 重算处方药材费/代煎费：按当前价格库（每剂药材费 × 剂数），用于价格库调整后或旧版计价修正历史处方
+router.put('/admin/prescriptions/:id/reprice', authMiddleware, requireModuleAccess('prescriptions'), requireRole('SENIOR'), (req, res) => {
+  const rx = db.prepare('SELECT * FROM prescriptions WHERE id = ?').get(req.params.id);
+  if(!rx) return res.status(404).json({ error: '处方不存在' });
+  const items = JSON.parse(rx.items || '[]');
+  const rxDoses = Math.max(1, Number(rx.doses) || 1);
+  const perDose = items.reduce(function(sum, it){
+    const row = db.prepare('SELECT price_per_g FROM herb_prices WHERE herb_name = ?').get(String(it.herbName || '').trim());
+    if(row){ it.pricePerG = row.price_per_g; return sum + (row.price_per_g || 0) * (Number(it.dosageGrams) || 0); }
+    it.pricePerG = null; return sum;
+  }, 0);
+  const herbTotal = Number((perDose * rxDoses).toFixed(2));
+  const needsDecoct = rx.formula_type === 'decoction' && (rx.dispense_mode === 'decoct_pickup' || rx.dispense_mode === 'decoct_delivery');
+  const decoctFee = needsDecoct ? 8 * rxDoses : 0;
+  db.prepare('UPDATE prescriptions SET items = ?, herb_total = ?, decoct_fee = ? WHERE id = ?')
+    .run(JSON.stringify(items), herbTotal, decoctFee, rx.id);
+  const result = serializePrescription(db.prepare('SELECT * FROM prescriptions WHERE id = ?').get(rx.id));
   res.json(result);
 });
 
