@@ -2427,12 +2427,13 @@ window.escapeHtml = function(s){
           var t = b.treatments[i];
           if(!t) return;
           var row = this.closest('.treat-row');
+          var parent = row.parentElement;
           row.outerHTML = '<div class="treat-row treat-edit-row">'
             + '<input class="te-name" value="'+escapeHtml(t.name)+'" placeholder="项目/商品名称">'
             + '<input class="te-qty" type="number" min="1" value="'+t.qty+'">'
             + '<input class="te-price" type="number" min="0" step="0.01" value="'+t.price+'">'
             + '<button class="te-save" type="button">保存</button><button class="te-cancel" type="button">取消</button></div>';
-          var editRow = row.parentElement.querySelector('.treat-edit-row');
+          var editRow = parent.querySelector('.treat-edit-row');
           editRow.querySelector('.te-save').addEventListener('click', function(){
             var name = editRow.querySelector('.te-name').value.trim();
             var qty = Math.max(1, Number(editRow.querySelector('.te-qty').value) || 1);
