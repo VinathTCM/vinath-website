@@ -2776,6 +2776,16 @@ window.escapeHtml = function(s){
   function mrTotal(m){
     return m.treatments.reduce(function(s,t){ return s + (Number(t.qty)||1)*(Number(t.price)||0); }, 0);
   }
+  function rxInRange(rx){
+    if(!inReportsRange(rx.date)) return false;
+    if(reportScopeId && (rx.practitionerId || null) !== reportScopeId) return false;
+    if(!rx.bookingId) return true;
+    var bk = BOOKINGS.find(function(b){ return (b._backendId || b.id) === rx.bookingId; });
+    return !(bk && Array.isArray(bk.treatments) && bk.treatments.length);
+  }
+  function rxTotal(rx){
+    return (Number(rx.herbTotal)||0) + (Number(rx.decoctFee)||0);
+  }
   function financeRecords(){
     var records = [];
     scopeOrders().forEach(function(o){
@@ -2793,11 +2803,15 @@ window.escapeHtml = function(s){
       if(!mrInRange(m)) return;
       records.push({date:m.visitDate, typeKey:'mr', ref:'病历·'+m.patientName, name:m.patientName, note:'居家会诊·病历', noteEn:'Home-visit (record)', amount:mrTotal(m)});
     });
+    RX_RECORDS.forEach(function(rx){
+      if(!rxInRange(rx)) return;
+      records.push({date:rx.date, typeKey:'rx', ref:rx.id, name:rx.patientName, note:'电子处方', noteEn:'Prescription', amount:rxTotal(rx)});
+    });
     records.sort(function(a,c){ return a.date < c.date ? -1 : 1; });
     return records;
   }
-  var FINANCE_TYPE_CN = {order:'订单', booking:'预约', mr:'病历治疗'};
-  var FINANCE_TYPE_EN = {order:'Order', booking:'Booking', mr:'Record Treatment'};
+  var FINANCE_TYPE_CN = {order:'订单', booking:'预约', mr:'病历治疗', rx:'电子处方'};
+  var FINANCE_TYPE_EN = {order:'Order', booking:'Booking', mr:'Record Treatment', rx:'Prescription'};
 
   var couponStatsPeriod = 'week';
   function getAllCouponOwners(){
@@ -2987,13 +3001,15 @@ window.escapeHtml = function(s){
     var orderRevenue = periodOrders.reduce(function(s,o){ return s+orderTotal(o); }, 0);
     var bookingRevenue = periodBookings.reduce(function(s,b){ return s+treatTotal(b); }, 0);
     var mrRevenue = periodMRs.reduce(function(s,m){ return s+mrTotal(m); }, 0);
-    var total = orderRevenue + bookingRevenue + mrRevenue;
+    var rxRevenue = RX_RECORDS.filter(rxInRange).reduce(function(s,rx){ return s+rxTotal(rx); }, 0);
+    var total = orderRevenue + bookingRevenue + mrRevenue + rxRevenue;
 
     document.getElementById('financePeriodLbl').textContent = reportsRangeLabel()+' · '+reportScopeName;
     document.getElementById('financeCards').innerHTML = ''
       + '<div class="summary-card"><div class="summary-num">MYR '+orderRevenue.toFixed(2)+'</div><div class="summary-lbl">商城订单收入</div></div>'
       + '<div class="summary-card"><div class="summary-num">MYR '+bookingRevenue.toFixed(2)+'</div><div class="summary-lbl">居家会诊服务收入</div></div>'
       + '<div class="summary-card"><div class="summary-num">MYR '+mrRevenue.toFixed(2)+'</div><div class="summary-lbl">病历治疗收入</div></div>'
+      + '<div class="summary-card"><div class="summary-num">MYR '+rxRevenue.toFixed(2)+'</div><div class="summary-lbl">电子处方收入</div></div>'
       + '<div class="summary-card"><div class="summary-num hi">'+fmtMYR(total)+'</div><div class="summary-lbl">合计总收入</div></div>'
       + '<div class="summary-card"><div class="summary-num">'+records.length+'</div><div class="summary-lbl">收入记录笔数</div></div>';
 
@@ -3011,7 +3027,8 @@ window.escapeHtml = function(s){
     var orderRevenue = periodOrders.reduce(function(s,o){ return s+orderTotal(o); }, 0);
     var bookingRevenue = periodBookings.reduce(function(s,b){ return s+treatTotal(b); }, 0);
     var mrRevenue = periodMRs.reduce(function(s,m){ return s+mrTotal(m); }, 0);
-    var total = orderRevenue + bookingRevenue + mrRevenue;
+    var rxRevenue = RX_RECORDS.filter(rxInRange).reduce(function(s,rx){ return s+rxTotal(rx); }, 0);
+    var total = orderRevenue + bookingRevenue + mrRevenue + rxRevenue;
     var rowsHtml = records.map(function(r){
       return '<tr><td>'+ddmmyyyy(r.date)+'</td><td>'+FINANCE_TYPE_EN[r.typeKey]+' '+r.ref+'</td><td>'+escapeHtml(r.name)+'</td><td class="num">'+fmtMYR(r.amount)+'</td></tr>';
     }).join('');
@@ -3023,6 +3040,7 @@ window.escapeHtml = function(s){
       + '<div><div class="receipt-meta-lbl">'+'Online Store Revenue'+'</div><div class="receipt-meta-val">MYR '+orderRevenue.toFixed(2)+'</div></div>'
       + '<div><div class="receipt-meta-lbl">'+'Home-Visit Service Revenue'+'</div><div class="receipt-meta-val">MYR '+bookingRevenue.toFixed(2)+'</div></div>'
       + '<div><div class="receipt-meta-lbl">'+'Record Treatment Revenue'+'</div><div class="receipt-meta-val">MYR '+mrRevenue.toFixed(2)+'</div></div>'
+      + '<div><div class="receipt-meta-lbl">'+'Prescription Revenue'+'</div><div class="receipt-meta-val">MYR '+rxRevenue.toFixed(2)+'</div></div>'
       + '</div>'
       + '<table class="receipt-table"><thead><tr><th>'+'Date'+'</th><th>'+'Reference No.'+'</th><th>'+'Name'+'</th><th class="num">'+'Amount'+'</th></tr></thead><tbody>'
       + rowsHtml
@@ -3037,8 +3055,8 @@ window.escapeHtml = function(s){
 
   // ---- 当日交易: a chosen day's actual transactions (order placed that day / booking serviced that day with items charged) ----
   var selectedDailyDate = TODAY_ISO;
-  var DAILY_TYPE_CN = {order:'商城订单', booking:'居家会诊', mr:'居家会诊·病历'};
-  var DAILY_TYPE_EN = {order:'Online Order', booking:'Home Visit'};
+  var DAILY_TYPE_CN = {order:'商城订单', booking:'居家会诊', mr:'居家会诊·病历', rx:'电子处方'};
+  var DAILY_TYPE_EN = {order:'Online Order', booking:'Home Visit', mr:'Home Visit (Record)', rx:'Prescription'};
   function dailyRecords(dateISO){
     var records = [];
     ORDERS.forEach(function(o){
@@ -3059,14 +3077,22 @@ window.escapeHtml = function(s){
       var amt = m.treatments.reduce(function(s,t){ return s + (Number(t.qty)||1)*(Number(t.price)||0); }, 0);
       records.push({typeKey:'mr', ref:'病历·'+m.patientName, name:m.patientName, note:itemsSummary, items:m.treatments, slot:'—', amount:amt, sortKey:'m'});
     });
+    RX_RECORDS.forEach(function(rx){
+      if(rx.date !== dateISO) return;
+      var itemsSummary = rx.items.map(function(it){ return it.herbName + ' ' + (it.dosageGrams||'') + 'g'; }).join('、') || '（未填写药材）';
+      if(rx.decoctFee > 0) itemsSummary += '（代煎）';
+      records.push({typeKey:'rx', ref:rx.id, name:rx.patientName, note:itemsSummary, items:rx.items, slot:'—', amount:rx.herbTotal + rx.decoctFee, sortKey:'x'});
+    });
     records.sort(function(a,c){ return a.sortKey < c.sortKey ? -1 : 1; });
     return records;
   }
   var MR_RECORDS = []; // 当天病历里"未关联预约"的治疗项目（关联了预约的由预约行承担，避免重复）
+  var RX_RECORDS = []; // 未关联预约的电子处方（关联了预约的处方费已写回该预约的治疗明细，避免重复）
   async function refreshDailyData(){
     if(!authToken) return;
     try { await loadOrdersAndBookingsFromBackend(true); } catch(e){}
     MR_RECORDS = [];
+    RX_RECORDS = [];
     try {
       var mrRes = await fetch(API_BASE + '/admin/medical-records', { headers: { 'Authorization': 'Bearer ' + authToken } });
       if(mrRes.ok){
@@ -3089,20 +3115,46 @@ window.escapeHtml = function(s){
         });
       }
     } catch(e){}
+    try {
+      var rxRes = await fetch(API_BASE + '/admin/prescriptions', { headers: { 'Authorization': 'Bearer ' + authToken } });
+      if(rxRes.ok){
+        var rxs = await rxRes.json();
+        RX_RECORDS = rxs.map(function(r){
+          return {
+            date: (r.created_at || '').slice(0,10),
+            id: r.id,
+            patientName: r.patient_name || '',
+            items: normArrField(r.items),
+            herbTotal: Number(r.herb_total) || 0,
+            decoctFee: Number(r.decoct_fee) || 0,
+            bookingId: r.booking_id || null,
+            practitionerId: r.practitioner_id || null,
+            doses: Number(r.doses) || 1,
+            dispenseMode: r.dispense_mode || 'herb_pickup'
+          };
+        }).filter(function(rx){
+          if(rx.herbTotal + rx.decoctFee <= 0) return false;
+          if(!rx.bookingId) return true;
+          // 关联了预约且预约治疗明细里有写回的中药费 → 由预约行承担，避免重复计
+          var bk = BOOKINGS.find(function(b){ return (b._backendId || b.id) === rx.bookingId; });
+          return !(bk && Array.isArray(bk.treatments) && bk.treatments.length);
+        });
+      }
+    } catch(e){}
   }
 
   async function renderDailyTransactions(){
     await refreshDailyData();
     var records = dailyRecords(selectedDailyDate);
     var orderRevenue = records.filter(function(r){ return r.typeKey==='order'; }).reduce(function(s,r){ return s+r.amount; },0);
-    var bookingRevenue = records.filter(function(r){ return r.typeKey==='booking' || r.typeKey==='mr'; }).reduce(function(s,r){ return s+r.amount; },0);
+    var bookingRevenue = records.filter(function(r){ return r.typeKey==='booking' || r.typeKey==='mr' || r.typeKey==='rx'; }).reduce(function(s,r){ return s+r.amount; },0);
     var total = orderRevenue + bookingRevenue;
     var isToday = selectedDailyDate === TODAY_ISO;
     var dayLbl = isToday ? '今日' : selectedDailyDate;
     document.getElementById('dailyDateLbl').textContent = isToday ? '当前查看：今天 '+TODAY_ISO : '当前查看：'+selectedDailyDate;
     var orderCount = records.filter(function(r){ return r.typeKey==='order'; }).length;
     var bookingCount = records.filter(function(r){ return r.typeKey==='booking'; }).length;
-    var mrCount = records.filter(function(r){ return r.typeKey==='mr'; }).length;
+    var mrCount = records.filter(function(r){ return r.typeKey==='mr' || r.typeKey==='rx'; }).length;
     document.getElementById('dailyCards').innerHTML = ''
       + '<div class="summary-card"><div class="summary-num">MYR '+orderRevenue.toFixed(2)+'</div><div class="summary-lbl">'+dayLbl+'商城订单（'+orderCount+' 笔）</div></div>'
       + '<div class="summary-card"><div class="summary-num">MYR '+bookingRevenue.toFixed(2)+'</div><div class="summary-lbl">'+dayLbl+'相约金额（'+(bookingCount+mrCount)+' 次）</div></div>'
@@ -3128,6 +3180,9 @@ window.escapeHtml = function(s){
     if(record.typeKey==='order'){
       return record.items.map(function(i){ return blItem(i.name,lang)+' ×'+i.qty; }).join(lang?', ':'，');
     }
+    if(record.typeKey==='rx'){
+      return record.items.map(function(it){ return (it.herbName||'') + ' ' + (it.dosageGrams||'') + 'g'; }).join(lang?', ':'、');
+    }
     if(!record.items.length) return lang ? 'No treatment items yet' : '（未填写治疗项目）';
     return record.items.map(function(t){ return blItem(t.name,lang,t.nameEn)+(t.price<0?'':' ×'+t.qty); }).join(lang?', ':'，');
   }
@@ -3136,7 +3191,7 @@ window.escapeHtml = function(s){
     await refreshDailyData();
     var records = dailyRecords(selectedDailyDate);
     var orderRevenue = records.filter(function(r){ return r.typeKey==='order'; }).reduce(function(s,r){ return s+r.amount; },0);
-    var bookingRevenue = records.filter(function(r){ return r.typeKey==='booking' || r.typeKey==='mr'; }).reduce(function(s,r){ return s+r.amount; },0);
+    var bookingRevenue = records.filter(function(r){ return r.typeKey==='booking' || r.typeKey==='mr' || r.typeKey==='rx'; }).reduce(function(s,r){ return s+r.amount; },0);
     var total = orderRevenue + bookingRevenue;
     var rowsHtml = records.map(function(r){
       return '<tr><td>'+DAILY_TYPE_EN[r.typeKey]+'</td><td>'+r.ref+'</td><td>'+r.name+'</td><td>'+itemsSummaryLang(r,lang)+'</td><td class="num">'+slotEN(r.slot)+'</td><td class="num">'+fmtMYR(r.amount)+'</td></tr>';
