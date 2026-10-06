@@ -34,6 +34,61 @@ function serializeBooking(b){
   return { ...b, treatments: treatments, cancelled: !!b.cancelled, status: (b.status===null||b.status===undefined)?0:b.status };
 }
 
+// ---- 大管理员同步出诊：两位大管理员同一时段只服务一位客户 ----
+// 开关存 site_settings（后端全局生效，所有客户设备都读到）；开启后任一大管理员某时段被预约，
+// 另一位大管理员同一时段自动视为"已预约"（前端禁用 + 后端拒重复）
+function getSyncFlag(){
+  try {
+    const row = db.prepare("SELECT value FROM site_settings WHERE key = 'senior_sync_schedule'").get();
+    return !!(row && row.value && JSON.parse(row.value) === true);
+  } catch(e){ return false; }
+}
+function isSeniorPractitioner(id){
+  const row = db.prepare('SELECT role FROM admins WHERE id = ?').get(id);
+  return !!(row && row.role === 'SENIOR');
+}
+function getOtherSeniorIds(excludeId){
+  const rows = db.prepare("SELECT id FROM admins WHERE role = 'SENIOR'").all();
+  return rows.map(function(r){ return r.id; }).filter(function(id){ return id !== excludeId; });
+}
+// 未取消、未软删、未完成的预约才算占用（status<2：0待确认/1已确认；>=2已完成不再占时段）
+const TAKEN_WHERE = 'deleted_at IS NULL AND cancelled = 0 AND status < 2';
+function takenSlotsOf(practitionerId, date){
+  return db.prepare('SELECT slot FROM bookings WHERE practitioner_id = ? AND appt_date_iso = ? AND ' + TAKEN_WHERE)
+    .all(practitionerId, date).map(function(r){ return r.slot; });
+}
+function slotAlreadyTaken(practitionerId, date, slot){
+  const base = 'SELECT id FROM bookings WHERE appt_date_iso = ? AND slot = ? AND ' + TAKEN_WHERE;
+  if(db.prepare(base + ' AND practitioner_id = ?').get(date, slot, practitionerId)) return true;
+  // 同步开启且该医师是大管理员：任一位其他大管理员同一时段被约，也视为占用
+  if(getSyncFlag() && isSeniorPractitioner(practitionerId)){
+    const others = getOtherSeniorIds(practitionerId);
+    if(others.length){
+      const ph = others.map(function(){ return '?'; }).join(',');
+      if(db.prepare(base + ' AND practitioner_id IN (' + ph + ')').get(date, slot, ...others)) return true;
+    }
+  }
+  return false;
+}
+
+// 公开接口：居家会诊页选时段用——返回该医师该日已占用时段；
+// 同步开启时（且该医师是大管理员），同时返回其他大管理员同一日期的占用，前端一起锁掉
+router.get('/bookings/availability', (req, res) => {
+  const { practitionerId, date } = req.query;
+  if(!practitionerId || !date) return res.status(400).json({ error: '缺少医师或日期参数' });
+  const taken = [...new Set(takenSlotsOf(practitionerId, date))];
+  const sync = getSyncFlag() && isSeniorPractitioner(practitionerId);
+  let syncedFrom = [];
+  if(sync){
+    const others = getOtherSeniorIds(practitionerId);
+    others.forEach(function(id){
+      syncedFrom = syncedFrom.concat(takenSlotsOf(id, date));
+    });
+    syncedFrom = [...new Set(syncedFrom)];
+  }
+  res.json({ sync, taken, syncedFrom });
+});
+
 // 客户填手机号是"0123456789"这种本地写法，黑名单存的可能是不带开头0的格式——
 // 两边先都归一化成同一种形式再比对，跟之前前端 consult.html 里 normalizePhoneForMatch 逻辑一致
 function normalizePhone(v){
@@ -54,6 +109,10 @@ router.post('/bookings', (req, res) => {
   }
   if(isBlacklisted(practitionerId, phone)){
     return res.status(403).json({ error: '抱歉，您选择的医师暂时无法为您提供服务，请重新选择一位医师。' });
+  }
+  // 时段占用校验：本人同日期同时段已约 → 拒绝；大管理员同步出诊开启时，对方大管理员已约也拒绝
+  if(apptDateISO && slot && slotAlreadyTaken(practitionerId, apptDateISO, slot)){
+    return res.status(409).json({ error: '这个时段刚刚已经被预约了，请重新选择其他时段。' });
   }
   const customer = findOrCreateCustomer(phone, name);
   const id = 'booking_' + Date.now();

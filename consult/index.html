@@ -127,6 +127,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .hc-slot{ border:1.5px solid var(--line); border-radius:12px; padding:13px 10px; text-align:center; font-size:16px; font-weight:600; cursor:pointer; transition:.15s; }
 .hc-slot.on{ border-color:var(--clay); background:rgba(188,110,78,.08); color:var(--clay); }
 .hc-slot.disabled{ opacity:.35; cursor:not-allowed; background:var(--cream); text-decoration:line-through; }
+.hc-sync-note{ background:rgba(188,110,78,.07); border:1px dashed var(--clay); color:var(--clay); font-size:12.5px; line-height:1.6; border-radius:10px; padding:8px 12px; margin-bottom:14px; }
 
 /* ---- phone field (reuse Malaysia +60 pattern) ---- */
 .hc-phone-row{ display:flex; align-items:stretch; border:1.5px solid var(--line); border-radius:12px; overflow:hidden; background:var(--white-warm); }
@@ -926,7 +927,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   function renderStage3(){
     var dates = getBookableDates(21);
     var html = '<div class="hc-stage-title">选择日期与时间</div>'
-      + '<div class="hc-stage-hint">周日为休息日，当日下午已过则无法预约当日剩余时段；公共假期等临时休诊日期不会出现在下方可选日期中，部分时段停诊则会以划线样式显示在对应时段上。</div>'
+      + '<div class="hc-stage-hint">周日为休息日，当日下午已过则无法预约当日剩余时段；公共假期等临时休诊日期不会出现在下方可选日期中，部分时段停诊则会以划线样式显示在对应时段上。已被其他客户预约的时段同样会划线锁定。</div>'
+      + '<div class="hc-sync-note" id="syncNote" style="display:none;"></div>'
       + '<div class="hc-date-strip" id="dateStrip">';
     dates.forEach(function(d, i){
       var selected = form.date && d.toDateString() === form.date.toDateString();
@@ -941,16 +943,43 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="hc-back-link" id="backLink">← 返回上一步</div>';
     document.getElementById('stageArea').innerHTML = html;
 
+    // 已预约时段（后端权威）：taken=本人已约；sync 开启且该医师为大管理员时，synced=其他大管理员已约
+    var slotOccupancy = {};
+    function fetchAvailability(){
+      var d = form.date;
+      if(!d || !form.doctor) return;
+      var iso = toISODate(d);
+      fetch(API_BASE + '/bookings/availability?practitionerId=' + encodeURIComponent(form.doctor) + '&date=' + iso)
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(data){
+          if(!data) return;
+          slotOccupancy[iso] = { taken: data.taken || [], synced: data.syncedFrom || [], sync: !!data.sync };
+          renderSlots();
+          var note = document.getElementById('syncNote');
+          if(note) note.style.display = slotOccupancy[iso].sync ? 'block' : 'none';
+        })
+        .catch(function(){});
+    }
+    function isOccupied(iso, slotLabel){
+      var o = slotOccupancy[iso];
+      if(!o) return false;
+      if(o.taken.indexOf(slotLabel) !== -1) return true;
+      if(o.sync && o.synced.indexOf(slotLabel) !== -1) return true;
+      return false;
+    }
     function renderSlots(){
       if(!form.date){ document.getElementById('slotArea').innerHTML = ''; return; }
+      var iso = toISODate(form.date);
       var sh = '<div class="hc-field"><label>可预约时段</label><div class="hc-slot-grid">';
       SLOTS.forEach(function(slot){
-        var avail = isSlotAvailable(form.date, slot);
+        var avail = isSlotAvailable(form.date, slot) && !isOccupied(iso, slot.label);
         var on = form.slot === slot.id;
+        if(!avail && on){ form.slot = ''; }
         sh += '<div class="hc-slot'+(on?' on':'')+(avail?'':' disabled')+'" data-id="'+slot.id+'">'+slot.label+'</div>';
       });
       sh += '</div></div>';
       document.getElementById('slotArea').innerHTML = sh;
+      document.getElementById('nextBtn').disabled = !form.slot;
       document.querySelectorAll('.hc-slot').forEach(function(el){
         if(el.classList.contains('disabled')) return;
         el.addEventListener('click', function(){
@@ -961,6 +990,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       });
     }
     renderSlots();
+    fetchAvailability();
 
     document.querySelectorAll('.hc-date-card').forEach(function(card){
       card.addEventListener('click', function(){
@@ -970,6 +1000,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         this.classList.add('on');
         document.getElementById('nextBtn').disabled = true;
         renderSlots();
+        fetchAvailability();
       });
     });
     document.getElementById('nextBtn').addEventListener('click', function(){ stage = 4; render(); });

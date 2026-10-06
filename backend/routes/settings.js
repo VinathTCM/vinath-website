@@ -7,7 +7,7 @@ const { authMiddleware, requireRole } = require('../middleware/auth');
 const router = express.Router();
 
 // 白名单——不是任意key都能存，避免这个通用接口被当成不受限的任意键值存储用
-const ALLOWED_KEYS = ['business_info', 'announcements', 'policy_pages', 'health_journeys', 'module_access', 'service_areas', 'price_list', 'shop_categories', 'shipping_settings', 'consult_price_images', 'consult_price_images_by_doc'];
+const ALLOWED_KEYS = ['business_info', 'announcements', 'policy_pages', 'health_journeys', 'module_access', 'service_areas', 'price_list', 'shop_categories', 'shipping_settings', 'consult_price_images', 'consult_price_images_by_doc', 'senior_sync_schedule'];
 
 router.get('/site-settings/:key', (req, res) => {
   if(!ALLOWED_KEYS.includes(req.params.key)) return res.status(404).json({ error: '不存在这个设置项' });
@@ -26,6 +26,10 @@ router.put('/admin/site-settings/:key', authMiddleware, requireRole('SENIOR', 'P
         return res.status(403).json({ error: '只能保存自己名下的价格表' });
       }
     }
+  }
+  // 大管理员同步出诊开关：只有大管理员能改
+  if(req.params.key === 'senior_sync_schedule' && req.admin.role !== 'SENIOR'){
+    return res.status(403).json({ error: '只有大管理员可以设置同步出诊' });
   }
   db.prepare(`
     INSERT INTO site_settings (key, value, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP)

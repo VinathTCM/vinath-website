@@ -685,6 +685,17 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
     <div class="note"><b>提示：</b>休诊日期保存后，「居家会诊」预约页面会读取同一份数据来隐藏对应日期。目前设置保存在本机浏览器中，暂未同步到服务器，换设备查看会不同。</div>
 
     <div class="closure-card">
+      <div class="closure-card-title">大管理员同步出诊</div>
+      <div class="closure-card-hint">两位大管理员目前同时出诊、同一时段只服务一位客户时，开启这个开关：任一大管理员某个时段被预约，另一位大管理员同一时段会自动变为"已预约"——客户在「居家会诊」选择时段时会看到该时段已锁定，后端也会拒绝重复预约。此设置全局生效（所有客户设备都适用）；关闭后恢复各自独立排班。</div>
+      <label style="display:flex;align-items:center;gap:10px;margin:12px 0;cursor:pointer;">
+        <input type="checkbox" id="seniorSyncToggle" style="width:18px;height:18px;cursor:pointer;">
+        <span id="seniorSyncLabel" style="font-weight:600;">同步出诊：关闭</span>
+      </label>
+      <button type="button" id="seniorSyncSaveBtn">保存设置</button>
+      <div class="closure-add-error" id="seniorSyncStatus" style="margin-top:8px;">未保存</div>
+    </div>
+
+    <div class="closure-card">
       <div class="closure-card-title">居家会诊服务地区设置</div>
       <div class="closure-card-hint">按州属管理「居家会诊」目前实际服务的地区——客户预约时"您所在的区域"下拉菜单只会显示这里开启的地区。已经预先把全马13个州属+3个联邦直辖区、共92个地区都列进来了，方便以后开分店时直接开启对应地区，不用再重新开发。目前只有新山（Johor Bahru）市区的10个地区是开启状态，其余全部默认关闭，你可以随时调整。</div>
       <div class="area-search-row">
@@ -3675,6 +3686,44 @@ window.escapeHtml = function(s){
     });
   }
   renderClosureSlotPicker();
+
+  // ---- 大管理员同步出诊（后端全局生效：前台选时段锁定 + 后端防重复）----
+  var SYNC_KEY = 'senior_sync_schedule';
+  var seniorSyncOn = false;
+  function syncUI(){
+    var t = document.getElementById('seniorSyncToggle');
+    if(!t) return;
+    t.checked = seniorSyncOn;
+    document.getElementById('seniorSyncLabel').textContent = '同步出诊：' + (seniorSyncOn ? '开启' : '关闭');
+    document.getElementById('seniorSyncStatus').textContent = '未保存';
+    document.getElementById('seniorSyncStatus').classList.remove('show');
+  }
+  function loadSeniorSync(){
+    fetch(API_BASE + '/site-settings/' + SYNC_KEY)
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(v){ seniorSyncOn = !!v; syncUI(); })
+      .catch(function(){ seniorSyncOn = false; syncUI(); });
+  }
+  document.getElementById('seniorSyncToggle').addEventListener('change', function(){
+    document.getElementById('seniorSyncStatus').textContent = '有改动，记得点「保存设置」';
+    document.getElementById('seniorSyncStatus').classList.add('show');
+  });
+  document.getElementById('seniorSyncSaveBtn').addEventListener('click', function(){
+    var on = document.getElementById('seniorSyncToggle').checked;
+    var st = document.getElementById('seniorSyncStatus');
+    st.textContent = '保存中…';
+    st.classList.add('show');
+    fetch(API_BASE + '/admin/site-settings/' + SYNC_KEY, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+      body: JSON.stringify(on)
+    }).then(function(res){
+      if(!res.ok){ st.textContent = '保存失败（HTTP ' + res.status + '），请确认是大管理员账号'; return; }
+      seniorSyncOn = on;
+      st.textContent = '已保存 · 前台「居家会诊」选时段即时生效';
+    }).catch(function(){ st.textContent = '保存失败，请检查网络'; });
+  });
+  loadSeniorSync();
+
   document.getElementById('closureScopeSeg').querySelectorAll('.seg-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
       closureScope = this.getAttribute('data-scope');
