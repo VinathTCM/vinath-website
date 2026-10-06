@@ -345,6 +345,10 @@ tbody tr:hover{ background:#FBFAF7; }
   </div>
 
   <div id="tab-pricelist" style="display:none;">
+    <div class="field" style="max-width:420px;">
+      <label>选择要管理的医师</label>
+      <select id="priceDoctorSelect"></select>
+    </div>
     <div class="toolbar" style="margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
       <button class="btn-primary" id="priceListUploadBtn">+ 上传价格表图片</button>
       <input type="file" id="priceListFile" accept="image/*" multiple style="display:none;">
@@ -352,7 +356,7 @@ tbody tr:hover{ background:#FBFAF7; }
       <span id="priceListStatus" style="font-size:13px;color:var(--ink-soft);"></span>
     </div>
     <div id="priceListGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;"></div>
-    <div class="note" style="margin-top:20px;"><b>提示：</b>上传后会自动压缩转成 WEBP 格式再保存，前台「居家会诊」页面的"居家会诊价格"按钮会展示这些图片（多张时可左右切换）。上传的图片不要包含医疗功效承诺等敏感字眼，保持价格表信息即可。保存后点"保存"按钮才会生效。</div>
+    <div class="note" style="margin-top:20px;"><b>提示：</b>每位医师维护自己名下的价格表，保存后前台「居家会诊 → 选择中医师」页对应医师卡片会显示「居家会诊价格表」按钮（没有上传的医师不显示）。上传后会自动压缩转成 WEBP 格式再保存。上传的图片不要包含医疗功效承诺等敏感字眼，保持价格表信息即可。</div>
   </div>
 
   <div class="admin-footer">
@@ -388,6 +392,7 @@ window.scrollTo(0,0);
       {label:'电子处方', file:'/admin/prescriptions/', roles:['senior','practitioner'], gated:'prescriptions'},
       {label:'电子收据', file:'/admin/receipts/', roles:['senior','practitioner'], gated:'receipts'},
       {label:'智能排班', file:'/admin/schedule/', roles:['senior','practitioner']}
+      ,{label:'价格表', file:'/admin/pricelist/', roles:['senior','practitioner']}
     ];
     var myRole = navAdmin.type==='senior' ? 'senior' : (navAdmin.adminType||'practitioner');
     var visible = ALL_ADMIN_TOOLS.filter(function(t){ return t.roles.indexOf(myRole)!==-1; });
@@ -2926,17 +2931,50 @@ Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.
     btn.disabled = false;
   });
 
-  // ---- 居家会诊价格表图片（前台 consult 页"居家会诊价格"按钮展示；自动转 WEBP 存库）----
+  // ---- 居家会诊价格表图片（按医师归属，前台「选择中医师」页对应医师卡片展示；自动转 WEBP 存库）----
   var priceListImages = [];
-  var PRICE_LIST_KEY = 'consult_price_images';
+  var PRICE_LIST_KEY = 'consult_price_images_by_doc';
+  var PL_DOCS = [];          // [{id, name, role}]
+  var PL_SELECTED = 'gong';
+  var PL_MAP = {};           // doctorId -> [urls]
+  var PL_LEGACY = [];        // 原全局价格表（大管理员没单独存时作预览）
+
+  async function loadPriceDoctors(){
+    var sel = document.getElementById('priceDoctorSelect');
+    try {
+      var res = await fetch(API_BASE + '/auth/practitioners');
+      if(res.ok) PL_DOCS = await res.json();
+    } catch(e){}
+    if(!PL_DOCS.length) PL_DOCS = [{id:'gong', name:'龚诗宏医师', role:'SENIOR'}, {id:'yu', name:'余采恩医师', role:'PRACTITIONER'}];
+    PL_SELECTED = 'gong';
+    sel.innerHTML = PL_DOCS.map(function(p){
+      return '<option value="'+p.id+'">'+p.name+(p.role==='SENIOR'?'（大管理员）':'')+'</option>';
+    }).join('');
+    sel.addEventListener('change', function(){ PL_SELECTED = this.value; loadPriceList(); });
+  }
+
   async function loadPriceList(){
     var grid = document.getElementById('priceListGrid');
     var st = document.getElementById('priceListStatus');
+    st.textContent = '加载中…';
     try {
       var res = await fetch(API_BASE + '/site-settings/' + PRICE_LIST_KEY);
-      priceListImages = (res.ok && (await res.json())) || [];
+      var map = res.ok ? (await res.json()) : null;
+      PL_MAP = (map && typeof map==='object') ? map : {};
+    } catch(e){ PL_MAP = {}; }
+    try {
+      var gRes = await fetch(API_BASE + '/site-settings/consult_price_images');
+      PL_LEGACY = gRes.ok ? (await gRes.json()) : [];
+    } catch(e){ PL_LEGACY = []; }
+    var list = PL_MAP[PL_SELECTED] || [];
+    if(!list.length && PL_SELECTED==='gong' && Array.isArray(PL_LEGACY) && PL_LEGACY.length){
+      PL_MAP['gong'] = PL_LEGACY.filter(function(x){ return typeof x==='string' && x; });
+      list = PL_MAP['gong'];
+      st.textContent = '当前显示原有的全局价格表，保存后将归入「龚诗宏医师」名下';
+    } else {
       st.textContent = '';
-    } catch(e){ priceListImages = []; st.textContent = '拉取失败，请检查网络'; }
+    }
+    priceListImages = list;
     renderPriceListGrid();
   }
   function renderPriceListGrid(){
@@ -2946,7 +2984,7 @@ Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.
         + '<img src="'+src+'" style="width:100%;display:block;object-fit:cover;">'
         + '<button type="button" data-rm="'+i+'" style="position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(59,46,34,.75);color:#fff;font-size:14px;cursor:pointer;line-height:1;">×</button>'
         + '</div>';
-    }).join('') || '<div style="grid-column:1/-1;color:var(--ink-soft);font-size:13.5px;padding:18px 0;">还没有价格表图片，点"上传价格表图片"添加。</div>';
+    }).join('') || '<div style="grid-column:1/-1;color:var(--ink-soft);font-size:13.5px;padding:18px 0;">这位医师还没有价格表图片，点"上传价格表图片"添加。保存后前台医师卡片才会显示价格表入口。</div>';
     Array.prototype.forEach.call(grid.querySelectorAll('[data-rm]'), function(btn){
       btn.addEventListener('click', function(){
         priceListImages.splice(Number(this.getAttribute('data-rm')), 1);
@@ -2981,6 +3019,7 @@ Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.
     });
   }
   function initPriceList(){
+    loadPriceDoctors();
     var fileInput = document.getElementById('priceListFile');
     document.getElementById('priceListUploadBtn').addEventListener('click', function(){ fileInput.click(); });
     fileInput.addEventListener('change', async function(){
@@ -3009,11 +3048,20 @@ Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.
       var st = document.getElementById('priceListStatus');
       st.textContent = '保存中…';
       try {
-        await fetch(API_BASE + '/admin/site-settings/' + PRICE_LIST_KEY, {
+        var body = {};
+        body[PL_SELECTED] = priceListImages;
+        var res = await fetch(API_BASE + '/admin/site-settings/' + PRICE_LIST_KEY, {
           method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
-          body: JSON.stringify(priceListImages)
+          body: JSON.stringify(body)
         });
-        st.textContent = '已保存 · 前台"居家会诊价格"按钮现在会显示这些图片';
+        if(!res.ok){
+          var err = null;
+          try { err = await res.json(); } catch(e){}
+          st.textContent = '保存失败：' + ((err && err.error) || ('HTTP ' + res.status));
+          btn.disabled = false;
+          return;
+        }
+        st.textContent = '已保存 · 前台这位医师卡片现在会显示价格表入口';
       } catch(e){ st.textContent = '保存失败，请检查网络后重试'; }
       btn.disabled = false;
     });

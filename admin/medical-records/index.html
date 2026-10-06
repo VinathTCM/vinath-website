@@ -151,6 +151,7 @@ window.scrollTo(0,0);
       {label:'电子处方', file:'/admin/prescriptions/', roles:['senior','practitioner'], gated:'prescriptions'},
       {label:'电子收据', file:'/admin/receipts/', roles:['senior','practitioner'], gated:'receipts'},
       {label:'智能排班', file:'/admin/schedule/', roles:['senior','practitioner']}
+      ,{label:'价格表', file:'/admin/pricelist/', roles:['senior','practitioner']}
     ];
     var myRole = navAdmin.type==='senior' ? 'senior' : (navAdmin.adminType||'practitioner');
     var visible = ALL_ADMIN_TOOLS.filter(function(t){ return t.roles.indexOf(myRole)!==-1; });

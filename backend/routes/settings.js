@@ -7,7 +7,7 @@ const { authMiddleware, requireRole } = require('../middleware/auth');
 const router = express.Router();
 
 // 白名单——不是任意key都能存，避免这个通用接口被当成不受限的任意键值存储用
-const ALLOWED_KEYS = ['business_info', 'announcements', 'policy_pages', 'health_journeys', 'module_access', 'service_areas', 'price_list', 'shop_categories', 'shipping_settings', 'consult_price_images'];
+const ALLOWED_KEYS = ['business_info', 'announcements', 'policy_pages', 'health_journeys', 'module_access', 'service_areas', 'price_list', 'shop_categories', 'shipping_settings', 'consult_price_images', 'consult_price_images_by_doc'];
 
 router.get('/site-settings/:key', (req, res) => {
   if(!ALLOWED_KEYS.includes(req.params.key)) return res.status(404).json({ error: '不存在这个设置项' });
@@ -15,8 +15,18 @@ router.get('/site-settings/:key', (req, res) => {
   res.json(row ? JSON.parse(row.value) : null);
 });
 
-router.put('/admin/site-settings/:key', authMiddleware, requireRole('SENIOR'), (req, res) => {
+router.put('/admin/site-settings/:key', authMiddleware, requireRole('SENIOR', 'PRACTITIONER'), (req, res) => {
   if(!ALLOWED_KEYS.includes(req.params.key)) return res.status(404).json({ error: '不存在这个设置项' });
+  // 按医师的居家会诊价格表：PRACTITIONER 只能写自己名下的那份，SENIOR 可管理全部
+  if(req.params.key === 'consult_price_images_by_doc'){
+    const body = req.body || {};
+    const docIds = Object.keys(body);
+    if(req.admin.role !== 'SENIOR'){
+      if(docIds.length !== 1 || docIds[0] !== req.admin.sub){
+        return res.status(403).json({ error: '只能保存自己名下的价格表' });
+      }
+    }
+  }
   db.prepare(`
     INSERT INTO site_settings (key, value, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP)
     ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP

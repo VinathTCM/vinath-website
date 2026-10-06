@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VINATH · 我的价格表</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body{ margin:0; min-height:100vh; background:#F4F2EE; font-family:"Noto Sans SC","PingFang SC",sans-serif; color:#332A21; }
+:root{
+  --clay:#BC6E4E; --clay-soft:rgba(188,110,78,.12);
+  --tan:#C9A876; --line:#E6E1D6; --ink:#332A21; --ink-soft:#7A6F60;
+  --white:#FFFFFF; --shadow:0 3px 14px rgba(51,42,33,.07);
+  --font-serif:"Noto Serif SC",serif;
+}
+.vinath-admin-nav{ background:#332A21; }
+.vinath-admin-nav-inner{ max-width:1200px; margin:0 auto; display:flex; gap:2px; padding:0 20px; overflow-x:auto; }
+.van-item{ color:rgba(255,255,255,.62); font-size:13px; padding:13px 14px; text-decoration:none; white-space:nowrap; border-bottom:2.5px solid transparent; display:inline-block; }
+.van-item:hover{ color:#fff; }
+.van-item.current{ color:#fff; border-bottom-color:#BC6E4E; font-weight:700; }
+.wrap{ max-width:1140px; margin:0 auto; padding:28px 22px 90px; }
+.hdr h1{ font-family:var(--font-serif); font-size:clamp(24px,4vw,30px); margin:6px 0 4px; }
+.hdr .brand{ font-family:var(--font-serif); font-weight:700; font-size:15px; letter-spacing:.14em; color:var(--clay); text-transform:uppercase; }
+.hdr .brand .tm{ text-transform:none; font-size:.62em; vertical-align:super; margin-left:1px; }
+.hdr p{ color:var(--ink-soft); font-size:14.5px; margin:0; max-width:64ch; line-height:1.7; }
+.admin-footer{ margin-top:44px; padding-top:18px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; font-size:12px; color:var(--ink-soft); }
+.admin-footer .my{ font-weight:700; letter-spacing:.03em; white-space:nowrap; }
+.card{ background:var(--white); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); overflow:hidden; padding:20px 22px; }
+.btn-primary{ display:inline-flex; align-items:center; gap:7px; background:var(--ink); color:#fff; border:none; padding:10px 18px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; transition:opacity .15s; }
+.btn-primary:hover{ opacity:.88; }
+.btn-primary:disabled{ opacity:.5; cursor:not-allowed; }
+.toolbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+.toolbar .hint{ font-size:13px; color:var(--ink-soft); }
+.field{ margin-bottom:20px; }
+.field label{ display:block; font-size:12.5px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:.04em; margin-bottom:7px; }
+.field select{ width:100%; padding:11px 13px; border:1.5px solid var(--line); border-radius:10px; font-size:15px; font-family:inherit; color:var(--ink); background:#fff; }
+.note{ font-size:13px; color:var(--ink-soft); line-height:1.8; margin-top:20px; }
+.note b{ color:var(--ink); }
+.status-txt{ font-size:13px; color:var(--ink-soft); }
+.status-txt.ok{ color:#2E7D4F; font-weight:600; }
+.status-txt.err{ color:#B0503A; font-weight:600; }
+</style>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=20260911logo4">
+<link rel="icon" href="/favicon.ico?v=20260911logo4" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=20260911logo4">
+<link rel="icon" type="image/webp" href="/favicon.webp?v=20260911logo4">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260911logo4">
+</head>
+<body>
+
+<div class="vinath-admin-nav" id="vinathAdminNav"></div>
+
+<div id="loginGate" style="display:none;max-width:480px;margin:100px auto;text-align:center;padding:0 24px;">
+  <h2 style="font-family:var(--font-serif,serif);">请先登录</h2>
+  <p style="color:#7A6F60;font-size:14px;line-height:1.7;margin-top:10px;">请先在 <a href="/admin/orders/" style="color:#BC6E4E;font-weight:700;">订单预约管理</a> 登录，登录后回到这个页面即可使用——同一个浏览器里，两边共享登录状态。</p>
+</div>
+
+<div class="wrap" id="mainWrap">
+  <div class="hdr">
+    <div class="brand">VINATH<span class="tm">™</span> · Admin</div>
+    <h1>居家会诊价格表</h1>
+    <p>每位中医师可以维护自己名下的价格表图片；前台「居家会诊 → 选择中医师」的医师卡片上，有价格表的医师会显示「居家会诊价格表」入口，没有的不显示。</p>
+  </div>
+
+  <div class="card" style="margin-top:24px;">
+    <div class="field" id="doctorSelectField">
+      <label>选择要管理的医师</label>
+      <select id="doctorSelect"></select>
+    </div>
+    <div class="toolbar">
+      <div>
+        <button class="btn-primary" id="priceListUploadBtn">+ 上传价格表图片</button>
+        <input type="file" id="priceListFile" accept="image/*" multiple style="display:none;">
+        <button class="btn-primary" id="savePriceListBtn" style="margin-left:10px;">保存</button>
+      </div>
+      <span class="status-txt" id="priceListStatus"></span>
+    </div>
+    <div id="priceListGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;"></div>
+    <div class="note"><b>提示：</b>上传后会自动压缩转成 WEBP 格式再保存。保存后，前台「选择中医师」页这位医师卡片上会出现「居家会诊价格表」按钮。上传的图片请保持价格表信息即可，不要包含医疗功效承诺等敏感字眼。</div>
+  </div>
+
+  <div class="admin-footer">
+    <span>Copyright &copy; 2026 VINATH TCM HEALTH CARE. All rights reserved.</span>
+    <span class="my">Malaysia</span>
+  </div>
+</div>
+
+<script>
+var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+var authToken = null;
+try { authToken = sessionStorage.getItem('vinath_auth_token'); } catch(e){}
+
+function getCurrentAdmin(){
+  try { var raw = localStorage.getItem('vinath_current_admin'); return raw ? JSON.parse(raw) : null; } catch(e){ return null; }
+}
+var cur = getCurrentAdmin();
+var myRole = cur && (cur.type==='senior' ? 'senior' : (cur.adminType||'practitioner'));
+
+// 登录门：大管理员 + I类执业医师 可用（其他角色不行）
+if(!cur || (myRole!=='senior' && myRole!=='practitioner') || !authToken){
+  document.getElementById('loginGate').style.display = '';
+  document.getElementById('mainWrap').style.display = 'none';
+} else {
+  document.getElementById('mainWrap').style.display = '';
+  init();
+}
+
+async function renderVinathAdminNav(navAdmin){
+  if(!navAdmin) return;
+  var ALL_ADMIN_TOOLS = [
+    {label:'订单预约管理', file:'/admin/orders/', roles:['senior','practitioner','fulfillment','support']},
+    {label:'商品管理', file:'/admin/products/', roles:['senior']},
+    {label:'内容管理', file:'/admin/content/', roles:['senior']},
+    {label:'电子病历', file:'/admin/medical-records/', roles:['senior','practitioner'], gated:'medicalRecords'},
+    {label:'电子处方', file:'/admin/prescriptions/', roles:['senior','practitioner'], gated:'prescriptions'},
+    {label:'电子收据', file:'/admin/receipts/', roles:['senior','practitioner'], gated:'receipts'},
+    {label:'智能排班', file:'/admin/schedule/', roles:['senior','practitioner']},
+    {label:'价格表', file:'/admin/pricelist/', roles:['senior','practitioner']}
+  ];
+  var role = navAdmin.type==='senior' ? 'senior' : (navAdmin.adminType||'practitioner');
+  var visible = ALL_ADMIN_TOOLS.filter(function(t){ return t.roles.indexOf(role)!==-1; });
+  if(role==='practitioner'){
+    try {
+      var res = await fetch(API_BASE + '/site-settings/module_access');
+      var access = res.ok ? (await res.json() || {}) : {};
+      visible = visible.filter(function(t){ return !t.gated || access[t.gated]===true; });
+    } catch(e){}
+  }
+  var navEl = document.getElementById('vinathAdminNav');
+  navEl.innerHTML = '<div class="vinath-admin-nav-inner">' + visible.map(function(t){
+    return '<a class="van-item current" href="'+t.file+'">'+t.label+'</a>';
+  }).join('') + '<a class="van-item" href="javascript:void(0)" style="margin-left:auto;color:rgba(255,255,255,.9);font-weight:600;" onclick="logoutNow()">退出登录</a></div>';
+}
+function logoutNow(){
+  try { localStorage.removeItem('vinath_current_admin'); sessionStorage.removeItem('vinath_auth_token'); } catch(e){}
+  location.href = '/admin/orders/';
+}
+
+// ---- 医师列表 ----
+var PRACTITIONERS = [];   // [{id, name, role}]
+var selectedDoctor = cur ? cur.id : null;
+var PRICE_MAP = {};       // doctorId -> [urls]
+var legacyGlobal = [];    // 原全局价格表（大管理员若还没单独存，作为预览展示）
+
+async function loadPractitioners(){
+  try {
+    var res = await fetch(API_BASE + '/auth/practitioners');
+    if(res.ok){
+      PRACTITIONERS = await res.json();
+    }
+  } catch(e){}
+  if(!PRACTITIONERS.length){
+    // 兜底：至少两位固定医师
+    PRACTITIONERS = [{id:'gong', name:'龚诗宏医师', role:'SENIOR'}, {id:'yu', name:'余采恩医师', role:'PRACTITIONER'}];
+  }
+  renderDoctorSelect();
+}
+
+function renderDoctorSelect(){
+  var sel = document.getElementById('doctorSelect');
+  var options = PRACTITIONERS.map(function(p){
+    var label = p.name + (p.role==='SENIOR' ? '（大管理员）' : '');
+    return '<option value="'+p.id+'"'+(selectedDoctor===p.id?' selected':'')+'>'+label+'</option>';
+  }).join('');
+  if(myRole==='practitioner'){
+    // 小管理员只能看自己
+    var me = PRACTITIONERS.filter(function(p){ return p.id===cur.id; });
+    sel.innerHTML = me.length ? me.map(function(p){ return '<option value="'+p.id+'">'+p.name+'</option>'; }).join('') : '';
+    sel.disabled = true;
+    selectedDoctor = cur.id;
+    document.getElementById('doctorSelectField').style.display = 'none';
+  } else {
+    sel.innerHTML = options;
+  }
+  sel.addEventListener('change', function(){
+    selectedDoctor = this.value;
+    loadPriceList();
+  });
+}
+
+function grid(){
+  return document.getElementById('priceListGrid');
+}
+function st(){
+  return document.getElementById('priceListStatus');
+}
+
+async function loadPriceList(){
+  var g = grid(), s = st();
+  s.textContent = '加载中…';
+  s.className = 'status-txt';
+  try {
+    var res = await fetch(API_BASE + '/site-settings/consult_price_images_by_doc');
+    var map = res.ok ? (await res.json()) : null;
+    PRICE_MAP = (map && typeof map==='object') ? map : {};
+  } catch(e){ PRICE_MAP = {}; }
+  try {
+    var gRes = await fetch(API_BASE + '/site-settings/consult_price_images');
+    legacyGlobal = gRes.ok ? (await gRes.json()) : [];
+  } catch(e){ legacyGlobal = []; }
+
+  var list = PRICE_MAP[selectedDoctor] || [];
+  if(!list.length && myRole==='senior' && selectedDoctor==='gong' && Array.isArray(legacyGlobal) && legacyGlobal.length){
+    // 大管理员还没单独存过：展示原全局价格表作预览，保存后归入其名下
+    PRICE_MAP['gong'] = legacyGlobal.filter(function(x){ return typeof x==='string' && x; });
+    list = PRICE_MAP['gong'];
+    s.textContent = '当前显示的是原有的全局价格表，保存后将归入「龚诗宏医师」名下';
+  }
+  renderGrid(list);
+}
+
+function renderGrid(list){
+  var g = grid();
+  g.innerHTML = (list||[]).map(function(src, i){
+    return '<div style="position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;">'
+      + '<img src="'+src+'" style="width:100%;display:block;object-fit:cover;">'
+      + '<button type="button" data-rm="'+i+'" style="position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(59,46,34,.75);color:#fff;font-size:14px;cursor:pointer;line-height:1;">×</button>'
+      + '</div>';
+  }).join('') || '<div style="grid-column:1/-1;color:var(--ink-soft);font-size:13.5px;padding:18px 0;">这位医师还没有价格表图片，点「上传价格表图片」添加。保存后前台医师卡片才会显示价格表入口。</div>';
+  Array.prototype.forEach.call(g.querySelectorAll('[data-rm]'), function(btn){
+    btn.addEventListener('click', function(){
+      var list2 = PRICE_MAP[selectedDoctor] || [];
+      list2.splice(Number(this.getAttribute('data-rm')), 1);
+      PRICE_MAP[selectedDoctor] = list2;
+      renderGrid(list2);
+    });
+  });
+}
+
+function fileToWebp(file){
+  return new Promise(function(resolve, reject){
+    var reader = new FileReader();
+    reader.onload = function(){
+      var img = new Image();
+      img.onload = function(){
+        var scale = Math.min(1, 1400 / Math.max(img.width, img.height));
+        var w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+        var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+        cv.getContext('2d').drawImage(img, 0, 0, w, h);
+        cv.toBlob(function(blob){
+          if(!blob){ reject(new Error('webp 转换失败')); return; }
+          var r2 = new FileReader();
+          r2.onload = function(){ resolve(r2.result); };
+          r2.onerror = function(){ reject(new Error('读取失败')); };
+          r2.readAsDataURL(blob);
+        }, 'image/webp', 0.82);
+      };
+      img.onerror = function(){ reject(new Error('图片解码失败')); };
+      img.src = reader.result;
+    };
+    reader.onerror = function(){ reject(new Error('文件读取失败')); };
+    reader.readAsDataURL(file);
+  });
+}
+
+function init(){
+  renderVinathAdminNav(cur);
+  loadPractitioners().then(function(){
+    if(!selectedDoctor) selectedDoctor = cur.id;
+    loadPriceList();
+  });
+
+  var fileInput = document.getElementById('priceListFile');
+  document.getElementById('priceListUploadBtn').addEventListener('click', function(){ fileInput.click(); });
+  fileInput.addEventListener('change', async function(){
+    var files = Array.prototype.slice.call(fileInput.files || []);
+    if(!files.length) return;
+    var s = st();
+    s.textContent = '正在压缩转 WEBP…';
+    s.className = 'status-txt';
+    var list = PRICE_MAP[selectedDoctor] || [];
+    for(var i = 0; i < files.length; i++){
+      try {
+        var dataUrl = await fileToWebp(files[i]);
+        list.push(dataUrl);
+        s.textContent = '已处理 ' + (i + 1) + ' / ' + files.length;
+      } catch(e){ s.textContent = '第 ' + (i + 1) + ' 张处理失败：' + e.message; }
+    }
+    fileInput.value = '';
+    if(list.length > 10){
+      list = list.slice(0, 10);
+      s.textContent = '最多保留 10 张，已截断';
+    }
+    PRICE_MAP[selectedDoctor] = list;
+    renderGrid(list);
+  });
+
+  document.getElementById('savePriceListBtn').addEventListener('click', async function(){
+    var btn = this; btn.disabled = true;
+    var s = st();
+    s.textContent = '保存中…';
+    s.className = 'status-txt';
+    try {
+      var body = {};
+      body[selectedDoctor] = PRICE_MAP[selectedDoctor] || [];
+      var res = await fetch(API_BASE + '/admin/site-settings/consult_price_images_by_doc', {
+        method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify(body)
+      });
+      if(!res.ok){
+        var err = null;
+        try { err = await res.json(); } catch(e){}
+        s.textContent = '保存失败：' + ((err && err.error) || ('HTTP ' + res.status));
+        s.className = 'status-txt err';
+        btn.disabled = false;
+        return;
+      }
+      s.textContent = '已保存 · 前台这位医师卡片现在会显示价格表入口';
+      s.className = 'status-txt ok';
+    } catch(e){
+      s.textContent = '保存失败，请检查网络后重试';
+      s.className = 'status-txt err';
+    }
+    btn.disabled = false;
+  });
+}
+</script>
+</body>
+</html>
