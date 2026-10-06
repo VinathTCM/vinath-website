@@ -928,7 +928,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var dates = getBookableDates(21);
     var html = '<div class="hc-stage-title">选择日期与时间</div>'
       + '<div class="hc-stage-hint">周日为休息日，当日下午已过则无法预约当日剩余时段；公共假期等临时休诊日期不会出现在下方可选日期中，部分时段停诊则会以划线样式显示在对应时段上。已被其他客户预约的时段同样会划线锁定。</div>'
-      + '<div class="hc-sync-note" id="syncNote" style="display:none;"></div>'
+      + '<div class="hc-sync-note" id="syncNote" style="display:none;">两位大管理员同步出诊中：任一医师被预约的时段，另一位医师同一时段会自动锁定，避免同一时段被重复预约。</div>'
       + '<div class="hc-date-strip" id="dateStrip">';
     dates.forEach(function(d, i){
       var selected = form.date && d.toDateString() === form.date.toDateString();
