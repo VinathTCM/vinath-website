@@ -27,9 +27,19 @@ router.put('/admin/site-settings/:key', authMiddleware, requireRole('SENIOR', 'P
       }
     }
   }
-  // 大管理员同步出诊开关：只有大管理员能改
-  if(req.params.key === 'senior_sync_schedule' && req.admin.role !== 'SENIOR'){
-    return res.status(403).json({ error: '只有大管理员可以设置同步出诊' });
+  // 大管理员同步出诊开关：只有大管理员能改；值本身是布尔（express 严格 JSON 解析不接受顶层裸布尔，
+  // 前端传 {enabled:true/false} 对象，这里归一化后存裸布尔，GET 时语义清晰）
+  if(req.params.key === 'senior_sync_schedule'){
+    if(req.admin.role !== 'SENIOR'){
+      return res.status(403).json({ error: '只有大管理员可以设置同步出诊' });
+    }
+    const raw = req.body;
+    const enabled = (typeof raw === 'object' && raw !== null) ? !!raw.enabled : !!raw;
+    db.prepare(`
+      INSERT INTO site_settings (key, value, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP)
+      ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP
+    `).run(req.params.key, JSON.stringify(enabled));
+    return res.json({ ok: true, enabled });
   }
   db.prepare(`
     INSERT INTO site_settings (key, value, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP)

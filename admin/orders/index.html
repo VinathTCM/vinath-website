@@ -3715,7 +3715,7 @@ window.escapeHtml = function(s){
     st.classList.add('show');
     fetch(API_BASE + '/admin/site-settings/' + SYNC_KEY, {
       method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
-      body: JSON.stringify(on)
+      body: JSON.stringify({ enabled: on })
     }).then(function(res){
       if(!res.ok){ st.textContent = '保存失败（HTTP ' + res.status + '），请确认是大管理员账号'; return; }
       seniorSyncOn = on;
