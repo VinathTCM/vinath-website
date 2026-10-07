@@ -953,6 +953,16 @@
     <h2 class="partner-title" data-i18n="partnership.title">Partner With VINATH TCM</h2>
     <p class="partner-sub" data-i18n="partnership.subtitle">Bring trusted TCM wellness services and herbal care to your community</p>
     <div class="partner-orgs" data-i18n="partnership.orgs">Nursing Homes · Rehabilitation Centres · Gyms · TCM Herbal Shops · Beauty Salons · TCM Practitioners</div>
+    <div class="partner-pdfs">
+      <div class="partner-pdfs-title" data-i18n="partnership.pdfsTitle">View Partnership Proposals</div>
+      <div class="partner-pdfs-row">
+        <a href="/pdfs/nursing-home-en.pdf" target="_blank" rel="noopener" data-i18n="partnership.pdf.nursing">Nursing Home Proposal</a>
+        <a href="/pdfs/rehab-en.pdf" target="_blank" rel="noopener" data-i18n="partnership.pdf.rehab">Rehab Centre Proposal</a>
+        <a href="/pdfs/gym-en.pdf" target="_blank" rel="noopener" data-i18n="partnership.pdf.gym">Gym Proposal</a>
+        <a href="/pdfs/beauty-en.pdf" target="_blank" rel="noopener" data-i18n="partnership.pdf.beauty">Beauty Salon Proposal</a>
+        <a href="/pdfs/practitioner-en.pdf" target="_blank" rel="noopener" data-i18n="partnership.pdf.practitioner">TCM Practitioner Proposal</a>
+      </div>
+    </div>
     <a class="partner-cta" id="waPartner" href="https://wa.me/601145799499?text=Hello%2C%20I%20would%20like%20to%20explore%20working%20with%20VINATH%20TCM." target="_blank" rel="noopener" data-i18n="partnership.cta">Let's Talk</a>
   </div>
   <style>
@@ -966,7 +976,15 @@
       font-family:var(--font-body); font-weight:600; font-size:16px; text-decoration:none; padding:16px 44px; border-radius:100px;
       box-shadow:0 14px 34px rgba(0,0,0,.22); transition:transform .22s ease, box-shadow .22s ease, background .22s ease; }
     .partner-cta:hover { transform:translateY(-3px); box-shadow:0 20px 40px rgba(0,0,0,.3); background:#BF9455; }
-    @media (max-width:560px){ .partner-band { padding:66px 6% 76px; } .partner-cta { width:100%; } }
+    .partner-pdfs { margin-bottom:34px; }
+    .partner-pdfs-title { font-family:var(--font-mono); font-size:clamp(11px,1.5vw,13px); letter-spacing:.14em; text-transform:uppercase; opacity:.66; margin-bottom:14px; }
+    .partner-pdfs-row { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; }
+    .partner-pdfs-row a { display:inline-flex; align-items:center; gap:6px; padding:10px 20px; border:1px solid rgba(232,199,148,.38); border-radius:100px;
+      color:var(--warm-white); font-family:var(--font-body); font-size:clamp(12px,1.5vw,14px); text-decoration:none; opacity:.92;
+      transition:background .2s ease, opacity .2s ease, transform .2s ease; }
+    .partner-pdfs-row a:hover { background:rgba(232,199,148,.14); opacity:1; transform:translateY(-2px); }
+    .partner-pdfs-row a::before { content:""; width:7px; height:9px; background:var(--gold); clip-path:polygon(0 0,100% 0,100% 82%,50% 100%,0 82%); }
+    @media (max-width:560px){ .partner-band { padding:66px 6% 76px; } .partner-cta { width:100%; } .partner-pdfs-row a { flex:1 1 42%; justify-content:center; } }
   </style>
 </section>
 
