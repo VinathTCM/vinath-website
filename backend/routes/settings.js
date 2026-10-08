@@ -18,6 +18,7 @@ router.get('/site-settings/:key', (req, res) => {
 router.put('/admin/site-settings/:key', authMiddleware, requireRole('SENIOR', 'PRACTITIONER'), (req, res) => {
   if(!ALLOWED_KEYS.includes(req.params.key)) return res.status(404).json({ error: '不存在这个设置项' });
   // 按医师的居家会诊价格表：PRACTITIONER 只能写自己名下的那份，SENIOR 可管理全部
+  // 保存采用「合并」策略：只更新本次提交的医师，其他医师已保存的价格表原样保留，避免互相覆盖
   if(req.params.key === 'consult_price_images_by_doc'){
     const body = req.body || {};
     const docIds = Object.keys(body);
@@ -26,6 +27,20 @@ router.put('/admin/site-settings/:key', authMiddleware, requireRole('SENIOR', 'P
         return res.status(403).json({ error: '只能保存自己名下的价格表' });
       }
     }
+    let merged = {};
+    const existingRow = db.prepare('SELECT value FROM site_settings WHERE key = ?').get('consult_price_images_by_doc');
+    if(existingRow && existingRow.value){
+      try {
+        const parsed = JSON.parse(existingRow.value);
+        if(parsed && typeof parsed === 'object' && !Array.isArray(parsed)) merged = parsed;
+      } catch(e){ merged = {}; }
+    }
+    Object.assign(merged, body);
+    db.prepare(`
+      INSERT INTO site_settings (key, value, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP)
+      ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP
+    `).run('consult_price_images_by_doc', JSON.stringify(merged));
+    return res.json({ ok: true, saved: docIds });
   }
   // 大管理员同步出诊开关：只有大管理员能改；值本身是布尔（express 严格 JSON 解析不接受顶层裸布尔，
   // 前端传 {enabled:true/false} 对象，这里归一化后存裸布尔，GET 时语义清晰）
