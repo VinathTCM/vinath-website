@@ -2,8 +2,32 @@
 const express = require('express');
 const db = require('../db');
 const { authMiddleware, requireRole, logAdminAction } = require('../middleware/auth');
+const sharp = require('sharp');
 
 const router = express.Router();
+
+// 内存缩略图缓存：key=原图base64前64位, value=120x120 webp dataURL
+// 列表页每张图压成 ~5KB 缩略图，30个商品=150KB（原来8MB），浏览器还能再缓存
+const thumbCache = new Map();
+async function makeThumb(dataUrl){
+  if(!dataUrl) return null;
+  const cacheKey = dataUrl.slice(0, 64) + ':' + dataUrl.length;
+  if(thumbCache.has(cacheKey)) return thumbCache.get(cacheKey);
+  try {
+    const base64 = dataUrl.split(',')[1] || dataUrl;
+    const buf = Buffer.from(base64, 'base64');
+    const out = await sharp(buf)
+      .resize(120, 120, { fit: 'cover', position: 'center' })
+      .webp({ quality: 70 })
+      .toBuffer();
+    const thumbUrl = 'data:image/webp;base64,' + out.toString('base64');
+    if(thumbCache.size > 500) thumbCache.clear(); // 防内存泄漏
+    thumbCache.set(cacheKey, thumbUrl);
+    return thumbUrl;
+  } catch(e){
+    return dataUrl; // 压缩失败就返回原图，不影响功能
+  }
+}
 
 // 公开给客户端看的字段——绝不能包含成本价、批发价这些内部数据，
 // 不然客户打开浏览器网络请求面板就能看到进货成本，这是真实的商业机密泄露风险
@@ -16,12 +40,13 @@ function serializePublicProduct(p){
     tags: JSON.parse(p.tags||'[]'), journeys: JSON.parse(p.journeys||'[]'), images: JSON.parse(p.images||'[]')
   };
 }
-// 列表页专用：只返回第一张图片，大幅减少API响应体积
-function serializePublicProductList(p){
+// 列表页专用：只返回第一张图的极小缩略图（~5KB），大幅减少API响应体积
+async function serializePublicProductList(p){
   const allImages = JSON.parse(p.images||'[]');
+  const thumb = allImages.length ? await makeThumb(allImages[0]) : null;
   return {
     ...serializePublicProduct(p),
-    images: allImages.slice(0, 1),
+    images: thumb ? [thumb] : [],
     imageCount: allImages.length
   };
 }
@@ -31,20 +56,21 @@ function serializeAdminProduct(p){
     wholesalePrice:p.wholesale_price, wholesaleTrialPrice:p.wholesale_trial_price,
     couponPrice:p.coupon_price, couponTrialPrice:p.coupon_trial_price };
 }
-// 管理员列表专用：只返回第一张图片，大幅减少API响应体积（编辑时再单独拉全部图片）
-function serializeAdminProductList(p){
+// 管理员列表专用：只返回第一张图的极小缩略图（~5KB），大幅减少API响应体积（编辑时再单独拉全部图片）
+async function serializeAdminProductList(p){
   const allImages = JSON.parse(p.images||'[]');
+  const thumb = allImages.length ? await makeThumb(allImages[0]) : null;
   return {
     ...serializeAdminProduct(p),
-    images: allImages.slice(0, 1),
+    images: thumb ? [thumb] : [],
     imageCount: allImages.length
   };
 }
 
 // ---- 公开接口：客户端商店/商品详情页调用，不需要登录 ----
-router.get('/products', (req, res) => {
+router.get('/products', async (req, res) => {
   const rows = db.prepare('SELECT * FROM products WHERE active = 1 ORDER BY created_at DESC').all();
-  res.json(rows.map(serializePublicProductList));
+  res.json(await Promise.all(rows.map(serializePublicProductList)));
 });
 
 router.get('/products/:id', (req, res) => {
@@ -59,9 +85,9 @@ router.get('/categories', (req, res) => {
 });
 
 // ---- 管理接口：需要大管理员登录，对应之前"商品管理"后台的功能 ----
-router.get('/admin/products', authMiddleware, requireRole('SENIOR'), (req, res) => {
+router.get('/admin/products', authMiddleware, requireRole('SENIOR'), async (req, res) => {
   const rows = db.prepare('SELECT * FROM products ORDER BY created_at DESC').all();
-  res.json(rows.map(serializeAdminProductList));
+  res.json(await Promise.all(rows.map(serializeAdminProductList)));
 });
 
 function productFieldsFromBody(b){
