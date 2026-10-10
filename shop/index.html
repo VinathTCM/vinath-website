@@ -125,7 +125,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .wish-filter-chip.on{ background:var(--clay); border-color:var(--clay); color:#fff; }
 .wish-filter-chip svg{ flex:none; }
 .prod-name{ font-family:var(--font-serif); font-weight:700; font-size:14.5px; margin-top:9px; }
-.skel{ background:linear-gradient(90deg,#ece5d8 25%,#f5efe4 50%,#ece5d8 75%); background-size:200% 100%; animation:skelShimmer 1.4s infinite; border-radius:14px; }
+.skel{ background:linear-gradient(90deg,#d9cfbe 25%,#ece4d3 50%,#d9cfbe 75%); background-size:200% 100%; animation:skelShimmer 1.4s infinite; border-radius:14px; }
 @keyframes skelShimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
 .skel-card .skel-thumb{ width:100%; aspect-ratio:4/3; border-radius:14px; }
 .skel-card .skel-line1{ height:14px; margin-top:10px; border-radius:6px; }
@@ -296,7 +296,11 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
     <div class="feat-title">当季主打</div>
     <div class="feat-sub">SEASONAL PICKS</div>
-    <div class="feat-grid" id="featGrid"></div>
+    <div class="feat-grid" id="featGrid">
+      <div class="skel-card"><div class="skel" style="aspect-ratio:4/5;"></div><div class="skel skel-line1"></div><div class="skel skel-line2"></div></div>
+      <div class="skel-card"><div class="skel" style="aspect-ratio:4/5;"></div><div class="skel skel-line1"></div><div class="skel skel-line2"></div></div>
+      <div class="skel-card"><div class="skel" style="aspect-ratio:4/5;"></div><div class="skel skel-line1"></div><div class="skel skel-line2"></div></div>
+    </div>
   </div>
 </div>
 
