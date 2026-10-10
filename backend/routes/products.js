@@ -40,13 +40,12 @@ function serializePublicProduct(p){
     tags: JSON.parse(p.tags||'[]'), journeys: JSON.parse(p.journeys||'[]'), images: JSON.parse(p.images||'[]')
   };
 }
-// 列表页专用：只返回第一张图的极小缩略图（~5KB），大幅减少API响应体积
-async function serializePublicProductList(p){
+// 列表页专用：前台商店给客户看，保持原图清晰（只取第一张，详情页才给全部）
+function serializePublicProductList(p){
   const allImages = JSON.parse(p.images||'[]');
-  const thumb = allImages.length ? await makeThumb(allImages[0]) : null;
   return {
     ...serializePublicProduct(p),
-    images: thumb ? [thumb] : [],
+    images: allImages.slice(0, 1),
     imageCount: allImages.length
   };
 }
@@ -68,9 +67,9 @@ async function serializeAdminProductList(p){
 }
 
 // ---- 公开接口：客户端商店/商品详情页调用，不需要登录 ----
-router.get('/products', async (req, res) => {
+router.get('/products', (req, res) => {
   const rows = db.prepare('SELECT * FROM products WHERE active = 1 ORDER BY created_at DESC').all();
-  res.json(await Promise.all(rows.map(serializePublicProductList)));
+  res.json(rows.map(serializePublicProductList));
 });
 
 router.get('/products/:id', (req, res) => {
