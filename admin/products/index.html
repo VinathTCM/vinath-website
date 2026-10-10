@@ -868,7 +868,7 @@ function applyPreset(editor, type) {
       var tier = stockTier(p.stockQty);
       html += '<tr'+(tier?' class="stock-'+tier+'"':'')+'>'
         + '<td><div class="name-cell">'
-          + (p.imgs && p.imgs.length ? '<img class="thumb" src="'+p.imgs[0]+'">' : '<span class="thumb">'+ICON[p.type]+'</span>')
+          + (p.imgs && p.imgs.length ? '<img class="thumb" src="'+p.imgs[0]+'">' : '<span class="thumb">'+(ICON[p.type]||'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><line x1="8" y1="12" x2="16" y2="12"/></svg>')+'</span>')
           + '<span class="pname">'+(p.nameEn||p.name)+(p.nameEn?'<span class="pname-cn">'+p.name+'</span>':'')+'</span>'
           + (p.featured ? '<span class="feat-star" title="当季主打"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7-5.4-4.7 7.1-.7z"/></svg></span>' : '')
           + '</div></td>'
