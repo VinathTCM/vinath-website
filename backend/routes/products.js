@@ -31,13 +31,12 @@ function serializeAdminProduct(p){
     wholesalePrice:p.wholesale_price, wholesaleTrialPrice:p.wholesale_trial_price,
     couponPrice:p.coupon_price, couponTrialPrice:p.coupon_trial_price };
 }
-// 管理员列表专用：完全不返回 images base64（每张图几百KB，30个商品=8MB，拖慢后台），
-// 只保留 imageCount。列表前端用类型图标占位，点"编辑"时再单独拉 /products/:id 拿全部图
+// 管理员列表专用：只返回第一张图片，大幅减少API响应体积（编辑时再单独拉全部图片）
 function serializeAdminProductList(p){
   const allImages = JSON.parse(p.images||'[]');
   return {
     ...serializeAdminProduct(p),
-    images: [],
+    images: allImages.slice(0, 1),
     imageCount: allImages.length
   };
 }
