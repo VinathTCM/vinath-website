@@ -1952,7 +1952,7 @@ window.escapeHtml = function(s){
     var shipLabel = shipFee === 0 ? shipFreeNoteZh(o.region) : '运费（'+(o.region==='west'?'西马':'东马')+'）';
     var itemsHtml = o.items.map(function(i){
       return '<div class="detail-item-row"><span>'+i.name+' ×'+i.qty+'</span><span>MYR '+(i.qty*i.price).toFixed(2)+'</span></div>';
-    }).join('') + '<div class="detail-item-row"><span>'+shipLabel+'</span><span>MYR '+shipFee.toFixed(2)+'</span></div>'
+    }).join('') + '<div class="detail-item-row" style="align-items:center;"><span>'+shipLabel+' <button type="button" id="editShipBtn" style="font-size:11px;background:none;border:1px solid var(--line);border-radius:6px;padding:2px 8px;cursor:pointer;color:var(--ink-soft);margin-left:6px;">修改</button></span><span id="shipFeeDisplay">MYR '+shipFee.toFixed(2)+'</span></div>'
       + '<div class="detail-item-row total"><span>总计</span><span>MYR '+orderTotal(o).toFixed(2)+'</span></div>';
     var html = ''
       + '<div class="detail-section"><div class="detail-section-title">基本信息</div>'
@@ -2029,6 +2029,29 @@ window.escapeHtml = function(s){
     document.getElementById('exportTrackBtn').addEventListener('click', function(){
       printTrackingLabel(o.id, o.name, o.address+', '+o.city+' '+o.postcode+', '+o.state, 'bi');
     });
+    var editShipBtn = document.getElementById('editShipBtn');
+    if(editShipBtn){
+      editShipBtn.addEventListener('click', async function(){
+        var cur = Number(o.shipping)||0;
+        var val = prompt('输入运费金额（MYR）：', cur.toFixed(2));
+        if(val === null) return;
+        var newShip = parseFloat(val);
+        if(isNaN(newShip) || newShip < 0){ showToast('请输入有效数字'); return; }
+        o.shipping = newShip;
+        saveOrdersToStorage();
+        openOrderPanel(id);
+        renderOrders(); buildOrderFilters(); renderSummary();
+        if(o._backendId && authToken){
+          try {
+            await fetch(API_BASE + '/admin/orders/' + o._backendId + '/shipping', {
+              method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+              body: JSON.stringify({ shipping: newShip })
+            });
+          } catch(e){ console.error('运费同步到后端失败:', e); showToast('运费已本地更新，但同步服务器失败'); }
+        }
+        showToast('运费已更新为 MYR ' + newShip.toFixed(2));
+      });
+    }
     openPanel();
   }
 
