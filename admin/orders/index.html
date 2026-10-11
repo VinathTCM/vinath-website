@@ -1150,7 +1150,11 @@ window.escapeHtml = function(s){
   }
 
   function orderSubtotal(o){ return (Array.isArray(o.items)?o.items:[]).reduce(function(s,i){ return s+(Number(i.qty)||0)*(Number(i.price)||0); },0); }
-  function orderShipping(o){ return orderSubtotal(o) >= shipFreeThreshold(o.region || 'west') ? 0 : (o.shipping||0); }
+  function orderShipping(o){
+    // 东马不参与免邮门槛，始终按实际收取的运费显示
+    if(o.region === 'east') return Number(o.shipping)||0;
+    return orderSubtotal(o) >= shipFreeThreshold('west') ? 0 : (Number(o.shipping)||0);
+  }
   function orderTotal(o){ return orderSubtotal(o) + orderShipping(o); }
   // [stated bug fix] 结算页面告诉客户"提交后订单会标记为待核实付款"，但订单状态那几个字
   // 一直只有"已提交/备货中/已发货/已送达"这4种，没有一个真正叫"待核实付款"的状态——
