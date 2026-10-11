@@ -1151,6 +1151,8 @@ window.escapeHtml = function(s){
 
   function orderSubtotal(o){ return (Array.isArray(o.items)?o.items:[]).reduce(function(s,i){ return s+(Number(i.qty)||0)*(Number(i.price)||0); },0); }
   function orderShipping(o){
+    // 手动改过运费的订单始终用手动值
+    if(o.shippingManual) return Number(o.shipping)||0;
     // 东马不参与免邮门槛，始终按实际收取的运费显示
     if(o.region === 'east') return Number(o.shipping)||0;
     return orderSubtotal(o) >= shipFreeThreshold('west') ? 0 : (Number(o.shipping)||0);
@@ -1951,8 +1953,19 @@ window.escapeHtml = function(s){
     var shipFee = orderShipping(o);
     var shipLabel = shipFee === 0 ? shipFreeNoteZh(o.region) : '运费（'+(o.region==='west'?'西马':'东马')+'）';
     var itemsHtml = o.items.map(function(i){
-      return '<div class="detail-item-row"><span>'+i.name+' ×'+i.qty+'</span><span>MYR '+(i.qty*i.price).toFixed(2)+'</span></div>';
-    }).join('') + '<div class="detail-item-row" style="align-items:center;"><span>'+shipLabel+' <button type="button" id="editShipBtn" style="font-size:11px;background:none;border:1px solid var(--line);border-radius:6px;padding:2px 8px;cursor:pointer;color:var(--ink-soft);margin-left:6px;">修改</button></span><span id="shipFeeDisplay">MYR '+shipFee.toFixed(2)+'</span></div>'
+      var origPrice = i.originalPrice != null ? Number(i.originalPrice) : Number(i.price);
+      var hasDiscount = origPrice > Number(i.price);
+      var priceHtml = hasDiscount
+        ? '<s style="color:#aaa;">MYR '+(origPrice*i.qty).toFixed(2)+'</s> MYR '+(i.qty*Number(i.price)).toFixed(2)
+        : 'MYR '+(i.qty*Number(i.price)).toFixed(2);
+      return '<div class="detail-item-row"><span>'+i.name+' ×'+i.qty+'</span><span>'+priceHtml+'</span></div>';
+    }).join('');
+    var origSubtotal = o.items.reduce(function(s,i){ return s + (i.originalPrice != null ? Number(i.originalPrice) : Number(i.price)) * i.qty; },0);
+    var effSubtotal = orderSubtotal(o);
+    if(origSubtotal > effSubtotal){
+      itemsHtml += '<div class="detail-item-row" style="color:#B0503A;"><span>优惠码折扣</span><span>− MYR '+(origSubtotal-effSubtotal).toFixed(2)+'</span></div>';
+    }
+    itemsHtml += '<div class="detail-item-row" style="align-items:center;"><span>'+shipLabel+' <button type="button" id="editShipBtn" style="font-size:11px;background:none;border:1px solid var(--line);border-radius:6px;padding:2px 8px;cursor:pointer;color:var(--ink-soft);margin-left:6px;">修改</button></span><span>MYR '+shipFee.toFixed(2)+'</span></div>'
       + '<div class="detail-item-row total"><span>总计</span><span>MYR '+orderTotal(o).toFixed(2)+'</span></div>';
     var html = ''
       + '<div class="detail-section"><div class="detail-section-title">基本信息</div>'
@@ -2038,6 +2051,7 @@ window.escapeHtml = function(s){
         var newShip = parseFloat(val);
         if(isNaN(newShip) || newShip < 0){ showToast('请输入有效数字'); return; }
         o.shipping = newShip;
+        o.shippingManual = true;
         saveOrdersToStorage();
         openOrderPanel(id);
         renderOrders(); buildOrderFilters(); renderSummary();
@@ -3473,10 +3487,21 @@ window.escapeHtml = function(s){
   function printPackingSlip(o, lang){
     preparePrint('normal');
     var itemsHtml = o.items.map(function(i){
-      return '<tr><td>'+blItem(i.name,lang)+'</td><td class="num">'+i.qty+'</td><td class="num">MYR '+i.price.toFixed(2)+'</td><td class="num">MYR '+(i.qty*i.price).toFixed(2)+'</td></tr>';
+      var origPrice = i.originalPrice != null ? Number(i.originalPrice) : Number(i.price);
+      var hasDiscount = origPrice > Number(i.price);
+      var unitHtml = hasDiscount
+        ? '<s style="color:#999;">MYR '+origPrice.toFixed(2)+'</s> MYR '+Number(i.price).toFixed(2)
+        : 'MYR '+Number(i.price).toFixed(2);
+      return '<tr><td>'+blItem(i.name,lang)+'</td><td class="num">'+i.qty+'</td><td class="num">'+unitHtml+'</td><td class="num">MYR '+(i.qty*Number(i.price)).toFixed(2)+'</td></tr>';
     }).join('');
     var shipFee = orderShipping(o);
     var shipLabel = shipFee === 0 ? shipFreeNoteEn(o.region) : 'Shipping ('+(o.region==='west'?'West Malaysia':'East Malaysia')+')';
+    var origSubtotal = o.items.reduce(function(s,i){ return s + (i.originalPrice != null ? Number(i.originalPrice) : Number(i.price)) * i.qty; },0);
+    var effSubtotal = orderSubtotal(o);
+    var discountRow = '';
+    if(origSubtotal > effSubtotal){
+      discountRow = '<tr style="color:#B0503A;"><td colspan="3">'+(lang==='en'?'Coupon discount':'优惠码折扣')+'</td><td class="num">− MYR '+(origSubtotal-effSubtotal).toFixed(2)+'</td></tr>';
+    }
     var html = ''
       + exportHeader(lang, 'Packing Slip', '装箱清单', o.id, o.date)
       + '<div class="receipt-meta-grid">'
@@ -3487,6 +3512,7 @@ window.escapeHtml = function(s){
       + '</div>'
       + '<table class="receipt-table"><thead><tr><th>'+'Product'+'</th><th class="num">'+'Qty'+'</th><th class="num">'+'Unit Price'+'</th><th class="num">'+'Subtotal'+'</th></tr></thead><tbody>'
       + itemsHtml
+      + discountRow
       + '<tr><td colspan="3">'+shipLabel+'</td><td class="num">MYR '+shipFee.toFixed(2)+'</td></tr>'
       + '<tr class="receipt-total-row"><td colspan="3">'+'Total'+'</td><td class="num">MYR '+orderTotal(o).toFixed(2)+'</td></tr>'
       + '</tbody></table>'
