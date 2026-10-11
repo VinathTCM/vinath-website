@@ -117,6 +117,16 @@ router.put('/admin/orders/:id/verify-payment', authMiddleware, requireRole('SENI
   res.json({ ok: true });
 });
 
+router.put('/admin/orders/:id/shipping', authMiddleware, requireRole('SENIOR', 'FULFILLMENT'), (req, res) => {
+  const { shipping } = req.body;
+  const s = Number(shipping);
+  if(isNaN(s) || s < 0) return res.status(400).json({ error: '运费金额不对' });
+  const result = db.prepare('UPDATE orders SET shipping = ? WHERE id = ?').run(s, req.params.id);
+  if(result.changes === 0) return res.status(404).json({ error: '订单不存在' });
+  logAdminAction(req, 'update', 'order_shipping', req.params.id, '运费改为：RM'+s.toFixed(2));
+  res.json({ ok: true });
+});
+
 // ---- 付款方式：客户结算页面读取，管理员在内容管理里维护 ----
 router.get('/payment-methods', (req, res) => {
   const rows = db.prepare('SELECT * FROM payment_methods WHERE active = 1').all();
