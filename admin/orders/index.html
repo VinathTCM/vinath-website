@@ -1084,6 +1084,27 @@ window.escapeHtml = function(s){
   var orderFilter = null, bookingFilter = null;
   var orderSearchQ = '', bookingSearchQ = '';
   var cachedCouponOwners = [];
+  var cachedProductCatalog = []; // 公开商品目录，用于按名称查原价（划线对比优惠价）
+  async function loadProductCatalog(){
+    try {
+      var res = await fetch(API_BASE + '/products');
+      if(res.ok){
+        var list = await res.json();
+        cachedProductCatalog = list.map(function(p){ return { name:p.name, price:p.price, trial:p.trial, couponPrice:p.couponPrice, couponPriceTrial:p.couponPriceTrial }; });
+      }
+    } catch(e){}
+  }
+  loadProductCatalog();
+  function lookupOriginalPrice(item){
+    // 如果后端已经存了originalPrice就直接用
+    if(item.originalPrice != null) return Number(item.originalPrice);
+    // 否则按商品名从目录查
+    var match = cachedProductCatalog.find(function(p){ return p.name === item.name; });
+    if(!match) return Number(item.price);
+    // 试用装还是正装：用订单价格判断
+    var isTrial = Number(item.price) <= Number(match.trial) + 1;
+    return isTrial ? Number(match.trial) : Number(match.price);
+  }
   var MR_PATIENTS = {}; // key=phone(不带0), value=name — 以病历里的姓名为权威来源
 
   // 历史数据里 treatments 可能存成 JSON 字符串或对象，统一规范成数组，避免 .map/.reduce 崩溃
@@ -1953,14 +1974,14 @@ window.escapeHtml = function(s){
     var shipFee = orderShipping(o);
     var shipLabel = shipFee === 0 ? shipFreeNoteZh(o.region) : '运费（'+(o.region==='west'?'西马':'东马')+'）';
     var itemsHtml = o.items.map(function(i){
-      var origPrice = i.originalPrice != null ? Number(i.originalPrice) : Number(i.price);
+      var origPrice = lookupOriginalPrice(i);
       var hasDiscount = origPrice > Number(i.price);
       var priceHtml = hasDiscount
         ? '<s style="color:#aaa;">MYR '+(origPrice*i.qty).toFixed(2)+'</s> MYR '+(i.qty*Number(i.price)).toFixed(2)
         : 'MYR '+(i.qty*Number(i.price)).toFixed(2);
       return '<div class="detail-item-row"><span>'+i.name+' ×'+i.qty+'</span><span>'+priceHtml+'</span></div>';
     }).join('');
-    var origSubtotal = o.items.reduce(function(s,i){ return s + (i.originalPrice != null ? Number(i.originalPrice) : Number(i.price)) * i.qty; },0);
+    var origSubtotal = o.items.reduce(function(s,i){ return s + lookupOriginalPrice(i) * i.qty; },0);
     var effSubtotal = orderSubtotal(o);
     if(origSubtotal > effSubtotal){
       itemsHtml += '<div class="detail-item-row" style="color:#B0503A;"><span>优惠码折扣</span><span>− MYR '+(origSubtotal-effSubtotal).toFixed(2)+'</span></div>';
@@ -3487,7 +3508,7 @@ window.escapeHtml = function(s){
   function printPackingSlip(o, lang){
     preparePrint('normal');
     var itemsHtml = o.items.map(function(i){
-      var origPrice = i.originalPrice != null ? Number(i.originalPrice) : Number(i.price);
+      var origPrice = lookupOriginalPrice(i);
       var hasDiscount = origPrice > Number(i.price);
       var unitHtml = hasDiscount
         ? '<s style="color:#999;">MYR '+origPrice.toFixed(2)+'</s> MYR '+Number(i.price).toFixed(2)
@@ -3496,7 +3517,7 @@ window.escapeHtml = function(s){
     }).join('');
     var shipFee = orderShipping(o);
     var shipLabel = shipFee === 0 ? shipFreeNoteEn(o.region) : 'Shipping ('+(o.region==='west'?'West Malaysia':'East Malaysia')+')';
-    var origSubtotal = o.items.reduce(function(s,i){ return s + (i.originalPrice != null ? Number(i.originalPrice) : Number(i.price)) * i.qty; },0);
+    var origSubtotal = o.items.reduce(function(s,i){ return s + lookupOriginalPrice(i) * i.qty; },0);
     var effSubtotal = orderSubtotal(o);
     var discountRow = '';
     if(origSubtotal > effSubtotal){
