@@ -1087,23 +1087,32 @@ window.escapeHtml = function(s){
   var cachedProductCatalog = []; // 公开商品目录，用于按名称查原价（划线对比优惠价）
   async function loadProductCatalog(){
     try {
-      var res = await fetch(API_BASE + '/products');
+      var base = (typeof API_BASE !== 'undefined' && API_BASE) || 'https://api.vinathtcm.com/api';
+      var res = await fetch(base + '/products');
       if(res.ok){
         var list = await res.json();
-        cachedProductCatalog = list.map(function(p){ return { name:p.name, price:p.price, trial:p.trial, couponPrice:p.couponPrice, couponPriceTrial:p.couponPriceTrial }; });
+        cachedProductCatalog = list.map(function(p){ return { id:p.id, name:p.name, price:p.price, trial:p.trial, couponPrice:p.couponPrice, couponPriceTrial:p.couponPriceTrial }; });
       }
-    } catch(e){}
+    } catch(e){ console.warn('商品目录加载失败', e); }
   }
   loadProductCatalog();
   function lookupOriginalPrice(item){
-    // 如果后端已经存了originalPrice就直接用
     if(item.originalPrice != null) return Number(item.originalPrice);
-    // 否则按商品名从目录查
-    var match = cachedProductCatalog.find(function(p){ return p.name === item.name; });
+    // 优先按productId匹配
+    var match = null;
+    if(item.productId){
+      match = cachedProductCatalog.find(function(p){ return p.id === item.productId; });
+    }
+    // 再按名称匹配
+    if(!match){
+      match = cachedProductCatalog.find(function(p){ return p.name === item.name; });
+    }
     if(!match) return Number(item.price);
-    // 试用装还是正装：用订单价格判断
-    var isTrial = Number(item.price) <= Number(match.trial) + 1;
-    return isTrial ? Number(match.trial) : Number(match.price);
+    // 试用装还是正装
+    if(item.isTrial){
+      return Number(match.trial) || Number(match.price);
+    }
+    return Number(match.price);
   }
   var MR_PATIENTS = {}; // key=phone(不带0), value=name — 以病历里的姓名为权威来源
 
