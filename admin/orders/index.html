@@ -3460,9 +3460,14 @@ window.escapeHtml = function(s){
     '综合美容调理': 'Comprehensive Beauty Treatment',
     '综合美容调理+面部手法提拉': 'Comprehensive Beauty + Facial Tuina'
   };
-  function itemNameEn(chineseName, explicitEn){
+  function itemNameEn(chineseName, explicitEn, productId){
     if(explicitEn) return explicitEn;
-    // 先从实时商品目录查
+    // 优先按productId查（商品可能改过名）
+    if(productId){
+      var byId = cachedProductCatalog.find(function(p){ return p.id === productId; });
+      if(byId && byId.nameEn) return byId.nameEn;
+    }
+    // 再按名称查实时目录
     var liveMatch = cachedProductCatalog.find(function(p){ return p.name === chineseName; });
     if(liveMatch && liveMatch.nameEn) return liveMatch.nameEn;
     var catalogMatch = findCatalogProduct(chineseName);
@@ -3475,8 +3480,8 @@ window.escapeHtml = function(s){
   // no way to guarantee a translation for arbitrary free-text a future admin might type —
   // the treatment-add row's optional English-label input (see setupTreatCatalog) is the way
   // to close that gap for anything new going forward.
-  function blItem(chineseName, lang, explicitEn){
-    var en = itemNameEn(chineseName, explicitEn);
+  function blItem(chineseName, lang, explicitEn, productId){
+    var en = itemNameEn(chineseName, explicitEn, productId);
     return en || chineseName;
   }
   function exportHeader(lang, docTypeEn, docTypeCn, docNo, docDate){
@@ -3526,7 +3531,7 @@ window.escapeHtml = function(s){
       var unitHtml = hasDiscount
         ? '<s style="color:#999;">MYR '+origPrice.toFixed(2)+'</s> MYR '+Number(i.price).toFixed(2)
         : 'MYR '+Number(i.price).toFixed(2);
-      return '<tr><td>'+blItem(i.name,lang)+'</td><td class="num">'+i.qty+'</td><td class="num">'+unitHtml+'</td><td class="num">MYR '+(i.qty*Number(i.price)).toFixed(2)+'</td></tr>';
+      return '<tr><td>'+blItem(i.name,lang,null,i.productId)+'</td><td class="num">'+i.qty+'</td><td class="num">'+unitHtml+'</td><td class="num">MYR '+(i.qty*Number(i.price)).toFixed(2)+'</td></tr>';
     }).join('');
     var shipFee = orderShipping(o);
     var shipLabel = shipFee === 0 ? shipFreeNoteEn(o.region) : 'Shipping ('+(o.region==='west'?'West Malaysia':'East Malaysia')+')';
