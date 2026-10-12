@@ -3316,7 +3316,7 @@ window.escapeHtml = function(s){
   });
   function itemsSummaryLang(record, lang){
     if(record.typeKey==='order'){
-      return record.items.map(function(i){ return blItem(i.name,lang)+' ×'+i.qty; }).join(lang?', ':'，');
+      return record.items.map(function(i){ return blItem(i.name,lang,null,i.productId)+' ×'+i.qty; }).join(lang?', ':'，');
     }
     if(record.typeKey==='rx'){
       return record.items.map(function(it){ return (it.herbName||'') + ' ' + (it.dosageGrams||'') + 'g'; }).join(lang?', ':'、');
@@ -3563,7 +3563,7 @@ window.escapeHtml = function(s){
   function printWholesalePackingSlip(o, lang){
     preparePrint('normal');
     var itemsHtml = o.items.map(function(i){
-      return '<tr><td>'+blItem(i.name,lang)+'</td><td class="num">'+i.qty+'</td><td class="num">MYR '+i.price.toFixed(2)+'</td><td class="num">MYR '+(i.qty*i.price).toFixed(2)+'</td></tr>';
+      return '<tr><td>'+blItem(i.name,lang,null,i.productId)+'</td><td class="num">'+i.qty+'</td><td class="num">MYR '+i.price.toFixed(2)+'</td><td class="num">MYR '+(i.qty*i.price).toFixed(2)+'</td></tr>';
     }).join('');
     var shipLabel = o.shipping === 0 ? shipFreeNoteEn(o.region) : 'Shipping ('+(o.region==='west'?'West Malaysia':'East Malaysia')+')';
     var html = ''
@@ -3588,7 +3588,7 @@ window.escapeHtml = function(s){
   function printWholesaleInvoice(o, lang){
     preparePrint('normal');
     var itemsHtml = o.items.map(function(i){
-      return '<tr><td>'+blItem(i.name,lang)+'</td><td class="num">'+i.qty+'</td><td class="num">MYR '+i.price.toFixed(2)+'</td><td class="num">MYR '+(i.qty*i.price).toFixed(2)+'</td></tr>';
+      return '<tr><td>'+blItem(i.name,lang,null,i.productId)+'</td><td class="num">'+i.qty+'</td><td class="num">MYR '+i.price.toFixed(2)+'</td><td class="num">MYR '+(i.qty*i.price).toFixed(2)+'</td></tr>';
     }).join('');
     var shipLabel = o.shipping === 0 ? (lang==='en'?shipFreeNoteEn(o.region):shipFreeNoteZh(o.region)) : (lang==='en'?'Shipping ('+(o.region==='west'?'West Malaysia':'East Malaysia')+')':'运费（'+(o.region==='west'?'西马':'东马')+'）');
     var docEn = lang==='en' ? 'WHOLESALE INVOICE' : 'Wholesale Invoice';
@@ -3652,7 +3652,7 @@ window.escapeHtml = function(s){
   function printBookingReceipt(b, lang){
     preparePrint('normal');
     var itemsHtml = b.treatments.map(function(t){
-      return '<tr><td>'+blItem(t.name,lang,t.nameEn)+'</td><td class="num">'+(t.price<0?'—':t.qty)+'</td><td class="num">'+(t.price<0?'—':fmtMYR(t.price))+'</td><td class="num">'+fmtMYR(t.qty*t.price)+'</td></tr>';
+      return '<tr><td>'+blItem(t.name,lang,t.nameEn,t.productId)+'</td><td class="num">'+(t.price<0?'—':t.qty)+'</td><td class="num">'+(t.price<0?'—':fmtMYR(t.price))+'</td><td class="num">'+fmtMYR(t.qty*t.price)+'</td></tr>';
     }).join('');
     var html = ''
       + exportHeader(lang, 'Receipt', '收据', b.id, b.apptDate)
@@ -3692,7 +3692,7 @@ window.escapeHtml = function(s){
   function printBookingReceiptThermal(b, lang){
     preparePrint('thermal');
     var itemsHtml = b.treatments.map(function(t){
-      var nm = blItem(t.name, lang, t.nameEn);
+      var nm = blItem(t.name, lang, t.nameEn, t.productId);
       var sub = (t.price<0 ? '' : ('x'+t.qty+' @ MYR'+t.price.toFixed(2)+'  '));
       return '<div class="t-item"><div class="t-item-name">'+nm+'</div><div class="t-item-sub"><span>'+sub+'</span><span>'+fmtMYR(t.qty*t.price)+'</span></div></div>';
     }).join('');
