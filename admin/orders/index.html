@@ -683,7 +683,7 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
       <div class="closure-add-error" id="closureAddError">请选择一个日期</div>
       <div class="closure-list" id="closureList"></div>
     </div>
-    <div class="note"><b>提示：</b>休诊日期保存后，「居家会诊」预约页面会读取同一份数据来隐藏对应日期。目前设置保存在本机浏览器中，暂未同步到服务器，换设备查看会不同。</div>
+    <div class="note"><b>提示：</b>休诊日期保存后自动同步到服务器，所有设备（包括手机）的「居家会诊」预约页面都会即时生效。</div>
 
     <div class="closure-card">
       <div class="closure-card-title">大管理员同步出诊</div>
@@ -3722,17 +3722,31 @@ window.escapeHtml = function(s){
     window.print();
   }
 
-  // ---- 预约设置: closed dates, read by 居家会诊.html via the same localStorage key ----
+  // ---- 预约设置: closed dates, synced via backend site-settings ----
   var CLOSED_DATES_KEY = 'vinath_booking_closed_dates';
+  var CLOSED_SETTINGS_KEY = 'booking_closed_dates';
+  var closedDatesCache = [];
   function getClosedDates(){
-    try {
-      var raw = localStorage.getItem(CLOSED_DATES_KEY);
-      var list = raw ? JSON.parse(raw) : [];
-      return list.filter(function(item){ return item && item.date && item.date >= TODAY_ISO; });
-    } catch(e){ return []; }
+    return closedDatesCache.filter(function(item){ return item && item.date && item.date >= TODAY_ISO; });
+  }
+  function loadClosedDatesFromServer(){
+    return fetch(API_BASE + '/site-settings/' + CLOSED_SETTINGS_KEY)
+      .then(function(r){ return r.ok ? r.json() : []; })
+      .then(function(list){
+        closedDatesCache = Array.isArray(list) ? list : [];
+        try { localStorage.setItem(CLOSED_DATES_KEY, JSON.stringify(closedDatesCache)); } catch(e){}
+        renderClosureList();
+      })
+      .catch(function(){ closedDatesCache = []; });
   }
   function saveClosedDates(list){
+    closedDatesCache = list;
     try { localStorage.setItem(CLOSED_DATES_KEY, JSON.stringify(list)); } catch(e){}
+    // 同步到后端
+    fetch(API_BASE + '/admin/site-settings/' + CLOSED_SETTINGS_KEY, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+      body: JSON.stringify(list)
+    }).catch(function(){});
   }
   function renderClosureList(){
     var list = getClosedDates().sort(function(a,c){ return a.date < c.date ? -1 : 1; });
@@ -5450,7 +5464,7 @@ window.escapeHtml = function(s){
     if(trashEl) trashEl.style.display = key==='trash' ? '' : 'none';
     if(key==='orders') renderOrders();
     if(key==='bookings'){ await loadServiceReviews(); renderBookings(); }
-    if(key==='settings'){ renderClosureList(); renderAreaList(); }
+    if(key==='settings'){ loadClosedDatesFromServer(); renderAreaList(); }
     if(key==='records') renderRecords();
     if(key==='daily') renderDailyTransactions();
     if(key==='sales') renderSales();

@@ -618,24 +618,27 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   var stage = 1;
   var form = { needs:'', supplement:'', doctor:'', date:null, slot:'', name:'', phone:'', area:'', addressDetail:'' };
 
-  // ---- admin-configured closed dates (set from 订单预约管理 admin tool's "预约设置" tab) ----
-  // Shared via localStorage under the same origin — see note in the admin tool: this only
-  // takes effect for browsers/devices that share that localStorage (i.e. same browser the
-  // admin used), it does not reach other customers' devices without a real backend.
-  var CLOSED_DATES_KEY = 'vinath_booking_closed_dates';
+  // ---- admin-configured closed dates (synced via backend site-settings) ----
+  var CLOSED_SETTINGS_KEY = 'booking_closed_dates';
+  var closedDatesLoaded = {};
+  function loadClosedDatesFromServer(){
+    return fetch('https://api.vinathtcm.com/api/site-settings/' + CLOSED_SETTINGS_KEY)
+      .then(function(r){ return r.ok ? r.json() : []; })
+      .then(function(list){
+        closedDatesLoaded = {};
+        if(Array.isArray(list)){
+          list.forEach(function(item){
+            if(item && item.date){ closedDatesLoaded[item.date] = { reason: item.reason || '', slots: (item.slots && item.slots.length) ? item.slots : null }; }
+          });
+        }
+      })
+      .catch(function(){});
+  }
   function toISODate(d){
     return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
   }
   function getClosedDateSet(){
-    var set = {};
-    try {
-      var raw = localStorage.getItem(CLOSED_DATES_KEY);
-      var list = raw ? JSON.parse(raw) : [];
-      list.forEach(function(item){
-        if(item && item.date){ set[item.date] = { reason: item.reason || '', slots: (item.slots && item.slots.length) ? item.slots : null }; }
-      });
-    } catch(e){}
-    return set;
+    return closedDatesLoaded;
   }
   function getBookableDates(count){
     var dates = [];
@@ -925,6 +928,11 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   }
 
   function renderStage3(){
+    loadClosedDatesFromServer().then(function(){
+      renderStage3Inner();
+    });
+  }
+  function renderStage3Inner(){
     var dates = getBookableDates(21);
     var html = '<div class="hc-stage-title">选择日期与时间</div>'
       + '<div class="hc-stage-hint">周日为休息日，当日下午及公共假期等临时休整日则无法预约。公共假期等临时休诊日期不会出现在下方可选日期中，部分时段停诊则会以划线样式显示在对应时段上。已被其他客户预约的时段同样会划线锁定。</div>'
