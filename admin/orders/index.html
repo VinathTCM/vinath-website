@@ -3837,6 +3837,29 @@ window.escapeHtml = function(s){
       document.getElementById('closureSlotPicker').style.display = closureScope==='partial' ? 'flex' : 'none';
     });
   });
+  document.getElementById('closureDateInput').addEventListener('change', function(){
+    var date = this.value;
+    if(!date) return;
+    var existing = getClosedDates().find(function(item){ return item.date === date; });
+    if(existing){
+      // 已设置过：自动加载已关闭的时段到picker，方便查看/调整
+      if(existing.slots && existing.slots.length){
+        closureScope = 'partial';
+        closurePickedSlots = existing.slots.slice();
+        document.getElementById('closureScopeSeg').querySelectorAll('.seg-btn').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-scope')==='partial'); });
+        document.getElementById('closureSlotPicker').style.display = 'flex';
+      } else {
+        closureScope = 'all';
+        closurePickedSlots = [];
+        document.getElementById('closureScopeSeg').querySelectorAll('.seg-btn').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-scope')==='all'); });
+        document.getElementById('closureSlotPicker').style.display = 'none';
+      }
+      renderClosureSlotPicker();
+      document.getElementById('closureReasonInput').value = existing.reason || '';
+      document.getElementById('closureAddError').textContent = '该日期已有设置（见下方列表），保存会覆盖原有设置';
+      document.getElementById('closureAddError').classList.add('show');
+    }
+  });
   document.getElementById('closureAddBtn').addEventListener('click', function(){
     var dateInput = document.getElementById('closureDateInput');
     var reasonInput = document.getElementById('closureReasonInput');
@@ -3848,12 +3871,7 @@ window.escapeHtml = function(s){
       errEl.classList.add('show');
       return;
     }
-    var list = getClosedDates();
-    if(list.some(function(item){ return item.date === date; })){
-      errEl.textContent = '这个日期已经设置过了，如需调整请先删除原有设置';
-      errEl.classList.add('show');
-      return;
-    }
+    var list = getClosedDates().filter(function(item){ return item.date !== date; });
     errEl.classList.remove('show');
     list.push({date:date, reason:reasonInput.value.trim(), slots: closureScope==='partial' ? closurePickedSlots.slice() : null});
     saveClosedDates(list);
