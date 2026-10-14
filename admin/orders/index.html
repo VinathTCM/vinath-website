@@ -1089,7 +1089,8 @@ window.escapeHtml = function(s){
   async function loadProductCatalog(){
     try {
       var base = (typeof API_BASE !== 'undefined' && API_BASE) || 'https://api.vinathtcm.com/api';
-      var res = await fetch(base + '/products?includeInactive=true');
+      var res = await fetch(base + '/admin/products', { headers: { 'Authorization': 'Bearer ' + authToken } });
+      if(!res.ok) res = await fetch(base + '/products');
       if(res.ok){
         var list = await res.json();
         cachedProductCatalog = list.map(function(p){ return { id:p.id, name:p.name, nameEn:p.nameEn, price:p.price, trial:p.trial_price||p.trial, couponPrice:p.couponPrice, couponPriceTrial:p.couponPriceTrial }; });
@@ -1300,6 +1301,7 @@ window.escapeHtml = function(s){
     setCurrentAdmin(admin);
     renderLoginOverlay();
     loadOrdersAndBookingsFromBackend();
+    loadProductCatalog();
     syncJuniorAdminsFromServer();
     syncServiceAreasFromServer();
     startAutoRefresh();
