@@ -25,4 +25,18 @@ router.get('/admin/audit-log/resource-types', authMiddleware, requireRole('SENIO
   res.json(rows.map(r => r.resource_type));
 });
 
+// 日志完整性校验：按写入顺序重算整条 hash 链，任何一条被修改/删除/插入，
+// 都会在对应位置产生断链。返回断点清单，便于管理员核对日志是否被人动过。
+router.get('/admin/audit-log/integrity', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const rows = db.prepare('SELECT rowid, id, admin_id, admin_name, action, resource_type, resource_id, patient_phone, detail, prev_hash, hash, created_at FROM access_log ORDER BY rowid ASC').all();
+  let prev = null;
+  const broken = [];
+  rows.forEach(r => {
+    const expected = db.computeLogHash(prev, r.admin_id, r.admin_name, r.action, r.resource_type, r.resource_id, r.patient_phone, r.detail, r.created_at);
+    if(expected !== r.hash) broken.push({ rowid: r.rowid, id: r.id, action: r.action, resourceType: r.resource_type });
+    prev = r.hash;
+  });
+  res.json({ ok: broken.length === 0, total: rows.length, broken: broken.slice(0, 50), brokenCount: broken.length });
+});
+
 module.exports = router;

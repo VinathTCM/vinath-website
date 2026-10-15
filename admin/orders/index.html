@@ -890,6 +890,8 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
       <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
         <select id="auditTypeFilter" style="padding:8px 11px;border:1.5px solid var(--line);border-radius:8px;font-family:inherit;font-size:13px;"><option value="">全部类型</option></select>
         <button type="button" class="btn-secondary" id="auditRefreshBtn" style="padding:8px 14px;font-size:13px;">刷新</button>
+        <button type="button" class="btn-secondary" id="auditIntegrityBtn" style="padding:8px 14px;font-size:13px;">校验日志完整性</button>
+        <span id="auditIntegrityResult" style="font-size:13px;"></span>
       </div>
       <div id="auditLogList"></div>
     </div>
@@ -4090,7 +4092,7 @@ window.escapeHtml = function(s){
     payment_method:'支付方式', blacklist:'黑名单', admin_account:'账号管理', admin_password_reset:'密码重置',
     coupon_code:'优惠码', medical_record:'病历访问'
   };
-  var AUDIT_ACTION_LABELS = { view:'查看', create:'新增', update:'修改', delete:'删除' };
+  var AUDIT_ACTION_LABELS = { view:'查看', create:'新增', update:'修改', delete:'删除', soft_delete:'移入回收箱', restore:'恢复', permanent_delete:'永久删除', purge:'彻底删除', update_patient:'修改患者信息', update-patient:'修改患者信息', cleanup_test_data:'清理测试数据' };
   async function loadAuditTypeFilter(){
     try {
       var res = await fetch(API_BASE + '/admin/audit-log/resource-types', { headers: { 'Authorization': 'Bearer ' + authToken } });
@@ -4121,6 +4123,26 @@ window.escapeHtml = function(s){
   }
   document.getElementById('auditTypeFilter').addEventListener('change', renderAuditLog);
   document.getElementById('auditRefreshBtn').addEventListener('click', renderAuditLog);
+  document.getElementById('auditIntegrityBtn').addEventListener('click', async function(){
+    var resEl = document.getElementById('auditIntegrityResult');
+    resEl.textContent = '校验中…';
+    resEl.style.color = 'var(--ink-soft)';
+    try {
+      var res = await fetch(API_BASE + '/admin/audit-log/integrity', { headers: { 'Authorization': 'Bearer ' + authToken } });
+      var data = res.ok ? await res.json() : null;
+      if(!data){ resEl.textContent = '校验失败（接口无响应）'; resEl.style.color = '#B0503A'; return; }
+      if(data.ok){
+        resEl.textContent = '✓ 完整：共 ' + data.total + ' 条日志，链条校验全部通过（无被改动/删除痕迹）';
+        resEl.style.color = '#2E7D32';
+      } else {
+        resEl.textContent = '⚠ 发现 ' + data.brokenCount + ' 处断链（日志可能被改动/删除），共 ' + data.total + ' 条';
+        resEl.style.color = '#B0503A';
+      }
+    } catch(e){
+      resEl.textContent = '校验失败：' + (e && e.message ? e.message : '网络错误');
+      resEl.style.color = '#B0503A';
+    }
+  });
   var cachedSeniorAccounts = [];
   async function renderSeniorList(){
     try {

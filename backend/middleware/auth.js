@@ -68,11 +68,21 @@ function requireModuleAccess(moduleName){
 // 敏感操作也要记下"谁在什么时候做了什么"。复用同一张access_log表(resource_type区分类型)，
 // 各个路由文件都调用这一个函数，不用各自重复写记录逻辑。detail是给人看的一句话摘要（比如
 // "价格从RM39改成RM45"），不是结构化数据，方便审计日志页面直接展示。
-function logAdminAction(req, action, resourceType, resourceId, detail){
+// 每条日志写入时会计算 hash 链（prev_hash → hash），任何一条被改/删都能通过完整性校验发现。
+function appendAuditLog(adminId, adminName, action, resourceType, resourceId, patientPhone, detail){
   try {
-    db.prepare('INSERT INTO access_log (id, admin_id, admin_name, action, resource_type, resource_id, detail) VALUES (?, ?, ?, ?, ?, ?, ?)')
-      .run('log_' + Date.now() + '_' + Math.random().toString(36).slice(2,8), req.admin.sub, req.admin.name, action, resourceType, resourceId||null, detail||null);
+    const last = db.prepare('SELECT hash FROM access_log ORDER BY rowid DESC LIMIT 1').get();
+    const prevHash = last ? last.hash : null;
+    const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' '); // UTC，与 SQLite CURRENT_TIMESTAMP 同格式
+    const hash = db.computeLogHash(prevHash, adminId, adminName, action, resourceType, resourceId, patientPhone, detail, createdAt);
+    db.prepare(`INSERT INTO access_log (id, admin_id, admin_name, action, resource_type, resource_id, patient_phone, detail, prev_hash, hash, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)`)
+      .run('log_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8), adminId, adminName, action, resourceType, resourceId || null, patientPhone || null, detail || null, prevHash, hash, createdAt);
   } catch(e){ console.error('写入审计日志失败:', e); } // 日志写入失败不应该阻断正常业务流程
+}
+
+function logAdminAction(req, action, resourceType, resourceId, detail){
+  if(!req || !req.admin) return;
+  appendAuditLog(req.admin.sub, req.admin.name, action, resourceType, resourceId, null, detail);
 }
 
 function signToken(admin){
@@ -83,4 +93,4 @@ function signToken(admin){
   );
 }
 
-module.exports = { authMiddleware, requireRole, requireModuleAccess, logAdminAction, signToken, JWT_SECRET };
+module.exports = { authMiddleware, requireRole, requireModuleAccess, logAdminAction, appendAuditLog, signToken, JWT_SECRET };

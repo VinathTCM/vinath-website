@@ -10,6 +10,7 @@
 
 const Database = require('better-sqlite3');
 const path = require('path');
+const crypto = require('crypto');
 
 // 数据库文件路径：优先读 DB_PATH 环境变量（生产环境挂载持久磁盘时指向磁盘目录），
 // 默认存到本文件同目录（本地开发用）。
@@ -22,6 +23,14 @@ if (process.env.DB_PATH) {
 const db = new Database(DB_FILE);
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
+
+// 审计日志 hash 链计算：把一条日志的完整内容与前一条 hash 一起做 sha256。
+// 挂到 db 对象上导出（db 是所有路由共用的连接对象，module.exports 保持为 db 不变）。
+// 任何一条日志被修改或删除，都会导致它自身及后续所有日志的 hash 校验失败。
+db.computeLogHash = function(prevHash, adminId, adminName, action, resourceType, resourceId, patientPhone, detail, createdAt){
+  const payload = [prevHash || 'GENESIS', adminId, adminName, action, resourceType, resourceId || '', patientPhone || '', detail || '', createdAt].join('|');
+  return crypto.createHash('sha256').update(payload).digest('hex');
+};
 
 // 安全地为 admins 表添加登录安全字段（检查列是否存在，不存在才添加，不影响现有数据）
 (function addLoginSecurityColumns(){
@@ -340,11 +349,13 @@ db.exec(`
     id TEXT PRIMARY KEY,
     admin_id TEXT NOT NULL,
     admin_name TEXT NOT NULL,
-    action TEXT NOT NULL CHECK(action IN ('view','create','update','delete')),
+    action TEXT NOT NULL,
     resource_type TEXT NOT NULL,
     resource_id TEXT,
     patient_phone TEXT,
     detail TEXT,
+    prev_hash TEXT,
+    hash TEXT,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
   );
 
@@ -378,6 +389,49 @@ db.exec(`
     issued_at TEXT DEFAULT CURRENT_TIMESTAMP
   );
 `);
+
+// access_log 防篡改链迁移：旧表把 action 限制在 view/create/update/delete（CHECK 约束），
+// 导致恢复病历、永久删除、软删订单等敏感操作写入日志时被 SQLite 拒绝、日志静默丢失；
+// 同时旧表没有 hash 链，无法检测日志是否被人改过/删过。
+// 这里重建表：去掉 action 限制 + 加 prev_hash/hash 列，保留全部历史日志并按顺序回填链条。
+(function migrateAccessLog(){
+  try {
+    const tableSql = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='access_log'").get();
+    if(!tableSql) return; // 全新数据库，上方 CREATE 已建好（含 hash 列、无 action 限制）
+    if(tableSql.sql.includes('prev_hash')) return; // 已是最新版本，幂等跳过
+    console.log('检测到 access_log 表是旧版本（action 被 CHECK 限制 + 无防篡改链），正在自动迁移…');
+    db.exec(`
+      CREATE TABLE access_log_new (
+        id TEXT PRIMARY KEY,
+        admin_id TEXT NOT NULL,
+        admin_name TEXT NOT NULL,
+        action TEXT NOT NULL,
+        resource_type TEXT NOT NULL,
+        resource_id TEXT,
+        patient_phone TEXT,
+        detail TEXT,
+        prev_hash TEXT,
+        hash TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+      );
+      INSERT INTO access_log_new (id, admin_id, admin_name, action, resource_type, resource_id, patient_phone, detail, created_at)
+        SELECT id, admin_id, admin_name, action, resource_type, resource_id, patient_phone, detail, created_at FROM access_log;
+      DROP TABLE access_log;
+      ALTER TABLE access_log_new RENAME TO access_log;
+    `);
+    const rows = db.prepare('SELECT rowid, id, admin_id, admin_name, action, resource_type, resource_id, patient_phone, detail, created_at FROM access_log ORDER BY rowid ASC').all();
+    let prev = null;
+    const upd = db.prepare('UPDATE access_log SET prev_hash = ?, hash = ? WHERE rowid = ?');
+    for(const r of rows){
+      const h = db.computeLogHash(prev, r.admin_id, r.admin_name, r.action, r.resource_type, r.resource_id, r.patient_phone, r.detail, r.created_at);
+      upd.run(prev, h, r.rowid);
+      prev = h;
+    }
+    console.log('access_log 迁移完成，已为 ' + rows.length + ' 条历史日志回填防篡改链。');
+  } catch(e){
+    console.warn('access_log 迁移失败（不影响其他功能）:', e.message);
+  }
+})();
 
 // ===== 安全网：在跑任何商品迁移之前，先把商品表全量(含图片base64)备份到持久磁盘 =====
 // 防止迁移误覆盖用户在后台上传的图片/手动修改；保留最近10份，出问题可直接读 JSON 恢复。

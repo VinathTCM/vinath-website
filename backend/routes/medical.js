@@ -1,7 +1,7 @@
 // routes/medical.js —— 电子病历：SENIOR+PRACTITIONER可用，具体问诊字段整体存JSON（字段还可能调整，不为每次调整都写数据库迁移）
 const express = require('express');
 const db = require('../db');
-const { authMiddleware, requireRole, requireModuleAccess } = require('../middleware/auth');
+const { authMiddleware, requireRole, requireModuleAccess, appendAuditLog } = require('../middleware/auth');
 const { visiblePatientPhonesFor } = require('./visibility');
 
 const router = express.Router();
@@ -27,10 +27,8 @@ function serializeRecord(r){
 // 病历属于敏感健康数据，每次查看/创建/修改都记一笔——谁、什么时候、看了哪个患者的记录。
 // 这不是完整的PDPA合规方案，但"数据访问可追溯"是其中的基础一环。
 function logAccess(req, action, recordId, patientPhone){
-  try {
-    db.prepare('INSERT INTO access_log (id, admin_id, admin_name, action, resource_type, resource_id, patient_phone) VALUES (?, ?, ?, ?, ?, ?, ?)')
-      .run('log_' + Date.now() + '_' + Math.random().toString(36).slice(2,8), req.admin.sub, req.admin.name, action, 'medical_record', recordId||null, patientPhone||null);
-  } catch(e){ console.error('写入访问日志失败:', e); } // 日志写入失败不应该阻断正常业务流程
+  if(!req || !req.admin) return;
+  appendAuditLog(req.admin.sub, req.admin.name, action, 'medical_record', recordId || null, patientPhone || null, null);
 }
 
 // 按患者手机号查这个人的全部病历——电子病历自己的时间轴用，也是"合并时间轴"
