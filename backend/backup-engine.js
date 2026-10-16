@@ -62,6 +62,22 @@ function cleanupLocal() {
   }
 }
 
+// 一次性清理历史遗留的本地大快照（早期版本写满磁盘，现改为只发审计导出，本地不再需要这些文件）
+function purgeLegacyBackups() {
+  try {
+    if (!fs.existsSync(BACKUP_DIR)) return 0;
+    const files = fs.readdirSync(BACKUP_DIR).filter(f => /^vinath-.*\.db$/.test(f));
+    let n = 0;
+    files.forEach(f => {
+      try { fs.unlinkSync(path.join(BACKUP_DIR, f)); n++; } catch (e) {}
+    });
+    if (n > 0) console.log('[备份] 清理历史本地快照 ' + n + ' 个');
+    return n;
+  } catch (e) {
+    return 0;
+  }
+}
+
 function humanSize(bytes) {
   if (bytes < 1024) return bytes + ' B';
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
@@ -203,5 +219,8 @@ function startScheduler() {
   setTimeout(check, 45 * 1000);
   setInterval(check, 60 * 60 * 1000);
 }
+
+// 每次部署启动时清理历史遗留本地快照（防止磁盘再次被写满）
+purgeLegacyBackups();
 
 module.exports = { runBackup, startScheduler, smtpConfig, encryptionKey, encryptBuffer, ENC_MAGIC, BACKUP_DIR, DB_FILE };
