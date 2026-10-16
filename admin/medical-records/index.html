@@ -381,6 +381,115 @@ window.scrollTo(0,0);
       ov.querySelector('#verList').innerHTML = '<div style="color:#B71C1C;padding:20px 0;text-align:center;">加载失败：' + escapeHtml(e.message) + '</div>';
     }
   }
+  // ===================== 备份与外部存证（仅大管理员） =====================
+  // 法律依据：MMC《Confidentiality Guidelines》(2011) 第14(g)条「定期备份」、第14(i)条「灾难恢复预案」。
+  // 每日自动把完整数据库与审计日志用 AES-256-GCM 加密后发送到机构外部邮箱，服务器损毁时备份仍在邮箱。
+  function fmtBackupSize(n){
+    n = Number(n) || 0;
+    if(n < 1024) return n + ' B';
+    if(n < 1024*1024) return (n/1024).toFixed(1) + ' KB';
+    return (n/1024/1024).toFixed(2) + ' MB';
+  }
+  async function openBackupModal(){
+    var old = document.getElementById('backupOv'); if(old) old.remove();
+    var ov = document.createElement('div');
+    ov.id = 'backupOv';
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    ov.innerHTML = '<div style="background:#fff;border-radius:14px;width:100%;max-width:820px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.2);">'
+      + '<div style="padding:18px 22px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">'
+      + '<div><div style="font-size:16px;font-weight:700;">💾 备份与外部存证</div>'
+      + '<div style="font-size:12px;color:#7A6F60;margin-top:4px;line-height:1.5;">系统每天自动把完整数据库与审计日志用 AES-256 加密后发送到机构外部邮箱（保留最近30份本地快照）。<br>依据 MMC《Confidentiality Guidelines》(2011) §14(g)(i)「定期备份与灾难恢复」。</div></div>'
+      + '<button class="btn-secondary" id="bkCloseBtn" style="padding:6px 14px;white-space:nowrap;">关闭</button></div>'
+      + '<div id="bkStatus" style="padding:14px 22px;border-bottom:1px solid #eee;"><div style="color:#7A6F60;padding:8px 0;text-align:center;">加载中…</div></div>'
+      + '<div style="padding:10px 22px;border-bottom:1px solid #eee;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">'
+      + '<button class="btn-primary" id="bkRunBtn" style="padding:8px 18px;">▶ 立即备份并发送</button>'
+      + '<span id="bkRunRes" style="font-size:12.5px;"></span></div>'
+      + '<div id="bkList" style="padding:12px 22px;overflow-y:auto;flex:1;"></div>'
+      + '</div>';
+    document.body.appendChild(ov);
+    function close(){ ov.remove(); }
+    ov.querySelector('#bkCloseBtn').addEventListener('click', close);
+    ov.addEventListener('click', function(ev){ if(ev.target===ov) close(); });
+
+    function renderStatus(j){
+      var c = j.configured || {};
+      var emailBadge = c.email
+        ? '<span style="background:#2E7D32;color:#fff;border-radius:10px;padding:2px 10px;font-size:11.5px;">✅ 外部邮箱已配置</span>'
+        : '<span style="background:#B71C1C;color:#fff;border-radius:10px;padding:2px 10px;font-size:11.5px;">⚠️ 外部邮箱未配置</span>';
+      var last = j.lastSuccessAt ? fmtLogTime(j.lastSuccessAt) + '（马来西亚时间）' : '从未成功备份';
+      var html = '<div style="display:flex;flex-wrap:wrap;gap:10px 26px;font-size:12.8px;line-height:2;">'
+        + '<div>外发存证：' + emailBadge + '</div>'
+        + '<div>收件邮箱：<b>' + escapeHtml(c.emailTo || '—') + '</b></div>'
+        + '<div>最近成功备份：<b>' + last + '</b></div>'
+        + '</div>';
+      if(!c.email){
+        html += '<div style="margin-top:8px;font-size:12px;color:#B0503A;line-height:1.6;">尚未在 Render 配置 BACKUP_SMTP_* 环境变量，目前只做服务器本地备份，服务器整体丢失时备份会一起没，请尽快配置外部邮箱。</div>';
+      }
+      ov.querySelector('#bkStatus').innerHTML = html;
+    }
+    function renderRuns(runs){
+      if(!runs || !runs.length){
+        ov.querySelector('#bkList').innerHTML = '<div style="color:#7A6F60;padding:20px 0;text-align:center;">暂无备份记录</div>';
+        return;
+      }
+      ov.querySelector('#bkList').innerHTML = runs.map(function(r){
+        var kindBadge = r.kind === 'manual'
+          ? '<span style="background:#6A4C93;color:#fff;border-radius:10px;padding:1px 9px;font-size:11px;">手动</span>'
+          : '<span style="background:#7A6F60;color:#fff;border-radius:10px;padding:1px 9px;font-size:11px;">自动</span>';
+        var localBadge = r.ok
+          ? '<span style="color:#2E7D32;font-size:11.5px;">本地✓</span>'
+          : '<span style="color:#B71C1C;font-size:11.5px;">本地失败</span>';
+        var mailBadge;
+        if(!r.email_configured) mailBadge = '<span style="color:#A89884;font-size:11.5px;">邮件未配置</span>';
+        else if(r.email_ok) mailBadge = '<span style="color:#2E7D32;font-size:11.5px;">邮件✓</span>';
+        else mailBadge = '<span style="color:#B71C1C;font-size:11.5px;">邮件失败：' + escapeHtml(r.email_error || '') + '</span>';
+        return '<div style="padding:10px 2px;border-bottom:1px dashed #E8E0D4;font-size:12.5px;">'
+          + '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;">'
+          + '<div><b>' + fmtLogTime(r.finished_at || r.started_at) + '</b> ' + kindBadge + ' ' + localBadge + ' ' + mailBadge + '</div>'
+          + '<div style="color:#7A6F60;">' + fmtBackupSize(r.size_bytes) + ' · 日志 ' + (r.log_count||0) + ' 条 · 版本 ' + (r.version_count||0) + ' 条</div>'
+          + '</div>'
+          + (r.triggered_by_name ? '<div style="color:#A89884;font-size:11.5px;margin-top:3px;">操作人：' + escapeHtml(r.triggered_by_name) + '</div>' : '')
+          + (!r.ok && r.email_error ? '<div style="color:#B71C1C;font-size:11.5px;margin-top:3px;">' + escapeHtml(r.email_error) + '</div>' : '')
+          + '</div>';
+      }).join('');
+    }
+
+    async function load(){
+      try {
+        var res = await fetch(API_BASE + '/admin/backup/status', { headers: { 'Authorization': 'Bearer ' + authToken } });
+        if(!res.ok) throw new Error('http ' + res.status);
+        var j = await res.json();
+        renderStatus(j);
+        renderRuns(j.runs);
+        return j;
+      } catch(e){
+        ov.querySelector('#bkStatus').innerHTML = '<div style="color:#B71C1C;padding:8px 0;text-align:center;">加载失败：' + escapeHtml(e.message) + '</div>';
+      }
+    }
+    ov.querySelector('#bkRunBtn').addEventListener('click', async function(){
+      var btn = this, resEl = ov.querySelector('#bkRunRes');
+      btn.disabled = true; resEl.style.color = '#7A6F60'; resEl.textContent = '正在备份并发送，请稍候（约10–30秒）…';
+      try {
+        var res = await fetch(API_BASE + '/admin/backup/trigger', {
+          method: 'POST', headers: { 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json' }, body: '{}'
+        });
+        var r = await res.json();
+        if(r.ok && r.emailConfigured && r.emailOk){
+          resEl.style.color = '#2E7D32'; resEl.textContent = '✅ 备份成功，加密邮件已发送到机构邮箱。';
+        } else if(r.ok && !r.emailConfigured){
+          resEl.style.color = '#B5651D'; resEl.textContent = '✅ 本地备份成功；外部邮箱未配置，未发送邮件。';
+        } else if(r.ok && r.emailConfigured && !r.emailOk){
+          resEl.style.color = '#B71C1C'; resEl.textContent = '⚠️ 本地备份成功，但邮件发送失败：' + (r.emailError || '未知错误');
+        } else {
+          resEl.style.color = '#B71C1C'; resEl.textContent = '❌ 备份失败：' + (r.error || '未知错误');
+        }
+      } catch(e){ resEl.style.color = '#B71C1C'; resEl.textContent = '❌ 失败：' + e.message; }
+      btn.disabled = false;
+      await load();
+    });
+
+    load();
+  }
   function treatName(t){
     if(!t) return '';
     return t.nameEn ? t.name + ' (' + t.nameEn + ')' : t.name;
@@ -755,7 +864,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       + '<button class="btn-primary" id="newRecordBtn">+ 新建病历</button>'
       + '<button class="btn-secondary" id="gotoLedgerBtn" style="margin-left:8px;">账本导出</button>'
       + (isSenior ? '<button class="btn-primary" id="trashBtn" style="margin-left:8px;background:var(--ink-soft,#999);border-color:transparent;">回收箱</button>' : '')
-      + (isSenior ? '<button class="btn-secondary" id="allAuditBtn" style="margin-left:8px;">📋 操作日志</button>' : '')
+      + (isSenior ? '<button class="btn-secondary" id="allAuditBtn" style="margin-left:8px;">📋 操作日志</button><button class="btn-secondary" id="allBackupBtn" style="margin-left:8px;">💾 备份存证</button>' : '')
       + '</div>'
       + '<div class="card"><div class="section-title">患者列表</div>'
       + (list.length ? list.map(function(p){
@@ -793,6 +902,8 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     if(gotoL) gotoL.addEventListener('click', function(){ view='ledger'; render(); });
     var allAudit = document.getElementById('allAuditBtn');
     if(allAudit) allAudit.addEventListener('click', function(){ openAuditLogModal(null, null); });
+    var bkBtn = document.getElementById('allBackupBtn');
+    if(bkBtn) bkBtn.addEventListener('click', function(){ openBackupModal(); });
   }
 
   function refreshCurrentView(){ if(view==='form') view='timeline'; render(); }

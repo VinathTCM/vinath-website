@@ -74,6 +74,7 @@ app.use('/api', require('./routes/settings'));
 app.use('/api', require('./routes/staff-chat'));
 app.use('/api', require('./routes/reviews'));
 app.use('/api', require('./routes/audit'));
+app.use('/api', require('./routes/backup'));
 app.use('/api', require('./routes/cleanup'));
 // tmt-translate 路由已停用（国际版无免费额度，改用MyMemory免费API）
 
@@ -82,6 +83,9 @@ app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISO
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`VINATH 后端已启动，监听端口 ${PORT}`);
+  // 每日自动备份调度（启动后45秒检查一次，之后每小时检查；超过24小时未备份就自动跑）
+  try { require('./backup-engine').startScheduler(); }
+  catch (e) { console.error('备份调度器启动失败:', e.message); }
 });
 
 module.exports = app;

@@ -256,6 +256,26 @@ db.exec(`
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
   );
 
+  -- 备份执行记录表：每次本地备份/外部加密邮件备份的结果都落表（只追加），
+  -- 配合 MMC《Confidentiality Guidelines》(2011) 第14(g)(i)条"定期备份与灾难恢复"要求。
+  CREATE TABLE IF NOT EXISTS backup_runs (
+    id TEXT PRIMARY KEY,
+    kind TEXT NOT NULL DEFAULT 'auto',
+    started_at TEXT NOT NULL,
+    finished_at TEXT,
+    ok INTEGER DEFAULT 0,
+    local_path TEXT,
+    size_bytes INTEGER DEFAULT 0,
+    log_count INTEGER DEFAULT 0,
+    version_count INTEGER DEFAULT 0,
+    hash_tip TEXT,
+    email_configured INTEGER DEFAULT 0,
+    email_ok INTEGER DEFAULT 0,
+    email_error TEXT,
+    triggered_by_id TEXT,
+    triggered_by_name TEXT
+  );
+
   CREATE TABLE IF NOT EXISTS prescriptions (
     id TEXT PRIMARY KEY,
     patient_phone TEXT NOT NULL,
