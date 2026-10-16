@@ -1,7 +1,7 @@
 // backup-engine.js —— 每日自动备份 + 外部加密邮件存证
 //
 // 三层保护，对应 MMC《Confidentiality Guidelines》(2011) §14(g)(i)（定期备份/灾难恢复）：
-//   1. 本地备份：用 better-sqlite3 的 .backup() 做一致性快照，存到 backups/（保留最近2份，防小磁盘写满）
+//   1. 本地备份：用 better-sqlite3 的 .backup() 做一致性快照，存到 backups/（保留最近1份，防小磁盘写满）
 //   2. 加密：完整库快照与审计导出用 AES-256-GCM 加密，密钥只来自服务器环境变量
 //   3. 外发：把加密附件发送到机构指定邮箱（独立于服务器，服务器损毁/账号被黑都删不掉邮件）
 //
@@ -17,7 +17,7 @@ const DB_FILE = process.env.DB_PATH || path.join(__dirname, 'vinath.db');
 // 本地备份目录：默认跟随数据库文件所在目录（生产环境 DB_PATH 指向持久磁盘时，备份自动落在同一磁盘）；
 // 也可用 BACKUP_DIR 单独覆盖。
 const BACKUP_DIR = process.env.BACKUP_DIR || path.join(path.dirname(DB_FILE), 'backups');
-const KEEP_LOCAL = 2;
+const KEEP_LOCAL = 1;
 const INTERVAL_MS = 24 * 60 * 60 * 1000;
 const ENC_MAGIC = 'VBENC001';
 
@@ -142,7 +142,6 @@ async function runBackup(options = {}) {
     if (cfg) {
       try {
         if (!nodemailer) throw new Error('nodemailer 未安装（请在后端目录执行 npm install）');
-        const encDb = encryptBuffer(dbBuf);
         const encAudit = encryptBuffer(Buffer.from(JSON.stringify(auditPayload), 'utf8'));
         const to = process.env.BACKUP_EMAIL_TO || cfg.auth.user;
         const transporter = nodemailer.createTransport({
@@ -156,12 +155,12 @@ async function runBackup(options = {}) {
   <p style="margin:4px 0">Time (UTC): <b>${startedAt}</b></p>
   <p style="margin:4px 0">Type: <b>${kind}</b>${triggeredByName ? ' (' + triggeredByName + ')' : ''}</p>
   <p style="margin:4px 0">Audit log entries: <b>${result.logCount}</b>　Record versions: <b>${result.versionCount}</b></p>
-  <p style="margin:4px 0">Encrypted database size: <b>${humanSize(result.sizeBytes)}</b></p>
+  <p style="margin:4px 0">Full database snapshot: <b>${humanSize(result.sizeBytes)}</b> (kept on server)</p>
   <p style="margin:4px 0;word-break:break-all">Hash-chain tip: <code>${result.hashTip}</code></p>
   <hr style="border:0;border-top:1px solid #ddd"/>
-  <p style="font-size:12px;color:#7A6F60">附件为 AES-256-GCM 加密文件，解密密钥仅保存在服务器环境变量中，本邮件不含密钥。
+  <p style="font-size:12px;color:#7A6F60">本邮件附 AES-256-GCM 加密的审计导出（操作日志与版本链），完整数据库快照保存在服务器本地。解密密钥仅保存在服务器环境变量中，本邮件不含密钥。
   这是自动化合规备份邮件，请勿删除；如非本人操作收到此邮件，请立即检查系统。<br/>
-  Attachments are AES-256-GCM encrypted. The decryption key is held only in the server environment and is never sent by email.</p>
+  This email carries an AES-256-GCM encrypted audit export (access log and record-version chain). The full database snapshot is kept on the server. The decryption key is held only in the server environment and is never sent by email.</p>
 </div>`;
         await transporter.sendMail({
           from: `VINATH TCM Backup <${cfg.auth.user}>`,
@@ -169,7 +168,6 @@ async function runBackup(options = {}) {
           subject,
           html,
           attachments: [
-            { filename: `vinath-${stamp}.db.enc`, content: encDb, contentType: 'application/octet-stream' },
             { filename: `vinath-audit-${stamp}.json.enc`, content: encAudit, contentType: 'application/octet-stream' }
           ]
         });
