@@ -1,7 +1,7 @@
 // backup-engine.js —— 每日自动备份 + 外部加密邮件存证
 //
 // 三层保护，对应 MMC《Confidentiality Guidelines》(2011) §14(g)(i)（定期备份/灾难恢复）：
-//   1. 本地备份：用 better-sqlite3 的 .backup() 做一致性快照，存到 backups/（保留最近30份）
+//   1. 本地备份：用 better-sqlite3 的 .backup() 做一致性快照，存到 backups/（保留最近2份，防小磁盘写满）
 //   2. 加密：完整库快照与审计导出用 AES-256-GCM 加密，密钥只来自服务器环境变量
 //   3. 外发：把加密附件发送到机构指定邮箱（独立于服务器，服务器损毁/账号被黑都删不掉邮件）
 //
@@ -17,7 +17,7 @@ const DB_FILE = process.env.DB_PATH || path.join(__dirname, 'vinath.db');
 // 本地备份目录：默认跟随数据库文件所在目录（生产环境 DB_PATH 指向持久磁盘时，备份自动落在同一磁盘）；
 // 也可用 BACKUP_DIR 单独覆盖。
 const BACKUP_DIR = process.env.BACKUP_DIR || path.join(path.dirname(DB_FILE), 'backups');
-const KEEP_LOCAL = 30;
+const KEEP_LOCAL = 2;
 const INTERVAL_MS = 24 * 60 * 60 * 1000;
 const ENC_MAGIC = 'VBENC001';
 
@@ -98,6 +98,8 @@ async function runBackup(options = {}) {
       result.emailConfigured ? 1 : 0, 0, null, triggeredById, triggeredByName);
 
     if (!fs.existsSync(BACKUP_DIR)) fs.mkdirSync(BACKUP_DIR, { recursive: true });
+    // 备份前先滚动清理（磁盘不足时旧备份也可能导致本次失败，先清出空间）
+    cleanupLocal();
     const localPath = path.join(BACKUP_DIR, `vinath-${stamp}.db`);
 
     // 1) 一致性快照（只读打开生产库，.backup() 处理并发写入）
