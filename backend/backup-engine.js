@@ -14,7 +14,9 @@ const crypto = require('crypto');
 const Database = require('better-sqlite3');
 
 const DB_FILE = process.env.DB_PATH || path.join(__dirname, 'vinath.db');
-const BACKUP_DIR = process.env.BACKUP_DIR || path.join(__dirname, 'backups');
+// 本地备份目录：默认跟随数据库文件所在目录（生产环境 DB_PATH 指向持久磁盘时，备份自动落在同一磁盘）；
+// 也可用 BACKUP_DIR 单独覆盖。
+const BACKUP_DIR = process.env.BACKUP_DIR || path.join(path.dirname(DB_FILE), 'backups');
 const KEEP_LOCAL = 30;
 const INTERVAL_MS = 24 * 60 * 60 * 1000;
 const ENC_MAGIC = 'VBENC001';
