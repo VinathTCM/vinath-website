@@ -1,9 +1,12 @@
 // backup-engine.js —— 每日自动备份 + 外部加密邮件存证
 //
 // 三层保护，对应 MMC《Confidentiality Guidelines》(2011) §14(g)(i)（定期备份/灾难恢复）：
-//   1. 本地备份：用 better-sqlite3 的 .backup() 做一致性快照，存到 backups/（保留最近1份，防小磁盘写满）
-//   2. 加密：完整库快照与审计导出用 AES-256-GCM 加密，密钥只来自服务器环境变量
+//   1. 审计导出：从生产库只读导出 access_log 哈希链与病历版本链（留痕核心，仅几 KB）
+//   2. 加密：审计导出用 AES-256-GCM 加密，密钥只来自服务器环境变量
 //   3. 外发：把加密附件发送到机构指定邮箱（独立于服务器，服务器损毁/账号被黑都删不掉邮件）
+//
+// 说明：早期版本会额外写一份完整库快照（约 86MB，含商品图 base64），在 Render 小磁盘上
+// 多次备份即写满（database or disk is full）。现改为只发审计导出，不再写本地大文件。
 //
 // 不依赖付费定时任务：startScheduler() 在启动后及每小时检查一次，距上次成功备份超过24小时就补跑。
 // 备份执行记录写入 backup_runs 表（只追加），大管理员可在后台查看并手动触发。
@@ -97,22 +100,13 @@ async function runBackup(options = {}) {
     insertRun.run(runId, kind, startedAt, 0, null, 0, 0, 0, null,
       result.emailConfigured ? 1 : 0, 0, null, triggeredById, triggeredByName);
 
-    if (!fs.existsSync(BACKUP_DIR)) fs.mkdirSync(BACKUP_DIR, { recursive: true });
-    // 备份前先滚动清理（磁盘不足时旧备份也可能导致本次失败，先清出空间）
-    cleanupLocal();
-    const localPath = path.join(BACKUP_DIR, `vinath-${stamp}.db`);
-
-    // 1) 一致性快照（只读打开生产库，.backup() 处理并发写入）
+    // 不写本地完整库快照（含商品图 base64，约 86MB，会撑爆小磁盘）；
+    // 留痕核心是审计导出（access_log 哈希链 + 病历版本链）+ 加密邮件，直接从生产库只读生成。
     const src = new Database(DB_FILE, { readonly: true });
-    await src.backup(localPath);
-    result.localPath = localPath;
-
-    // 2) 从快照读取统计与审计导出（保证与备份内容完全一致）
-    const snap = new Database(localPath, { readonly: true });
-    result.logCount = snap.prepare('SELECT COUNT(*) c FROM access_log').get().c;
-    try { result.versionCount = snap.prepare('SELECT COUNT(*) c FROM medical_record_versions').get().c; } catch (e) {}
-    const tipLog = snap.prepare('SELECT hash FROM access_log ORDER BY rowid DESC LIMIT 1').get();
-    const tipVer = snap.prepare('SELECT hash FROM medical_record_versions ORDER BY rowid DESC LIMIT 1').get();
+    result.logCount = src.prepare('SELECT COUNT(*) c FROM access_log').get().c;
+    try { result.versionCount = src.prepare('SELECT COUNT(*) c FROM medical_record_versions').get().c; } catch (e) {}
+    const tipLog = src.prepare('SELECT hash FROM access_log ORDER BY rowid DESC LIMIT 1').get();
+    const tipVer = src.prepare('SELECT hash FROM medical_record_versions ORDER BY rowid DESC LIMIT 1').get();
     result.hashTip = JSON.stringify({
       accessLog: tipLog ? tipLog.hash : null,
       recordVersions: tipVer ? tipVer.hash : null
@@ -122,20 +116,14 @@ async function runBackup(options = {}) {
       exportedAt: startedAt,
       counts: { accessLog: result.logCount, recordVersions: result.versionCount },
       hashTips: { accessLog: tipLog ? tipLog.hash : null, recordVersions: tipVer ? tipVer.hash : null },
-      accessLog: snap.prepare('SELECT * FROM access_log ORDER BY rowid ASC').all(),
+      accessLog: src.prepare('SELECT * FROM access_log ORDER BY rowid ASC').all(),
       recordVersions: (() => {
-        try { return snap.prepare('SELECT * FROM medical_record_versions ORDER BY rowid ASC').all(); }
+        try { return src.prepare('SELECT * FROM medical_record_versions ORDER BY rowid ASC').all(); }
         catch (e) { return []; }
       })()
     };
-    snap.close();
+    try { result.sizeBytes = fs.statSync(DB_FILE).size; } catch (e) { result.sizeBytes = 0; }
     src.close();
-
-    const dbBuf = fs.readFileSync(localPath);
-    result.sizeBytes = dbBuf.length;
-
-    // 3) 本地保留滚动清理
-    cleanupLocal();
 
     // 4) 加密 + 发送邮件（配置了 SMTP 才执行；失败不影响本地备份，只记录错误）
     const cfg = smtpConfig();
@@ -155,7 +143,7 @@ async function runBackup(options = {}) {
   <p style="margin:4px 0">Time (UTC): <b>${startedAt}</b></p>
   <p style="margin:4px 0">Type: <b>${kind}</b>${triggeredByName ? ' (' + triggeredByName + ')' : ''}</p>
   <p style="margin:4px 0">Audit log entries: <b>${result.logCount}</b>　Record versions: <b>${result.versionCount}</b></p>
-  <p style="margin:4px 0">Full database snapshot: <b>${humanSize(result.sizeBytes)}</b> (kept on server)</p>
+  <p style="margin:4px 0">Database size: <b>${humanSize(result.sizeBytes)}</b></p>
   <p style="margin:4px 0;word-break:break-all">Hash-chain tip: <code>${result.hashTip}</code></p>
   <hr style="border:0;border-top:1px solid #ddd"/>
   <p style="font-size:12px;color:#7A6F60">本邮件附 AES-256-GCM 加密的审计导出（操作日志与版本链），完整数据库快照保存在服务器本地。解密密钥仅保存在服务器环境变量中，本邮件不含密钥。
