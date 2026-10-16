@@ -576,6 +576,9 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   var cachedCatalog = [];
   var cachedPaymentMethods = [];
 
+  // 金额统一保留两位小数显示（MYR 0.00），避免浮点长尾（如 12.300000000000001）出现在手机/平板
+  function fmt(v){ return Number(v || 0).toFixed(2); }
+
   async function initFromBackend(){
     try {
       var [productsRes, paymentRes] = await Promise.all([
@@ -769,7 +772,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       if(!res.ok){
         var err = await res.json();
         showToast(err.error || '下单失败，请重试');
-        if(confirmBtn){ confirmBtn.disabled = false; confirmBtn.textContent = '提交付款凭证 · MYR '+pendingOrder.total; }
+        if(confirmBtn){ confirmBtn.disabled = false; confirmBtn.textContent = '提交付款凭证 · MYR '+fmt(pendingOrder.total); }
         return;
       }
       var savedOrder = await res.json();
@@ -779,7 +782,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     } catch(e){
       console.error(e);
       showToast('连不上服务器，请检查网络后重试');
-      if(confirmBtn){ confirmBtn.disabled = false; confirmBtn.textContent = '提交付款凭证 · MYR '+pendingOrder.total; }
+      if(confirmBtn){ confirmBtn.disabled = false; confirmBtn.textContent = '提交付款凭证 · MYR '+fmt(pendingOrder.total); }
     }
   }
 
@@ -787,7 +790,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var methods = getActivePaymentMethods();
     if(!methods.length){
       document.getElementById('mainArea').innerHTML = '<div class="payment-view">'
-        + '<div class="pay-summary">应付金额<span class="pay-total">MYR '+pendingOrder.total+'</span></div>'
+        + '<div class="pay-summary">应付金额<span class="pay-total">MYR '+fmt(pendingOrder.total)+'</span></div>'
         + '<div class="empty-state" style="padding:30px 0;">暂时还没有可用的付款方式，请通过「相约」联系我们完成付款安排。</div>'
         + '<div class="os-back" id="backToCartBtn">← 返回购物车</div></div>';
       document.getElementById('backToCartBtn').addEventListener('click', function(){ pendingOrder = null; render(); });
@@ -796,7 +799,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     selectedPaymentMethodId = selectedPaymentMethodId || methods[0].id;
     paymentScreenshotData = null;
     var html = '<div class="payment-view">'
-      + '<div class="pay-summary">应付金额<span class="pay-total">MYR '+pendingOrder.total+'</span></div>'
+      + '<div class="pay-summary">应付金额<span class="pay-total">MYR '+fmt(pendingOrder.total)+'</span></div>'
       + '<div class="pay-methods">';
     methods.forEach(function(m){
       var label = m.type==='bank_transfer' ? '银行转账' : m.type==='duitnow' ? 'DuitNow' : (m.accountName || '其他方式');
@@ -810,7 +813,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         + '<span class="pm-radio"></span></div>';
     });
     html += '</div><div id="paymentFormArea" class="pay-form-area"></div>'
-      + '<button class="checkout-btn" id="confirmPayBtn" disabled>提交付款凭证 · MYR '+pendingOrder.total+'</button>'
+      + '<button class="checkout-btn" id="confirmPayBtn" disabled>提交付款凭证 · MYR '+fmt(pendingOrder.total)+'</button>'
       + '<div style="font-size:12px;color:var(--ink-soft,#7A6F60);text-align:center;margin-top:10px;">提交后订单会标记为"待核实付款"，我们核对到账后会尽快为您安排发货</div>'
       + '<div class="os-back" id="backToCartBtn">← 返回购物车</div>'
       + '</div>';
@@ -902,8 +905,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       var origPrice = unitPrice(item);
       var effPrice = effectiveUnitPrice(item);
       var priceHtml = effPrice < origPrice
-        ? '<span class="item-price-orig">MYR '+origPrice+'</span> MYR '+effPrice
-        : 'MYR '+origPrice;
+        ? '<span class="item-price-orig">MYR '+fmt(origPrice)+'</span> MYR '+fmt(effPrice)
+        : 'MYR '+fmt(origPrice);
       html += '<div class="cart-item'+(item.checked?'':' excluded')+'" data-idx="'+idx+'">'
         + '<span class="item-checkbox'+(item.checked?' on':'')+'" data-check="'+idx+'">'+CHECK_SVG+'</span>'
         + '<div class="item-thumb">' + (hasImg ? '<img src="'+p.imgs[0]+'" alt="'+p.name+'">' : '<div class="pt-icon">'+ICON[p.type]+'</div>') + '</div>'
@@ -913,7 +916,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
           + oos
           + '<div class="item-bottom">'
             + '<div class="item-stepper"><div class="item-step-btn" data-minus="'+idx+'">－</div><div class="item-qty-num">'+item.qty+'</div><div class="item-step-btn" data-plus="'+idx+'">＋</div></div>'
-            + '<div class="item-price">MYR '+(effPrice*item.qty)+'</div>'
+            + '<div class="item-price">MYR '+fmt(effPrice*item.qty)+'</div>'
           + '</div>'
         + '</div></div>';
     });
@@ -936,7 +939,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       + '<div class="summary-row"><span>已选商品</span><span>'+checkedCount+' 件</span></div>'
       + (couponSavings > 0 ? '<div class="summary-row"><span>原价小计</span><span class="orig-strike">MYR '+origSubtotal.toFixed(2)+'</span></div>' : '')
       + (couponSavings > 0 ? '<div class="summary-row coupon-discount-row"><span>优惠码折扣</span><span>− MYR '+couponSavings.toFixed(2)+'</span></div>' : '')
-      + '<div class="summary-row"><span>运费</span><span>'+(addressForm.state ? 'MYR '+ship : '请选择地址') +'</span></div>'
+      + '<div class="summary-row"><span>运费</span><span>'+(addressForm.state ? 'MYR '+fmt(ship) : '请选择地址') +'</span></div>'
       + '<div class="summary-row total"><span>合计</span><span class="sr-price">MYR '+grandTotal.toFixed(2)+'</span></div>'
       + '</div>';
 
@@ -996,7 +999,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
     var addrOk = isAddressComplete();
     var canCheckout = checkedItems.length > 0 && disclaimerChecked && contactOk && addrOk;
-    html += '<button class="checkout-btn" id="checkoutBtn"'+(canCheckout?'':' disabled')+'>去支付 · MYR '+grandTotal+'</button>';
+    html += '<button class="checkout-btn" id="checkoutBtn"'+(canCheckout?'':' disabled')+'>去支付 · MYR '+fmt(grandTotal)+'</button>';
     if(!addrOk){
       html += '<div class="checkout-hint">请填写完整的收货地址</div>';
     } else if(!contactOk){
