@@ -26,17 +26,41 @@ router.get('/admin/audit-log/resource-types', authMiddleware, requireRole('SENIO
 });
 
 // 日志完整性校验：按写入顺序重算整条 hash 链，任何一条被修改/删除/插入，
-// 都会在对应位置产生断链。返回断点清单，便于管理员核对日志是否被人动过。
+// 都会在对应位置产生断链。同时校验病历版本快照链。返回断点清单，便于管理员核对是否被人动过。
 router.get('/admin/audit-log/integrity', authMiddleware, requireRole('SENIOR'), (req, res) => {
   const rows = db.prepare('SELECT rowid, id, admin_id, admin_name, action, resource_type, resource_id, patient_phone, detail, prev_hash, hash, created_at FROM access_log ORDER BY rowid ASC').all();
   let prev = null;
   const broken = [];
   rows.forEach(r => {
     const expected = db.computeLogHash(prev, r.admin_id, r.admin_name, r.action, r.resource_type, r.resource_id, r.patient_phone, r.detail, r.created_at);
-    if(expected !== r.hash) broken.push({ rowid: r.rowid, id: r.id, action: r.action, resourceType: r.resource_type });
+    if(expected !== r.hash) broken.push({ chain: 'audit_log', rowid: r.rowid, id: r.id, action: r.action, resourceType: r.resource_type });
     prev = r.hash;
   });
-  res.json({ ok: broken.length === 0, total: rows.length, broken: broken.slice(0, 50), brokenCount: broken.length });
+
+  // 病历版本快照链（只追加，记录每次修改前的完整旧内容）
+  let vPrev = null;
+  const vBroken = [];
+  let vTotal = 0;
+  try {
+    const vRows = db.prepare('SELECT rowid, id, record_id, patient_phone, patient_name, version_no, visit_date, data, changed_by_id, changed_by_name, change_summary, prev_hash, hash, created_at FROM medical_record_versions ORDER BY rowid ASC').all();
+    vTotal = vRows.length;
+    vRows.forEach(r => {
+      const expected = db.computeVersionHash(vPrev, r.record_id, r.patient_phone, r.patient_name, r.version_no, r.visit_date, r.data, r.changed_by_id, r.changed_by_name, r.change_summary, r.created_at);
+      if(expected !== r.hash) vBroken.push({ chain: 'record_versions', rowid: r.rowid, id: r.id, recordId: r.record_id, version: r.version_no });
+      vPrev = r.hash;
+    });
+  } catch(e){
+    // 表不存在（极旧版本）时不阻塞校验
+  }
+
+  const allBroken = broken.concat(vBroken);
+  res.json({
+    ok: allBroken.length === 0,
+    total: rows.length,
+    broken: allBroken.slice(0, 50),
+    brokenCount: allBroken.length,
+    versions: { total: vTotal, brokenCount: vBroken.length }
+  });
 });
 
 module.exports = router;

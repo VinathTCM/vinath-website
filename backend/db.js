@@ -32,6 +32,13 @@ db.computeLogHash = function(prevHash, adminId, adminName, action, resourceType,
   return crypto.createHash('sha256').update(payload).digest('hex');
 };
 
+// 病历版本快照 hash 链：每条版本快照（修改前的完整旧内容）与上一条快照 hash 一起做 sha256。
+// 快照表只追加、系统不提供任何修改/删除接口；任何人直接改库或删行，完整性校验都会发现断链。
+db.computeVersionHash = function(prevHash, recordId, patientPhone, patientName, versionNo, visitDate, data, changedById, changedByName, summary, createdAt){
+  const payload = [prevHash || 'GENESIS', recordId, patientPhone || '', patientName || '', String(versionNo), visitDate || '', data || '{}', changedById, changedByName, summary || '', createdAt].join('|');
+  return crypto.createHash('sha256').update(payload).digest('hex');
+};
+
 // 安全地为 admins 表添加登录安全字段（检查列是否存在，不存在才添加，不影响现有数据）
 (function addLoginSecurityColumns(){
   try {
@@ -60,6 +67,9 @@ db.exec(`
     name TEXT NOT NULL,
     role TEXT NOT NULL CHECK(role IN ('SENIOR','PRACTITIONER','FULFILLMENT','SUPPORT')),
     password_hash TEXT,
+    username TEXT,
+    login_failures INTEGER DEFAULT 0,
+    locked_until TEXT,
     regions TEXT DEFAULT '[]',
     accepting_orders INTEGER DEFAULT 1,
     coupon_code TEXT UNIQUE,
@@ -225,6 +235,25 @@ db.exec(`
     data TEXT NOT NULL DEFAULT '{}',
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+  );
+
+  -- 病历修改版本快照表：每次修改前，把旧内容完整快照写入此表（只追加，系统无任何 UPDATE/DELETE 接口）。
+  -- 依据：马来西亚医药理事会 MMC《Confidentiality Guidelines》(2011) 第14(c)(d)条——
+  -- 须维护审计日志以支持病历记录的真实性，并保护电子病历任何部分不被删除。
+  CREATE TABLE IF NOT EXISTS medical_record_versions (
+    id TEXT PRIMARY KEY,
+    record_id TEXT NOT NULL,
+    patient_phone TEXT,
+    patient_name TEXT,
+    version_no INTEGER NOT NULL,
+    visit_date TEXT,
+    data TEXT NOT NULL DEFAULT '{}',
+    changed_by_id TEXT NOT NULL,
+    changed_by_name TEXT NOT NULL,
+    change_summary TEXT,
+    prev_hash TEXT,
+    hash TEXT,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
   );
 
   CREATE TABLE IF NOT EXISTS prescriptions (

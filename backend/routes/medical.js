@@ -31,6 +31,69 @@ function logAccess(req, action, recordId, patientPhone){
   appendAuditLog(req.admin.sub, req.admin.name, action, 'medical_record', recordId || null, patientPhone || null, null);
 }
 
+// ============ 病历修改留痕（版本快照 + 字段级变更摘要） ============
+// 依据马来西亚医药理事会 MMC《Confidentiality Guidelines》(2011-10-11 批准) 第14条：
+//   (c) 维护审计日志以支持病历新增/修改内容的真实性；
+//   (d) 保护电子病历的任何部分不被删除。
+// 配合 PDPA 2010 (Act 709) 安全原则与数据完整性原则：更正须可追溯、可追责。
+
+// 病历字段中文标签——变更摘要用中文标明改了哪些栏目，便于日后举证与内部核查
+const MR_FIELD_LABELS = {
+  visitDate: '就诊日期', visitType: '就诊类型', voiceNotes: '语音备注',
+  chiefComplaint: '主诉', presentIllness: '现病史', medicalHistory: '既往史',
+  pulseNotes: '脉诊备注', pulseType: '脉象', tongueBodyColor: '舌质',
+  tongueCoating: '舌苔', tongueShape: '舌形', tongueBodyColorCustom: '舌质(自定义)',
+  tongueCoatingCustom: '舌苔(自定义)', tongueShapeCustom: '舌形(自定义)',
+  constitutionType: '体质', constitutionTypeCustom: '体质(自定义)',
+  tcmDiagnosis: '中医诊断', syndromePattern: '证型', treatmentPlan: '治法方案',
+  treatmentPoints: '治疗穴位', treatments: '治疗项目', products: '商品',
+  couponCode: '优惠码', manualDiscount: '手动折扣',
+  gender: '性别', dateOfBirth: '出生日期', age: '年龄', photos: '照片'
+};
+
+function mrNorm(v){
+  if(v === null || v === undefined) return '';
+  if(Array.isArray(v)) return JSON.stringify(v.slice().sort());
+  if(typeof v === 'object') return JSON.stringify(v);
+  return String(v);
+}
+
+// 对比修改前后的病历，返回变更栏目中文标签数组（去重、保持稳定顺序）
+function diffMedicalRecord(oldData, newData, oldVisitDate, newVisitDate){
+  const changed = [];
+  const keys = new Set([].concat(Object.keys(oldData || {}), Object.keys(newData || {})));
+  keys.forEach(function(k){
+    if(k === '_deleted') return; // 软删除标记由删除流程处理，不算普通修改
+    if(mrNorm(oldData ? oldData[k] : undefined) !== mrNorm(newData ? newData[k] : undefined)){
+      changed.push(MR_FIELD_LABELS[k] || k);
+    }
+  });
+  if(newVisitDate && oldVisitDate !== newVisitDate && changed.indexOf('就诊日期') === -1){
+    changed.unshift('就诊日期');
+  }
+  return changed;
+}
+
+// 修改前把完整旧内容写入只追加版本表（系统无 UPDATE/DELETE 接口），并挂到版本 hash 链上
+function appendRecordVersion(existingRow, changedBy, changedFields){
+  const last = db.prepare('SELECT MAX(version_no) AS v FROM medical_record_versions WHERE record_id = ?').get(existingRow.id);
+  const versionNo = (last && last.v ? last.v : 0) + 1;
+  const id = 'ver_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+  const createdAt = toSqliteUtc(new Date());
+  const summary = JSON.stringify({ changed: changedFields });
+  const prevRow = db.prepare('SELECT hash FROM medical_record_versions ORDER BY rowid DESC LIMIT 1').get();
+  const prevHash = prevRow ? prevRow.hash : null;
+  const hash = db.computeVersionHash(prevHash, existingRow.id, existingRow.patient_phone, existingRow.patient_name,
+    versionNo, existingRow.visit_date, existingRow.data, changedBy.sub, changedBy.name, summary, createdAt);
+  db.prepare(`INSERT INTO medical_record_versions
+    (id, record_id, patient_phone, patient_name, version_no, visit_date, data, changed_by_id, changed_by_name, change_summary, prev_hash, hash, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
+      id, existingRow.id, existingRow.patient_phone, existingRow.patient_name, versionNo,
+      existingRow.visit_date, existingRow.data, changedBy.sub, changedBy.name, summary, prevHash, hash, createdAt
+    );
+  return versionNo;
+}
+
 // 按患者手机号查这个人的全部病历——电子病历自己的时间轴用，也是"合并时间轴"
 // （病历+预约+处方合并显示）那个功能要用到的三个数据源之一
 router.get('/admin/medical-records', authMiddleware, requireModuleAccess('medicalRecords'), (req, res) => {
@@ -120,10 +183,26 @@ router.put('/admin/medical-records/:id', authMiddleware, requireModuleAccess('me
   const existing = db.prepare('SELECT * FROM medical_records WHERE id = ?').get(req.params.id);
   if(!existing) return res.status(404).json({ error: '病历不存在' });
   const { visitDate, data } = req.body;
-  db.prepare('UPDATE medical_records SET visit_date = ?, data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
-    .run(visitDate || existing.visit_date, JSON.stringify(data||{}), req.params.id);
+  const newData = data || {};
+  const nextVisitDate = visitDate || existing.visit_date;
+  let oldData = {};
+  try { oldData = JSON.parse(existing.data || '{}'); } catch(e){ oldData = {}; }
+  const changedFields = diffMedicalRecord(oldData, newData, existing.visit_date, nextVisitDate);
+
+  // 有实质变更才存版本+写修改日志；只点保存但内容完全没变，不产生无意义的修改记录
+  if(changedFields.length){
+    db.transaction(() => {
+      // 先把修改前的完整旧内容快照存档（只追加、不可覆盖），再写入新内容
+      const versionNo = appendRecordVersion(existing, req.admin, changedFields);
+      db.prepare('UPDATE medical_records SET visit_date = ?, data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+        .run(nextVisitDate, JSON.stringify(newData), req.params.id);
+      // 审计日志记录"谁、什么时候、改了哪条病历的哪些栏目"，并关联版本号
+      appendAuditLog(req.admin.sub, req.admin.name, 'update', 'medical_record',
+        req.params.id, existing.patient_phone,
+        JSON.stringify({ changed: changedFields, version: versionNo }));
+    })();
+  }
   const row = db.prepare('SELECT * FROM medical_records WHERE id = ?').get(req.params.id);
-  logAccess(req, 'update', req.params.id, existing.patient_phone);
   res.json(serializeRecord(row));
 });
 
@@ -188,12 +267,38 @@ router.get('/admin/medical-records/access-log', authMiddleware, requireRole('SEN
   const { patientPhone, limit } = req.query;
   let rows;
   if(patientPhone){
-    rows = db.prepare("SELECT * FROM access_log WHERE resource_type = 'medical_record' AND patient_phone = ? ORDER BY created_at DESC LIMIT ?")
+    rows = db.prepare("SELECT * FROM access_log WHERE resource_type = 'medical_record' AND patient_phone = ? ORDER BY created_at DESC, rowid DESC LIMIT ?")
       .all(patientPhone, Number(limit) || 200);
   } else {
-    rows = db.prepare("SELECT * FROM access_log WHERE resource_type = 'medical_record' ORDER BY created_at DESC LIMIT ?").all(Number(limit) || 200);
+    rows = db.prepare("SELECT * FROM access_log WHERE resource_type = 'medical_record' ORDER BY created_at DESC, rowid DESC LIMIT ?").all(Number(limit) || 200);
   }
   res.json(rows);
+});
+
+// 病历版本历史：修改前的完整旧内容快照（只追加、不可删除）。仅大管理员可查。
+// 每条含版本号、修改人、修改时间、变更栏目摘要，以及该版本的完整病历内容。
+router.get('/admin/medical-records/:id/versions', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  const rec = db.prepare('SELECT * FROM medical_records WHERE id = ?').get(req.params.id);
+  if(!rec) return res.status(404).json({ error: '病历不存在' });
+  const rows = db.prepare('SELECT * FROM medical_record_versions WHERE record_id = ? ORDER BY version_no DESC').all(req.params.id);
+  const out = rows.map(function(r){
+    let snapshot = {};
+    try { snapshot = JSON.parse(r.data || '{}'); } catch(e){ snapshot = {}; }
+    let summary = null;
+    try { summary = r.change_summary ? JSON.parse(r.change_summary) : null; } catch(e){ summary = null; }
+    return {
+      id: r.id, recordId: r.record_id, versionNo: r.version_no, visitDate: r.visit_date,
+      snapshot: snapshot, changedById: r.changed_by_id, changedByName: r.changed_by_name,
+      changeSummary: summary, hash: r.hash, createdAt: r.created_at
+    };
+  });
+  // 同时返回当前版本，前端可对比"最后一次修改后 vs 修改前"
+  let currentData = {};
+  try { currentData = JSON.parse(rec.data || '{}'); } catch(e){ currentData = {}; }
+  res.json({
+    record: { id: rec.id, patientName: rec.patient_name, patientPhone: rec.patient_phone, visitDate: rec.visit_date, currentData: currentData, updatedAt: rec.updated_at },
+    versions: out
+  });
 });
 
 // 修改患者姓名 / 手机号：用于更正当初着急写错的信息。按"原手机号"定位这个人，
@@ -222,8 +327,17 @@ router.post('/admin/medical-records/patient/update', authMiddleware, requireRole
     return { records: rec.changes, prescriptions: rx.changes, receipts: rc.changes };
   });
   try {
+    const oldNameRow = db.prepare('SELECT patient_name FROM medical_records WHERE patient_phone = ? LIMIT 1').get(oldPhone);
     const updated = apply();
-    logAccess(req, 'update-patient', null, oldPhone);
+    // 记录更正前后的姓名/手机号，确保"谁改了患者身份信息"可追溯（PDPA 更正原则）
+    appendAuditLog(req.admin.sub, req.admin.name, 'update-patient', 'medical_record', null, oldPhone,
+      JSON.stringify({
+        oldName: oldNameRow ? oldNameRow.patient_name : '',
+        newName: cleanNewName,
+        oldPhone: oldPhone,
+        newPhone: cleanNewPhone,
+        updated: updated
+      }));
     res.json({ ok: true, updated });
   } catch(e){
     console.error('修改患者信息失败:', e);
