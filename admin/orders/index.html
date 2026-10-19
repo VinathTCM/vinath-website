@@ -359,10 +359,27 @@ tbody tr:hover{ background:#FBFAF7; }
 .receipt-meta-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:22px 0; padding:16px 0; border-top:1px solid #ccc; border-bottom:1px solid #ccc; }
 .receipt-meta-lbl{ font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:#999; margin-bottom:3px; }
 .receipt-meta-val{ font-size:13px; }
-.receipt-table{ width:100%; border-collapse:collapse; margin:22px 0; }
-.receipt-table th{ text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:#888; padding:8px 6px; border-bottom:2px solid #333; }
+.receipt-table{ width:100%; min-width:0; border-collapse:collapse; margin:22px 0; table-layout:fixed; }
+/* 4 列：装箱清单 / 发票 / 收据 / 财务报表（名称列最宽，数量列最窄） */
+.receipt-table th:nth-child(1){ width:42%; }
+.receipt-table th:nth-child(2){ width:12%; }
+.receipt-table th:nth-child(3){ width:23%; }
+.receipt-table th:nth-child(4){ width:23%; }
+/* 6 列：当日交易报表（服务/商品列最宽，类型/时间列最窄） */
+.receipt-table:has(th:nth-child(6)) th:nth-child(1){ width:16%; }
+.receipt-table:has(th:nth-child(6)) th:nth-child(2){ width:20%; }
+.receipt-table:has(th:nth-child(6)) th:nth-child(3){ width:14%; }
+.receipt-table:has(th:nth-child(6)) th:nth-child(4){ width:22%; }
+.receipt-table:has(th:nth-child(6)) th:nth-child(5){ width:10%; }
+.receipt-table:has(th:nth-child(6)) th:nth-child(6){ width:18%; }
+/* 财务报表 4 列：日期 / 编号 / 姓名 / 金额（编号列要宽，日期列窄） */
+.receipt-table-fin th:nth-child(1){ width:18%; }
+.receipt-table-fin th:nth-child(2){ width:30%; }
+.receipt-table-fin th:nth-child(3){ width:32%; }
+.receipt-table-fin th:nth-child(4){ width:20%; }
+.receipt-table th{ text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:#888; padding:8px 6px; border-bottom:2px solid #333; overflow-wrap:break-word; word-break:normal; }
 .receipt-table th.num, .receipt-table td.num{ text-align:right; }
-.receipt-table td{ padding:9px 6px; border-bottom:1px solid #ddd; font-size:13px; }
+.receipt-table td{ padding:9px 6px; border-bottom:1px solid #ddd; font-size:13px; overflow-wrap:break-word; word-break:normal; }
 .receipt-total-row td{ font-weight:700; border-top:2px solid #333; border-bottom:none; padding-top:13px; font-size:14px; }
 .receipt-ftr{ margin-top:40px; text-align:center; font-size:10.5px; color:#999; line-height:1.7; }
 .receipt-brand .tm{ font-size:9px; vertical-align:super; margin-left:1px; font-weight:400; }
@@ -3184,7 +3201,7 @@ window.escapeHtml = function(s){
       + '<div><div class="receipt-meta-lbl">'+'Record Treatment Revenue'+'</div><div class="receipt-meta-val">MYR '+mrRevenue.toFixed(2)+'</div></div>'
       + '<div><div class="receipt-meta-lbl">'+'Prescription Revenue'+'</div><div class="receipt-meta-val">MYR '+rxRevenue.toFixed(2)+'</div></div>'
       + '</div>'
-      + '<table class="receipt-table"><thead><tr><th>'+'Date'+'</th><th>'+'Reference No.'+'</th><th>'+'Name'+'</th><th class="num">'+'Amount'+'</th></tr></thead><tbody>'
+      + '<table class="receipt-table receipt-table-fin"><thead><tr><th>'+'Date'+'</th><th>'+'Reference No.'+'</th><th>'+'Name'+'</th><th class="num">'+'Amount'+'</th></tr></thead><tbody>'
       + rowsHtml
       + '<tr class="receipt-total-row"><td colspan="3">'+'Total Revenue'+'</td><td class="num">'+fmtMYR(total)+'</td></tr>'
       + '</tbody></table>'
