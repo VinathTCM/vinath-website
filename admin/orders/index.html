@@ -1108,7 +1108,9 @@ window.escapeHtml = function(s){
   async function loadProductCatalog(){
     try {
       var base = (typeof API_BASE !== 'undefined' && API_BASE) || 'https://api.vinathtcm.com/api';
-      var res = await fetch(base + '/admin/products', { headers: { 'Authorization': 'Bearer ' + authToken } });
+      var catToken = authToken;
+      try { catToken = catToken || sessionStorage.getItem('vinath_auth_token'); } catch(e){}
+      var res = await fetch(base + '/admin/products', { headers: { 'Authorization': 'Bearer ' + catToken } });
       if(!res.ok) res = await fetch(base + '/products');
       if(res.ok){
         var list = await res.json();
@@ -3503,7 +3505,13 @@ window.escapeHtml = function(s){
   // to close that gap for anything new going forward.
   function blItem(chineseName, lang, explicitEn, productId){
     var en = itemNameEn(chineseName, explicitEn, productId);
-    return en || chineseName;
+    if(en) return en;
+    // 英文查不到时，按 productId 同步商品"当前"中文名（订单里可能是改名前的旧快照，如"玉屏风散"）
+    if(productId){
+      var byIdNow = cachedProductCatalog.find(function(p){ return p.id === productId; });
+      if(byIdNow && byIdNow.name) return byIdNow.name;
+    }
+    return chineseName;
   }
   function exportHeader(lang, docTypeEn, docTypeCn, docNo, docDate){
     return '<div class="receipt-brandrow"><div><div class="receipt-brand">VINATH TCM HEALTH CARE</div>'
