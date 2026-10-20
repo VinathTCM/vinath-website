@@ -1947,7 +1947,7 @@ window.escapeHtml = function(s){
       tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state">没有符合条件的订单</div></td></tr>';
     } else {
       var rowsHtml = list.map(function(o){
-        var itemsSummary = (Array.isArray(o.items)?o.items:[]).map(function(i){ return (i.name||'商品')+' ×'+(i.qty||0); }).join('，') || '—';
+        var itemsSummary = (Array.isArray(o.items)?o.items:[]).map(function(i){ return resolveItemName(i)+' ×'+(i.qty||0); }).join('，') || '—';
         return '<tr>'
           + '<td><span class="pname">'+o.id+'</span></td>'
           + '<td>'+o.date+'</td>'
@@ -1961,7 +1961,7 @@ window.escapeHtml = function(s){
           + '</tr>';
       }).join('');
       rowsHtml += wholesaleList.map(function(o){
-        var itemsSummary = (Array.isArray(o.items)?o.items:[]).map(function(i){ return (i.name||'商品')+' ×'+(i.qty||0); }).join('，') || '—';
+        var itemsSummary = (Array.isArray(o.items)?o.items:[]).map(function(i){ return resolveItemName(i)+' ×'+(i.qty||0); }).join('，') || '—';
         return '<tr class="row-wholesale">'
           + '<td><span class="pname">'+o.id+'</span><span class="admin-type-badge practitioner" style="margin-left:6px;">拿货订单</span></td>'
           + '<td>'+o.date+'</td>'
@@ -2012,7 +2012,7 @@ window.escapeHtml = function(s){
       var priceHtml = hasDiscount
         ? '<s style="color:#aaa;">MYR '+(origPrice*i.qty).toFixed(2)+'</s> MYR '+(i.qty*Number(i.price)).toFixed(2)
         : 'MYR '+(i.qty*Number(i.price)).toFixed(2);
-      return '<div class="detail-item-row"><span>'+i.name+' ×'+i.qty+'</span><span>'+priceHtml+'</span></div>';
+      return '<div class="detail-item-row"><span>'+resolveItemName(i)+' ×'+i.qty+'</span><span>'+priceHtml+'</span></div>';
     }).join('');
     var origSubtotal = o.items.reduce(function(s,i){ return s + lookupOriginalPrice(i) * i.qty; },0);
     var effSubtotal = orderSubtotal(o);
@@ -2135,7 +2135,7 @@ window.escapeHtml = function(s){
     document.getElementById('panelTitle').textContent = '拿货订单详情';
     var shipLabel = o.shipping === 0 ? shipFreeNoteZh(o.region) : '运费（'+(o.region==='west'?'西马':'东马')+'）';
     var itemsHtml = o.items.map(function(i){
-      return '<div class="detail-item-row"><span>'+i.name+' ×'+i.qty+'</span><span>MYR '+(i.qty*i.price).toFixed(2)+'</span></div>';
+      return '<div class="detail-item-row"><span>'+resolveItemName(i)+' ×'+i.qty+'</span><span>MYR '+(i.qty*i.price).toFixed(2)+'</span></div>';
     }).join('') + '<div class="detail-item-row"><span>'+shipLabel+'</span><span>MYR '+o.shipping.toFixed(2)+'</span></div>'
       + '<div class="detail-item-row total"><span>总计</span><span>MYR '+o.total.toFixed(2)+'</span></div>';
     var html = ''
@@ -3512,6 +3512,14 @@ window.escapeHtml = function(s){
       if(byIdNow && byIdNow.name) return byIdNow.name;
     }
     return chineseName;
+  }
+  // 屏幕（中文后台）显示用：按 productId 取商品"当前"中文名，避免订单里的改名前快照（如"玉屏风散"）
+  function resolveItemName(item){
+    if(item && item.productId){
+      var p = cachedProductCatalog.find(function(x){ return x.id === item.productId; });
+      if(p && p.name) return p.name;
+    }
+    return (item && item.name) ? item.name : '商品';
   }
   function exportHeader(lang, docTypeEn, docTypeCn, docNo, docDate){
     return '<div class="receipt-brandrow"><div><div class="receipt-brand">VINATH TCM HEALTH CARE</div>'
