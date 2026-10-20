@@ -2046,8 +2046,8 @@ window.escapeHtml = function(s){
       + ORDER_STATUS.map(function(label,i){ return '<div class="status-step-btn'+(o.status===i?' on':'')+'" data-i="'+i+'">'+(i===0?orderStatusLabel(o):label)+'</div>'; }).join('')
       + '</div></div>'
       + '<div class="detail-section" style="margin-bottom:6px;">'
-      + '<div class="export-btn-group"><button class="btn-export" id="exportPackBtnBi">导出装箱清单 · 双语</button><button class="btn-export" id="exportPackBtnEn">Packing Slip · English</button><button class="btn-export" id="exportTrackBtn">打印快递单号</button></div>'
-      + '<div class="export-hint">打包核对用，也可以打印出来放进包裹里，方便用户收货后清点商品。</div></div>';
+      + '<div class="export-btn-group"><button class="btn-export" id="exportInvBtnBi">导出发票 · 双语</button><button class="btn-export" id="exportInvBtnEn">Invoice · English</button><button class="btn-export" id="exportPackBtnBi">导出装箱清单 · 双语</button><button class="btn-export" id="exportPackBtnEn">Packing Slip · English</button><button class="btn-export" id="exportTrackBtn">打印快递单号</button></div>'
+      + '<div class="export-hint">发票用于顾客付款/报销凭证；装箱清单用于打包核对，也可打印放进包裹方便收货清点。</div></div>';
     document.getElementById('panelBody').innerHTML = html;
     document.querySelectorAll('#orderStepper .status-step-btn').forEach(function(b){
       b.addEventListener('click', async function(){
@@ -2091,6 +2091,8 @@ window.escapeHtml = function(s){
         if(w) w.document.write('<img src="'+o.paymentScreenshot+'" style="max-width:100%;">');
       });
     }
+    document.getElementById('exportInvBtnBi').addEventListener('click', function(){ printInvoice(o, 'bi'); });
+    document.getElementById('exportInvBtnEn').addEventListener('click', function(){ printInvoice(o, 'en'); });
     document.getElementById('exportPackBtnBi').addEventListener('click', function(){ printPackingSlip(o, 'bi'); });
     document.getElementById('exportPackBtnEn').addEventListener('click', function(){ printPackingSlip(o, 'en'); });
     document.getElementById('exportTrackBtn').addEventListener('click', function(){
@@ -3593,6 +3595,43 @@ window.escapeHtml = function(s){
       + '<tr class="receipt-total-row"><td colspan="3">'+'Total'+'</td><td class="num">MYR '+orderTotal(o).toFixed(2)+'</td></tr>'
       + '</tbody></table>'
       + exportFooter(lang, 'Please verify item quantities before packing. Contact us via WhatsApp: +601145799499 if the list does not match the items received.', 'VINATH（JOHOR）· 请核对商品件数后装箱，如清单与实际收到的商品不符，请通过 WhatsApp 联系我们');
+    document.getElementById('printReceipt').innerHTML = html;
+    window.print();
+  }
+  // 客户订单的正式发票（Invoice）——与装箱清单同一套版式，仅主题与页脚说明不同，作为顾客付款/报销凭证
+  function printInvoice(o, lang){
+    preparePrint('normal');
+    var itemsHtml = o.items.map(function(i){
+      var origPrice = lookupOriginalPrice(i);
+      var hasDiscount = origPrice > Number(i.price);
+      var unitHtml = hasDiscount
+        ? '<s style="color:#999;">MYR '+origPrice.toFixed(2)+'</s> MYR '+Number(i.price).toFixed(2)
+        : 'MYR '+Number(i.price).toFixed(2);
+      return '<tr><td>'+blItem(i.name,lang,null,i.productId)+'</td><td class="num">'+i.qty+'</td><td class="num">'+unitHtml+'</td><td class="num">MYR '+(i.qty*Number(i.price)).toFixed(2)+'</td></tr>';
+    }).join('');
+    var shipFee = orderShipping(o);
+    var shipLabel = shipFee === 0 ? shipFreeNoteEn(o.region) : 'Shipping ('+(o.region==='west'?'West Malaysia':'East Malaysia')+')';
+    var origSubtotal = o.items.reduce(function(s,i){ return s + lookupOriginalPrice(i) * i.qty; },0);
+    var effSubtotal = orderSubtotal(o);
+    var discountRow = '';
+    if(origSubtotal > effSubtotal){
+      discountRow = '<tr style="color:#B0503A;"><td colspan="3">'+(lang==='en'?'Coupon discount':'优惠码折扣')+'</td><td class="num">− MYR '+(origSubtotal-effSubtotal).toFixed(2)+'</td></tr>';
+    }
+    var html = ''
+      + exportHeader(lang, 'Invoice', '发票', o.id, o.date)
+      + '<div class="receipt-meta-grid">'
+      + '<div><div class="receipt-meta-lbl">'+'Bill To'+'</div><div class="receipt-meta-val">'+escapeHtml(o.name)+'</div></div>'
+      + '<div><div class="receipt-meta-lbl">'+'Contact'+'</div><div class="receipt-meta-val">'+escapeHtml(o.contact)+'</div></div>'
+      + '<div><div class="receipt-meta-lbl">'+'Delivery Address'+'</div><div class="receipt-meta-val">'+escapeHtml(o.address)+', '+escapeHtml(o.city)+' '+escapeHtml(o.postcode)+', '+escapeHtml(o.state)+'</div></div>'
+      + '<div><div class="receipt-meta-lbl">'+'Invoice Date'+'</div><div class="receipt-meta-val">'+ddmmyyyy(o.date)+'</div></div>'
+      + '</div>'
+      + '<table class="receipt-table"><thead><tr><th>'+'Product'+'</th><th class="num">'+'Qty'+'</th><th class="num">'+'Unit Price'+'</th><th class="num">'+'Subtotal'+'</th></tr></thead><tbody>'
+      + itemsHtml
+      + discountRow
+      + '<tr><td colspan="3">'+shipLabel+'</td><td class="num">MYR '+shipFee.toFixed(2)+'</td></tr>'
+      + '<tr class="receipt-total-row"><td colspan="3">'+'Total'+'</td><td class="num">MYR '+orderTotal(o).toFixed(2)+'</td></tr>'
+      + '</tbody></table>'
+      + exportFooter(lang, 'Thank you for your purchase. This is an official invoice issued by VINATH TCM HEALTH CARE. For any questions, contact us via WhatsApp: +601145799499.', 'VINATH（JOHOR）· 感谢您的购买，本单为 VINATH TCM HEALTH CARE 正式发票。如有疑问，请通过 WhatsApp 联系我们 +601145799499');
     document.getElementById('printReceipt').innerHTML = html;
     window.print();
   }
