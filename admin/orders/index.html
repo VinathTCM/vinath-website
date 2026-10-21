@@ -7,7 +7,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
 
 *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-body{ margin:0; min-height:100vh; background:#F4F2EE; font-family:"Noto Sans SC","PingFang SC",sans-serif; color:#332A21; }
+body{ margin:0; min-height:100vh; background:#F4F2EE; font-family:"Noto Sans SC","PingFang SC",sans-serif; color:#332A21; overflow-x:hidden; }
 :root{
   --clay:#BC6E4E; --clay-soft:rgba(188,110,78,.12);
   --tan:#C9A876; --line:#E6E1D6; --ink:#332A21; --ink-soft:#7A6F60;
@@ -74,8 +74,8 @@ body{ margin:0; min-height:100vh; background:#F4F2EE; font-family:"Noto Sans SC"
 .admin-type-badge.fulfillment{ background:#D9E4DC; color:#3E5C4A; }
 .hdr p{ color:var(--ink-soft); font-size:14.5px; margin:0; max-width:64ch; line-height:1.7; }
 
-.tabs{ display:flex; gap:4px; margin:26px 0 18px; border-bottom:1px solid var(--line); }
-.tab{ padding:11px 18px; font-size:14.5px; font-weight:600; color:var(--ink-soft); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; transition:.15s; }
+.tabs{ display:flex; gap:4px; margin:26px 0 18px; border-bottom:1px solid var(--line); overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.tab{ padding:11px 18px; font-size:14.5px; font-weight:600; color:var(--ink-soft); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; transition:.15s; flex:none; }
 .tab.active{ color:var(--clay); border-bottom-color:var(--clay); }
 
 .toolbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; flex-wrap:wrap; }
@@ -225,6 +225,17 @@ tbody tr:hover{ background:#FBFAF7; }
 /* ---- summary cards ---- */
 .summary-row{ display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:24px; }
 @media (max-width:700px){ .summary-row{ grid-template-columns:1fr 1fr; } }
+@media (max-width:700px){
+  .wrap{ padding:18px 14px 80px; }
+  .tabs{ scrollbar-width:none; }
+  .tabs::-webkit-scrollbar{ display:none; }
+  .tbl-scroll{ -webkit-overflow-scrolling:touch; }
+  .toolbar .hint{ width:100%; }
+  .search-box{ max-width:none; }
+  .export-btn-group{ flex-wrap:wrap; }
+  .export-btn-group .btn-export{ min-width:46%; }
+  .panel-body{ padding:18px 16px 40px; }
+}
 .summary-card{ background:var(--white); border:1px solid var(--line); border-radius:14px; padding:16px 18px; box-shadow:var(--shadow); }
 .summary-num{ font-family:var(--font-serif); font-weight:700; font-size:26px; color:var(--ink); }
 .summary-lbl{ font-size:12.5px; color:var(--ink-soft); margin-top:3px; }
