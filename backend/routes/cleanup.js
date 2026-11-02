@@ -161,6 +161,16 @@ router.post('/admin/db/maintenance', authMiddleware, requireRole('SENIOR'), (req
       }).sort((a, b) => Number(b.mb) - Number(a.mb));
       results.rootDirs = sizes;
     } catch(e){ results.rootErr = e.message; }
+    // data 目录大文件列表（定位可清理项）
+    try {
+      const dataDir = path.join(backendDir, 'data');
+      if (fs.existsSync(dataDir)) {
+        const files = [];
+        (function walk(p){ fs.readdirSync(p).forEach(f => { const fp = path.join(p, f); const st = fs.statSync(fp); if (st.isDirectory()) walk(fp); else files.push({ f: fp.replace(dataDir + path.sep, ''), mb: (st.size / 1048576).toFixed(2) }); }); })(dataDir);
+        files.sort((a, b) => Number(b.mb) - Number(a.mb));
+        results.dataFiles = files.slice(0, 30);
+      } else results.dataFiles = 'no dir';
+    } catch(e){ results.dataFiles = 'err: ' + e.message; }
     res.json({ success: true, results });
   } catch(e){ res.status(500).json({ success: false, error: e.message }); }
 });
