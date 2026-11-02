@@ -111,6 +111,32 @@ router.post('/admin/db/maintenance', authMiddleware, requireRole('SENIOR'), (req
         results.backupTotalMb = (files.reduce((s, x) => s + x.size, 0) / 1048576).toFixed(2);
       } else { results.backupFiles = 'no dir'; }
     } catch(e){ results.backupErr = e.message; }
+    // 各业务表行数与关键大字段估算，找磁盘大头
+    try {
+      const tables = ['receipts','medical_records','instant_requests','bookings','orders','wholesale_orders','chat_messages','chat_threads','pageviews','service_reviews','prescriptions','customers','access_log','staff_messages','product_interest','wishlist_events','products','personal_formulas','herb_prices'];
+      const sizes = [];
+      for (const t of tables) {
+        try {
+          const c = db.prepare(`SELECT COUNT(*) cnt FROM ${t}`).get().cnt;
+          let big = 0;
+          try { big = db.prepare(`SELECT SUM(LENGTH(payment_proof)) x FROM ${t}`).get().x; } catch(e){}
+          if (!big) { try { big = db.prepare(`SELECT SUM(LENGTH(data)) x FROM ${t}`).get().x; } catch(e){} }
+          sizes.push({ table: t, rows: c, bigColBytes: big || 0 });
+        } catch(e){ sizes.push({ table: t, err: e.message }); }
+      }
+      results.tables = sizes;
+    } catch(e){ results.tablesErr = e.message; }
+    // uploads / data 目录占用
+    for (const d of ['uploads', 'data']) {
+      try {
+        const dir = path.join(path.dirname(dbPath), d);
+        if (fs.existsSync(dir)) {
+          let total = 0, n = 0;
+          (function walk(p){ fs.readdirSync(p).forEach(f => { const fp = path.join(p, f); const st = fs.statSync(fp); if (st.isDirectory()) walk(fp); else { total += st.size; n++; } }); })(dir);
+          results[`dir_${d}`] = { mb: (total / 1048576).toFixed(2), files: n };
+        } else results[`dir_${d}`] = 'no dir';
+      } catch(e){ results[`dir_${d}`] = 'err: ' + e.message; }
+    }
     res.json({ success: true, results });
   } catch(e){ res.status(500).json({ success: false, error: e.message }); }
 });
