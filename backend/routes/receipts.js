@@ -92,24 +92,27 @@ router.post('/admin/receipts', authMiddleware, requireModuleAccess('receipts'), 
     const reused = db.prepare('SELECT * FROM receipts WHERE source_type = ? AND source_id = ?').get(sourceType, sourceId);
     if(reused){
       if(reused.manual_override){
-        // 该收据已在收据页被手动编辑（manual_override=1）：手动值为权威，重新打印只刷新开单医师快照，
+        // 该收据已在收据页被手动编辑（manual_override=1）：手动值为权威，重新打印只刷新开单医师快照与最新收货地址，
         // 绝不用订单/病历源数据覆盖明细、合计与付款方式——根治"编辑后刷新/再导出回到旧值"
         db.prepare(`
           UPDATE receipts SET
           practitioner_id = COALESCE(?, practitioner_id), practitioner_name_snapshot = COALESCE(?, practitioner_name_snapshot),
-          practitioner_moh_reg_no = COALESCE(?, practitioner_moh_reg_no), practitioner_apc_no = COALESCE(?, practitioner_apc_no)
+          practitioner_moh_reg_no = COALESCE(?, practitioner_moh_reg_no), practitioner_apc_no = COALESCE(?, practitioner_apc_no),
+          address = COALESCE(?, address)
           WHERE id = ?
-        `).run(practitionerId || null, practitionerNameSnapshot || null, practitionerMohRegNo || null, practitionerApcNo || null, reused.id);
+        `).run(practitionerId || null, practitionerNameSnapshot || null, practitionerMohRegNo || null, practitionerApcNo || null, address || null, reused.id);
       } else {
         db.prepare(`
           UPDATE receipts SET items = ?, line_items = ?, total_amount = ?, payment_method = ?, payment_status = ?, tcm_diagnosis_snapshot = ?,
           practitioner_id = COALESCE(?, practitioner_id), practitioner_name_snapshot = COALESCE(?, practitioner_name_snapshot),
-          practitioner_moh_reg_no = COALESCE(?, practitioner_moh_reg_no), practitioner_apc_no = COALESCE(?, practitioner_apc_no)
+          practitioner_moh_reg_no = COALESCE(?, practitioner_moh_reg_no), practitioner_apc_no = COALESCE(?, practitioner_apc_no),
+          address = COALESCE(?, address)
           WHERE id = ?
         `).run(JSON.stringify(items||{}), JSON.stringify(detailItems), totalAmount,
           paymentMethod || reused.payment_method, paymentStatus || reused.payment_status,
           tcmDiagnosisSnapshot !== undefined ? (tcmDiagnosisSnapshot || null) : reused.tcm_diagnosis_snapshot,
           practitionerId || null, practitionerNameSnapshot || null, practitionerMohRegNo || null, practitionerApcNo || null,
+          address || null,
           reused.id);
       }
       appendAuditLog(req.admin.sub, req.admin.name, 'update', 'receipt', reused.id, patientPhone,
