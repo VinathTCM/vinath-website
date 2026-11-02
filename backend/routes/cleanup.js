@@ -104,7 +104,7 @@ router.post('/admin/db/maintenance', authMiddleware, requireRole('SENIOR'), (req
     // 清理积压的 products 迁移安全备份（保留最近3份），释放磁盘
     if (req.body && req.body.cleanupBackups) {
       try {
-        const backupDir = path.join(backendDir, 'data', 'backups');
+        const backupDir = path.join(__dirname, '..', 'data', 'backups');
         if (fs.existsSync(backupDir)) {
           const files = fs.readdirSync(backupDir).filter(f => /^products_.*\.json$/.test(f)).sort();
           let removed = 0, freed = 0;
