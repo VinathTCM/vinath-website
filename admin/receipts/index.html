@@ -75,8 +75,8 @@ h1{ font-family:var(--font-serif); font-size:22px; margin:0 0 4px; }
      避免它们占高度把内容挤出空白第二页。 */
   body > :not(#app){ display:none !important; }
   .no-print{ display:none !important; }
-  .wrap > :not(.receipt-doc){ display:none !important; }
-  .receipt-doc{ border:none; box-shadow:none; padding:14mm 16mm; }
+  .wrap > :not(.receipt-doc):not(.order-invoice){ display:none !important; }
+  .receipt-doc, .order-invoice{ border:none; box-shadow:none; padding:14mm 16mm; }
   .wrap{ max-width:none; padding:0; }
 }
 .vinath-admin-nav{ background:#332A21; }
@@ -84,6 +84,31 @@ h1{ font-family:var(--font-serif); font-size:22px; margin:0 0 4px; }
 .van-item{ color:rgba(255,255,255,.62); font-size:13px; padding:13px 14px; text-decoration:none; white-space:nowrap; border-bottom:2.5px solid transparent; display:inline-block; }
 .van-item:hover{ color:#fff; }
 .van-item.current{ color:#fff; border-bottom-color:#BC6E4E; font-weight:700; }
+/* 订单收据（source_type=order）完全对齐订单预约管理页 Invoice·English 排版（品牌行/6栏信息区/四列表/一栏三行居中页脚） */
+.order-invoice{ background:#fff; border:1px solid var(--line); border-radius:16px; padding:36px 40px; }
+.order-invoice .receipt-brandrow{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:26px; }
+.order-invoice .receipt-brand{ font-family:var(--font-serif); font-weight:700; font-size:18px; letter-spacing:.06em; }
+.order-invoice .receipt-brand-sub{ font-size:11px; color:#888; margin-top:3px; letter-spacing:.06em; }
+.order-invoice .receipt-doctype{ text-align:right; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:#888; }
+.order-invoice .receipt-no{ text-align:right; font-size:12px; color:#888; margin-top:3px; }
+.order-invoice .receipt-meta-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:22px 0; padding:16px 0; border-top:1px solid #ccc; border-bottom:1px solid #ccc; }
+.order-invoice .receipt-meta-lbl{ font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:#999; margin-bottom:3px; }
+.order-invoice .receipt-meta-val{ font-size:13px; }
+.order-invoice .receipt-meta-grid-6{ grid-template-columns:repeat(3, 1fr); gap:16px 20px; }
+.order-invoice .receipt-table{ width:100%; min-width:0; border-collapse:collapse; margin:22px 0; table-layout:fixed; }
+.order-invoice .receipt-table th:nth-child(1){ width:42%; }
+.order-invoice .receipt-table th:nth-child(2){ width:12%; }
+.order-invoice .receipt-table th:nth-child(3){ width:23%; }
+.order-invoice .receipt-table th:nth-child(4){ width:23%; }
+.order-invoice .receipt-table th{ text-align:left; font-size:10.5px; text-transform:uppercase; letter-spacing:.04em; color:#888; padding:8px 6px; border-bottom:2px solid #333; overflow-wrap:break-word; word-break:normal; }
+.order-invoice .receipt-table th.num, .order-invoice .receipt-table td.num{ text-align:right; }
+.order-invoice .receipt-table td{ padding:9px 6px; border-bottom:1px solid #ddd; font-size:13px; overflow-wrap:break-word; word-break:normal; }
+.order-invoice .receipt-total-row td{ font-weight:700; border-top:2px solid #333; border-bottom:none; padding-top:13px; font-size:14px; }
+.order-invoice .receipt-ftr{ margin-top:40px; text-align:center; font-size:10.5px; color:#999; line-height:1.7; }
+.order-invoice .receipt-ftr2{ margin-top:18px; padding-top:14px; border-top:1px solid #ddd; display:flex; justify-content:space-between; align-items:flex-end; font-size:9.5px; color:#999; line-height:1.6; gap:10px; }
+.order-invoice .receipt-ftr2 .my{ font-weight:700; letter-spacing:.05em; white-space:nowrap; }
+.order-invoice .receipt-ftr2-compact{ display:block; text-align:center; }
+.order-invoice .receipt-ftr2-compact > div{ margin:0 auto; }
 </style>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=20260911logo4">
 <link rel="icon" href="/favicon.ico?v=20260911logo4" sizes="any">
@@ -738,34 +763,36 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     var orderMode = rc.sourceType === 'order';
     // 订单收据（source_type=order）对齐订单预约管理页 Invoice·English：六栏信息 + 四列明细 + 短页脚一栏三行
     var orderRows = orderMode ? (rc.lineItems || []).map(function(it){
-      var nm = escapeHtml(it.name || '');
+      var nm = escapeHtml(itName(it));
       var price = Number(it.price) || 0;
       var qty = Number(it.qty) || 1;
-      if(it.category === 'delivery'){ return '<tr><td colspan="3">'+nm+'</td><td class="amt-col">MYR '+price.toFixed(2)+'</td></tr>'; }
-      if(it.category === 'discount'){ return '<tr style="color:#B0503A;"><td colspan="3">'+nm+'</td><td class="amt-col">− MYR '+Math.abs(price).toFixed(2)+'</td></tr>'; }
-      return '<tr><td>'+nm+'</td><td class="amt-col">'+qty+'</td><td class="amt-col">MYR '+price.toFixed(2)+'</td><td class="amt-col">MYR '+(price*qty).toFixed(2)+'</td></tr>';
+      if(it.category === 'delivery'){ return '<tr><td colspan="3">'+nm+'</td><td class="num">MYR '+price.toFixed(2)+'</td></tr>'; }
+      if(it.category === 'discount'){ return '<tr style="color:#B0503A;"><td colspan="3">'+nm+'</td><td class="num">− MYR '+Math.abs(price).toFixed(2)+'</td></tr>'; }
+      return '<tr><td>'+nm+'</td><td class="num">'+qty+'</td><td class="num">MYR '+price.toFixed(2)+'</td><td class="num">MYR '+(price*qty).toFixed(2)+'</td></tr>';
     }).join('') : '';
     var orderBody = orderMode ? (
-        '<div class="receipt-doc">'
-        + '<div class="receipt-doc-hd"><div><div class="brand">VINATH TCM HEALTH CARE</div>'
-        + '<div style="font-size:12px;color:#555;">健康，本该简单 · Easy Health</div>'
-        + '<div style="font-size:11px;color:#777;margin-top:2px;">Reg No: '+BIZ_SSM+' &nbsp;·&nbsp; TIN: '+escapeHtml(biz.taxId)+'</div>'
-        + '<div style="font-size:11px;color:#777;">WhatsApp +601145799499 &nbsp;·&nbsp; Johor, Malaysia</div></div>'
-        + '<div class="doctype"><div class="big">Invoice</div><div class="small">No. '+escapeHtml(rc.receiptNo)+'</div><div class="small">Date '+rc.issuedAt.slice(0,10)+'</div></div></div>'
-        + '<div class="receipt-meta-grid" style="grid-template-columns:repeat(3,1fr);gap:16px 20px;">'
-        + '<div><div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px;">Bill To</div><div style="font-size:13px;">'+escapeHtml(rc.patientName)+'</div></div>'
-        + '<div><div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px;">Contact</div><div style="font-size:13px;">'+escapeHtml(rc.patientPhone)+'</div></div>'
-        + '<div><div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px;">Delivery Address</div><div style="font-size:13px;">'+escapeHtml(rc.address || '—')+'</div></div>'
-        + '<div><div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px;">Invoice Date</div><div style="font-size:13px;">'+rc.issuedAt.slice(0,10)+'</div></div>'
-        + '<div><div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px;">Payment Status</div><div style="font-size:13px;">'+(rc.paymentStatus==='paid'?'Paid':'Pending')+'</div></div>'
-        + '<div><div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px;">Payment Method</div><div style="font-size:13px;">'+escapeHtml(PAYMENT_METHOD_LABELS[rc.paymentMethod] || rc.paymentMethod || 'Cash')+'</div></div>'
+        '<div class="order-invoice">'
+        + '<div class="receipt-brandrow"><div><div class="receipt-brand">VINATH TCM HEALTH CARE</div>'
+        + '<div class="receipt-brand-sub">健康，本该简单 · Easy Health</div>'
+        + '<div class="receipt-brand-sub" style="margin-top:6px;">Reg No: '+BIZ_SSM+' &nbsp;·&nbsp; TIN: '+escapeHtml(biz.taxId)+'</div>'
+        + '<div class="receipt-brand-sub">WhatsApp +601145799499 &nbsp;·&nbsp; Johor, Malaysia</div></div>'
+        + '<div><div class="receipt-doctype">Invoice</div>'
+        + '<div class="receipt-no">No. '+escapeHtml(rc.receiptNo)+'</div>'
+        + '<div class="receipt-no">Date '+rc.issuedAt.slice(0,10)+'</div></div></div>'
+        + '<div class="receipt-meta-grid receipt-meta-grid-6">'
+        + '<div><div class="receipt-meta-lbl">Bill To</div><div class="receipt-meta-val">'+escapeHtml(rc.patientName)+'</div></div>'
+        + '<div><div class="receipt-meta-lbl">Contact</div><div class="receipt-meta-val">'+escapeHtml(rc.patientPhone)+'</div></div>'
+        + '<div><div class="receipt-meta-lbl">Delivery Address</div><div class="receipt-meta-val">'+escapeHtml(rc.address || '—')+'</div></div>'
+        + '<div><div class="receipt-meta-lbl">Invoice Date</div><div class="receipt-meta-val">'+rc.issuedAt.slice(0,10)+'</div></div>'
+        + '<div><div class="receipt-meta-lbl">Payment Status</div><div class="receipt-meta-val">'+(rc.paymentStatus==='paid'?'Paid':'Pending')+'</div></div>'
+        + '<div><div class="receipt-meta-lbl">Payment Method</div><div class="receipt-meta-val">'+escapeHtml(PAYMENT_METHOD_LABELS[rc.paymentMethod] || rc.paymentMethod || 'Cash')+'</div></div>'
         + '</div>'
-        + '<table class="receipt-table"><thead><tr><th>Product</th><th class="amt-col">Qty</th><th class="amt-col">Unit Price</th><th class="amt-col">Subtotal</th></tr></thead><tbody>'
+        + '<table class="receipt-table"><thead><tr><th>Product</th><th class="num">Qty</th><th class="num">Unit Price</th><th class="num">Subtotal</th></tr></thead><tbody>'
         + orderRows
-        + '<tr class="receipt-total-row"><td colspan="3">Total</td><td class="amt-col">MYR '+Number(rc.totalAmount).toFixed(2)+'</td></tr>'
+        + '<tr class="receipt-total-row"><td colspan="3">Total</td><td class="num">MYR '+Number(rc.totalAmount).toFixed(2)+'</td></tr>'
         + '</tbody></table>'
         + '<div class="receipt-ftr">Thank you for your purchase. For any questions, contact us via WhatsApp: +601145799499.</div>'
-        + '<div class="receipt-ftr2">'
+        + '<div class="receipt-ftr2 receipt-ftr2-compact">'
         + '<div>VINATH TCM HEALTH CARE · Reg No: '+BIZ_SSM+' · TIN: '+escapeHtml(biz.taxId)+' · WhatsApp +601145799499</div>'
         + '<div>Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.</div>'
         + '<div class="my">Malaysia</div>'
