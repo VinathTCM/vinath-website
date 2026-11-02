@@ -721,9 +721,10 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     }
     var hasDetail = rc.lineItems && rc.lineItems.length > 0;
     var itemRows = hasDetail ? rc.lineItems.map(function(it){
-      var priceTxt = it.price === 0 ? '另计' : 'RM '+it.price.toFixed(2);
-      var amtTxt = it.price === 0 ? '另计' : 'RM '+(it.price * (it.qty||1)).toFixed(2);
-      return '<tr><td>'+escapeHtml(itName(it))+(it.qty && it.qty>1 ? ' x '+it.qty : '')+'</td><td class="amt-col">'+priceTxt+' / '+amtTxt+'</td></tr>';
+      var nameCell = escapeHtml(itName(it)) + (it.qty && it.qty > 1 ? ' x ' + it.qty : '');
+      // Amount 列只显示小计一个金额（避免同 item 出现单价/总价两个金额）；零价行标 billed separately
+      var amtTxt = it.price === 0 ? '(billed separately)' : 'RM '+(Number(it.price) * (Number(it.qty)||1)).toFixed(2);
+      return '<tr><td>'+nameCell+'</td><td class="amt-col">'+amtTxt+'</td></tr>';
     }).join('') : Object.keys(FEE_LABELS).filter(function(k){ return rc.items[k] > 0; }).map(function(k){
       return '<tr><td>'+FEE_LABELS[k]+'</td><td class="amt-col">RM '+rc.items[k].toFixed(2)+'</td></tr>';
     }).join('');
@@ -736,6 +737,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
 
       + '<div class="receipt-doc">'
       + '<div class="receipt-doc-hd"><div><div class="brand">VINATH TCM HEALTH CARE</div>'
+      + '<div style="font-size:12px;color:#555;">Easy Health · 健康，本该简单</div>'
       + '<div style="font-size:11px;color:#777;margin-top:2px;">Reg No: '+BIZ_SSM+' &nbsp;·&nbsp; TIN: '+escapeHtml(biz.taxId)+'</div>'
       + '<div style="font-size:11px;color:#777;">WhatsApp +601145799499 &nbsp;·&nbsp; Johor, Malaysia</div></div>'
       + '<div class="doctype"><div class="big">INVOICE</div><div class="small">Invoice No.: '+rc.receiptNo+'</div></div></div>'
