@@ -135,19 +135,27 @@ router.post('/admin/db/maintenance', authMiddleware, requireRole('SENIOR'), (req
         results.backupTotalMb = (files.reduce((s, x) => s + x.size, 0) / 1048576).toFixed(2);
       } else { results.backupFiles = 'no dir'; }
     } catch(e){ results.backupErr = e.message; }
-    // 各业务表行数与关键大字段估算，找磁盘大头
+    // 动态枚举全部业务表：行数 + 最大 TEXT/BLOB 列总长（定位大字段归属）
     try {
-      const tables = ['receipts','medical_records','instant_requests','bookings','orders','wholesale_orders','chat_messages','chat_threads','pageviews','service_reviews','prescriptions','customers','access_log','staff_messages','product_interest','wishlist_events','products','personal_formulas','herb_prices'];
+      const allTables = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'").all().map(r => r.name);
       const sizes = [];
-      for (const t of tables) {
+      for (const t of allTables) {
         try {
           const c = db.prepare(`SELECT COUNT(*) cnt FROM ${t}`).get().cnt;
-          let big = 0;
-          try { big = db.prepare(`SELECT SUM(LENGTH(payment_proof)) x FROM ${t}`).get().x; } catch(e){}
-          if (!big) { try { big = db.prepare(`SELECT SUM(LENGTH(data)) x FROM ${t}`).get().x; } catch(e){} }
-          sizes.push({ table: t, rows: c, bigColBytes: big || 0 });
+          const cols = db.prepare(`PRAGMA table_info(${t})`).all();
+          let big = 0, bigCol = null;
+          for (const col of cols) {
+            if (['TEXT','BLOB'].includes(String(col.type || '').toUpperCase())) {
+              try {
+                const v = db.prepare(`SELECT SUM(LENGTH("${col.name}")) x FROM ${t}`).get().x;
+                if (v && v > big) { big = v; bigCol = col.name; }
+              } catch(e){}
+            }
+          }
+          sizes.push({ table: t, rows: c, bigMB: (big / 1048576).toFixed(1), bigCol });
         } catch(e){ sizes.push({ table: t, err: e.message }); }
       }
+      sizes.sort((a, b) => Number(b.bigMB || 0) - Number(a.bigMB || 0));
       results.tables = sizes;
     } catch(e){ results.tablesErr = e.message; }
     // uploads / data 目录占用（相对 backend 目录）
