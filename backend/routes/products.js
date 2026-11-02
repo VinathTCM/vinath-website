@@ -2,7 +2,9 @@
 const express = require('express');
 const db = require('../db');
 const { authMiddleware, requireRole, logAdminAction } = require('../middleware/auth');
-const sharp = require('sharp');
+// sharp 可选加载：存在时做缩略图压缩；缺失（如磁盘受限环境未安装）时优雅降级返回原图，不影响功能
+let sharp = null;
+try { sharp = require('sharp'); } catch(e) { console.log('[products] sharp 未安装，缩略图压缩降级为原图'); }
 
 const router = express.Router();
 
@@ -14,6 +16,7 @@ async function makeThumb(dataUrl){
   const cacheKey = dataUrl.slice(0, 64) + ':' + dataUrl.length;
   if(thumbCache.has(cacheKey)) return thumbCache.get(cacheKey);
   try {
+    if(!sharp) return dataUrl; // 无 sharp 时直接返回原图
     const base64 = dataUrl.split(',')[1] || dataUrl;
     const buf = Buffer.from(base64, 'base64');
     const out = await sharp(buf)
