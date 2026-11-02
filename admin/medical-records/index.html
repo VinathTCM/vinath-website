@@ -2538,47 +2538,51 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
         + '</div>';
     }
 function sheetA4Html(receipt, biz, lang){
-      // A4 发票固定全英文（马来西亚报税/顾客报销凭证）：不显示患者姓名与电话；医师名用英文；
-      // 排版保持原有 A4 发票样式
+      // A4 发票全英文（报税/报销凭证），版式与电子收据页 A4 对齐：
+      // 头部（品牌+Easy Health 副标题 / INVOICE）、meta 信息栏、Item|Amount 明细表、居中品牌页脚、底部致谢
+      // 不显示患者姓名与电话；医师名用英文
       var rows = receipt.lineItems.map(function(it){
-        var price = Number(it.price)||0, amount = lineAmount(it);
-        var priceCell = price === 0 ? 'n/a' : money(price);
-        var amountCell = price === 0 ? 'n/a' : money(amount);
+        var price = Number(it.price)||0, amount = price * (Number(it.qty)||1);
+        var priceTxt = price === 0 ? 'n/a' : money(price);
+        var amtTxt = price === 0 ? 'n/a' : money(amount);
         return '<tr style="border-bottom:1px solid #ddd;">'
-          + '<td style="padding:7px 6px;vertical-align:top;">' + escapeHtml(itemName(it, 'en')) + '</td>'
-          + '<td style="padding:7px 6px;text-align:center;">' + (it.qty||1) + '</td>'
-          + '<td style="padding:7px 6px;text-align:right;">' + priceCell + '</td>'
-          + '<td style="padding:7px 6px;text-align:right;">' + amountCell + '</td>'
+          + '<td style="padding:7px 6px;vertical-align:top;">' + escapeHtml(itemName(it, 'en')) + (it.qty && it.qty > 1 ? ' x ' + it.qty : '') + '</td>'
+          + '<td style="padding:7px 6px;text-align:right;white-space:nowrap;">' + priceTxt + (price !== 0 && it.qty && it.qty > 1 ? ' / ' + amtTxt : '') + '</td>'
           + '</tr>';
       }).join('');
       var grand = receiptGrandTotal(receipt);
-      var hasSeparate = receipt.lineItems.some(function(it){ return (Number(it.price)||0) === 0; });
+      var hasMOH = receipt.practitioner_moh_reg_no || receipt.practitioner_apc_no;
+      var payStatus = String(receipt.payment_status || '').toLowerCase() === 'paid' ? 'Paid' : 'Pending';
+      var payMethod = (receipt.payment_method || 'cash').replace(/_/g,' ').replace(/^./, function(c){ return c.toUpperCase(); });
       return '<div class="sheet-a4" style="display:none;font-family:\'Arial Narrow\',\'Helvetica Neue\',Arial,\'PingFang SC\',\'Microsoft YaHei\',sans-serif;font-stretch:condensed;color:#111;max-width:190mm;margin:0 auto;">'
-        + '<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #333;padding-bottom:12px;">'
-        + '<div><div style="font-size:22px;font-weight:700;">VINATH TCM HEALTH CARE</div>'
-        + '<div style="font-size:12px;color:#555;">Easy Health</div>'
-        + '<div style="font-size:11px;color:#777;margin-top:4px;">Reg No: ' + escapeHtml(biz.ssm) + ' · TIN: ' + escapeHtml(biz.taxId) + ' · WhatsApp +601145799499 · Johor, Malaysia</div></div>'
-        + '<div style="text-align:right;"><div style="font-size:16px;font-weight:700;">INVOICE</div>'
-        + '<div style="font-size:12px;color:#555;">' + escapeHtml(receipt.receipt_no) + '</div></div>'
+        + '<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #333;padding-bottom:14px;">'
+        + '<div><div style="font-size:18px;font-weight:700;">VINATH TCM HEALTH CARE</div>'
+        + '<div style="font-size:12px;color:#555;">Easy Health · 健康，本该简单</div>'
+        + '<div style="font-size:11px;color:#777;margin-top:3px;">Reg No: ' + escapeHtml(biz.ssm) + ' &nbsp;·&nbsp; TIN: ' + escapeHtml(biz.taxId) + '</div>'
+        + '<div style="font-size:11px;color:#777;">WhatsApp +601145799499 &nbsp;·&nbsp; Johor, Malaysia</div></div>'
+        + '<div style="text-align:right;"><div style="font-size:18px;font-weight:700;">INVOICE</div>'
+        + '<div style="font-size:12px;color:#555;">Invoice No.: ' + escapeHtml(receipt.receipt_no) + '</div></div>'
         + '</div>'
-        + '<div style="display:flex;justify-content:space-between;margin:14px 0;font-size:13px;">'
-        + '<div><div><b>Date: </b>' + fmtLocal(receipt.issued_at) + '</div></div>'
-        + '<div style="text-align:right;"><div><b>Attended by: </b>' + escapeHtml(practitionerName(receipt.practitioner_name_snapshot, 'en') || '') + '</div></div>'
+        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 24px;font-size:13px;margin:14px 0;">'
+        + '<div><span style="color:#777;">Date: </span>' + fmtLocal(receipt.issued_at) + '</div>'
+        + '<div style="text-align:right;"><span style="color:#777;">Payment Status: </span>' + payStatus + '</div>'
+        + '<div><span style="color:#777;">Payment Method: </span>' + payMethod + '</div>'
+        + '<div style="text-align:right;"><span style="color:#777;">Practitioner: </span>' + escapeHtml(practitionerName(receipt.practitioner_name_snapshot, 'en') || '') + '</div>'
+        + (hasMOH ? '<div><span style="color:#777;">MOH T&CM Reg. No.: </span>' + escapeHtml(receipt.practitioner_moh_reg_no || '') + '</div>'
+          + (receipt.practitioner_apc_no ? '<div style="text-align:right;"><span style="color:#777;">APC No.: </span>' + escapeHtml(receipt.practitioner_apc_no) + '</div>' : '') : '')
         + '</div>'
         + '<table style="width:100%;border-collapse:collapse;font-size:13px;">'
         + '<tr style="background:#f2f2f2;"><th style="padding:8px 6px;text-align:left;border-bottom:2px solid #333;">Item</th>'
-        + '<th style="padding:8px 6px;text-align:center;border-bottom:2px solid #333;">Qty</th>'
-        + '<th style="padding:8px 6px;text-align:right;border-bottom:2px solid #333;">Unit Price</th>'
-        + '<th style="padding:8px 6px;text-align:right;border-bottom:2px solid #333;">Subtotal</th></tr>'
+        + '<th style="padding:8px 6px;text-align:right;border-bottom:2px solid #333;">Amount</th></tr>'
         + rows
-        + '<tr><td colspan="3" style="padding:10px 6px;text-align:right;font-weight:700;">TOTAL</td>'
-        + '<td style="padding:10px 6px;text-align:right;font-weight:700;font-size:15px;">' + money(grand) + '</td></tr>'
+        + '<tr><td style="padding:10px 6px;text-align:left;font-weight:700;border-top:2px solid #333;">Total</td>'
+        + '<td style="padding:10px 6px;text-align:right;font-weight:700;font-size:15px;border-top:2px solid #333;">' + money(grand) + '</td></tr>'
         + '</table>'
-        + (hasSeparate ? '<div style="font-size:12px;color:#666;margin-top:8px;">Note: Herbal fee billed separately.</div>' : '')
-        + '<div style="margin-top:26px;font-size:12px;color:#555;border-top:1px solid #ccc;padding-top:10px;">'
-        + '<div style="font-weight:700;">VINATH TCM HEALTH CARE</div>'
-        + 'Reg No: ' + escapeHtml(biz.ssm) + ' · TIN: ' + escapeHtml(biz.taxId) + ' · WhatsApp +601145799499 · Johor, Malaysia<br>'
-        + 'Thank you! Take good care.</div>'
+        + '<div style="margin-top:24px;text-align:center;font-size:12px;color:#555;border-top:1px solid #ccc;padding-top:12px;">'
+        + '<div style="font-weight:700;color:#333;">VINATH TCM HEALTH CARE</div>'
+        + 'Reg No: ' + escapeHtml(biz.ssm) + ' &nbsp;·&nbsp; TIN: ' + escapeHtml(biz.taxId) + '<br>'
+        + 'WhatsApp +601145799499 · Johor, Malaysia</div>'
+        + '<div style="margin-top:20px;font-size:12px;color:#777;text-align:justify;line-height:1.6;">Thank you for choosing VINATH TCM.<br>For any billing questions, please contact us via WhatsApp +601145799499.</div>'
         + '</div>';
     }
 function fillPrintArea(receipt, size, lang){
