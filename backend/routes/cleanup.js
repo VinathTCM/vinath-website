@@ -145,6 +145,21 @@ router.post('/admin/db/maintenance', authMiddleware, requireRole('SENIOR'), (req
         } else results[`dir_${d}`] = 'no dir';
       } catch(e){ results[`dir_${d}`] = 'err: ' + e.message; }
     }
+    // 磁盘整体空间 + 项目根目录顶层占用（找占盘大头）
+    try {
+      const cp = require('child_process');
+      results.df = cp.execSync('df -h / 2>/dev/null || df -h /opt 2>/dev/null || echo no-df', { encoding: 'utf8', timeout: 8000 }).trim();
+    } catch(e){ results.df = 'err: ' + e.message; }
+    try {
+      const root = path.join(__dirname, '..', '..');
+      const dirs = fs.readdirSync(root).filter(d => { try { return fs.statSync(path.join(root, d)).isDirectory(); } catch(e){ return false; } });
+      const sizes = dirs.map(d => {
+        let t = 0;
+        (function walk(p){ try { fs.readdirSync(p).forEach(f => { const fp = path.join(p, f); const st = fs.statSync(fp); if (st.isDirectory()) walk(fp); else t += st.size; }); } catch(e){} })(path.join(root, d));
+        return { d: d, mb: (t / 1048576).toFixed(1) };
+      }).sort((a, b) => Number(b.mb) - Number(a.mb));
+      results.rootDirs = sizes;
+    } catch(e){ results.rootErr = e.message; }
     res.json({ success: true, results });
   } catch(e){ res.status(500).json({ success: false, error: e.message }); }
 });
