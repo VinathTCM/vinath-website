@@ -134,10 +134,11 @@ router.post('/admin/db/maintenance', authMiddleware, requireRole('SENIOR'), (req
       }
       results.tables = sizes;
     } catch(e){ results.tablesErr = e.message; }
-    // uploads / data 目录占用
-    for (const d of ['uploads', 'data']) {
+    // uploads / data 目录占用（相对 backend 目录）
+    const backendDir = path.join(__dirname, '..');
+    for (const d of ['uploads', 'data', 'backups', 'node_modules', 'logs']) {
       try {
-        const dir = path.join(path.dirname(dbPath), d);
+        const dir = path.join(backendDir, d);
         if (fs.existsSync(dir)) {
           let total = 0, n = 0;
           (function walk(p){ fs.readdirSync(p).forEach(f => { const fp = path.join(p, f); const st = fs.statSync(fp); if (st.isDirectory()) walk(fp); else { total += st.size; n++; } }); })(dir);
