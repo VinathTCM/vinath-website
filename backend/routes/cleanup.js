@@ -85,7 +85,7 @@ router.get('/admin/cleanup-test-data/preview', authMiddleware, requireRole('SENI
   }
 });
 
-// 临时磁盘维护（诊断期）：WAL checkpoint TRUNCATE + 磁盘占用报告；不删任何业务数据
+// 临时磁盘维护（诊断期）：WAL checkpoint TRUNCATE + 可选 VACUUM 压缩 + 磁盘占用报告；不删任何业务数据
 router.post('/admin/db/maintenance', authMiddleware, requireRole('SENIOR'), (req, res) => {
   try {
     const fs = require('fs');
@@ -93,6 +93,14 @@ router.post('/admin/db/maintenance', authMiddleware, requireRole('SENIOR'), (req
     const results = {};
     try { results.wal = db.pragma('wal_checkpoint(TRUNCATE)'); }
     catch(e){ results.wal = 'err: ' + e.message; }
+    if (req.body && req.body.vacuum) {
+      const before = fs.statSync(process.env.DB_PATH || path.join(__dirname, '..', 'vinath.db')).size;
+      try {
+        db.exec('VACUUM');
+        const after = fs.statSync(process.env.DB_PATH || path.join(__dirname, '..', 'vinath.db')).size;
+        results.vacuum = { beforeMb: (before / 1048576).toFixed(2), afterMb: (after / 1048576).toFixed(2), freedMb: ((before - after) / 1048576).toFixed(2) };
+      } catch(e){ results.vacuum = 'err: ' + e.message; }
+    }
     const dbPath = process.env.DB_PATH || path.join(__dirname, '..', 'vinath.db');
     try {
       const st = fs.statSync(dbPath);
