@@ -80,6 +80,15 @@ app.use('/api', require('./routes/cleanup'));
 
 app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
 
+// 统一错误处理（诊断期临时暴露错误信息；定位后收敛为不返回堆栈）
+app.use((err, req, res, next) => {
+  console.error('[error]', req.method, req.originalUrl, err);
+  res.status(err.status || 500).json({
+    error: err.message || 'Internal Server Error',
+    detail: String(err.stack || '').split('\n').slice(0, 4)
+  });
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`VINATH 后端已启动，监听端口 ${PORT}`);
