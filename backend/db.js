@@ -147,6 +147,7 @@ db.exec(`
     payment_verified INTEGER DEFAULT 0,
     payment_screenshot TEXT,
     consent_given_at TEXT,
+    invoice_no TEXT,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(customer_id) REFERENCES customers(id)
   );
@@ -208,6 +209,7 @@ db.exec(`
     shipping REAL DEFAULT 0,
     pay_method TEXT,
     status INTEGER DEFAULT 0,
+    invoice_no TEXT,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
   );
 
@@ -303,11 +305,19 @@ db.exec(`
     practitioner_moh_reg_no TEXT,
     practitioner_apc_no TEXT,
     items TEXT NOT NULL DEFAULT '{}',
+    line_items TEXT DEFAULT '[]',
     total_amount REAL NOT NULL,
     tcm_diagnosis_snapshot TEXT,
     payment_method TEXT,
     payment_status TEXT,
+    source_type TEXT,
+    source_id TEXT,
     issued_at TEXT DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS invoice_seq (
+    year INTEGER PRIMARY KEY,
+    last_no INTEGER NOT NULL DEFAULT 0
   );
 
   CREATE TABLE IF NOT EXISTS chat_threads (
@@ -565,6 +575,43 @@ db.exec(`
   console.log('检测到 receipts 表缺少 line_items 列，正在补列…');
   db.exec("ALTER TABLE receipts ADD COLUMN line_items TEXT DEFAULT '[]'");
   console.log('receipts 表 line_items 列已补充。');
+})();
+
+// [stated] 发票连号体系（马来西亚报税要求连续编号）：
+//  1) receipts 补 source_type/source_id —— 同一病历/订单的发票重复打印时复用同一号码，不再每次打印占用新号
+//  2) orders 补 invoice_no —— 客户订单/批发订单的正式发票使用连号（不再直接用订单id）
+//  3) invoice_seq 表 —— 全站唯一连续序列 VN-YYYY-NNNNN；起点从 receipts 当年已有最大号继续，避免与历史重号
+(function migrateInvoiceSequence(){
+  const rSql = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='receipts'").get();
+  if(rSql && !rSql.sql.includes('source_type')){
+    console.log('检测到 receipts 表缺少 source_type/source_id 列，正在补列…');
+    db.exec("ALTER TABLE receipts ADD COLUMN source_type TEXT");
+    db.exec("ALTER TABLE receipts ADD COLUMN source_id TEXT");
+    console.log('receipts 表 source 列已补充。');
+  }
+  const oSql = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='orders'").get();
+  if(oSql && !oSql.sql.includes('invoice_no')){
+    console.log('检测到 orders 表缺少 invoice_no 列，正在补列…');
+    db.exec("ALTER TABLE orders ADD COLUMN invoice_no TEXT");
+    console.log('orders 表 invoice_no 列已补充。');
+  }
+  const wSql = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='wholesale_orders'").get();
+  if(wSql && !wSql.sql.includes('invoice_no')){
+    console.log('检测到 wholesale_orders 表缺少 invoice_no 列，正在补列…');
+    db.exec("ALTER TABLE wholesale_orders ADD COLUMN invoice_no TEXT");
+    console.log('wholesale_orders 表 invoice_no 列已补充。');
+  }
+  db.exec('CREATE TABLE IF NOT EXISTS invoice_seq (year INTEGER PRIMARY KEY, last_no INTEGER NOT NULL DEFAULT 0)');
+  // 用 receipts 当年已有最大号初始化/抬升序列起点（历史号保留，新号从最大继续，保证不重复、连续）
+  const year = new Date().getFullYear();
+  const maxRow = db.prepare("SELECT receipt_no FROM receipts WHERE receipt_no LIKE ? ORDER BY receipt_no DESC LIMIT 1").get('VN-' + year + '-%');
+  let maxNo = 0;
+  if(maxRow && maxRow.receipt_no){
+    const m = String(maxRow.receipt_no).match(/^VN-\d{4}-(\d+)$/);
+    if(m) maxNo = parseInt(m[1], 10) || 0;
+  }
+  db.prepare('INSERT INTO invoice_seq (year, last_no) VALUES (?, ?) ON CONFLICT(year) DO UPDATE SET last_no = MAX(last_no, excluded.last_no)').run(year, maxNo);
+  console.log('invoice_seq 初始化完成，' + year + ' 起点 ' + maxNo);
 })();
 
 

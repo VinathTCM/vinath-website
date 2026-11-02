@@ -1166,7 +1166,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       var rxItems = [];
       if(rec.lastRx && rec.lastRx.items && rec.lastRx.items.length) rxItems = rec.lastRx.items;
       if(!treatments.length && !rxItems.length && !products.length){ showToast('这份病历没有治疗、商品或处方药材，无需打印'); return; }
-      await openInvoicePrint({ treatments: treatments, rxItems: rxItems, products: products, couponCode: d.couponCode||'', manualDiscount: Number(d.manualDiscount)||0, deliveryFee: Number(d.deliveryFee)||0, doses: (rec.lastRx && rec.lastRx.doses) || 1, decoctDoses: (rec.lastRx && rec.lastRx.decoctDoses) || (rec.lastRx && rec.lastRx.doses) || 1, dispenseMode: (rec.lastRx && rec.lastRx.dispenseMode) || 'herb_pickup' }, patientName || (rec.patientName||''), activePatientPhone, size);
+      await openInvoicePrint({ sourceId: rec.id, treatments: treatments, rxItems: rxItems, products: products, couponCode: d.couponCode||'', manualDiscount: Number(d.manualDiscount)||0, deliveryFee: Number(d.deliveryFee)||0, doses: (rec.lastRx && rec.lastRx.doses) || 1, decoctDoses: (rec.lastRx && rec.lastRx.decoctDoses) || (rec.lastRx && rec.lastRx.doses) || 1, dispenseMode: (rec.lastRx && rec.lastRx.dispenseMode) || 'herb_pickup' }, patientName || (rec.patientName||''), activePatientPhone, size);
     }
 
     // 该患者的操作日志（仅大管理员）
@@ -2536,12 +2536,14 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
         + '</div>';
     }
 function sheetA4Html(receipt, biz, lang){
+      // A4 发票固定全英文（马来西亚报税/顾客报销凭证）：不显示患者姓名与电话；医师名用英文；
+      // 排版保持原有 A4 发票样式
       var rows = receipt.lineItems.map(function(it){
         var price = Number(it.price)||0, amount = lineAmount(it);
         var priceCell = price === 0 ? 'n/a' : money(price);
         var amountCell = price === 0 ? 'n/a' : money(amount);
         return '<tr style="border-bottom:1px solid #ddd;">'
-          + '<td style="padding:7px 6px;vertical-align:top;">' + escapeHtml(itemName(it, lang)) + '</td>'
+          + '<td style="padding:7px 6px;vertical-align:top;">' + escapeHtml(itemName(it, 'en')) + '</td>'
           + '<td style="padding:7px 6px;text-align:center;">' + (it.qty||1) + '</td>'
           + '<td style="padding:7px 6px;text-align:right;">' + priceCell + '</td>'
           + '<td style="padding:7px 6px;text-align:right;">' + amountCell + '</td>'
@@ -2552,31 +2554,29 @@ function sheetA4Html(receipt, biz, lang){
       return '<div class="sheet-a4" style="display:none;font-family:\'Arial Narrow\',\'Helvetica Neue\',Arial,\'PingFang SC\',\'Microsoft YaHei\',sans-serif;font-stretch:condensed;color:#111;max-width:190mm;margin:0 auto;">'
         + '<div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #333;padding-bottom:12px;">'
         + '<div><div style="font-size:22px;font-weight:700;">VINATH TCM HEALTH CARE</div>'
-        + '<div style="font-size:12px;color:#555;">TCM Clinic · Acupuncture · Tuina · Beauty · Home Visit</div>'
+        + '<div style="font-size:12px;color:#555;">Easy Health</div>'
         + '<div style="font-size:11px;color:#777;margin-top:4px;">Reg No: ' + escapeHtml(biz.ssm) + ' · TIN: ' + escapeHtml(biz.taxId) + ' · WhatsApp +601145799499 · Johor, Malaysia</div></div>'
-        + '<div style="text-align:right;"><div style="font-size:16px;font-weight:700;">' + bl('INVOICE','发票',lang) + '</div>'
+        + '<div style="text-align:right;"><div style="font-size:16px;font-weight:700;">INVOICE</div>'
         + '<div style="font-size:12px;color:#555;">' + escapeHtml(receipt.receipt_no) + '</div></div>'
         + '</div>'
         + '<div style="display:flex;justify-content:space-between;margin:14px 0;font-size:13px;">'
-        + '<div><div><b>' + bl('Patient','患者',lang) + ': </b>' + escapeHtml(receipt.patient_name || '') + '</div>'
-        + '<div><b>' + bl('Phone','电话',lang) + ': </b>+60 ' + escapeHtml((receipt.patient_phone||'').replace(/^0/,'')) + '</div></div>'
-        + '<div style="text-align:right;"><div><b>' + bl('Date','日期',lang) + ': </b>' + fmtLocal(receipt.issued_at) + '</div>'
-        + '<div><b>' + bl('Attended by','看诊医师',lang) + ': </b>' + escapeHtml(practitionerName(receipt.practitioner_name_snapshot, lang) || '') + '</div></div>'
+        + '<div><div><b>Date: </b>' + fmtLocal(receipt.issued_at) + '</div></div>'
+        + '<div style="text-align:right;"><div><b>Attended by: </b>' + escapeHtml(practitionerName(receipt.practitioner_name_snapshot, 'en') || '') + '</div></div>'
         + '</div>'
         + '<table style="width:100%;border-collapse:collapse;font-size:13px;">'
-        + '<tr style="background:#f2f2f2;"><th style="padding:8px 6px;text-align:left;border-bottom:2px solid #333;">' + bl('Item','项目',lang) + '</th>'
-        + '<th style="padding:8px 6px;text-align:center;border-bottom:2px solid #333;">' + bl('Qty','数量',lang) + '</th>'
-        + '<th style="padding:8px 6px;text-align:right;border-bottom:2px solid #333;">' + bl('Unit Price','单价',lang) + '</th>'
-        + '<th style="padding:8px 6px;text-align:right;border-bottom:2px solid #333;">' + bl('Subtotal','小计',lang) + '</th></tr>'
+        + '<tr style="background:#f2f2f2;"><th style="padding:8px 6px;text-align:left;border-bottom:2px solid #333;">Item</th>'
+        + '<th style="padding:8px 6px;text-align:center;border-bottom:2px solid #333;">Qty</th>'
+        + '<th style="padding:8px 6px;text-align:right;border-bottom:2px solid #333;">Unit Price</th>'
+        + '<th style="padding:8px 6px;text-align:right;border-bottom:2px solid #333;">Subtotal</th></tr>'
         + rows
-        + '<tr><td colspan="3" style="padding:10px 6px;text-align:right;font-weight:700;">' + bl('TOTAL','合计',lang) + '</td>'
+        + '<tr><td colspan="3" style="padding:10px 6px;text-align:right;font-weight:700;">TOTAL</td>'
         + '<td style="padding:10px 6px;text-align:right;font-weight:700;font-size:15px;">' + money(grand) + '</td></tr>'
         + '</table>'
-        + (hasSeparate ? '<div style="font-size:12px;color:#666;margin-top:8px;">' + bl('Note: Herbal fee billed separately.','注：中药费另计。',lang) + '</div>' : '')
+        + (hasSeparate ? '<div style="font-size:12px;color:#666;margin-top:8px;">Note: Herbal fee billed separately.</div>' : '')
         + '<div style="margin-top:26px;font-size:12px;color:#555;border-top:1px solid #ccc;padding-top:10px;">'
         + '<div style="font-weight:700;">VINATH TCM HEALTH CARE</div>'
         + 'Reg No: ' + escapeHtml(biz.ssm) + ' · TIN: ' + escapeHtml(biz.taxId) + ' · WhatsApp +601145799499 · Johor, Malaysia<br>'
-        + bl('Thank you! Take good care.','感谢您的信任，祝安康。',lang) + '</div>'
+        + 'Thank you! Take good care.</div>'
         + '</div>';
     }
 function fillPrintArea(receipt, size, lang){
@@ -2656,7 +2656,8 @@ function fillPrintArea(receipt, size, lang){
             practitionerNameSnapshot: (cur && cur.name) || 'VINATH TCM',
             items: { consultation: 0, transport: 0, medication: 0, other: grandTotal },
             lineItems: items,
-            paymentMethod: 'cash', paymentStatus: 'paid'
+            paymentMethod: 'cash', paymentStatus: 'paid',
+            sourceType: 'medical_record', sourceId: result.sourceId || result.savedMrId || null
           })
         });
         if(!res.ok){ var ej = await res.json().catch(function(){ return {}; }); showToast('发票保存失败：' + (ej.error || res.status)); return; }
@@ -2675,7 +2676,6 @@ function fillPrintArea(receipt, size, lang){
         + '<div style="font-size:13px;color:#6B7280;margin-bottom:16px;">' + escapeHtml(receipt.receipt_no) + ' · ' + money(receipt.total_amount) + '</div>'
         + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">'
         + '<button class="btn-primary" id="print58Btn" style="padding:11px;font-size:13px;">58mm 英语小票</button>'
-        + '<button class="btn-primary" id="printA4BiBtn" style="padding:11px;font-size:13px;background:#3A3F42;">A4 双语发票</button>'
         + '<button class="btn-primary" id="printA4EnBtn" style="padding:11px;font-size:13px;background:#3A3F42;">A4 英语发票</button>'
         + '</div>'
         + '<button class="btn-secondary" id="printCloseBtn" style="padding:10px;margin-top:12px;width:100%;">暂不打印</button>'
@@ -2683,7 +2683,6 @@ function fillPrintArea(receipt, size, lang){
       document.body.appendChild(ov);
       ov.addEventListener('click', function(ev){ if(ev.target === ov){ ov.remove(); view = 'timeline'; render(); } });
       ov.querySelector('#print58Btn').addEventListener('click', function(){ doPrintReceipt(receipt, '58', 'en'); });
-      ov.querySelector('#printA4BiBtn').addEventListener('click', function(){ doPrintReceipt(receipt, 'a4', 'bi'); });
       ov.querySelector('#printA4EnBtn').addEventListener('click', function(){ doPrintReceipt(receipt, 'a4', 'en'); });
       ov.querySelector('#printCloseBtn').addEventListener('click', function(){ ov.remove(); view = 'timeline'; render(); });
     }

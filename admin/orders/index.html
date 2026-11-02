@@ -3610,8 +3610,16 @@ window.escapeHtml = function(s){
     window.print();
   }
   // 客户订单的正式发票（Invoice）——与装箱清单同一套版式，仅主题与页脚说明不同，作为顾客付款/报销凭证
-  function printInvoice(o, lang){
+  // 编号连号（马来西亚报税要求）：首次打印时向后端申请 VN-YYYY-NNNNN 并存订单，重复打印复用同一号码
+  async function printInvoice(o, lang){
     preparePrint('normal');
+    if(!o.invoice_no){
+      try {
+        var rr = await fetch(API_BASE + '/admin/invoices/alloc', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body: JSON.stringify({ orderId: o.id, table: 'orders' }) });
+        if(rr.ok){ var rj = await rr.json(); if(rj.invoiceNo) o.invoice_no = rj.invoiceNo; }
+      } catch(e){}
+    }
+    var docNo = o.invoice_no || o.id;
     var itemsHtml = o.items.map(function(i){
       var origPrice = lookupOriginalPrice(i);
       var hasDiscount = origPrice > Number(i.price);
@@ -3629,7 +3637,7 @@ window.escapeHtml = function(s){
       discountRow = '<tr style="color:#B0503A;"><td colspan="3">'+(lang==='en'?'Coupon discount':'优惠码折扣')+'</td><td class="num">− MYR '+(origSubtotal-effSubtotal).toFixed(2)+'</td></tr>';
     }
     var html = ''
-      + exportHeader(lang, 'Invoice', '发票', o.id, o.date)
+      + exportHeader(lang, 'Invoice', '发票', docNo, o.date)
       + '<div class="receipt-meta-grid">'
       + '<div><div class="receipt-meta-lbl">'+'Bill To'+'</div><div class="receipt-meta-val">'+escapeHtml(o.name)+'</div></div>'
       + '<div><div class="receipt-meta-lbl">'+'Contact'+'</div><div class="receipt-meta-val">'+escapeHtml(o.contact)+'</div></div>'
@@ -3672,8 +3680,15 @@ window.escapeHtml = function(s){
     window.print();
   }
   // 拿货订单的正式批发发票——给小管理员的进货凭证，金额按拿货价计，便于对方入账报税与对账
-  function printWholesaleInvoice(o, lang){
+  async function printWholesaleInvoice(o, lang){
     preparePrint('normal');
+    if(!o.invoice_no){
+      try {
+        var wr = await fetch(API_BASE + '/admin/invoices/alloc', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body: JSON.stringify({ orderId: o.id, table: 'wholesale' }) });
+        if(wr.ok){ var wj = await wr.json(); if(wj.invoiceNo) o.invoice_no = wj.invoiceNo; }
+      } catch(e){}
+    }
+    var wdocNo = o.invoice_no || o.order_no || o.id;
     var itemsHtml = o.items.map(function(i){
       return '<tr><td>'+blItem(i.name,lang,null,i.productId)+'</td><td class="num">'+i.qty+'</td><td class="num">MYR '+i.price.toFixed(2)+'</td><td class="num">MYR '+(i.qty*i.price).toFixed(2)+'</td></tr>';
     }).join('');
@@ -3681,7 +3696,7 @@ window.escapeHtml = function(s){
     var docEn = lang==='en' ? 'WHOLESALE INVOICE' : 'Wholesale Invoice';
     var docCn = lang==='en' ? 'Wholesale Invoice' : '批发发票';
     var html = ''
-      + exportHeader(lang, docEn, docCn, o.order_no || o.id, o.date)
+      + exportHeader(lang, docEn, docCn, wdocNo, o.date)
       + '<div class="receipt-meta-grid">'
       + '<div><div class="receipt-meta-lbl">'+'Billed To'+'</div><div class="receipt-meta-val">'+escapeHtml(o.orderedByName)+' (Practitioner)</div></div>'
       + '<div><div class="receipt-meta-lbl">'+'Payment Method'+'</div><div class="receipt-meta-val">'+escapeHtml(o.payMethod||'—')+'</div></div>'

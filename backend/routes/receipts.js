@@ -2,7 +2,7 @@
 // 兼容两种开票：e-Invoice分类金额式（items对象）+ 项目明细式（lineItems数组，病历页"保存并打印发票"用）
 const express = require('express');
 const db = require('../db');
-const { authMiddleware, requireModuleAccess, appendAuditLog } = require('../middleware/auth');
+const { authMiddleware, requireRole, requireModuleAccess, appendAuditLog } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -12,11 +12,16 @@ function serializeReceipt(r){
   try { out.lineItems = JSON.parse(r.line_items || '[]'); } catch(e){}
   return out;
 }
-function genReceiptNo(){
+// 全站唯一连续编号 VN-YYYY-NNNNN（马来西亚报税要求发票/小票编号连号、不重复、不跳号）。
+// 计数器存 invoice_seq 表（事务内原子 +1）；同一年内删除某张票也不会回退，新号从最大继续。
+function allocateInvoiceNo(){
   const year = new Date().getFullYear();
-  const count = db.prepare("SELECT COUNT(*) as c FROM receipts WHERE receipt_no LIKE ?").get('VN-' + year + '-%').c;
-  return 'VN-' + year + '-' + String(count + 1).padStart(5, '0');
+  const row = db.prepare('SELECT last_no FROM invoice_seq WHERE year = ?').get(year);
+  const next = (row ? Number(row.last_no) : 0) + 1;
+  db.prepare('INSERT INTO invoice_seq (year, last_no) VALUES (?, ?) ON CONFLICT(year) DO UPDATE SET last_no = excluded.last_no').run(year, next);
+  return 'VN-' + year + '-' + String(next).padStart(5, '0');
 }
+function genReceiptNo(){ return allocateInvoiceNo(); }
 
 router.get('/admin/receipts', authMiddleware, requireModuleAccess('receipts'), (req, res) => {
   const rows = db.prepare('SELECT * FROM receipts ORDER BY issued_at DESC').all();
@@ -25,7 +30,7 @@ router.get('/admin/receipts', authMiddleware, requireModuleAccess('receipts'), (
 
 router.post('/admin/receipts', authMiddleware, requireModuleAccess('receipts'), (req, res) => {
   const { patientName, patientPhone, practitionerId, practitionerNameSnapshot, practitionerMohRegNo, practitionerApcNo,
-    items, tcmDiagnosisSnapshot, paymentMethod, paymentStatus, lineItems } = req.body;
+    items, tcmDiagnosisSnapshot, paymentMethod, paymentStatus, lineItems, sourceType, sourceId } = req.body;
   if(!patientName || !patientPhone) return res.status(400).json({ error: '请填写患者姓名和手机号' });
   if(!practitionerNameSnapshot) return res.status(400).json({ error: '请选择医师' });
 
@@ -38,17 +43,50 @@ router.post('/admin/receipts', authMiddleware, requireModuleAccess('receipts'), 
     ? detailItems.reduce(function(s, it){ return s + it.price * it.qty; }, 0)
     : ['consultation','transport','medication','other'].reduce((s,k) => s + (Number(items && items[k]) || 0), 0);
 
+  // 同一来源（病历/订单）重复打印：复用已有收据，更新明细与合计，保留原 receipt_no 与 issued_at——
+  // 打印本身不占新编号，保证连号不被重复打印烧掉（报税连号要求）
+  if(sourceType && sourceId){
+    const reused = db.prepare('SELECT * FROM receipts WHERE source_type = ? AND source_id = ?').get(sourceType, sourceId);
+    if(reused){
+      db.prepare(`
+        UPDATE receipts SET items = ?, line_items = ?, total_amount = ?, payment_method = ?, payment_status = ?, tcm_diagnosis_snapshot = ?
+        WHERE id = ?
+      `).run(JSON.stringify(items||{}), JSON.stringify(detailItems), totalAmount,
+        paymentMethod || reused.payment_method, paymentStatus || reused.payment_status,
+        tcmDiagnosisSnapshot !== undefined ? (tcmDiagnosisSnapshot || null) : reused.tcm_diagnosis_snapshot,
+        reused.id);
+      appendAuditLog(req.admin.sub, req.admin.name, 'update', 'receipt', reused.id, patientPhone,
+        JSON.stringify({ oldTotal: reused.total_amount, newTotal: totalAmount, lineItemsCount: detailItems.length, receiptNo: reused.receipt_no, reused: 1 }));
+      const row = db.prepare('SELECT * FROM receipts WHERE id = ?').get(reused.id);
+      return res.json(serializeReceipt(row));
+    }
+  }
+
   const id = 'rc_' + Date.now();
   const receiptNo = genReceiptNo();
   db.prepare(`
     INSERT INTO receipts (id, receipt_no, patient_name, patient_phone, practitioner_id, practitioner_name_snapshot,
-      practitioner_moh_reg_no, practitioner_apc_no, items, line_items, total_amount, tcm_diagnosis_snapshot, payment_method, payment_status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      practitioner_moh_reg_no, practitioner_apc_no, items, line_items, total_amount, tcm_diagnosis_snapshot, payment_method, payment_status, source_type, source_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(id, receiptNo, patientName, patientPhone, practitionerId||null, practitionerNameSnapshot,
     practitionerMohRegNo||null, practitionerApcNo||null, JSON.stringify(items||{}), JSON.stringify(detailItems),
-    totalAmount, tcmDiagnosisSnapshot||null, paymentMethod||null, paymentStatus||null);
+    totalAmount, tcmDiagnosisSnapshot||null, paymentMethod||null, paymentStatus||null,
+    sourceType||null, sourceId||null);
   const row = db.prepare('SELECT * FROM receipts WHERE id = ?').get(id);
   res.status(201).json(serializeReceipt(row));
+});
+
+// 订单/批发发票取连号：首次打印发票时分配（存 orders.invoice_no / wholesale_orders.invoice_no），此后重复打印复用同一号码
+router.post('/admin/invoices/alloc', authMiddleware, requireRole('SENIOR', 'FULFILLMENT', 'PRACTITIONER'), (req, res) => {
+  const orderId = req.body && req.body.orderId;
+  const table = (req.body && req.body.table) === 'wholesale' ? 'wholesale_orders' : 'orders';
+  if(!orderId) return res.status(400).json({ error: '缺少订单ID' });
+  const order = db.prepare('SELECT * FROM ' + table + ' WHERE id = ?').get(orderId);
+  if(!order) return res.status(404).json({ error: '订单不存在' });
+  if(order.invoice_no) return res.json({ invoiceNo: order.invoice_no });
+  const invoiceNo = allocateInvoiceNo();
+  db.prepare('UPDATE ' + table + ' SET invoice_no = ? WHERE id = ?').run(invoiceNo, orderId);
+  res.json({ invoiceNo });
 });
 
 router.put('/admin/receipts/:id', authMiddleware, requireModuleAccess('receipts'), (req, res) => {
