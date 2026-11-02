@@ -85,4 +85,34 @@ router.get('/admin/cleanup-test-data/preview', authMiddleware, requireRole('SENI
   }
 });
 
+// 临时磁盘维护（诊断期）：WAL checkpoint TRUNCATE + 磁盘占用报告；不删任何业务数据
+router.post('/admin/db/maintenance', authMiddleware, requireRole('SENIOR'), (req, res) => {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const results = {};
+    try { results.wal = db.pragma('wal_checkpoint(TRUNCATE)'); }
+    catch(e){ results.wal = 'err: ' + e.message; }
+    const dbPath = process.env.DB_PATH || path.join(__dirname, '..', 'vinath.db');
+    try {
+      const st = fs.statSync(dbPath);
+      results.db = { path: dbPath, mb: (st.size / 1048576).toFixed(2) };
+    } catch(e){ results.db = 'err: ' + e.message; }
+    const walPath = dbPath + '-wal';
+    try {
+      const st = fs.statSync(walPath);
+      results.walFile = { mb: (st.size / 1048576).toFixed(2) };
+    } catch(e){ results.walFile = 'none'; }
+    const bdir = path.join(path.dirname(dbPath), 'backups');
+    try {
+      if (fs.existsSync(bdir)) {
+        const files = fs.readdirSync(bdir).filter(f => /^vinath-.*\.db$/.test(f)).map(f => ({ f, size: fs.statSync(path.join(bdir, f)).size }));
+        results.backupFiles = files.map(x => ({ name: x.f, mb: (x.size / 1048576).toFixed(2) }));
+        results.backupTotalMb = (files.reduce((s, x) => s + x.size, 0) / 1048576).toFixed(2);
+      } else { results.backupFiles = 'no dir'; }
+    } catch(e){ results.backupErr = e.message; }
+    res.json({ success: true, results });
+  } catch(e){ res.status(500).json({ success: false, error: e.message }); }
+});
+
 module.exports = router;
