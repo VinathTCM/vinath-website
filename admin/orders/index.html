@@ -3613,13 +3613,30 @@ window.escapeHtml = function(s){
   // 编号连号（马来西亚报税要求）：首次打印时向后端申请 VN-YYYY-NNNNN 并存订单，重复打印复用同一号码
   async function printInvoice(o, lang){
     preparePrint('normal');
-    if(!o.invoice_no){
-      try {
-        var rr = await fetch(API_BASE + '/admin/invoices/alloc', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body: JSON.stringify({ orderId: o.id, table: 'orders' }) });
-        if(rr.ok){ var rj = await rr.json(); if(rj.invoiceNo) o.invoice_no = rj.invoiceNo; }
-      } catch(e){}
-    }
-    var docNo = o.invoice_no || o.id;
+    // 订单发票编号接入全站连号体系：写入 receipts 表（来源=order），电子收据页可见；重复打印同一订单复用同一编号，不再占新号
+    var rc = null;
+    try {
+      var lineItems = (Array.isArray(o.items) ? o.items : []).map(function(i){
+        return { name: i.name || '', nameEn: i.nameEn || '', category: 'product', qty: Number(i.qty) || 1, price: Number(i.price) || 0 };
+      });
+      var shipFee = orderShipping(o);
+      if(shipFee > 0) lineItems.push({ name: '运费', nameEn: 'Shipping', category: 'delivery', qty: 1, price: shipFee });
+      var origSubtotal = (Array.isArray(o.items) ? o.items : []).reduce(function(s,i){ return s + lookupOriginalPrice(i) * i.qty; },0);
+      var effSubtotal = orderSubtotal(o);
+      if(origSubtotal > effSubtotal) lineItems.push({ name: '优惠码折扣', nameEn: 'Coupon Discount', category: 'discount', qty: 1, price: -Math.round((origSubtotal-effSubtotal)*100)/100 });
+      var rres = await fetch(API_BASE + '/admin/receipts', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body: JSON.stringify({
+        patientName: o.name || 'VINATH Customer',
+        patientPhone: (o.contact || '').toString() || '—',
+        practitionerId: o.practitionerId || null,
+        practitionerNameSnapshot: o.practitionerName || 'VINATH TCM',
+        items: {},
+        lineItems: lineItems,
+        paymentMethod: o.payMethod || 'cash', paymentStatus: 'paid',
+        sourceType: 'order', sourceId: o.id
+      })});
+      if(rres.ok){ rc = await rres.json(); }
+    } catch(e){}
+    var docNo = (rc && rc.receipt_no) ? rc.receipt_no : (o.invoice_no || o.id);
     var itemsHtml = o.items.map(function(i){
       var origPrice = lookupOriginalPrice(i);
       var hasDiscount = origPrice > Number(i.price);
@@ -3682,13 +3699,26 @@ window.escapeHtml = function(s){
   // 拿货订单的正式批发发票——给小管理员的进货凭证，金额按拿货价计，便于对方入账报税与对账
   async function printWholesaleInvoice(o, lang){
     preparePrint('normal');
-    if(!o.invoice_no){
-      try {
-        var wr = await fetch(API_BASE + '/admin/invoices/alloc', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body: JSON.stringify({ orderId: o.id, table: 'wholesale' }) });
-        if(wr.ok){ var wj = await wr.json(); if(wj.invoiceNo) o.invoice_no = wj.invoiceNo; }
-      } catch(e){}
-    }
-    var wdocNo = o.invoice_no || o.order_no || o.id;
+    // 批发发票同样接入全站连号体系（来源=wholesale），重复打印复用同一编号
+    var rc = null;
+    try {
+      var wlineItems = (Array.isArray(o.items) ? o.items : []).map(function(i){
+        return { name: i.name || '', nameEn: i.nameEn || '', category: 'product', qty: Number(i.qty) || 1, price: Number(i.price) || 0 };
+      });
+      if(Number(o.shipping) > 0) wlineItems.push({ name: '运费', nameEn: 'Shipping', category: 'delivery', qty: 1, price: Number(o.shipping) });
+      var wres = await fetch(API_BASE + '/admin/receipts', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body: JSON.stringify({
+        patientName: o.orderedByName || 'VINATH Wholesale',
+        patientPhone: (o.contact || '').toString() || '—',
+        practitionerId: o.practitionerId || null,
+        practitionerNameSnapshot: (o.orderedByName || 'VINATH TCM') + ' (Practitioner)',
+        items: {},
+        lineItems: wlineItems,
+        paymentMethod: o.payMethod || 'cash', paymentStatus: 'paid',
+        sourceType: 'wholesale', sourceId: o.id
+      })});
+      if(wres.ok){ rc = await wres.json(); }
+    } catch(e){}
+    var wdocNo = (rc && rc.receipt_no) ? rc.receipt_no : (o.invoice_no || o.order_no || o.id);
     var itemsHtml = o.items.map(function(i){
       return '<tr><td>'+blItem(i.name,lang,null,i.productId)+'</td><td class="num">'+i.qty+'</td><td class="num">MYR '+i.price.toFixed(2)+'</td><td class="num">MYR '+(i.qty*i.price).toFixed(2)+'</td></tr>';
     }).join('');
