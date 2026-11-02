@@ -3545,7 +3545,7 @@ window.escapeHtml = function(s){
       + '<div class="receipt-brand-sub">'+'WhatsApp +601145799499 &nbsp;·&nbsp; Johor, Malaysia'+'</div></div>'
       + '<div><div class="receipt-doctype">'+docTypeEn+'</div>'
       + '<div class="receipt-no">'+'No.'+' '+docNo+'</div>'
-      + '<div class="receipt-no">'+'Date'+' '+ddmmyyyy(TODAY_ISO)+'</div></div></div>';
+      + '<div class="receipt-no">'+'Date'+' '+ddmmyyyy(docDate || TODAY_ISO)+'</div></div></div>';
   }
   function exportFooter(lang, noteEn, noteCn, opts){
     const compact = opts && opts.compact;
@@ -3642,7 +3642,7 @@ window.escapeHtml = function(s){
         patientPhone: (o.contact || '').toString() || '—',
         practitionerId: o.practitionerId || null,
         practitionerNameSnapshot: o.practitionerName || 'VINATH TCM',
-        items: {},
+        items: { orderDate: o.date || '' },
         lineItems: lineItems,
         paymentMethod: o.payMethod || 'cash', paymentStatus: 'paid',
         sourceType: 'order', sourceId: o.id,
