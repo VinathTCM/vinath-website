@@ -101,6 +101,22 @@ router.post('/admin/db/maintenance', authMiddleware, requireRole('SENIOR'), (req
         results.vacuum = { beforeMb: (before / 1048576).toFixed(2), afterMb: (after / 1048576).toFixed(2), freedMb: ((before - after) / 1048576).toFixed(2) };
       } catch(e){ results.vacuum = 'err: ' + e.message; }
     }
+    // 清理积压的 products 迁移安全备份（保留最近3份），释放磁盘
+    if (req.body && req.body.cleanupBackups) {
+      try {
+        const backupDir = path.join(backendDir, 'data', 'backups');
+        if (fs.existsSync(backupDir)) {
+          const files = fs.readdirSync(backupDir).filter(f => /^products_.*\.json$/.test(f)).sort();
+          let removed = 0, freed = 0;
+          while (files.length > 3) {
+            const old = files.shift();
+            const p = path.join(backupDir, old);
+            try { freed += fs.statSync(p).size; fs.unlinkSync(p); removed++; } catch(e){}
+          }
+          results.cleanupBackups = { removed, freedMb: (freed / 1048576).toFixed(2) };
+        } else results.cleanupBackups = 'no backups dir';
+      } catch(e){ results.cleanupBackups = 'err: ' + e.message; }
+    }
     const dbPath = process.env.DB_PATH || path.join(__dirname, '..', 'vinath.db');
     try {
       const st = fs.statSync(dbPath);

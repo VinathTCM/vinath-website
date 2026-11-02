@@ -510,7 +510,7 @@ db.exec(`
     const stamp = d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'_'+pad(d.getHours())+pad(d.getMinutes())+pad(d.getSeconds());
     fs.writeFileSync(path.join(backupDir,'products_'+stamp+'.json'), JSON.stringify(rows,null,2), 'utf8');
     const files = fs.readdirSync(backupDir).filter(f=>/^products_.*\.json$/.test(f)).sort();
-    while(files.length > 10){ const old = files.shift(); try { fs.unlinkSync(path.join(backupDir,old)); } catch(e){} }
+    while(files.length > 3){ const old = files.shift(); try { fs.unlinkSync(path.join(backupDir,old)); } catch(e){} }
     console.log('[安全备份] 商品表已备份 '+rows.length+' 条 -> backups/products_'+stamp+'.json');
   } catch(e){
     console.log('[安全备份] 商品表备份跳过:', e.message);
