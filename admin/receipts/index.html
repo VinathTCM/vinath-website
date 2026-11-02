@@ -70,7 +70,7 @@ h1{ font-family:var(--font-serif); font-size:22px; margin:0 0 4px; }
   body > :not(#app){ display:none !important; }
   .no-print{ display:none !important; }
   .wrap > :not(.receipt-doc){ display:none !important; }
-  .receipt-doc{ border:none; box-shadow:none; padding:0; }
+  .receipt-doc{ border:none; box-shadow:none; padding:14mm 16mm; }
   .wrap{ max-width:none; padding:0; }
 }
 .vinath-admin-nav{ background:#332A21; }
@@ -474,7 +474,8 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
         }
         pg.textContent = '@page{size:48mm ' + hMm + 'mm;margin:0;}';
       } else {
-        pg.textContent = '@page{size:A4;margin:12mm;}';
+        // A4：页边距交给 .receipt-doc 打印内边距承担（浏览器无 margin 空间即不再打印页眉/页脚 URL 与日期）
+        pg.textContent = '@page{size:A4;margin:0;}';
       }
     }
     // iPad/iPadOS Safari 不支持 @page{size:58mm}，默认按 A4/Letter 纸打印会把小票缩成
@@ -736,15 +737,13 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       + '<div class="receipt-doc-hd"><div><div class="brand">VINATH TCM HEALTH CARE</div>'
       + '<div style="font-size:11px;color:#777;margin-top:2px;">Reg No: '+BIZ_SSM+' &nbsp;·&nbsp; TIN: '+escapeHtml(biz.taxId)+'</div>'
       + '<div style="font-size:11px;color:#777;">WhatsApp +601145799499 &nbsp;·&nbsp; Johor, Malaysia</div></div>'
-      + '<div class="doctype"><div class="big">RECEIPT</div><div class="small">Receipt No.: '+rc.receiptNo+'</div></div></div>'
+      + '<div class="doctype"><div class="big">INVOICE</div><div class="small">Invoice No.: '+rc.receiptNo+'</div></div></div>'
 
       + '<div class="receipt-meta-grid">'
       + '<div><span class="rlabel">Date: </span>'+rc.issuedAt.slice(0,10)+'</div>'
       + '<div><span class="rlabel">Payment Status: </span>'+(rc.paymentStatus==='paid'?'Paid':'Pending')+'</div>'
-      + '<div><span class="rlabel">Patient: </span>'+escapeHtml(rc.patientName)+'</div>'
       + '<div><span class="rlabel">Payment Method: </span>'+PAYMENT_METHOD_LABELS[rc.paymentMethod]+'</div>'
       + '<div><span class="rlabel">Practitioner: </span>'+escapeHtml(docDisplay(rc.practitionerNameSnapshot))+'</div>'
-      + '<div><span class="rlabel">TCM Diagnosis: </span>'+escapeHtml(rc.tcmDiagnosisSnapshot||'—')+'</div>'
       + (rc.practitionerMohRegNo ? '<div><span class="rlabel">MOH T&CM Reg. No.: </span>'+escapeHtml(rc.practitionerMohRegNo)+'</div>' : '')
       + (rc.practitionerApcNo ? '<div><span class="rlabel">APC No.: </span>'+escapeHtml(rc.practitionerApcNo)+'</div>' : '')
       + '</div>'

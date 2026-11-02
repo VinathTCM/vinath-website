@@ -2188,6 +2188,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
         '@media print{',
         '  body > :not(#printArea){ display:none !important; }',
         '  #printArea{ display:block !important; }',
+        '  .sheet-a4{ padding:14mm 16mm; box-sizing:border-box; }',
         '}'
       ].join('\n');
       document.head.appendChild(st);
@@ -2208,7 +2209,8 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
         }
         pg.textContent = '@page{size:48mm ' + hMm + 'mm;margin:0;}';
       } else {
-        pg.textContent = '@page{size:A4;margin:10mm;}';
+        // A4：页边距交给 .sheet-a4 打印内边距承担（浏览器无 margin 空间即不再打印页眉/页脚 URL 与日期）
+        pg.textContent = '@page{size:A4;margin:0;}';
       }
     }
     // iPad/iPadOS Safari 不支持 @page{size:58mm}，默认按 A4/Letter 纸打印会把小票缩成
