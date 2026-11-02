@@ -1142,6 +1142,8 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     // [stated bug fix] 之前保存过的病历记录，时间轴上完全没有入口能再打开来改——只能新建，
     // 改不了已经存过的。保存逻辑其实早就支持"有id就更新"，只是缺一个点进去的入口，现在补上。
     document.querySelectorAll('.timeline-item-clickable').forEach(function(item){
+      if(item.dataset.editBound) return;
+      item.dataset.editBound = '1';
       item.addEventListener('click', function(){
         var id = this.getAttribute('data-record-id');
         editingRecord = records.find(function(r){ return r.id===id; });
@@ -1149,7 +1151,12 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
         render();
       });
     });
+    // [fix 2026-11-02] 打印按钮防重复绑定：渲染函数可能对同一批按钮执行多次，
+    // 若不判重，一次点击会触发多次 printRecordReceipt、并行发出多个 POST /admin/receipts，
+    // 每次点击就会额外占用新的连号（报税连号被烧号）。
     document.querySelectorAll('[data-print-rec],[data-print-rec58]').forEach(function(btn){
+      if(btn.dataset.printBound) return;
+      btn.dataset.printBound = '1';
       btn.addEventListener('click', function(ev){
         ev.stopPropagation();
         var id = this.getAttribute('data-print-rec') || this.getAttribute('data-print-rec58');
