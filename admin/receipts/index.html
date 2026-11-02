@@ -768,7 +768,10 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       var qty = Number(it.qty) || 1;
       if(it.category === 'delivery'){ return '<tr><td colspan="3">'+nm+'</td><td class="num">MYR '+price.toFixed(2)+'</td></tr>'; }
       if(it.category === 'discount'){ return '<tr style="color:#B0503A;"><td colspan="3">'+nm+'</td><td class="num">− MYR '+Math.abs(price).toFixed(2)+'</td></tr>'; }
-      return '<tr><td>'+nm+'</td><td class="num">'+qty+'</td><td class="num">MYR '+price.toFixed(2)+'</td><td class="num">MYR '+(price*qty).toFixed(2)+'</td></tr>';
+      // 折扣商品：Unit Price 显示原价划线 + 折后实付价，与订单页 Invoice·English 完全一致
+      var orig = Number(it.origPrice);
+      var unitHtml = (orig > price) ? '<s style="color:#999;">MYR '+orig.toFixed(2)+'</s> MYR '+price.toFixed(2) : 'MYR '+price.toFixed(2);
+      return '<tr><td>'+nm+'</td><td class="num">'+qty+'</td><td class="num">'+unitHtml+'</td><td class="num">MYR '+(price*qty).toFixed(2)+'</td></tr>';
     }).join('') : '';
     var orderBody = orderMode ? (
         '<div class="order-invoice">'

@@ -81,9 +81,13 @@ router.post('/admin/receipts', authMiddleware, requireModuleAccess('receipts'), 
   // 明细额外保留 category（rx 处方药材 / treatment 治疗 / product 商品 / discount 折扣）与 nameEn，
   // 这样账本导出、双语发票才能按类型分列；折扣行 price 为负数，下面 total 的求和会自动扣减
   let detailItems = (lineItems || []).filter(function(it){ return it && it.name && String(it.name).trim(); })
-    .map(function(it){ return { name: String(it.name).trim(), nameEn: it.nameEn ? String(it.nameEn).trim() : '', category: it.category ? String(it.category).trim() : '', qty: Number(it.qty) || 1, price: Number(it.price) || 0 }; });
+    .map(function(it){ return { name: String(it.name).trim(), nameEn: it.nameEn ? String(it.nameEn).trim() : '', category: it.category ? String(it.category).trim() : '', qty: Number(it.qty) || 1, price: Number(it.price) || 0, origPrice: it.origPrice != null ? Number(it.origPrice) : null }; });
+  // 订单收据（source_type=order）：订单页明细存的是折后实付价，折扣行仅作信息展示，
+  // total 只合计商品与运费（折扣已含在折后价中）；病历等其他来源维持原口径（售价 + 负折扣行扣减）
+  const isOrderReceipt = String(req.body.sourceType || '') === 'order';
   const totalAmount = detailItems.length
-    ? detailItems.reduce(function(s, it){ return s + it.price * it.qty; }, 0)
+    ? detailItems.filter(function(it){ return !isOrderReceipt || it.category !== 'discount'; })
+        .reduce(function(s, it){ return s + it.price * it.qty; }, 0)
     : ['consultation','transport','medication','other'].reduce((s,k) => s + (Number(items && items[k]) || 0), 0);
 
   // 同一来源（病历/订单）重复打印：复用已有收据，更新明细与合计，保留原 receipt_no 与 issued_at——
@@ -159,9 +163,11 @@ router.put('/admin/receipts/:id', authMiddleware, requireModuleAccess('receipts'
 
   // 明细清洗与 POST 完全一致（含负价折扣行）
   const detailItems = (lineItems || []).filter(function(it){ return it && it.name && String(it.name).trim(); })
-    .map(function(it){ return { name: String(it.name).trim(), nameEn: it.nameEn ? String(it.nameEn).trim() : '', category: it.category ? String(it.category).trim() : '', qty: Number(it.qty) || 1, price: Number(it.price) || 0 }; });
+    .map(function(it){ return { name: String(it.name).trim(), nameEn: it.nameEn ? String(it.nameEn).trim() : '', category: it.category ? String(it.category).trim() : '', qty: Number(it.qty) || 1, price: Number(it.price) || 0, origPrice: it.origPrice != null ? Number(it.origPrice) : null }; });
+  const isOrderReceipt = String(existing.source_type || '') === 'order';
   const totalAmount = detailItems.length
-    ? detailItems.reduce(function(s, it){ return s + it.price * it.qty; }, 0)
+    ? detailItems.filter(function(it){ return !isOrderReceipt || it.category !== 'discount'; })
+        .reduce(function(s, it){ return s + it.price * it.qty; }, 0)
     : ['consultation','transport','medication','other'].reduce((s,k) => s + (Number(items && items[k]) || 0), 0);
 
   const newItems = items ? JSON.stringify(items) : existing.items;

@@ -3630,7 +3630,7 @@ window.escapeHtml = function(s){
     var rc = null;
     try {
       var lineItems = (Array.isArray(o.items) ? o.items : []).map(function(i){
-        return { name: i.name || '', nameEn: i.nameEn || '', category: 'product', qty: Number(i.qty) || 1, price: Number(i.price) || 0 };
+        return { name: i.name || '', nameEn: i.nameEn || '', category: 'product', qty: Number(i.qty) || 1, price: Number(i.price) || 0, origPrice: lookupOriginalPrice(i) };
       });
       var shipFee = orderShipping(o);
       if(shipFee > 0) lineItems.push({ name: '运费', nameEn: 'Shipping', category: 'delivery', qty: 1, price: shipFee });
