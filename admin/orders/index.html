@@ -396,6 +396,10 @@ tbody tr:hover{ background:#FBFAF7; }
 .receipt-brand .tm{ font-size:9px; vertical-align:super; margin-left:1px; font-weight:400; }
 .receipt-ftr2{ margin-top:18px; padding-top:14px; border-top:1px solid #ddd; display:flex; justify-content:space-between; align-items:flex-end; font-size:9.5px; color:#999; line-height:1.6; gap:10px; }
 .receipt-ftr2 .my{ font-weight:700; letter-spacing:.05em; white-space:nowrap; }
+/* Invoice·English：6 栏信息区（3×2）与底部一栏三行居中页脚，仅客户发票使用，不影响其他导出单据 */
+.receipt-meta-grid-6{ grid-template-columns:repeat(3, 1fr); gap:16px 20px; }
+.receipt-ftr2-compact{ display:block; text-align:center; }
+.receipt-ftr2-compact > div{ margin:0 auto; }
 .export-btn-group{ display:flex; gap:8px; }
 .export-btn-group .btn-export{ flex:1; font-size:12.5px; padding:12px 6px; }
 
@@ -3543,7 +3547,16 @@ window.escapeHtml = function(s){
       + '<div class="receipt-no">'+'No.'+' '+docNo+'</div>'
       + '<div class="receipt-no">'+'Date'+' '+ddmmyyyy(TODAY_ISO)+'</div></div></div>';
   }
-  function exportFooter(lang, noteEn, noteCn){
+  function exportFooter(lang, noteEn, noteCn, opts){
+    const compact = opts && opts.compact;
+    if(compact){
+      // Invoice·English 新口径：去掉"Johor, Malaysia"，剩余三项一栏三行、居中对齐
+      return '<div class="receipt-ftr">'+noteEn+'</div>'
+        + '<div class="receipt-ftr2 receipt-ftr2-compact">'
+        + '<div>VINATH TCM HEALTH CARE · Reg No: '+COMPANY_SSM+' · TIN: '+COMPANY_TAX_ID+' · WhatsApp +601145799499</div>'
+        + '<div>Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.</div>'
+        + '<div class="my">Malaysia</div></div>';
+    }
     return '<div class="receipt-ftr">'+noteEn+'</div>'
       + '<div class="receipt-ftr2"><div>VINATH TCM HEALTH CARE · Reg No: '+COMPANY_SSM+' · TIN: '+COMPANY_TAX_ID+' · WhatsApp +601145799499</div>'
       + '<div>Johor, Malaysia</div>'
@@ -3632,7 +3645,8 @@ window.escapeHtml = function(s){
         items: {},
         lineItems: lineItems,
         paymentMethod: o.payMethod || 'cash', paymentStatus: 'paid',
-        sourceType: 'order', sourceId: o.id
+        sourceType: 'order', sourceId: o.id,
+        address: [o.address, o.city, o.postcode, o.state].filter(function(x){ return x && String(x).trim(); }).join(', ')
       })});
       if(rres.ok){ rc = await rres.json(); }
     } catch(e){}
@@ -3655,11 +3669,13 @@ window.escapeHtml = function(s){
     }
     var html = ''
       + exportHeader(lang, 'Invoice', '发票', docNo, o.date)
-      + '<div class="receipt-meta-grid">'
+      + '<div class="receipt-meta-grid receipt-meta-grid-6">'
       + '<div><div class="receipt-meta-lbl">'+'Bill To'+'</div><div class="receipt-meta-val">'+escapeHtml(o.name)+'</div></div>'
       + '<div><div class="receipt-meta-lbl">'+'Contact'+'</div><div class="receipt-meta-val">'+escapeHtml(o.contact)+'</div></div>'
       + '<div><div class="receipt-meta-lbl">'+'Delivery Address'+'</div><div class="receipt-meta-val">'+escapeHtml(o.address)+', '+escapeHtml(o.city)+' '+escapeHtml(o.postcode)+', '+escapeHtml(o.state)+'</div></div>'
       + '<div><div class="receipt-meta-lbl">'+'Invoice Date'+'</div><div class="receipt-meta-val">'+ddmmyyyy(o.date)+'</div></div>'
+      + '<div><div class="receipt-meta-lbl">'+'Payment Status'+'</div><div class="receipt-meta-val">'+((rc && rc.payment_status === 'paid') || !rc ? 'Paid' : escapeHtml(rc.payment_status || 'Pending'))+'</div></div>'
+      + '<div><div class="receipt-meta-lbl">'+'Payment Method'+'</div><div class="receipt-meta-val">'+escapeHtml((rc && rc.payment_method) || o.payMethod || 'Cash')+'</div></div>'
       + '</div>'
       + '<table class="receipt-table"><thead><tr><th>'+'Product'+'</th><th class="num">'+'Qty'+'</th><th class="num">'+'Unit Price'+'</th><th class="num">'+'Subtotal'+'</th></tr></thead><tbody>'
       + itemsHtml
@@ -3667,7 +3683,7 @@ window.escapeHtml = function(s){
       + '<tr><td colspan="3">'+shipLabel+'</td><td class="num">MYR '+shipFee.toFixed(2)+'</td></tr>'
       + '<tr class="receipt-total-row"><td colspan="3">'+'Total'+'</td><td class="num">MYR '+orderTotal(o).toFixed(2)+'</td></tr>'
       + '</tbody></table>'
-      + exportFooter(lang, 'Thank you for your purchase. This is an official invoice issued by VINATH TCM HEALTH CARE. For any questions, contact us via WhatsApp: +601145799499.', 'VINATH（JOHOR）· 感谢您的购买，本单为 VINATH TCM HEALTH CARE 正式发票。如有疑问，请通过 WhatsApp 联系我们 +601145799499');
+      + exportFooter(lang, 'Thank you for your purchase. For any questions, contact us via WhatsApp: +601145799499.', 'VINATH（JOHOR）· 感谢您的购买。如有疑问，请通过 WhatsApp 联系我们 +601145799499。', { compact: true });
     document.getElementById('printReceipt').innerHTML = html;
     window.print();
   }

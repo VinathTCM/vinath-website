@@ -312,6 +312,8 @@ db.exec(`
     payment_status TEXT,
     source_type TEXT,
     source_id TEXT,
+    manual_override INTEGER NOT NULL DEFAULT 0,
+    address TEXT,
     issued_at TEXT DEFAULT CURRENT_TIMESTAMP
   );
 
@@ -445,6 +447,8 @@ db.exec(`
     payment_method TEXT,
     payment_status TEXT,
     line_items TEXT DEFAULT '[]',
+    manual_override INTEGER NOT NULL DEFAULT 0,
+    address TEXT,
     issued_at TEXT DEFAULT CURRENT_TIMESTAMP
   );
 `);
@@ -612,6 +616,36 @@ db.exec(`
   }
   db.prepare('INSERT INTO invoice_seq (year, last_no) VALUES (?, ?) ON CONFLICT(year) DO UPDATE SET last_no = MAX(last_no, excluded.last_no)').run(year, maxNo);
   console.log('invoice_seq 初始化完成，' + year + ' 起点 ' + maxNo);
+})();
+
+// 手动编辑保护标记：收据页"编辑明细"手动改过的收据 manual_override=1，此后订单/病历重新打印走 POST
+// 复用分支时不再用源数据覆盖明细/付款字段（用户手动修正为权威值）；默认 0 保持原有同步行为。
+(function migrateManualOverride(){
+  const tableSql = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='receipts'").get();
+  if(!tableSql) return;
+  if(tableSql.sql.includes('manual_override')) return;
+  console.log('检测到 receipts 表缺少 manual_override 列，正在补列…');
+  db.exec('ALTER TABLE receipts ADD COLUMN manual_override INTEGER NOT NULL DEFAULT 0');
+  console.log('receipts 表 manual_override 列已补充。');
+})();
+
+// 订单收据补地址：receipts 表无地址列的历史订单收据（source_type='order'）按 source_id 关联 orders 表回填，
+// 供电子收据页订单收据与订单页 Invoice·English 六栏（含 DELIVERY ADDRESS）排版对齐
+(function migrateOrderReceiptAddress(){
+  const tableSql = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='receipts'").get();
+  if(!tableSql) return;
+  if(!tableSql.sql.includes('address')){
+    console.log('检测到 receipts 表缺少 address 列，正在补列…');
+    db.exec('ALTER TABLE receipts ADD COLUMN address TEXT');
+  }
+  const updated = db.prepare(`
+    UPDATE receipts SET address = (
+      SELECT trim(o.address || ', ' || o.city || ' ' || o.postcode || ', ' || o.state)
+      FROM orders o WHERE o.id = receipts.source_id
+    )
+    WHERE source_type = 'order' AND (address IS NULL OR address = '')
+  `).run();
+  if(updated.changes) console.log('订单收据地址回填 ' + updated.changes + ' 条。');
 })();
 
 

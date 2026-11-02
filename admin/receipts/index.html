@@ -57,6 +57,11 @@ h1{ font-family:var(--font-serif); font-size:22px; margin:0 0 4px; }
 .receipt-table .amt-col{ text-align:right; }
 .receipt-total-row td{ font-weight:700; font-size:15px; border-bottom:none; border-top:2px solid var(--ink); }
 .receipt-footer{ margin-top:26px; text-align:center; }
+/* 订单收据（source_type=order）套用订单页 Invoice·English 底部排版：短文案 + 一栏三行居中 */
+.receipt-ftr{ margin-top:40px; text-align:center; font-size:10.5px; color:#999; line-height:1.7; }
+.receipt-ftr2{ margin-top:18px; padding-top:14px; border-top:1px solid #ddd; font-size:9.5px; color:#999; line-height:1.6; text-align:center; }
+.receipt-ftr2 > div{ margin:0 auto; }
+.receipt-ftr2 .my{ font-weight:700; letter-spacing:.05em; white-space:nowrap; }
 .receipt-thanks{ font-size:12px; color:var(--ink-soft); margin-top:22px; text-align:justify; line-height:1.6; }
 .receipt-disclaimer{ font-size:11px; color:var(--ink-soft); margin-top:24px; line-height:1.6; border-top:1px solid var(--line); padding-top:14px; }
 @page{ size:A4; margin:12mm; }
@@ -236,7 +241,8 @@ window.scrollTo(0,0);
             practitionerId:r.practitioner_id, practitionerNameSnapshot:r.practitioner_name_snapshot,
             practitionerMohRegNo:r.practitioner_moh_reg_no, practitionerApcNo:r.practitioner_apc_no,
             items:r.items, lineItems:r.lineItems || [], totalAmount:r.total_amount, tcmDiagnosisSnapshot:r.tcm_diagnosis_snapshot,
-            paymentMethod:r.payment_method, paymentStatus:r.payment_status, issuedAt:r.issued_at }; });
+            paymentMethod:r.payment_method, paymentStatus:r.payment_status, issuedAt:r.issued_at,
+            sourceType:r.source_type, sourceId:r.source_id, address:r.address || '', manualOverride:r.manualOverride ? 1 : 0 }; });
         }
       } catch(e){ console.error('拉取收据列表失败:', e); }
     }
@@ -729,13 +735,52 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       return '<tr><td>'+FEE_LABELS[k]+'</td><td class="amt-col">RM '+rc.items[k].toFixed(2)+'</td></tr>';
     }).join('');
 
+    var orderMode = rc.sourceType === 'order';
+    // 订单收据（source_type=order）对齐订单预约管理页 Invoice·English：六栏信息 + 四列明细 + 短页脚一栏三行
+    var orderRows = orderMode ? (rc.lineItems || []).map(function(it){
+      var nm = escapeHtml(it.name || '');
+      var price = Number(it.price) || 0;
+      var qty = Number(it.qty) || 1;
+      if(it.category === 'delivery'){ return '<tr><td colspan="3">'+nm+'</td><td class="amt-col">MYR '+price.toFixed(2)+'</td></tr>'; }
+      if(it.category === 'discount'){ return '<tr style="color:#B0503A;"><td colspan="3">'+nm+'</td><td class="amt-col">− MYR '+Math.abs(price).toFixed(2)+'</td></tr>'; }
+      return '<tr><td>'+nm+'</td><td class="amt-col">'+qty+'</td><td class="amt-col">MYR '+price.toFixed(2)+'</td><td class="amt-col">MYR '+(price*qty).toFixed(2)+'</td></tr>';
+    }).join('') : '';
+    var orderBody = orderMode ? (
+        '<div class="receipt-doc">'
+        + '<div class="receipt-doc-hd"><div><div class="brand">VINATH TCM HEALTH CARE</div>'
+        + '<div style="font-size:12px;color:#555;">健康，本该简单 · Easy Health</div>'
+        + '<div style="font-size:11px;color:#777;margin-top:2px;">Reg No: '+BIZ_SSM+' &nbsp;·&nbsp; TIN: '+escapeHtml(biz.taxId)+'</div>'
+        + '<div style="font-size:11px;color:#777;">WhatsApp +601145799499 &nbsp;·&nbsp; Johor, Malaysia</div></div>'
+        + '<div class="doctype"><div class="big">Invoice</div><div class="small">No. '+escapeHtml(rc.receiptNo)+'</div><div class="small">Date '+rc.issuedAt.slice(0,10)+'</div></div></div>'
+        + '<div class="receipt-meta-grid" style="grid-template-columns:repeat(3,1fr);gap:16px 20px;">'
+        + '<div><div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px;">Bill To</div><div style="font-size:13px;">'+escapeHtml(rc.patientName)+'</div></div>'
+        + '<div><div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px;">Contact</div><div style="font-size:13px;">'+escapeHtml(rc.patientPhone)+'</div></div>'
+        + '<div><div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px;">Delivery Address</div><div style="font-size:13px;">'+escapeHtml(rc.address || '—')+'</div></div>'
+        + '<div><div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px;">Invoice Date</div><div style="font-size:13px;">'+rc.issuedAt.slice(0,10)+'</div></div>'
+        + '<div><div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px;">Payment Status</div><div style="font-size:13px;">'+(rc.paymentStatus==='paid'?'Paid':'Pending')+'</div></div>'
+        + '<div><div style="font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#999;margin-bottom:3px;">Payment Method</div><div style="font-size:13px;">'+escapeHtml(PAYMENT_METHOD_LABELS[rc.paymentMethod] || rc.paymentMethod || 'Cash')+'</div></div>'
+        + '</div>'
+        + '<table class="receipt-table"><thead><tr><th>Product</th><th class="amt-col">Qty</th><th class="amt-col">Unit Price</th><th class="amt-col">Subtotal</th></tr></thead><tbody>'
+        + orderRows
+        + '<tr class="receipt-total-row"><td colspan="3">Total</td><td class="amt-col">MYR '+Number(rc.totalAmount).toFixed(2)+'</td></tr>'
+        + '</tbody></table>'
+        + '<div class="receipt-ftr">Thank you for your purchase. For any questions, contact us via WhatsApp: +601145799499.</div>'
+        + '<div class="receipt-ftr2">'
+        + '<div>VINATH TCM HEALTH CARE · Reg No: '+BIZ_SSM+' · TIN: '+escapeHtml(biz.taxId)+' · WhatsApp +601145799499</div>'
+        + '<div>Copyright © 2026 VINATH TCM HEALTH CARE. All rights reserved.</div>'
+        + '<div class="my">Malaysia</div>'
+        + '</div>'
+        + '</div>'
+      ) : '';
+
     var html = '<div class="wrap">'
       + '<div class="top-actions no-print"><button class="btn-secondary" id="backToListBtn">← 返回收据列表</button>'
       + '<button class="btn-secondary" id="print58Btn">打印 58mm 小票</button>'
       + '<button class="btn-secondary" id="editItemsBtn">编辑明细</button>'
       + '<button class="btn-primary" id="printBtn">导出 PDF / 打印(A4)</button></div>'
 
-      + '<div class="receipt-doc">'
+      + (orderMode ? orderBody : (
+      '<div class="receipt-doc">'
       + '<div class="receipt-doc-hd"><div><div class="brand">VINATH TCM HEALTH CARE</div>'
       + '<div style="font-size:12px;color:#555;">Easy Health · 健康，本该简单</div>'
       + '<div style="font-size:11px;color:#777;margin-top:2px;">Reg No: '+BIZ_SSM+' &nbsp;·&nbsp; TIN: '+escapeHtml(biz.taxId)+'</div>'
@@ -745,7 +790,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       + '<div class="receipt-meta-grid">'
       + '<div><span class="rlabel">Date: </span>'+rc.issuedAt.slice(0,10)+'</div>'
       + '<div><span class="rlabel">Payment Status: </span>'+(rc.paymentStatus==='paid'?'Paid':'Pending')+'</div>'
-      + '<div><span class="rlabel">Payment Method: </span>'+PAYMENT_METHOD_LABELS[rc.paymentMethod]+'</div>'
+      + '<div><span class="rlabel">Payment Method: </span>'+escapeHtml(PAYMENT_METHOD_LABELS[rc.paymentMethod] || rc.paymentMethod || 'Cash')+'</div>'
       + '<div><span class="rlabel">Practitioner: </span>'+escapeHtml(docDisplay(rc.practitionerNameSnapshot))+'</div>'
       + (rc.practitionerMohRegNo ? '<div><span class="rlabel">MOH T&CM Reg. No.: </span>'+escapeHtml(rc.practitionerMohRegNo)+'</div>' : '')
       + (rc.practitionerApcNo ? '<div><span class="rlabel">APC No.: </span>'+escapeHtml(rc.practitionerApcNo)+'</div>' : '')
@@ -765,6 +810,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       + '<div class="receipt-thanks">Thank you for choosing VINATH TCM.<br>For any billing questions, please contact us via WhatsApp +601145799499.</div>'
 
       + '</div>'
+      ))
       + '<div class="sheet-58" style="display:none;width:48mm;box-sizing:border-box;padding:0.5mm 1mm;font-family:\'Arial Narrow\',\'Helvetica Neue\',Arial,\'PingFang SC\',\'Microsoft YaHei\',sans-serif;font-stretch:condensed;font-size:12px;line-height:1.3;color:#000;">'
       + '<div style="text-align:center;word-break:break-word;font-weight:700;font-size:14px;">VINATH TCM HEALTH CARE</div>'
       + '<div style="text-align:center;word-break:break-word;font-size:11px;">Reg No: '+BIZ_SSM+'</div>'
@@ -833,6 +879,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       + '<div class="two-col" style="margin-bottom:12px;">'
       + '<div class="field"><label>付款方式 / Payment Method</label><select id="editPaymentMethodInput">'
       + ['cash','duitnow_qr','ewallet','bank_transfer','online','card','other'].map(function(m){ return '<option value="'+m+'"'+(rc.paymentMethod===m?' selected':'')+'>'+(PAYMENT_METHOD_LABELS[m]||m)+'</option>'; }).join('')
+      + (PAYMENT_METHOD_LABELS[rc.paymentMethod] ? '' : (rc.paymentMethod ? '<option value="'+escapeHtml(rc.paymentMethod)+'" selected>'+escapeHtml(rc.paymentMethod)+'</option>' : ''))
       + '</select></div>'
       + '<div class="field"><label>付款状态</label><select id="editPaymentStatusInput"><option value="paid"'+(rc.paymentStatus==='paid'?' selected':'')+'>Paid</option><option value="pending"'+(rc.paymentStatus==='pending'?' selected':'')+'>Pending</option></select></div>'
       + '</div>'

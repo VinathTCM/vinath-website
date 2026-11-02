@@ -10,9 +10,9 @@ function serializeReceipt(r){
   const out = { ...r, items: JSON.parse(r.items || '{}') };
   out.lineItems = [];
   try { out.lineItems = JSON.parse(r.line_items || '[]'); } catch(e){}
+  out.manualOverride = r.manual_override ? 1 : 0;
   return out;
-}
-// 全站唯一连续编号 VN-YYYY-NNNNN（马来西亚报税要求发票/小票编号连号、不重复、不跳号）。
+}// 全站唯一连续编号 VN-YYYY-NNNNN（马来西亚报税要求发票/小票编号连号、不重复、不跳号）。
 // 计数器存 invoice_seq 表（事务内原子 +1）；同一年内删除某张票也不会回退，新号从最大继续。
 function allocateInvoiceNo(){
   const year = new Date().getFullYear();
@@ -73,7 +73,7 @@ router.get('/admin/receipts', authMiddleware, requireModuleAccess('receipts'), (
 
 router.post('/admin/receipts', authMiddleware, requireModuleAccess('receipts'), (req, res) => {
   const { patientName, patientPhone, practitionerId, practitionerNameSnapshot, practitionerMohRegNo, practitionerApcNo,
-    items, tcmDiagnosisSnapshot, paymentMethod, paymentStatus, lineItems, sourceType, sourceId } = req.body;
+    items, tcmDiagnosisSnapshot, paymentMethod, paymentStatus, lineItems, sourceType, sourceId, address } = req.body;
   if(!patientName || !patientPhone) return res.status(400).json({ error: '请填写患者姓名和手机号' });
   if(!practitionerNameSnapshot) return res.status(400).json({ error: '请选择医师' });
 
@@ -91,18 +91,29 @@ router.post('/admin/receipts', authMiddleware, requireModuleAccess('receipts'), 
   if(sourceType && sourceId){
     const reused = db.prepare('SELECT * FROM receipts WHERE source_type = ? AND source_id = ?').get(sourceType, sourceId);
     if(reused){
-      db.prepare(`
-        UPDATE receipts SET items = ?, line_items = ?, total_amount = ?, payment_method = ?, payment_status = ?, tcm_diagnosis_snapshot = ?,
-        practitioner_id = COALESCE(?, practitioner_id), practitioner_name_snapshot = COALESCE(?, practitioner_name_snapshot),
-        practitioner_moh_reg_no = COALESCE(?, practitioner_moh_reg_no), practitioner_apc_no = COALESCE(?, practitioner_apc_no)
-        WHERE id = ?
-      `).run(JSON.stringify(items||{}), JSON.stringify(detailItems), totalAmount,
-        paymentMethod || reused.payment_method, paymentStatus || reused.payment_status,
-        tcmDiagnosisSnapshot !== undefined ? (tcmDiagnosisSnapshot || null) : reused.tcm_diagnosis_snapshot,
-        practitionerId || null, practitionerNameSnapshot || null, practitionerMohRegNo || null, practitionerApcNo || null,
-        reused.id);
+      if(reused.manual_override){
+        // 该收据已在收据页被手动编辑（manual_override=1）：手动值为权威，重新打印只刷新开单医师快照，
+        // 绝不用订单/病历源数据覆盖明细、合计与付款方式——根治"编辑后刷新/再导出回到旧值"
+        db.prepare(`
+          UPDATE receipts SET
+          practitioner_id = COALESCE(?, practitioner_id), practitioner_name_snapshot = COALESCE(?, practitioner_name_snapshot),
+          practitioner_moh_reg_no = COALESCE(?, practitioner_moh_reg_no), practitioner_apc_no = COALESCE(?, practitioner_apc_no)
+          WHERE id = ?
+        `).run(practitionerId || null, practitionerNameSnapshot || null, practitionerMohRegNo || null, practitionerApcNo || null, reused.id);
+      } else {
+        db.prepare(`
+          UPDATE receipts SET items = ?, line_items = ?, total_amount = ?, payment_method = ?, payment_status = ?, tcm_diagnosis_snapshot = ?,
+          practitioner_id = COALESCE(?, practitioner_id), practitioner_name_snapshot = COALESCE(?, practitioner_name_snapshot),
+          practitioner_moh_reg_no = COALESCE(?, practitioner_moh_reg_no), practitioner_apc_no = COALESCE(?, practitioner_apc_no)
+          WHERE id = ?
+        `).run(JSON.stringify(items||{}), JSON.stringify(detailItems), totalAmount,
+          paymentMethod || reused.payment_method, paymentStatus || reused.payment_status,
+          tcmDiagnosisSnapshot !== undefined ? (tcmDiagnosisSnapshot || null) : reused.tcm_diagnosis_snapshot,
+          practitionerId || null, practitionerNameSnapshot || null, practitionerMohRegNo || null, practitionerApcNo || null,
+          reused.id);
+      }
       appendAuditLog(req.admin.sub, req.admin.name, 'update', 'receipt', reused.id, patientPhone,
-        JSON.stringify({ oldTotal: reused.total_amount, newTotal: totalAmount, lineItemsCount: detailItems.length, receiptNo: reused.receipt_no, reused: 1 }));
+        JSON.stringify({ oldTotal: reused.total_amount, newTotal: totalAmount, lineItemsCount: detailItems.length, receiptNo: reused.receipt_no, reused: 1, manualOverride: reused.manual_override ? 1 : 0 }));
       const row = db.prepare('SELECT * FROM receipts WHERE id = ?').get(reused.id);
       return res.json(serializeReceipt(row));
     }
@@ -112,12 +123,12 @@ router.post('/admin/receipts', authMiddleware, requireModuleAccess('receipts'), 
   const receiptNo = genReceiptNo();
   db.prepare(`
     INSERT INTO receipts (id, receipt_no, patient_name, patient_phone, practitioner_id, practitioner_name_snapshot,
-      practitioner_moh_reg_no, practitioner_apc_no, items, line_items, total_amount, tcm_diagnosis_snapshot, payment_method, payment_status, source_type, source_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      practitioner_moh_reg_no, practitioner_apc_no, items, line_items, total_amount, tcm_diagnosis_snapshot, payment_method, payment_status, source_type, source_id, address)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(id, receiptNo, patientName, patientPhone, practitionerId||null, practitionerNameSnapshot,
     practitionerMohRegNo||null, practitionerApcNo||null, JSON.stringify(items||{}), JSON.stringify(detailItems),
     totalAmount, tcmDiagnosisSnapshot||null, paymentMethod||null, paymentStatus||null,
-    sourceType||null, sourceId||null);
+    sourceType||null, sourceId||null, address || null);
   const row = db.prepare('SELECT * FROM receipts WHERE id = ?').get(id);
   res.status(201).json(serializeReceipt(row));
 });
@@ -141,7 +152,7 @@ router.put('/admin/receipts/:id', authMiddleware, requireModuleAccess('receipts'
 
   // 只更新明细 / 分类金额 / 付款信息；receipt_no、issued_at（原开单时间）、患者与医师快照全部保留——
   // 改明细重新导出时，收据号与开单时间不因补正而改变
-  const { lineItems, items, paymentMethod, paymentStatus, tcmDiagnosisSnapshot } = req.body;
+  const { lineItems, items, paymentMethod, paymentStatus, tcmDiagnosisSnapshot, manualOverride } = req.body;
 
   // 明细清洗与 POST 完全一致（含负价折扣行）
   const detailItems = (lineItems || []).filter(function(it){ return it && it.name && String(it.name).trim(); })
@@ -153,13 +164,18 @@ router.put('/admin/receipts/:id', authMiddleware, requireModuleAccess('receipts'
   const newItems = items ? JSON.stringify(items) : existing.items;
   const newLineItems = detailItems.length ? JSON.stringify(detailItems) : existing.line_items;
 
+  // 手动保存即标记 manual_override=1：此后源数据重新打印不再覆盖手动值；
+  // 请求体显式 manualOverride:false 可清除标记（恢复为订单/病历数据权威同步）
+  const nextManualOverride = manualOverride === false ? 0 : 1;
+
   db.prepare(`
-    UPDATE receipts SET items = ?, line_items = ?, total_amount = ?, payment_method = ?, payment_status = ?, tcm_diagnosis_snapshot = ?
+    UPDATE receipts SET items = ?, line_items = ?, total_amount = ?, payment_method = ?, payment_status = ?, tcm_diagnosis_snapshot = ?, manual_override = ?
     WHERE id = ?
   `).run(newItems, newLineItems, totalAmount,
     paymentMethod !== undefined ? (paymentMethod || null) : existing.payment_method,
     paymentStatus !== undefined ? (paymentStatus || null) : existing.payment_status,
     tcmDiagnosisSnapshot !== undefined ? (tcmDiagnosisSnapshot || null) : existing.tcm_diagnosis_snapshot,
+    nextManualOverride,
     req.params.id);
 
   // 收据修改同样留痕：谁、什么时候、把哪张收据的合计从多少改成了多少（与病历留痕同一张日志表）
