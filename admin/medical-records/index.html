@@ -2542,9 +2542,9 @@ function sheetA4Html(receipt, biz, lang){
       // 两页排版保持一致；不显示患者姓名与电话；医师名用英文
       var rows = receipt.lineItems.map(function(it){
         var price = Number(it.price)||0;
-        var nameCell = escapeHtml(itemName(it, 'en')) + (it.qty && it.qty > 1 ? ' x ' + it.qty : '');
-        var amtTxt = price === 0 ? '(billed separately)' : money(price * (Number(it.qty)||1));
-        return '<tr style="border-bottom:1px solid #E6E1D6;"><td style="padding:9px 4px;font-size:13.5px;">' + nameCell + '</td>'
+        // Amount 列以「数量 @ 单价」表示（x2 @ RM 5.00），与电子收据页 A4 / 58mm 小票一致；合计见 Total 行
+        var amtTxt = price === 0 ? '(billed separately)' : 'x' + (Number(it.qty)||1) + ' @ RM ' + price.toFixed(2);
+        return '<tr style="border-bottom:1px solid #E6E1D6;"><td style="padding:9px 4px;font-size:13.5px;">' + escapeHtml(itemName(it, 'en')) + '</td>'
           + '<td style="padding:9px 4px;font-size:13.5px;text-align:right;white-space:nowrap;">' + amtTxt + '</td></tr>';
       }).join('');
       var grand = receiptGrandTotal(receipt);
@@ -2574,7 +2574,7 @@ function sheetA4Html(receipt, biz, lang){
         + '<th style="text-align:right;font-size:12px;color:#7A6F60;border-bottom:1.5px solid #332A21;padding:6px 4px;text-transform:uppercase;letter-spacing:.03em;">Amount</th></tr>'
         + rows
         + '<tr style="font-weight:700;font-size:15px;border-top:2px solid #332A21;"><td style="padding:9px 4px;">Total</td>'
-        + '<td style="padding:9px 4px;text-align:right;">' + money(grand) + '</td></tr>'
+        + '<td style="padding:9px 4px;text-align:right;">RM ' + grand.toFixed(2) + '</td></tr>'
         + '</table>'
         + '<div style="margin-top:26px;text-align:center;">'
         + '<div style="font-size:11.5px;color:#555;font-weight:700;">VINATH TCM HEALTH CARE</div>'

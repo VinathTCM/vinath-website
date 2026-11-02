@@ -721,10 +721,10 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     }
     var hasDetail = rc.lineItems && rc.lineItems.length > 0;
     var itemRows = hasDetail ? rc.lineItems.map(function(it){
-      var nameCell = escapeHtml(itName(it)) + (it.qty && it.qty > 1 ? ' x ' + it.qty : '');
-      // Amount 列只显示小计一个金额（避免同 item 出现单价/总价两个金额）；零价行标 billed separately
-      var amtTxt = it.price === 0 ? '(billed separately)' : 'RM '+(Number(it.price) * (Number(it.qty)||1)).toFixed(2);
-      return '<tr><td>'+nameCell+'</td><td class="amt-col">'+amtTxt+'</td></tr>';
+      // Amount 列以「数量 @ 单价」表示（x2 @ RM 5.00），与 58mm 小票一致；合计见 Total 行
+      var nm = escapeHtml(itName(it));
+      var amtTxt = it.price === 0 ? '(billed separately)' : 'x' + (Number(it.qty)||1) + ' @ RM ' + Number(it.price).toFixed(2);
+      return '<tr><td>'+nm+'</td><td class="amt-col">'+amtTxt+'</td></tr>';
     }).join('') : Object.keys(FEE_LABELS).filter(function(k){ return rc.items[k] > 0; }).map(function(k){
       return '<tr><td>'+FEE_LABELS[k]+'</td><td class="amt-col">RM '+rc.items[k].toFixed(2)+'</td></tr>';
     }).join('');
