@@ -1166,7 +1166,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       var rxItems = [];
       if(rec.lastRx && rec.lastRx.items && rec.lastRx.items.length) rxItems = rec.lastRx.items;
       if(!treatments.length && !rxItems.length && !products.length){ showToast('这份病历没有治疗、商品或处方药材，无需打印'); return; }
-      await openInvoicePrint({ treatments: treatments, rxItems: rxItems, products: products, couponCode: d.couponCode||'', manualDiscount: Number(d.manualDiscount)||0, doses: (rec.lastRx && rec.lastRx.doses) || 1, decoctDoses: (rec.lastRx && rec.lastRx.decoctDoses) || (rec.lastRx && rec.lastRx.doses) || 1, dispenseMode: (rec.lastRx && rec.lastRx.dispenseMode) || 'herb_pickup' }, patientName || (rec.patientName||''), activePatientPhone, size);
+      await openInvoicePrint({ treatments: treatments, rxItems: rxItems, products: products, couponCode: d.couponCode||'', manualDiscount: Number(d.manualDiscount)||0, deliveryFee: Number(d.deliveryFee)||0, doses: (rec.lastRx && rec.lastRx.doses) || 1, decoctDoses: (rec.lastRx && rec.lastRx.decoctDoses) || (rec.lastRx && rec.lastRx.doses) || 1, dispenseMode: (rec.lastRx && rec.lastRx.dispenseMode) || 'herb_pickup' }, patientName || (rec.patientName||''), activePatientPhone, size);
     }
 
     // 该患者的操作日志（仅大管理员）
@@ -1243,6 +1243,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       rxDraft.couponCode = _d0.couponCode || '';
       rxDraft.couponApplied = !!_d0.couponCode;
       rxDraft.manualDiscount = Number(_d0.manualDiscount)||0;
+      rxDraft.deliveryFee = Number(_d0.deliveryFee)||0;
       if(r.lastRx){
         rxDraft.formulaType = r.lastRx.formulaType || 'granule';
         rxDraft.items = (r.lastRx.items && r.lastRx.items.length) ? r.lastRx.items.map(function(it){ return { herbName: it.herbName, dosageGrams: it.dosageGrams, notes: it.notes||'' }; }) : [{herbName:'',dosageGrams:'',notes:''}];
@@ -1265,7 +1266,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       // 处方区块是否勾选只取决于"有没有药材"；治疗 / 商品已独立成卡片，不再依赖勾选处方
       rxDraft.enabled = _hasHerb;
     } else {
-      rxDraft = { enabled:false, formulaType:'granule', items:[{herbName:'',dosageGrams:'',notes:''}], usageInstructions:'', treatments:[], products:[], couponCode:'', couponApplied:false, manualDiscount:0, bookingId:null, doses:1, dispenseMode:'herb_pickup', decoctDoses:1, _decoctFollow:true };
+      rxDraft = { enabled:false, formulaType:'granule', items:[{herbName:'',dosageGrams:'',notes:''}], usageInstructions:'', treatments:[], products:[], couponCode:'', couponApplied:false, manualDiscount:0, deliveryFee:0, bookingId:null, doses:1, dispenseMode:'herb_pickup', decoctDoses:1, _decoctFollow:true };
     }
     r.tongueShape = r.tongueShape || [];
     r.pulseType = r.pulseType || [];
@@ -1369,6 +1370,14 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       + '<div class="field"><label>从价目表选择，自动带出价格</label>'
       + '<div class="rx-from-formula"><select id="rxTreatSel"><option value="">从价目表选择…</option></select><button type="button" class="btn-small" id="rxAddTreatBtn">+ 添加</button></div>'
       + '<div id="rxTreatList" style="margin-top:8px;"></div></div>'
+      + '<div style="margin-top:10px;padding-top:12px;border-top:1px dashed var(--line);">'
+      + '<label style="display:block;font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:8px;">居家出诊费（先选距离 Zone，再手动填金额）</label>'
+      + '<div class="two-col">'
+      + '<div class="field" style="margin-bottom:8px;"><select id="hvZoneSel"><option value="">选择 Zone（距离）…</option></select></div>'
+      + '<div class="field" style="margin-bottom:8px;"><input type="number" id="hvFeeInput" min="0" step="0.01" placeholder="出诊费金额 RM"></div>'
+      + '</div>'
+      + '<button type="button" class="btn-small" id="hvAddBtn">+ 添加出诊费</button>'
+      + '</div>'
       + '</div>'
 
       // 商品项目：独立卡片，与有货商店商品（试用装 / 正装）同步，治疗 + 商品可一起结算开票
@@ -1376,6 +1385,12 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       + '<div class="field"><label>从有货商店商品选择</label>'
       + '<div class="rx-from-formula"><select id="rxProductSel"><option value="">正在加载商品…</option></select><button type="button" class="btn-small" id="rxAddProductBtn">+ 添加</button></div>'
       + '<div id="rxProductList" style="margin-top:8px;"></div></div>'
+      + '</div>'
+
+      // 邮费 / Delivery Fee：独立卡片，放在"优惠与折扣"之前（需求3：邮费计入发票）
+      + '<div class="card"><div class="section-title">邮费 / Delivery Fee</div>'
+      + '<div class="field"><label>邮费（选填，配送订单填写；会随发票一并计算）</label>'
+      + '<input type="number" id="rxDeliveryFeeInput" min="0" step="0.01" value="'+(Number(rxDraft.deliveryFee)||0).toFixed(2)+'"></div>'
       + '</div>'
 
       // 优惠与折扣 + 实时金额汇总
@@ -1599,8 +1614,18 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     function loadPriceList(){
       return fetch(API_BASE + '/site-settings/price_list')
         .then(function(res){ return res.ok ? res.json() : null; })
-        .then(function(v){ PRICE_LIST = (v && v.list && v.list.length) ? v.list : PRICE_LIST_FALLBACK; renderRxTreatSelect(); return PRICE_LIST; })
-        .catch(function(){ PRICE_LIST = PRICE_LIST_FALLBACK; renderRxTreatSelect(); return PRICE_LIST; });
+        .then(function(v){ PRICE_LIST = (v && v.list && v.list.length) ? v.list : PRICE_LIST_FALLBACK; renderRxTreatSelect(); renderHvZoneSelect(); return PRICE_LIST; })
+        .catch(function(){ PRICE_LIST = PRICE_LIST_FALLBACK; renderRxTreatSelect(); renderHvZoneSelect(); return PRICE_LIST; });
+    }
+    // 居家出诊费 Zone 下拉：只取价目表里"居家出诊费 Home Visit"分类的项（Zone1-5），金额由医师手动填
+    function renderHvZoneSelect(){
+      var sel = document.getElementById('hvZoneSel');
+      if(!sel) return;
+      var list = (PRICE_LIST||PRICE_LIST_FALLBACK).filter(function(p){ return /居家出诊费|Home Visit/i.test(p.cat||''); });
+      sel.innerHTML = '<option value="">选择 Zone（距离）…</option>' + list.map(function(p){
+        var en = TREATMENT_EN[p.name] || p.nameEn || 'Home Visit';
+        return '<option value="'+escapeHtml(p.name)+'" data-en="'+escapeHtml(en)+'">'+escapeHtml(p.name+(p.nameEn?' ('+en+')':''))+'</option>';
+      }).join('');
     }
     function renderRxTreatSelect(){
       var sel = document.getElementById('rxTreatSel');
@@ -1735,13 +1760,16 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       var rxSum = rxHerbSubtotal();
       var manualInp = document.getElementById('rxManualDiscInput');
       var manual = Number(manualInp && manualInp.value) || 0;
-      var grand = treatSum + prodSum + rxSum - manual;
+      var delivInp = document.getElementById('rxDeliveryFeeInput');
+      var deliv = Number(delivInp && delivInp.value) || 0;
+      var grand = treatSum + prodSum + rxSum + deliv - manual;
       function sumRow(lbl, val, bold){
         return '<div style="display:flex;justify-content:space-between;align-items:center;font-size:'+(bold?'15px':'13px')+';'+(bold?'font-weight:700;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);':'margin-top:3px;')+'color:'+(bold?'var(--ink)':'var(--ink-soft)')+';"><span>'+lbl+'</span><span>RM'+val.toFixed(2)+'</span></div>';
       }
       box.innerHTML = sumRow('中药处方小计', rxSum)
         + sumRow('治疗项目小计', treatSum)
         + sumRow('商品项目小计', prodSum)
+        + (deliv > 0 ? sumRow('邮费 / Delivery Fee', deliv) : '')
         + (couponSavings > 0 ? sumRow('优惠码折扣', -couponSavings) : '')
         + (manual > 0 ? sumRow('手动折扣', -manual) : '')
         + sumRow('应收合计', grand, true);
@@ -1853,6 +1881,54 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     loadShopProducts();
     ensureHerbPrices().then(function(){ renderAmountSummary(); });
     renderAmountSummary();
+    // ---- 复诊新增（需求1）：拉取该患者历史病历，自动回填性别/出生日期/年龄，并展示既往记录栏 ----
+    if(!r.id && r.patientPhone){
+      (function(){
+        var histPhone = r.patientPhone;
+        var recLabel = 'patientGenderInput';
+        fetch(API_BASE + '/admin/medical-records?patientPhone=' + encodeURIComponent(histPhone), { headers: { 'Authorization': 'Bearer ' + authToken } })
+          .then(function(res){ return res.ok ? res.json() : []; })
+          .then(function(rows){
+            if(histPhone !== r.patientPhone) return; // 页面已切换
+            var recs = (rows || []).map(function(x){ return Object.assign({ id: x.id, visitDate: x.visit_date, patientName: x.patient_name }, x.data); })
+              .filter(function(x){ return !x._deleted; });
+            if(!recs.length) return;
+            // 1) 回填最近一次病历已填的出生日期 / 性别 / 年龄（用户没手动改才回填）
+            var last = recs[0];
+            if(last.gender && !r.gender){
+              r.gender = last.gender;
+              var gInp = document.getElementById('patientGenderInput');
+              if(gInp){ gInp.value = last.gender; }
+            }
+            if(last.dateOfBirth && !r.dateOfBirth){
+              r.dateOfBirth = last.dateOfBirth;
+              var dInp = document.getElementById('patientDobInput');
+              if(dInp) dInp.value = last.dateOfBirth;
+              var aInp = document.getElementById('patientAgeInput');
+              var age = calcAge(last.dateOfBirth);
+              if(aInp) aInp.value = age;
+              r.age = age;
+            }
+            // 2) 既往记录栏：插在"基本信息"卡片（第一个 card）之后，只读展示最近 10 条
+            var anchor = document.querySelector('.card');
+            if(!anchor) return;
+            var prevCard = document.createElement('div');
+            prevCard.className = 'card';
+            prevCard.id = 'prevRecordsCard';
+            prevCard.innerHTML = '<div class="section-title">既往病历记录（' + recs.length + ' 次）</div>'
+              + recs.slice(0, 10).map(function(rc){
+                var treatText = (rc.treatments && rc.treatments.length) ? rc.treatments.map(function(t){ return treatName(t); }).join('、') : '';
+                return '<div class="prev-rec-row" style="padding:9px 0;border-bottom:1px solid var(--line);">'
+                  + '<div style="font-weight:700;font-size:13.5px;">' + escapeHtml(rc.visitDate) + ' · ' + escapeHtml(rc.tcmDiagnosis || '（未填写诊断）') + (rc.syndromePattern ? ' · ' + escapeHtml(rc.syndromePattern) : '') + '</div>'
+                  + (rc.chiefComplaint ? '<div style="font-size:12.5px;color:var(--ink-soft);margin-top:2px;">主诉：' + escapeHtml(rc.chiefComplaint) + '</div>' : '')
+                  + (treatText ? '<div style="font-size:12px;color:var(--ink-soft);margin-top:2px;">治疗：' + escapeHtml(treatText) + '</div>' : '')
+                  + '</div>';
+              }).join('')
+              + '<div style="font-size:12px;color:var(--ink-soft);margin-top:10px;">出生日期、性别、年龄已自动沿用最近一次就诊记录，可直接修改。如需编辑既往病历，请到时间轴中点击对应记录。</div>';
+            anchor.parentNode.insertBefore(prevCard, anchor.nextSibling);
+          }).catch(function(){});
+      })();
+    }
     document.getElementById('rxEnableCheck').addEventListener('change', function(){
       rxDraft.enabled = this.checked;
       document.getElementById('rxBlock').style.display = this.checked ? '' : 'none';
@@ -1917,6 +1993,23 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       var _pt = (PRICE_LIST||PRICE_LIST_FALLBACK).find(function(x){ return x.name===sel.value; });
       rxDraft.treatments.push({ name: sel.value, nameEn: _pt ? (_pt.nameEn||'') : '', qty: 1, price: Number(sel.options[sel.selectedIndex].getAttribute('data-price')) || 0 });
       renderRxTreatList(); renderAmountSummary();
+    });
+    // 居家出诊费：先选 Zone 再手动填金额（需求2）
+    document.getElementById('hvAddBtn').addEventListener('click', function(){
+      var sel = document.getElementById('hvZoneSel');
+      var feeInp = document.getElementById('hvFeeInput');
+      if(!sel || !sel.value){ showToast('请先选择距离 Zone'); return; }
+      var fee = Number(feeInp && feeInp.value);
+      if(!(fee > 0)){ showToast('请填写出诊费金额（大于 0）'); return; }
+      var en = (sel.options[sel.selectedIndex] && sel.options[sel.selectedIndex].getAttribute('data-en')) || 'Home Visit';
+      rxDraft.treatments.push({ name: sel.value, nameEn: en, qty: 1, price: fee });
+      renderRxTreatList(); renderAmountSummary();
+      if(feeInp) feeInp.value = '';
+    });
+    // 邮费 / Delivery Fee：实时写入草稿并重算合计（需求3）
+    document.getElementById('rxDeliveryFeeInput').addEventListener('input', function(){
+      rxDraft.deliveryFee = Number(this.value) || 0;
+      renderAmountSummary();
     });
     // 优惠码应用 / 取消后，按当前状态重算所有已添加商品的单价，并刷新下拉与列表
     function repriceProducts(){
@@ -2008,6 +2101,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       if(rxDraft.products && rxDraft.products.length) dataPayload.products = rxDraft.products;
       if(rxDraft.couponCode) dataPayload.couponCode = rxDraft.couponCode;
       if(Number(rxDraft.manualDiscount) > 0) dataPayload.manualDiscount = Number(rxDraft.manualDiscount);
+      if(Number(rxDraft.deliveryFee) > 0) dataPayload.deliveryFee = Number(rxDraft.deliveryFee);
 
       try {
         var url = r.id ? API_BASE + '/admin/medical-records/' + r.id : API_BASE + '/admin/medical-records';
@@ -2053,7 +2147,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
 
         ok = true;
         activePatientPhone = r.patientPhone;
-        return { ok: true, savedMrId: savedMrId, rxItems: rxItems, treatments: treatments, products: rxDraft.products || [], couponCode: rxDraft.couponCode || '', manualDiscount: Number(rxDraft.manualDiscount) || 0, doses: Number(rxDraft.doses) || 1, decoctDoses: Number(rxDraft.decoctDoses) || 0, dispenseMode: rxDraft.dispenseMode || 'herb_pickup' };
+        return { ok: true, savedMrId: savedMrId, rxItems: rxItems, treatments: treatments, products: rxDraft.products || [], couponCode: rxDraft.couponCode || '', manualDiscount: Number(rxDraft.manualDiscount) || 0, deliveryFee: Number(rxDraft.deliveryFee) || 0, doses: Number(rxDraft.doses) || 1, decoctDoses: Number(rxDraft.decoctDoses) || 0, dispenseMode: rxDraft.dispenseMode || 'herb_pickup' };
       } catch(e){
         showToast('连不上服务器，请检查网络后重试');
         return { ok:false };
@@ -2543,6 +2637,10 @@ function fillPrintArea(receipt, size, lang){
         var formEn = p.form === 'trial' ? ' · Trial' : ' · Full';
         items.push({ name: p.name + formCn, nameEn: (p.nameEn || p.name) + formEn, category: 'product', qty: Number(p.qty) || 1, price: Number(p.unitPrice) || 0 });
       });
+      // 邮费 / Delivery Fee（category=delivery，随发票一并计算）
+      if(Number(result.deliveryFee) > 0){
+        items.push({ name: '邮费', nameEn: 'Delivery Fee', category: 'delivery', qty: 1, price: Number(result.deliveryFee) });
+      }
       // 手动折扣（category=discount，负价行）
       if(Number(result.manualDiscount) > 0){
         items.push({ name: '手动折扣', nameEn: 'Manual Discount', category: 'discount', qty: 1, price: -Math.abs(Number(result.manualDiscount)) });

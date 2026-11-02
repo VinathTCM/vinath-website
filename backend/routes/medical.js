@@ -47,7 +47,7 @@ const MR_FIELD_LABELS = {
   constitutionType: '体质', constitutionTypeCustom: '体质(自定义)',
   tcmDiagnosis: '中医诊断', syndromePattern: '证型', treatmentPlan: '治法方案',
   treatmentPoints: '治疗穴位', treatments: '治疗项目', products: '商品',
-  couponCode: '优惠码', manualDiscount: '手动折扣',
+  couponCode: '优惠码', manualDiscount: '手动折扣', deliveryFee: '邮费',
   gender: '性别', dateOfBirth: '出生日期', age: '年龄', photos: '照片'
 };
 

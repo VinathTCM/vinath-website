@@ -2,7 +2,7 @@
 // 兼容两种开票：e-Invoice分类金额式（items对象）+ 项目明细式（lineItems数组，病历页"保存并打印发票"用）
 const express = require('express');
 const db = require('../db');
-const { authMiddleware, requireModuleAccess } = require('../middleware/auth');
+const { authMiddleware, requireModuleAccess, appendAuditLog } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -49,6 +49,42 @@ router.post('/admin/receipts', authMiddleware, requireModuleAccess('receipts'), 
     totalAmount, tcmDiagnosisSnapshot||null, paymentMethod||null, paymentStatus||null);
   const row = db.prepare('SELECT * FROM receipts WHERE id = ?').get(id);
   res.status(201).json(serializeReceipt(row));
+});
+
+router.put('/admin/receipts/:id', authMiddleware, requireModuleAccess('receipts'), (req, res) => {
+  const existing = db.prepare('SELECT * FROM receipts WHERE id = ?').get(req.params.id);
+  if(!existing) return res.status(404).json({ error: '收据不存在' });
+
+  // 只更新明细 / 分类金额 / 付款信息；receipt_no、issued_at（原开单时间）、患者与医师快照全部保留——
+  // 改明细重新导出时，收据号与开单时间不因补正而改变
+  const { lineItems, items, paymentMethod, paymentStatus, tcmDiagnosisSnapshot } = req.body;
+
+  // 明细清洗与 POST 完全一致（含负价折扣行）
+  const detailItems = (lineItems || []).filter(function(it){ return it && it.name && String(it.name).trim(); })
+    .map(function(it){ return { name: String(it.name).trim(), nameEn: it.nameEn ? String(it.nameEn).trim() : '', category: it.category ? String(it.category).trim() : '', qty: Number(it.qty) || 1, price: Number(it.price) || 0 }; });
+  const totalAmount = detailItems.length
+    ? detailItems.reduce(function(s, it){ return s + it.price * it.qty; }, 0)
+    : ['consultation','transport','medication','other'].reduce((s,k) => s + (Number(items && items[k]) || 0), 0);
+
+  const newItems = items ? JSON.stringify(items) : existing.items;
+  const newLineItems = detailItems.length ? JSON.stringify(detailItems) : existing.line_items;
+
+  db.prepare(`
+    UPDATE receipts SET items = ?, line_items = ?, total_amount = ?, payment_method = ?, payment_status = ?, tcm_diagnosis_snapshot = ?
+    WHERE id = ?
+  `).run(newItems, newLineItems, totalAmount,
+    paymentMethod !== undefined ? (paymentMethod || null) : existing.payment_method,
+    paymentStatus !== undefined ? (paymentStatus || null) : existing.payment_status,
+    tcmDiagnosisSnapshot !== undefined ? (tcmDiagnosisSnapshot || null) : existing.tcm_diagnosis_snapshot,
+    req.params.id);
+
+  // 收据修改同样留痕：谁、什么时候、把哪张收据的合计从多少改成了多少（与病历留痕同一张日志表）
+  appendAuditLog(req.admin.sub, req.admin.name, 'update', 'receipt',
+    req.params.id, existing.patient_phone,
+    JSON.stringify({ oldTotal: existing.total_amount, newTotal: totalAmount, lineItemsCount: detailItems.length, receiptNo: existing.receipt_no }));
+
+  const row = db.prepare('SELECT * FROM receipts WHERE id = ?').get(req.params.id);
+  res.json(serializeReceipt(row));
 });
 
 router.delete('/admin/receipts/:id', authMiddleware, requireModuleAccess('receipts'), (req, res) => {

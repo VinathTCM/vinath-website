@@ -25,7 +25,8 @@ h1{ font-family:var(--font-serif); font-size:22px; margin:0 0 4px; }
 .field input[type=text], .field input[type=number], .field textarea, .field select{ width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:10px; font-family:inherit; font-size:13.5px; }
 .two-col{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
 .three-col{ display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px; }
-@media (max-width:640px){ .two-col, .three-col{ grid-template-columns:1fr; } }
+.edit-line input[type=text], .edit-line input[type=number]{ width:100%; padding:9px 10px; border:1.5px solid var(--line); border-radius:10px; font-family:inherit; font-size:13.5px; }
+@media (max-width:640px){ .two-col, .three-col{ grid-template-columns:1fr; } .edit-line{ grid-template-columns:1fr 1fr 56px 84px 34px !important; } }
 .btn-primary{ background:var(--clay); color:#fff; border:none; border-radius:10px; padding:11px 22px; font-size:14px; font-weight:700; cursor:pointer; }
 .btn-secondary{ background:none; border:1.5px solid var(--line); color:var(--ink); border-radius:10px; padding:10px 20px; font-size:13.5px; cursor:pointer; }
 .top-actions{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:10px; }
@@ -220,6 +221,7 @@ window.scrollTo(0,0);
     if(view==='list') renderList();
     else if(view==='form') renderForm();
     else if(view==='print') renderPrintView();
+    else if(view==='edit') renderEditView();
   }
 
   async function renderList(){
@@ -727,6 +729,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     var html = '<div class="wrap">'
       + '<div class="top-actions no-print"><button class="btn-secondary" id="backToListBtn">← 返回收据列表</button>'
       + '<button class="btn-secondary" id="print58Btn">打印 58mm 小票</button>'
+      + '<button class="btn-secondary" id="editItemsBtn">编辑明细</button>'
       + '<button class="btn-primary" id="printBtn">导出 PDF / 打印(A4)</button></div>'
 
       + '<div class="receipt-doc">'
@@ -793,6 +796,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     document.getElementById('app').innerHTML = html;
 
     document.getElementById('backToListBtn').addEventListener('click', function(){ view='list'; render(); });
+    document.getElementById('editItemsBtn').addEventListener('click', function(){ view='edit'; render(); });
     document.getElementById('printBtn').addEventListener('click', function(){ setPrintPageSize('a4'); document.body.classList.remove('print-58'); window.print(); });
     document.getElementById('print58Btn').addEventListener('click', function(){
       setPrintPageSize('58');
@@ -810,6 +814,118 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
         adaptThermalForIpad(root58);
         window.print();
       }, 250);
+    });
+  }
+
+  // 编辑明细并重新导出（需求5）：保留原开单日期时间（issued_at）与收据号，只改 item 明细后重算合计
+  async function renderEditView(){
+    var rc = editingReceipt;
+    var lines = (rc.lineItems && rc.lineItems.length) ? rc.lineItems.map(function(it){
+      return { name: it.name, nameEn: it.nameEn || '', category: it.category || '', qty: Number(it.qty) || 1, price: Number(it.price) || 0 };
+    }) : [];
+    var html = '<div class="wrap">'
+      + '<div class="top-actions"><div><h1>修改收据明细</h1>'
+      + '<div class="sub">'+escapeHtml(rc.receiptNo)+' · 原开单时间 '+rc.issuedAt.slice(0,16)+' 保留不变 · 修改后重算合计并重新导出</div></div>'
+      + '<button class="btn-secondary" id="cancelEditBtn">← 返回收据</button></div>'
+
+      + '<div class="card"><div class="section-title">费用明细（马币 RM）</div>'
+      + '<div id="editItemsList"></div>'
+      + '<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line);">'
+      + '<div class="two-col">'
+      + '<div class="field"><label>项目名称（中文/双语）</label><input type="text" id="newItemNameInput" placeholder="例如：邮费 / 出诊费"></div>'
+      + '<div class="field"><label>英文名（可留空，有则打印用英文）</label><input type="text" id="newItemNameEnInput" placeholder="例如：Delivery Fee"></div>'
+      + '</div>'
+      + '<div class="three-col">'
+      + '<div class="field"><label>数量</label><input type="number" id="newItemQtyInput" value="1" min="1"></div>'
+      + '<div class="field"><label>单价 RM</label><input type="number" id="newItemPriceInput" step="0.01" placeholder="0.00"></div>'
+      + '<div style="align-self:flex-end;"><button class="btn-primary" id="addItemBtn" style="width:100%;">+ 添加明细</button></div>'
+      + '</div></div>'
+      + '<div style="text-align:right;font-size:15px;font-weight:700;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);">合计：RM <span id="editTotalDisplay">0.00</span></div>'
+      + '</div>'
+      + '<button class="btn-primary" id="saveEditBtn" style="width:100%;padding:14px;font-size:15px;">保存修改并重新导出</button>'
+      + '</div>';
+    document.getElementById('app').innerHTML = html;
+
+    function renderEditList(){
+      var el = document.getElementById('editItemsList');
+      if(!el) return;
+      el.innerHTML = lines.length ? lines.map(function(l, i){
+        return '<div class="edit-line" data-idx="'+i+'" style="display:grid;grid-template-columns:1.4fr 1fr 64px 90px 36px;gap:8px;align-items:center;margin-bottom:8px;">'
+          + '<input type="text" value="'+escapeHtml(l.name)+'" data-f="name" aria-label="项目名称">'
+          + '<input type="text" value="'+escapeHtml(l.nameEn)+'" data-f="nameEn" placeholder="EN" aria-label="英文名">'
+          + '<input type="number" min="1" value="'+(Number(l.qty)||1)+'" data-f="qty" aria-label="数量">'
+          + '<input type="number" step="0.01" value="'+(Number(l.price)||0).toFixed(2)+'" data-f="price" aria-label="单价">'
+          + '<button type="button" class="btn-small" data-rm="'+i+'" style="color:#c0392b;border-color:#c0392b;">×</button>'
+          + '</div>';
+      }).join('') : '<div style="font-size:12.5px;color:var(--ink-soft);padding:8px 0;">这张收据还没有明细行，可在下方添加明细后保存。</div>';
+      el.querySelectorAll('input').forEach(function(inp){
+        inp.addEventListener('input', function(){
+          var idx = Number(this.closest('.edit-line').getAttribute('data-idx'));
+          var f = this.getAttribute('data-f');
+          if(f === 'qty' || f === 'price'){ lines[idx][f] = Number(this.value) || 0; }
+          else { lines[idx][f] = this.value; }
+          refreshTotal();
+        });
+      });
+      el.querySelectorAll('[data-rm]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var idx = Number(this.getAttribute('data-rm'));
+          lines.splice(idx, 1);
+          renderEditList();
+          refreshTotal();
+        });
+      });
+    }
+    function refreshTotal(){
+      var t = lines.reduce(function(s, l){ return s + (Number(l.price)||0) * (Number(l.qty)||1); }, 0);
+      var d = document.getElementById('editTotalDisplay');
+      if(d) d.textContent = t.toFixed(2);
+    }
+    renderEditList();
+    refreshTotal();
+
+    document.getElementById('cancelEditBtn').addEventListener('click', function(){ view='print'; render(); });
+    document.getElementById('addItemBtn').addEventListener('click', function(){
+      var name = (document.getElementById('newItemNameInput').value || '').trim();
+      if(!name){ showToast('请先填写项目名称'); return; }
+      lines.push({ name: name, nameEn: (document.getElementById('newItemNameEnInput').value || '').trim(), category: '', qty: Number(document.getElementById('newItemQtyInput').value) || 1, price: Number(document.getElementById('newItemPriceInput').value) || 0 });
+      document.getElementById('newItemNameInput').value = '';
+      document.getElementById('newItemNameEnInput').value = '';
+      document.getElementById('newItemQtyInput').value = '1';
+      document.getElementById('newItemPriceInput').value = '';
+      renderEditList();
+      refreshTotal();
+    });
+    document.getElementById('saveEditBtn').addEventListener('click', async function(){
+      var btn = this;
+      var valid = lines.filter(function(l){ return (l.name || '').trim(); });
+      if(!valid.length){ showToast('至少保留一条明细项'); return; }
+      btn.disabled = true;
+      try {
+        var res = await fetch(API_BASE + '/admin/receipts/' + encodeURIComponent(rc.id), {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+          body: JSON.stringify({ lineItems: valid })
+        });
+        if(!res.ok){
+          var err = await res.json();
+          showToast(err.error || '保存失败，请重试');
+          btn.disabled = false;
+          return;
+        }
+        var saved = await res.json();
+        editingReceipt = { id:saved.id, receiptNo:saved.receipt_no, patientName:saved.patient_name, patientPhone:saved.patient_phone,
+          practitionerId:saved.practitioner_id, practitionerNameSnapshot:saved.practitioner_name_snapshot,
+          practitionerMohRegNo:saved.practitioner_moh_reg_no, practitionerApcNo:saved.practitioner_apc_no,
+          items:saved.items, lineItems:saved.lineItems || [], totalAmount:saved.total_amount, tcmDiagnosisSnapshot:saved.tcm_diagnosis_snapshot,
+          paymentMethod:saved.payment_method, paymentStatus:saved.payment_status, issuedAt:saved.issued_at };
+        view = 'print';
+        render();
+        showToast('已保存，原开单时间与收据号不变，可直接重新导出/打印');
+      } catch(e){
+        showToast('连不上服务器，请检查网络后重试');
+        btn.disabled = false;
+      }
     });
   }
 
