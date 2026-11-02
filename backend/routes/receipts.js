@@ -188,9 +188,27 @@ router.put('/admin/receipts/:id', authMiddleware, requireModuleAccess('receipts'
 });
 
 router.delete('/admin/receipts/:id', authMiddleware, requireModuleAccess('receipts'), (req, res) => {
-  const info = db.prepare('DELETE FROM receipts WHERE id = ?').run(req.params.id);
-  if(!info.changes) return res.status(404).json({ error: '收据不存在' });
-  res.json({ ok: true, deleted: info.changes });
+  const row = db.prepare('SELECT * FROM receipts WHERE id = ?').get(req.params.id);
+  if(!row) return res.status(404).json({ error: '收据不存在' });
+  db.prepare('DELETE FROM receipts WHERE id = ?').run(req.params.id);
+  // 连号维护：仅当删除的是"当年已分配的最大号"时，把计数器回退到剩余最大号（防跳号空洞）。
+  // 删除中间号不回退（防重号），沿用"删除不回退"的既有设计。
+  const m = String(row.receipt_no || '').match(/^VN-(\d{4})-(\d+)$/);
+  if(m){
+    const year = parseInt(m[1], 10), no = parseInt(m[2], 10);
+    const seq = db.prepare('SELECT last_no FROM invoice_seq WHERE year = ?').get(year);
+    if(seq && Number(seq.last_no) === no){
+      const maxRow = db.prepare("SELECT receipt_no FROM receipts WHERE receipt_no LIKE ? ORDER BY receipt_no DESC LIMIT 1").get('VN-' + year + '-%');
+      let next = 0;
+      if(maxRow && maxRow.receipt_no){
+        const mm = String(maxRow.receipt_no).match(/^VN-\d{4}-(\d+)$/);
+        if(mm) next = parseInt(mm[1], 10) || 0;
+      }
+      db.prepare('UPDATE invoice_seq SET last_no = ? WHERE year = ?').run(next, year);
+    }
+  }
+  appendAuditLog(req.admin.sub, req.admin.name, 'delete', 'receipt', req.params.id, row.patient_phone || '', JSON.stringify({ receiptNo: row.receipt_no }));
+  res.json({ ok: true, deleted: 1, receiptNo: row.receipt_no });
 });
 
 module.exports = router;

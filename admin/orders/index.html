@@ -3675,7 +3675,7 @@ window.escapeHtml = function(s){
       + '<div><div class="receipt-meta-lbl">'+'Delivery Address'+'</div><div class="receipt-meta-val">'+escapeHtml(o.address)+', '+escapeHtml(o.city)+' '+escapeHtml(o.postcode)+', '+escapeHtml(o.state)+'</div></div>'
       + '<div><div class="receipt-meta-lbl">'+'Invoice Date'+'</div><div class="receipt-meta-val">'+ddmmyyyy(o.date)+'</div></div>'
       + '<div><div class="receipt-meta-lbl">'+'Payment Status'+'</div><div class="receipt-meta-val">'+((rc && rc.payment_status === 'paid') || !rc ? 'Paid' : escapeHtml(rc.payment_status || 'Pending'))+'</div></div>'
-      + '<div><div class="receipt-meta-lbl">'+'Payment Method'+'</div><div class="receipt-meta-val">'+escapeHtml((rc && rc.payment_method) || o.payMethod || 'Cash')+'</div></div>'
+      + '<div><div class="receipt-meta-lbl">'+'Payment Method'+'</div><div class="receipt-meta-val">'+escapeHtml(((rc && rc.payment_method) || o.payMethod || 'Cash') === 'cash' ? 'Cash' : ((rc && rc.payment_method) || o.payMethod || 'Cash'))+'</div></div>'
       + '</div>'
       + '<table class="receipt-table"><thead><tr><th>'+'Product'+'</th><th class="num">'+'Qty'+'</th><th class="num">'+'Unit Price'+'</th><th class="num">'+'Subtotal'+'</th></tr></thead><tbody>'
       + itemsHtml
