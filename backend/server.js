@@ -85,7 +85,7 @@ app.use((err, req, res, next) => {
   console.error('[error]', req.method, req.originalUrl, err);
   res.status(err.status || 500).json({
     error: err.message || 'Internal Server Error',
-    detail: String(err.stack || '').split('\n').slice(0, 4)
+    detail: process.env.NODE_ENV === 'production' ? undefined : String(err.stack || '').split('\n').slice(0, 4)
   });
 });
 

@@ -1186,7 +1186,7 @@ window.escapeHtml = function(s){
         ORDERS.length = 0;
         orders.forEach(function(o){
           var owner = cachedCouponOwners.find(function(c){ return c.code===o.coupon_code; });
-          ORDERS.push({ id:o.order_no||('ORD'+o.id), date:(o.created_at||'').slice(0,10), contact:o.contact||'', name:o.recipient_name||'未知客户',
+          ORDERS.push({ id:o.order_no||o.id, date:(o.created_at||'').slice(0,10), contact:o.contact||'', name:o.recipient_name||'未知客户',
             address:o.address, city:o.city, postcode:o.postcode, state:o.state, region:o.region,
             items:Array.isArray(o.items)?o.items:[], shipping:o.shipping, payMethod:o.pay_method, status:(o.status===null||o.status===undefined)?0:o.status,
             couponCode:o.coupon_code, couponOwner:owner ? owner.name : null,
