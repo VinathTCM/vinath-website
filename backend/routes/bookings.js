@@ -159,8 +159,10 @@ router.post('/bookings', (req, res) => {
       try {
         const av = JSON.parse(availRow.availability);
         if(av && Array.isArray(av.days) && av.days.length === 7){
-          const d = new Date(apptDateISO + 'T00:00:00+08:00');
-          if(!slotInAvailability(slot, av.days, d.getDay())){
+          // 用 UTC 构造日期再取星期几，避免服务器时区（Render 为 UTC）导致星期偏移一天
+          const dp = String(apptDateISO).split('-');
+          const dow = new Date(Date.UTC(Number(dp[0]), Number(dp[1])-1, Number(dp[2]))).getUTCDay();
+          if(!slotInAvailability(slot, av.days, dow)){
             return res.status(409).json({ error: '该时段不在医师服务时间内，请重新选择其他时段。' });
           }
         }
