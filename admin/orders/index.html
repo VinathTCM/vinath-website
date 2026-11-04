@@ -1024,7 +1024,6 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
   </div>
 
   <div id="tab-wholesale" style="display:none;">
-    <div class="closure-card-hint" style="margin-bottom:18px;">按拿货价向总部选购、提交进货申请——只有在「商品管理」里填过拿货价的商品才会出现在下面。提交后订单会出现在II类接单打包出货员的「订单管理」里（标注"拿货订单"），由他们处理发货流程（跟处理客户订单完全一样），不受地区限制。</div>
     <div class="wholesale-grid" id="wholesaleGrid"></div>
     <div class="wholesale-cart-bar" id="wholesaleCartBar" style="display:none;">
       <span id="wholesaleCartSummary"></span>
@@ -1062,8 +1061,6 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
       <div id="wholesaleHistoryList"></div>
     </div>
   </div>
-
-  <div class="note"><b>提示：</b>点击右侧的"查看"可以打开详情面板调整状态。</div>
 
   <div class="admin-footer">
     <span>Copyright &copy; 2026 VINATH TCM HEALTH CARE. All rights reserved.</span>
@@ -2363,7 +2360,7 @@ window.escapeHtml = function(s){
     var catalog = fullCatalog.filter(function(c){ return c.wholesalePrice; });
     var grid = document.getElementById('wholesaleGrid');
     if(!catalog.length){
-      grid.innerHTML = '<div class="wholesale-empty">目前还没有商品设置拿货价——请大管理员到「商品管理」的商品编辑面板里填写拿货价。</div>';
+      grid.innerHTML = '';
       updateWholesaleCartBar();
       return;
     }
