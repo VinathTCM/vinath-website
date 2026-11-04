@@ -117,7 +117,7 @@ router.get('/admin/medical-records', authMiddleware, requireModuleAccess('medica
         conds.push("patient_phone IN (" + ph + ")");
         params.push.apply(params, visiblePhones);
       }
-      rows = db.prepare("SELECT * FROM medical_records WHERE (" + conds.join(' OR ') + ") AND data NOT LIKE '%\"_deleted\":%' ORDER BY visit_date DESC").all.apply(null, params);
+      rows = db.prepare("SELECT * FROM medical_records WHERE (" + conds.join(' OR ') + ") AND data NOT LIKE '%\"_deleted\":%' ORDER BY visit_date DESC").all(...params);
       logAccess(req, 'view', null, null);
     }
   } else if(patientPhone){
@@ -143,7 +143,7 @@ router.get('/admin/medical-records/patients', authMiddleware, requireModuleAcces
       conds.push("patient_phone IN (" + ph + ")");
       params.push.apply(params, visiblePhones);
     }
-    rows = db.prepare("SELECT patient_phone, patient_name, visit_date, data FROM medical_records WHERE (" + conds.join(' OR ') + ") AND data NOT LIKE '%\"_deleted\":%'").all.apply(null, params);
+    rows = db.prepare("SELECT patient_phone, patient_name, visit_date, data FROM medical_records WHERE (" + conds.join(' OR ') + ") AND data NOT LIKE '%\"_deleted\":%'").all(...params);
   } else {
     rows = db.prepare("SELECT patient_phone, patient_name, visit_date, data FROM medical_records WHERE data NOT LIKE '%\"_deleted\":%'").all();
   }
