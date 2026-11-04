@@ -227,16 +227,6 @@ db.exec(`
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     responded_at TEXT
   );
-  // 已有库迁移：给 instant_requests 补 address_detail 列（不存在才加，不影响现有数据）
-  try {
-    const irCols = db.prepare("PRAGMA table_info(instant_requests)").all();
-    if(!irCols.map(c => c.name).includes('address_detail')){
-      db.prepare('ALTER TABLE instant_requests ADD COLUMN address_detail TEXT').run();
-      console.log('✅ 已添加 instant_requests.address_detail 列');
-    }
-  } catch(e){
-    console.warn('添加 address_detail 列时出错（不影响功能）:', e.message);
-  }
 
   CREATE TABLE IF NOT EXISTS medical_records (
     id TEXT PRIMARY KEY,
@@ -463,6 +453,19 @@ db.exec(`
     issued_at TEXT DEFAULT CURRENT_TIMESTAMP
   );
 `);
+
+// 已有库迁移：给 instant_requests 补 address_detail 列（不存在才加，不影响现有数据）
+(function migrateInstantRequestsAddress(){
+  try {
+    const cols = db.prepare("PRAGMA table_info(instant_requests)").all();
+    if(!cols.map(c => c.name).includes('address_detail')){
+      db.prepare('ALTER TABLE instant_requests ADD COLUMN address_detail TEXT').run();
+      console.log('✅ 已添加 instant_requests.address_detail 列');
+    }
+  } catch(e){
+    console.warn('添加 address_detail 列时出错（不影响功能）:', e.message);
+  }
+})();
 
 // access_log 防篡改链迁移：旧表把 action 限制在 view/create/update/delete（CHECK 约束），
 // 导致恢复病历、永久删除、软删订单等敏感操作写入日志时被 SQLite 拒绝、日志静默丢失；
