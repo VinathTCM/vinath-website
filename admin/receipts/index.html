@@ -172,12 +172,14 @@ window.scrollTo(0,0);
     try { var raw = localStorage.getItem('vinath_current_admin'); return raw ? JSON.parse(raw) : null; } catch(e){ return null; }
   }
   var cur = getCurrentAdmin();
-  var isPractitioner = cur && (cur.type==='senior' || (cur.type==='junior' && (cur.adminType||'practitioner')==='practitioner'));
+  var isSenior = cur && cur.type==='senior';
 
-  if(!isPractitioner){
+  // [junior-block] 电子收据页仅限大管理员：小管理员不归属公司，收据抬头（公司信息/SSM/TIN）不适用，
+  // 整页收据功能对其屏蔽
+  if(!isSenior){
     document.getElementById('app').innerHTML =
-      '<div class="wrap"><div class="login-gate"><h1>请先登录</h1>'
-      + '<div class="sub" style="margin-top:10px;">电子收据只对执业医师（大管理员 / I类小管理员）开放。请先在 <a href="/admin/orders/" style="color:var(--clay);font-weight:700;">订单预约管理</a> 页面登录，登录后回到这个页面即可看到内容——同一个浏览器里，两边共享登录状态。</div></div></div>';
+      '<div class="wrap"><div class="login-gate"><h1>无权限</h1>'
+      + '<div class="sub" style="margin-top:10px;">电子收据仅限大管理员使用。请先在 <a href="/admin/orders/" style="color:var(--clay);font-weight:700;">订单预约管理</a> 页面以 <b>大管理员</b> 身份登录后回到本页。</div></div></div>';
     return;
   }
   renderVinathAdminNav(cur);

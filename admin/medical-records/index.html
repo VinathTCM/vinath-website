@@ -1072,8 +1072,8 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
         + (r.treatments && r.treatments.length ? '<div style="font-size:12.5px;color:var(--ink-soft);">治疗项目：'+r.treatments.map(function(t){ return escapeHtml(treatName(t))+' ×'+(Number(t.qty)||1)+'（RM'+((Number(t.price)||0)*(Number(t.qty)||1))+'）'; }).join('、')+'</div>' : '')
         + (r.photos && r.photos.length ? '<div class="timeline-photos">'+r.photos.map(function(p, pi){ return '<img src="'+(p.photoThumb||p.photoUrl)+'" class="zoomable" data-photo-rec="'+r.id+'" data-photo-idx="'+pi+'" title="'+escapeHtml(p.photoType)+'">'; }).join('')+'</div>' : '')
         + '<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">'
-        + '<button type="button" class="btn-small btn-print-rec" data-print-rec="'+r.id+'">打印收据（A4）</button>'
-        + '<button type="button" class="btn-small btn-print-rec58" data-print-rec58="'+r.id+'">58mm 小票</button>'
+        + (isJuniorPractitioner ? '' : '<button type="button" class="btn-small btn-print-rec" data-print-rec="'+r.id+'">打印收据（A4）</button>'
+        + '<button type="button" class="btn-small btn-print-rec58" data-print-rec58="'+r.id+'">58mm 小票</button>')
         + (isSenior ? '<button type="button" class="btn-small btn-del-rec" data-del-rec="'+r.id+'" style="color:#c0392b;border-color:#c0392b;">删除</button>' : '')
         + '</div>'
         + '</div>' });
@@ -1168,6 +1168,8 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     });
     // 历史病历再次打印收据（A4 / 58mm）——病历里保存的治疗项目+商品+关联处方的药材
     async function printRecordReceipt(rec, size){
+      // [junior-block] 收据打印仅限大管理员（小管理员不归属公司，收据抬头不适用）
+      if(isJuniorPractitioner){ showToast('收据打印仅限大管理员'); return; }
       var d = rec.data || rec; // merged后treatments等字段在病历对象顶层
       var treatments = (Array.isArray(d.treatments) ? d.treatments : []).map(function(t){ return { name: t.name, nameEn: t.nameEn||'', qty: Number(t.qty)||1, price: Number(t.price)||0 }; });
       var products = (Array.isArray(d.products) ? d.products : []).map(function(p){ return { productId: p.productId, name: p.name, nameEn: p.nameEn||'', form: p.form||'full', qty: Number(p.qty)||1, unitPrice: Number(p.unitPrice)||0 }; });
@@ -1419,7 +1421,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
 
       + '<div style="display:flex;gap:10px;">'
       + '<button class="btn-primary" id="saveRecordBtn" style="flex:1;padding:14px;font-size:15px;">保存病历</button>'
-      + '<button class="btn-primary" id="saveAndPrintBtn" style="flex:1;padding:14px;font-size:15px;background:#3A3F42;">保存并打印发票</button>'
+      + (isJuniorPractitioner ? '' : '<button class="btn-primary" id="saveAndPrintBtn" style="flex:1;padding:14px;font-size:15px;background:#3A3F42;">保存并打印发票</button>')
       + '</div>'
       + '</div>';
 
@@ -2183,7 +2185,8 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       savingNow = false; btn.disabled = false;
       if(res && res.ok){ view = 'timeline'; render(); }
     });
-    document.getElementById('saveAndPrintBtn').addEventListener('click', async function(){
+    var sapBtn = document.getElementById('saveAndPrintBtn');
+    if(sapBtn) sapBtn.addEventListener('click', async function(){
       if(savingNow) return; savingNow = true;
       var btn = this; btn.disabled = true;
       var result = await saveRecordCore();
@@ -2629,6 +2632,8 @@ function fillPrintArea(receipt, size, lang){
       return HERB_PRICE_MAP;
     }
     async function openInvoicePrint(result, patientName, patientPhone, size){
+      // [junior-block] 收据/发票打印仅限大管理员：小管理员不归属公司，收据抬头（VINATH TCM 公司信息）不适用
+      if(isJuniorPractitioner){ showToast('收据打印仅限大管理员'); return; }
       var oldOv = document.getElementById('printChooser'); if(oldOv) oldOv.remove();
       var hpm = await ensureHerbPrices();
       var items = [];
