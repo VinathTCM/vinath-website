@@ -751,7 +751,6 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
         <tbody id="recordTbody"></tbody>
       </table>
     </div></div>
-    <div class="note"><b>提示：</b>下方「健康档案」是跟着客户本人走的长期记录（不属于某一次预约），保存后同样存在当前浏览器的本地存储中，方便医师下次接诊时快速了解这位客户的既往情况；每次预约各自的辨证记录仍在「预约管理」里对应预约的"医师补充病史"中查看。</div>
   </div>
 
   <div id="tab-daily" style="display:none;">
@@ -1064,7 +1063,7 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
     </div>
   </div>
 
-  <div class="note"><b>提示：</b>数据保存在浏览器内存里，刷新会重置。点击右侧的"查看"可以打开详情面板调整状态。</div>
+  <div class="note"><b>提示：</b>点击右侧的"查看"可以打开详情面板调整状态。</div>
 
   <div class="admin-footer">
     <span>Copyright &copy; 2026 VINATH TCM HEALTH CARE. All rights reserved.</span>
@@ -2615,26 +2614,7 @@ window.escapeHtml = function(s){
       + renderReviewDetailSection(b)
       + '<div class="detail-section"><div class="detail-section-title">客户自述症状</div>'
       + '<div class="detail-items" style="font-size:13.5px;line-height:1.7;">'+escapeHtml(b.need)+'</div></div>'
-      + '<div class="detail-section"><div class="detail-section-title">医师补充病史</div>'
-      + '<textarea class="doctor-note-input" id="doctorNoteInput" placeholder="舌脉、辨证、上门观察到的情况等补充记录...">'+(b.doctorNote||'')+'</textarea>'
-      + '<div style="margin-top:9px;"><button type="button" class="record-link-btn" id="viewPatientRecordBtn">查看该客户的完整健康档案 →</button></div></div>'
-      + '<div class="detail-section"><div class="detail-section-title">治疗 / 处方 / 商品</div>'
-      + '<div id="treatList"></div>'
-      + '<div class="treat-add-row">'
-      + '<input type="text" class="tname" id="treatNameInput" list="productCatalogList" placeholder="项目/商品名称">'
-      + '<input type="number" class="tqty" id="treatQtyInput" placeholder="数量" min="1" value="1">'
-      + '<input type="number" class="tprice" id="treatPriceInput" placeholder="单价" min="0">'
-      + '<button type="button" id="treatAddBtn">＋</button></div>'
-      + '<div class="treat-add-row2"><input type="text" id="treatNameEnInput" placeholder="English name（选填，商品会自动带入；留空则导出英文版时仍显示中文名）"></div>'
-      + '<datalist id="productCatalogList"></datalist>'
-      + '<div class="treat-stock-hint" id="treatStockHint"></div>'
-      + '<button type="button" class="treat-discount-toggle" id="treatDiscountToggle">− 添加折扣</button>'
-      + '<div class="treat-discount-row" id="treatDiscountRow" style="display:none;">'
-      + '<input type="text" class="dlabel" id="discountLabelInput" placeholder="说明，默认「折扣」（选填）">'
-      + '<input type="text" class="dlabel" id="discountLabelEnInput" placeholder="English label（选填，默认 Discount）">'
-      + '<input type="number" class="damt" id="discountAmtInput" placeholder="折扣金额 MYR" min="0">'
-      + '<button type="button" id="discountAddBtn">应用折扣</button></div>'
-      + '<div class="treat-total-row"><span>合计</span><span id="treatTotalVal">MYR 0.00</span></div></div>'
+      + '<div class="detail-section"><div style="margin-top:2px;"><button type="button" class="record-link-btn" id="viewPatientRecordBtn">查看该客户的完整健康档案 →</button></div></div>'
       + '<div class="detail-section"><div class="detail-section-title">预约状态</div>'
       + '<div class="status-stepper" id="bookingStepper">'
       + BOOKING_STATUS.map(function(label,i){ return '<div class="status-step-btn'+(!b.cancelled && b.status===i?' on':'')+'" data-i="'+i+'">'+label+'</div>'; }).join('')
@@ -2651,13 +2631,10 @@ window.escapeHtml = function(s){
       + '</div>');
     document.getElementById('panelBody').innerHTML = html;
 
-    renderTreatList(b);
-    document.getElementById('doctorNoteInput').addEventListener('input', function(){ b.doctorNote = this.value; saveBookingsToStorage(); });
     document.getElementById('viewPatientRecordBtn').addEventListener('click', function(){
       switchTab('records');
       openPatientPanel(b.contact);
     });
-    setupTreatCatalog(b);
     document.querySelectorAll('#bookingStepper .status-step-btn').forEach(function(btn){
       btn.addEventListener('click', async function(){
         if(this.getAttribute('data-cancel')){

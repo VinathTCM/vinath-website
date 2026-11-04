@@ -291,11 +291,7 @@ window.scrollTo(0,0);
               + '<div class="sname">'+b.name+' · '+b.slot+'</div>'
               + '<div class="smeta">'+b.contact+' · '+(b.need||'')+'</div>'
               + '<div class="saddr">'+b.area+' '+(b.addressDetail||'')+'</div>'
-              + '<div class="deposit-row"><span style="font-size:12.5px;">预订订金</span>'
-              + (b.depositStatus==='paid'
-                  ? '<span class="deposit-status paid">已收订金 RM'+b.depositAmount.toFixed(2)+'</span>'
-                  : '<span class="deposit-status unpaid">未收订金</span> <button type="button" class="btn-secondary request-deposit-btn" data-id="'+b.id+'" style="padding:5px 12px;font-size:12px;">请求订金</button>')
-              + '</div>'
+              // 预订订金功能暂不使用，整行屏蔽（deposit-row 不再渲染）
               + '<div class="quick-links-row" style="margin-top:8px;display:flex;gap:8px;">'
               + (cur.type==='senior' || (MODULE_ACCESS && MODULE_ACCESS.medicalRecords===true) ? '<a href="/admin/medical-records/?patientPhone='+encodeURIComponent(b.contact)+'&patientName='+encodeURIComponent(b.name)+'" target="_blank" style="font-size:12px;color:var(--clay);text-decoration:none;font-weight:700;">查看电子病历 →</a>' : '')
               + (cur.type==='senior' || (MODULE_ACCESS && MODULE_ACCESS.prescriptions===true) ? '<a href="/admin/prescriptions/" target="_blank" style="font-size:12px;color:var(--clay);text-decoration:none;font-weight:700;">开具处方 →</a>' : '')
@@ -307,10 +303,6 @@ window.scrollTo(0,0);
       + '</div></div>';
     document.getElementById('app').innerHTML = html;
     wireTabs();
-
-    document.querySelectorAll('.request-deposit-btn').forEach(function(btn){
-      btn.addEventListener('click', function(){ openDepositModal(this.getAttribute('data-id')); });
-    });
   }
 
   var pendingDepositBookingId = null;
