@@ -19,19 +19,21 @@ router.post('/register', async (req, res) => {
   if(!/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/[0-9]/.test(password)){
     return res.status(400).json({ error: '密码必须包含大小写字母和数字' });
   }
-  const admin = db.prepare('SELECT * FROM admins WHERE id = ?').get(adminId);
+  const admin = db.prepare('SELECT * FROM admins WHERE id = ?').get(adminId)
+    || (adminId ? db.prepare('SELECT * FROM admins WHERE username = ?').get(adminId) : null);
   if(!admin) return res.status(404).json({ error: '找不到这个管理员账号' });
   if(admin.password_hash) return res.status(409).json({ error: '这个账号已经设置过密码了，请直接登录' });
 
   const hash = await bcrypt.hash(password, 10);
-  db.prepare('UPDATE admins SET password_hash = ? WHERE id = ?').run(hash, adminId);
+  db.prepare('UPDATE admins SET password_hash = ? WHERE id = ?').run(hash, admin.id);
   const token = signToken(admin);
   res.json({ token, admin: { id: admin.id, name: admin.name, role: admin.role, regions: JSON.parse(admin.regions || '[]'), acceptingOrders: !!admin.accepting_orders, licenseExpiry: admin.license_expiry } });
 });
 
 router.post('/login', async (req, res) => {
   const { adminId, password } = req.body;
-  const admin = db.prepare('SELECT * FROM admins WHERE id = ?').get(adminId);
+  const admin = db.prepare('SELECT * FROM admins WHERE id = ?').get(adminId)
+    || (adminId ? db.prepare('SELECT * FROM admins WHERE username = ?').get(adminId) : null);
   if(!admin || !admin.password_hash){
     return res.status(401).json({ error: '账号不存在或还没设置密码' });
   }
@@ -49,16 +51,16 @@ router.post('/login', async (req, res) => {
     if(newFailures >= 5){
       // 连续失败5次，锁定15分钟
       const lockedUntil = new Date(Date.now() + 15 * 60 * 1000).toISOString();
-      db.prepare('UPDATE admins SET login_failures = ?, locked_until = ? WHERE id = ?').run(newFailures, lockedUntil, adminId);
+      db.prepare('UPDATE admins SET login_failures = ?, locked_until = ? WHERE id = ?').run(newFailures, lockedUntil, admin.id);
       return res.status(429).json({ error: '连续登录失败次数过多，账号已被临时锁定15分钟' });
     } else {
-      db.prepare('UPDATE admins SET login_failures = ? WHERE id = ?').run(newFailures, adminId);
+      db.prepare('UPDATE admins SET login_failures = ? WHERE id = ?').run(newFailures, admin.id);
       return res.status(401).json({ error: '密码不对，还剩' + (5 - newFailures) + '次机会' });
     }
   }
 
   // 登录成功，重置失败计数和锁定状态
-  db.prepare('UPDATE admins SET login_failures = 0, locked_until = NULL WHERE id = ?').run(adminId);
+  db.prepare('UPDATE admins SET login_failures = 0, locked_until = NULL WHERE id = ?').run(admin.id);
 
   const token = signToken(admin);
   res.json({ token, admin: { id: admin.id, name: admin.name, role: admin.role, regions: JSON.parse(admin.regions || '[]') } });
@@ -149,7 +151,7 @@ router.put('/admin/admins/:id/credentials', authMiddleware, requireRole('SENIOR'
 // 这是纯展示用途——真正登录还是要走 /login，光知道id和名字登不进去 ----
 router.get('/login-options', (req, res) => {
   const rows = db.prepare('SELECT id, name, username, role, regions, accepting_orders, license_expiry FROM admins ORDER BY (role=\'SENIOR\') DESC, rowid ASC').all();
-  res.json(rows.map(a => ({ id: a.id, name: a.name, role: a.role, regions: JSON.parse(a.regions || '[]'), acceptingOrders: !!a.accepting_orders, licenseExpiry: a.license_expiry })));
+  res.json(rows.map(a => ({ id: a.id, name: a.name, username: a.username, role: a.role, regions: JSON.parse(a.regions || '[]'), acceptingOrders: !!a.accepting_orders, licenseExpiry: a.license_expiry })));
 });
 
 function genJuniorId(){
