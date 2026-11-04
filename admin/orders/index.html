@@ -502,6 +502,10 @@ tbody tr:hover{ background:#FBFAF7; }
 .instant-trash-restore{ flex:none; padding:7px 16px; border-radius:100px; border:none; background:#8BA878; color:#fff; font-weight:600; font-size:12px; cursor:pointer; }
 .instant-trash-restore:hover{ background:#7A9768; }
 .wholesale-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; }
+.wholesale-group{ margin-bottom:26px; }
+.wholesale-group-title{ font-weight:700; font-size:15px; color:var(--ink); margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:8px; }
+.wholesale-group-title::before{ content:''; width:4px; height:16px; border-radius:2px; background:var(--clay); }
+.wholesale-group:last-child{ margin-bottom:0; }
 .wholesale-card{ background:var(--white); border:1.5px solid var(--line); border-radius:14px; padding:14px 16px; box-shadow:var(--shadow); }
 .wholesale-card-name{ font-weight:700; font-size:14px; margin-bottom:4px; }
 .wholesale-card-price{ font-size:12.5px; color:var(--ink-soft); margin-bottom:10px; }
@@ -2380,7 +2384,7 @@ window.escapeHtml = function(s){
       var res = await fetch(API_BASE + '/admin/wholesale-catalog', { headers: { 'Authorization': 'Bearer ' + authToken } });
       if(!res.ok) return [];
       var products = await res.json();
-      cachedWholesaleCatalog = products.map(function(p){ return { id:p.id, name:p.name, wholesalePrice:p.wholesalePrice }; });
+      cachedWholesaleCatalog = products.map(function(p){ return { id:p.id, name:p.name, type:p.type, categoryName:p.categoryName, wholesalePrice:p.wholesalePrice, wholesaleTrialPrice:p.wholesaleTrialPrice }; });
       return cachedWholesaleCatalog;
     } catch(e){ console.error('拉取拿货商品目录失败:', e); return []; }
   }
@@ -2418,13 +2422,26 @@ window.escapeHtml = function(s){
       updateWholesaleCartBar();
       return;
     }
-    grid.innerHTML = catalog.map(function(c){
-      var qty = wholesaleCart[c.id] || 0;
-      return '<div class="wholesale-card" data-cid="'+c.id+'">'
-        + '<div class="wholesale-card-name">'+c.name+'</div>'
-        + '<div class="wholesale-card-price">拿货价 <b>MYR '+c.wholesalePrice.toFixed(2)+'</b> / 件（正装）</div>'
-        + '<div class="wholesale-qty-row">'
-        + '<div class="wq-btn" data-wminus="'+c.id+'">－</div><div class="wq-num" id="wq-'+c.id+'">'+qty+'</div><div class="wq-btn" data-wplus="'+c.id+'">＋</div>'
+    // 按系列（商品分类）分组展示，避免全部卡片平铺显得杂乱
+    var groups = {};
+    catalog.forEach(function(c){ var k = c.categoryName || '其他'; (groups[k] = groups[k] || []).push(c); });
+    var groupKeys = Object.keys(groups);
+    if(!groupKeys.length){
+      grid.innerHTML = '';
+      updateWholesaleCartBar();
+      return;
+    }
+    grid.innerHTML = groupKeys.map(function(k){
+      return '<div class="wholesale-group"><div class="wholesale-group-title">'+k+'</div><div class="wholesale-grid">'
+        + groups[k].map(function(c){
+            var qty = wholesaleCart[c.id] || 0;
+            return '<div class="wholesale-card" data-cid="'+c.id+'">'
+              + '<div class="wholesale-card-name">'+c.name+'</div>'
+              + '<div class="wholesale-card-price">拿货价 <b>MYR '+c.wholesalePrice.toFixed(2)+'</b> / 件（正装）</div>'
+              + '<div class="wholesale-qty-row">'
+              + '<div class="wq-btn" data-wminus="'+c.id+'">－</div><div class="wq-num" id="wq-'+c.id+'">'+qty+'</div><div class="wq-btn" data-wplus="'+c.id+'">＋</div>'
+              + '</div></div>';
+          }).join('')
         + '</div></div>';
     }).join('');
     document.querySelectorAll('[data-wplus]').forEach(function(btn){

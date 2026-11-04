@@ -656,6 +656,17 @@ db.exec(`
   }
 })();
 
+// "专属小管理员"开关：wholesale_only=1 的商品只开放给小管理员在"拿货"Tab 选购，
+// 普通用户商城不可见（public /products 接口过滤掉）。默认 0 保持原有上架行为。
+(function migrateWholesaleOnly(){
+  const tableSql = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='products'").get();
+  if(!tableSql) return;
+  if(tableSql.sql.includes('wholesale_only')) return;
+  console.log('检测到 products 表缺少 wholesale_only 列，正在补列…');
+  db.exec('ALTER TABLE products ADD COLUMN wholesale_only INTEGER DEFAULT 0');
+  console.log('products 表 wholesale_only 列已补充。');
+})();
+
 // 手动编辑保护标记：收据页"编辑明细"手动改过的收据 manual_override=1，此后订单/病历重新打印走 POST
 // 复用分支时不再用源数据覆盖明细/付款字段（用户手动修正为权威值）；默认 0 保持原有同步行为。
 (function migrateManualOverride(){

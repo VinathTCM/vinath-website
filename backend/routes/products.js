@@ -56,7 +56,8 @@ function serializePublicProductList(p){
 function serializeAdminProduct(p){
   return { ...serializePublicProduct(p), cost:p.cost, costTrial:p.cost_trial,
     wholesalePrice:p.wholesale_price, wholesaleTrialPrice:p.wholesale_trial_price,
-    couponPrice:p.coupon_price, couponTrialPrice:p.coupon_trial_price };
+    couponPrice:p.coupon_price, couponTrialPrice:p.coupon_trial_price,
+    wholesaleOnly: !!p.wholesale_only };
 }
 // 管理员列表专用：只返回第一张图的极小缩略图（~5KB），大幅减少API响应体积（编辑时再单独拉全部图片）
 async function serializeAdminProductList(p){
@@ -70,14 +71,16 @@ async function serializeAdminProductList(p){
 }
 
 // ---- 公开接口：客户端商店/商品详情页调用，不需要登录 ----
+// 专属小管理员商品（wholesale_only=1）对普通用户隐藏：不在商店列表出现，详情也返回 404
 router.get('/products', (req, res) => {
-  const rows = db.prepare('SELECT * FROM products WHERE active = 1 ORDER BY created_at DESC').all();
+  const rows = db.prepare("SELECT * FROM products WHERE active = 1 AND (wholesale_only IS NULL OR wholesale_only = 0) ORDER BY created_at DESC").all();
   res.json(rows.map(serializePublicProductList));
 });
 
 router.get('/products/:id', (req, res) => {
   const row = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
   if(!row) return res.status(404).json({ error: '商品不存在' });
+  if(row.wholesale_only) return res.status(404).json({ error: '商品不存在' });
   res.json(serializePublicProduct(row));
 });
 
@@ -93,10 +96,18 @@ router.get('/admin/products', authMiddleware, requireRole('SENIOR'), async (req,
 });
 
 // 拿货目录：I类执业中医师按拿货价向总部下单时读的商品列表——只暴露拿货所需字段
-// （id/名称/拿货价），绝不包含 cost 成本价等商业机密（小管理员不可见）。只返回上架商品。
+// （id/名称/拿货价/所属系列），绝不包含 cost 成本价等商业机密（小管理员不可见）。只返回上架商品。
+// 专属小管理员商品（wholesale_only=1）也在此目录中——小管理员照常可拿货，仅普通用户前台不可见。
 router.get('/admin/wholesale-catalog', authMiddleware, requireRole('SENIOR', 'PRACTITIONER', 'FULFILLMENT'), (req, res) => {
-  const rows = db.prepare('SELECT id, name, name_en, wholesale_price, wholesale_trial_price FROM products WHERE active = 1 ORDER BY created_at DESC').all();
-  res.json(rows.map(p => ({ id: p.id, name: p.name, nameEn: p.name_en, wholesalePrice: p.wholesale_price, wholesaleTrialPrice: p.wholesale_trial_price })));
+  const rows = db.prepare(`
+    SELECT p.id, p.name, p.name_en, p.type, c.name AS category_name,
+      p.wholesale_price, p.wholesale_trial_price
+    FROM products p LEFT JOIN shop_categories c ON c.key = p.type
+    WHERE p.active = 1 ORDER BY p.created_at DESC
+  `).all();
+  res.json(rows.map(p => ({ id: p.id, name: p.name, nameEn: p.name_en, type: p.type,
+    categoryName: p.category_name || p.type || '其他',
+    wholesalePrice: p.wholesale_price, wholesaleTrialPrice: p.wholesale_trial_price })));
 });
 
 function productFieldsFromBody(b){
@@ -108,7 +119,8 @@ function productFieldsFromBody(b){
     stock_qty: b.stockQty||0, trial_per_full: (b.trialPerFull && Number(b.trialPerFull)>0) ? Math.round(Number(b.trialPerFull)) : null,
     description: b.description||null, usage_note: b.usageNote||null,
     herbs: JSON.stringify(b.herbs||[]), form: b.form||null,
-    tags: JSON.stringify(b.tags||[]), journeys: JSON.stringify(b.journeys||[]), images: JSON.stringify(b.images||[])
+    tags: JSON.stringify(b.tags||[]), journeys: JSON.stringify(b.journeys||[]), images: JSON.stringify(b.images||[]),
+    wholesale_only: b.wholesaleOnly ? 1 : 0
   };
 }
 
@@ -122,11 +134,11 @@ router.post('/admin/products', authMiddleware, requireRole('SENIOR'), (req, res)
   db.prepare(`
     INSERT INTO products (id, name, name_en, type, price, trial_price, cost, cost_trial,
       wholesale_price, wholesale_trial_price, coupon_price, coupon_trial_price,
-      stock_qty, trial_per_full, description, usage_note, herbs, form, tags, journeys, images)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      stock_qty, trial_per_full, description, usage_note, herbs, form, tags, journeys, images, wholesale_only)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(id, f.name, f.name_en, f.type, f.price, f.trial_price, f.cost, f.cost_trial,
     f.wholesale_price, f.wholesale_trial_price, f.coupon_price, f.coupon_trial_price,
-    f.stock_qty, f.trial_per_full, f.description, f.usage_note, f.herbs, f.form, f.tags, f.journeys, f.images);
+    f.stock_qty, f.trial_per_full, f.description, f.usage_note, f.herbs, f.form, f.tags, f.journeys, f.images, f.wholesale_only);
   const row = db.prepare('SELECT * FROM products WHERE id = ?').get(id);
   res.status(201).json(serializeAdminProduct(row));
 });
@@ -138,7 +150,7 @@ router.put('/admin/products/:id', authMiddleware, requireRole('SENIOR'), (req, r
   db.prepare(`
     UPDATE products SET name=?, name_en=?, type=?, price=?, trial_price=?, cost=?, cost_trial=?,
       wholesale_price=?, wholesale_trial_price=?, coupon_price=?, coupon_trial_price=?,
-      stock_qty=?, trial_per_full=?, active=?, featured=?, description=?, usage_note=?, herbs=?, form=?, tags=?, journeys=?, images=?,
+      stock_qty=?, trial_per_full=?, active=?, featured=?, description=?, usage_note=?, herbs=?, form=?, tags=?, journeys=?, images=?, wholesale_only=?,
       updated_at=CURRENT_TIMESTAMP WHERE id=?
   `).run(
     b.name ?? existing.name, b.nameEn ?? existing.name_en, b.type ?? existing.type,
@@ -151,7 +163,8 @@ router.put('/admin/products/:id', authMiddleware, requireRole('SENIOR'), (req, r
     b.active!=null ? (b.active?1:0) : existing.active, b.featured!=null ? (b.featured?1:0) : existing.featured,
     b.description ?? existing.description, b.usageNote ?? existing.usage_note, b.herbs ? JSON.stringify(b.herbs) : existing.herbs,
     b.form ?? existing.form, b.tags ? JSON.stringify(b.tags) : existing.tags, b.journeys ? JSON.stringify(b.journeys) : existing.journeys,
-    b.images ? JSON.stringify(b.images) : existing.images, req.params.id
+    b.images ? JSON.stringify(b.images) : existing.images,
+    b.wholesaleOnly!=null ? (b.wholesaleOnly?1:0) : existing.wholesale_only, req.params.id
   );
   const row = db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
   var priceChanged = b.price!=null && Number(b.price)!==existing.price;

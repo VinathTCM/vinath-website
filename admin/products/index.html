@@ -431,6 +431,13 @@ tbody tr.stock-warn:hover td, tbody tr.stock-crit:hover td{ filter:brightness(.9
       </div>
     </div>
     <div class="field">
+      <div class="field-row">
+        <label style="margin:0;">专属小管理员</label>
+        <span><span class="toggle" id="wOnlyToggle"><span class="knob"></span></span><span class="status-lbl" id="wOnlyLbl" style="font-size:12.5px;margin-left:8px;color:var(--ink-soft);">普通用户商城不展示</span></span>
+      </div>
+      <div style="font-size:12px;color:var(--ink-soft);margin-top:6px;">开启后：此商品只开放给小管理员在「订单预约管理 → 拿货」Tab 按拿货价选购，普通用户无法在商城选购或查看此商品。</div>
+    </div>
+    <div class="field">
       <label>库存数量</label>
       <input type="number" id="fStockQty" min="0" step="1" placeholder="0">
       <div style="font-size:12px;color:var(--ink-soft);margin-top:6px;">数量为 0 时会自动显示为"缺货"；客户预约时开出的商品也会从这里自动扣减（同一浏览器内）。</div>
@@ -748,7 +755,7 @@ function applyPreset(editor, type) {
         PRODUCTS.push({ id:p.id, name:p.name, nameEn:p.nameEn, type:p.type, price:p.price, trial:p.trial_price, trialPerFull:p.trialPerFull,
           cost:p.cost, costTrial:p.costTrial, couponPrice:p.couponPrice, couponPriceTrial:p.couponTrialPrice,
           wholesale:p.wholesalePrice, wholesaleTrial:p.wholesaleTrialPrice,
-          desc:p.description, active:p.active, featured:p.featured, tags:p.tags||[], journeys:p.journeys||[],
+          desc:p.description, active:p.active, featured:p.featured, wholesaleOnly:p.wholesaleOnly, tags:p.tags||[], journeys:p.journeys||[],
           form:p.form||'', herbs:p.herbs||[], usage:p.usage_note||'', imgs:p.images||[],
           stockQty:p.stock_qty, inStock:p.stock_qty>0
         });
@@ -959,6 +966,8 @@ function applyPreset(editor, type) {
   var journeyChipsEl = document.getElementById('journeyChips');
   var activeToggle = document.getElementById('activeToggle');
   var activeLbl = document.getElementById('activeLbl');
+  var wOnlyToggle = document.getElementById('wOnlyToggle');
+  var wOnlyLbl = document.getElementById('wOnlyLbl');
 
   // ---- 全局定价规则: 成本价 + 目标毛利率 → 建议售价；拿货加价% / 优惠码折扣% → 建议拿货价/优惠码价。
   // 全部是"参考默认值"，不强制——某个商品的某个价格字段一旦被手动改过，就不再被全局比例自动覆盖
@@ -1136,6 +1145,7 @@ function applyPreset(editor, type) {
   var currentType = 'plaster';
   var currentActive = true;
   var currentFeatured = false;
+  var currentWOnly = false;
   var currentJourneys = [];
   var currentImgs = [];
   var currentHerbs = [];
@@ -1281,6 +1291,11 @@ function applyPreset(editor, type) {
     this.classList.toggle('on', currentFeatured);
     featLbl.textContent = currentFeatured ? '精选中' : '未精选';
   });
+  wOnlyToggle.addEventListener('click', function(){
+    currentWOnly = !currentWOnly;
+    this.classList.toggle('on', currentWOnly);
+    wOnlyLbl.textContent = currentWOnly ? '仅小管理员可见' : '普通用户商城不展示';
+  });
 
   async function openPanel(id){
     editingId = id;
@@ -1294,7 +1309,9 @@ function applyPreset(editor, type) {
       currentHerbs = []; renderHerbList();
       setType('plaster');
       currentActive = true; currentFeatured = false; currentJourneys = [];
+      currentWOnly = false;
       activeToggle.classList.add('on'); activeLbl.textContent = '上架中';
+      wOnlyToggle.classList.remove('on'); wOnlyLbl.textContent = '普通用户商城不展示';
       fStockQty.value = 30;
       featToggle.classList.remove('on'); featLbl.textContent = '未精选';
       currentImgs = []; renderGallery();
@@ -1315,7 +1332,9 @@ function applyPreset(editor, type) {
       currentHerbs = (p.herbs || []).slice(); renderHerbList();
       setType(p.type);
       currentActive = p.active; currentFeatured = !!p.featured; currentJourneys = p.journeys.slice();
+      currentWOnly = !!p.wholesaleOnly;
       activeToggle.classList.toggle('on', p.active); activeLbl.textContent = p.active ? '上架中' : '已下架';
+      wOnlyToggle.classList.toggle('on', currentWOnly); wOnlyLbl.textContent = currentWOnly ? '仅小管理员可见' : '普通用户商城不展示';
       fStockQty.value = typeof p.stockQty === 'number' ? p.stockQty : 0;
       featToggle.classList.toggle('on', currentFeatured); featLbl.textContent = currentFeatured ? '精选中' : '未精选';
       // 列表只返回第一张图，编辑时单独拉取全部图片，避免保存时丢失其他图片
@@ -1369,7 +1388,7 @@ function applyPreset(editor, type) {
       stockQty: Math.max(0, Math.round(Number(fStockQty.value) || 0)),
       description: fDesc.innerHTML.trim(), form: document.getElementById('fForm').value.trim(),
       usageNote: document.getElementById('fUsage').innerHTML.trim(),
-      active: currentActive, featured: currentFeatured, images: currentImgs.slice(), herbs: currentHerbs.slice()
+      active: currentActive, featured: currentFeatured, wholesaleOnly: currentWOnly, images: currentImgs.slice(), herbs: currentHerbs.slice()
     };
     var btn = this;
     btn.disabled = true;
