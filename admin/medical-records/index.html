@@ -870,7 +870,9 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       + '<div class="card"><div class="section-title">患者列表</div>'
       + (list.length ? list.map(function(p){
           return '<div class="patient-row" data-phone="'+escapeHtml(p.phone)+'" data-name="'+escapeHtml(p.name)+'"><div><div class="pname">'+escapeHtml(p.name)+(p.gender?' <span style="color:var(--ink-soft);font-weight:400;font-size:12px;">'+escapeHtml(p.gender)+(p.age!=null&&p.age!==''?' · '+p.age+'岁':'')+'</span>':'')+'</div><div class="pmeta">+60'+escapeHtml(p.phone)+' · 共 '+p.count+' 次就诊记录 · 最近：'+p.lastVisit
-            + '</div></div><span style="color:var(--ink-soft);">查看时间轴 →</span></div>';
+            + '</div></div><span style="color:var(--ink-soft);">查看时间轴 →</span>'
+            + (isSenior ? '<button type="button" class="btn-small btn-del-patient" data-del-patient="'+escapeHtml(p.phone)+'" style="color:#c0392b;border-color:#c0392b;margin-left:10px;">删除患者</button>' : '')
+            + '</div>';
         }).join('') : '<div class="empty-state">还没有任何病历记录，点右上角"新建病历"开始</div>')
       + '</div></div>';
     document.getElementById('app').innerHTML = html;
@@ -886,6 +888,19 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
         activePatientPhone = this.getAttribute('data-phone');
         view = 'timeline';
         render();
+      });
+    });
+    // 大管理员可删除整个患者（软删除：全部病历打 _deleted 标记，可到回收箱恢复）
+    document.querySelectorAll('.btn-del-patient').forEach(function(btn){
+      btn.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        var phone = this.getAttribute('data-del-patient');
+        var name = this.closest('.patient-row').getAttribute('data-name') || '';
+        if(!confirm('确定删除患者「'+name+'」（+60'+phone+'）的全部病历记录？\n\n删除后可在回收箱恢复。')) return;
+        fetch(API_BASE + '/admin/medical-records/patient/' + encodeURIComponent(phone), { method:'DELETE', headers:{'Authorization':'Bearer '+authToken} })
+          .then(function(res){ if(!res.ok) throw new Error('HTTP '+res.status); return res.json(); })
+          .then(function(){ showToast('已删除该患者的全部病历记录'); render(); })
+          .catch(function(){ showToast('删除失败，请重试'); });
       });
     });
     document.getElementById('newRecordBtn').addEventListener('click', function(){
@@ -1063,6 +1078,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       entries.push({ date: r.visitDate, type:'record', sortKey: r.visitDate+'_2', html:
         '<div class="timeline-item timeline-item-clickable" data-record-id="'+r.id+'">'
         + '<div class="timeline-date"><span class="type-badge tb-record">病历</span>'+r.visitDate+' · '+(r.visitType==='home_visit'?'居家会诊':r.visitType==='follow_up'?'复诊':'门诊')+'<span class="timeline-edit-hint">点击编辑 →</span></div>'
+        + (isSenior && r.practitionerName ? '<div style="font-size:12px;color:var(--ink-soft);margin-bottom:4px;">接诊医师：'+escapeHtml(r.practitionerName)+'</div>' : '')
         + '<div style="font-weight:700;margin-bottom:4px;">'+escapeHtml(r.tcmDiagnosis||'（未填写诊断）')+(r.syndromePattern?' · '+escapeHtml(r.syndromePattern):'')+'</div>'
         + (r.chiefComplaint ? '<div style="font-size:13px;color:var(--ink-soft);margin-bottom:4px;">主诉：'+escapeHtml(r.chiefComplaint)+'</div>' : '')
         + (combineDisplay(r,'tongueBodyColor') || combineDisplay(r,'tongueCoating') ? '<div style="font-size:12.5px;color:var(--ink-soft);">舌象：'+escapeHtml(combineDisplay(r,'tongueBodyColor'))+' '+escapeHtml(combineDisplay(r,'tongueCoating'))+'</div>' : '')

@@ -2640,7 +2640,7 @@ window.escapeHtml = function(s){
       + BOOKING_STATUS.map(function(label,i){ return '<div class="status-step-btn'+(!b.cancelled && b.status===i?' on':'')+'" data-i="'+i+'">'+label+'</div>'; }).join('')
       + '<div class="status-step-btn cancel-opt'+(b.cancelled?' on':'')+'" data-cancel="1">标记取消</div>'
       + '</div></div>'
-      + '<div class="detail-section" style="margin-bottom:6px;">'
+      + (isJuniorAdmin() ? '' : '<div class="detail-section" style="margin-bottom:6px;">'
       + '<div class="export-hint" style="margin:2px 0 6px;text-align:left;">A4 / 信纸尺寸</div>'
       + '<div class="export-btn-group"><button class="btn-export" id="exportReceiptBtnBi">导出收据 · 双语</button><button class="btn-export" id="exportReceiptBtnEn">Receipt · English</button></div>'
       + '<div class="export-hint" style="margin:10px 0 6px;text-align:left;">58mm 便携打印机票据尺寸</div>'
@@ -2648,7 +2648,7 @@ window.escapeHtml = function(s){
       + '<div class="export-hint">会打开打印预览，可直接打印，或在打印对话框中选择"存为PDF"保存。</div>'
       + '<div class="export-hint" style="margin:14px 0 6px;text-align:left;">需要给患者用于报销的正式收据（诊费/车马费/药费分开列示）</div>'
       + '<a href="/admin/receipts/?patientName='+encodeURIComponent(b.name)+'&patientPhone='+encodeURIComponent(b.contact)+'&practitionerName='+encodeURIComponent(b.doctor)+'&diagnosis='+encodeURIComponent(b.doctorNote||'')+'" target="_blank" class="btn-export" style="display:inline-block;text-decoration:none;">生成正式收据（含分项，用于报销）→</a>'
-      + '</div>';
+      + '</div>');
     document.getElementById('panelBody').innerHTML = html;
 
     renderTreatList(b);
@@ -2679,10 +2679,10 @@ window.escapeHtml = function(s){
         }
       });
     });
-    document.getElementById('exportReceiptBtnBi').addEventListener('click', function(){ printBookingReceipt(b, 'bi'); });
-    document.getElementById('exportReceiptBtnEn').addEventListener('click', function(){ printBookingReceipt(b, 'en'); });
-    document.getElementById('exportReceiptThermalBtnBi').addEventListener('click', function(){ printBookingReceiptThermal(b, 'bi'); });
-    document.getElementById('exportReceiptThermalBtnEn').addEventListener('click', function(){ printBookingReceiptThermal(b, 'en'); });
+    var rBi = document.getElementById('exportReceiptBtnBi'); if(rBi) rBi.addEventListener('click', function(){ printBookingReceipt(b, 'bi'); });
+    var rEn = document.getElementById('exportReceiptBtnEn'); if(rEn) rEn.addEventListener('click', function(){ printBookingReceipt(b, 'en'); });
+    var tBi = document.getElementById('exportReceiptThermalBtnBi'); if(tBi) tBi.addEventListener('click', function(){ printBookingReceiptThermal(b, 'bi'); });
+    var tEn = document.getElementById('exportReceiptThermalBtnEn'); if(tEn) tEn.addEventListener('click', function(){ printBookingReceiptThermal(b, 'en'); });
     openPanel();
   }
 
