@@ -4961,6 +4961,7 @@ window.escapeHtml = function(s){
       var remainMin = Math.max(0, Math.ceil(r.remainMs/60000));
       return '<div class="instant-req-row"><div class="instant-req-info"><b>'+escapeHtml(r.customer_name)+'</b> · '+r.area
         + '<div class="meta">'+(r.need||'')+' · '+(r.created_at||'').slice(11,16)
+        + (r.address_detail ? ' · 地址：'+escapeHtml(r.address_detail) : '')
         + (r.status==='unmatched' ? ' · 未匹配成功，由大管理员尽快联系顾客'
            : r.status==='expired' ? ' · 医师未及时回应，由大管理员跟进'
            : r.status==='declined' ? ' · 医师暂无法接单，由大管理员跟进'

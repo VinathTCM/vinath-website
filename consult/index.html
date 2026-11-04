@@ -377,7 +377,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   // with a 15-minute response window enforced admin-side. ----
   var instantMode = false;
   var instantStep = 1;
-  var instantForm = { needs:'', area:'', name:'', phone:'' };
+  var instantForm = { needs:'', area:'', name:'', phone:'', addressDetail:'' };
   var instantPollTimer = null;
   var instantReqId = null;
 
@@ -420,7 +420,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       var res = await fetch(API_BASE + '/instant-requests', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: instantForm.name, phone: instantForm.phone, area: instantForm.area,
-          need: instantForm.needs, consentGivenAt: instantForm.consentGivenAt || null })
+          need: instantForm.needs, addressDetail: instantForm.addressDetail, consentGivenAt: instantForm.consentGivenAt || null })
       });
       if(!res.ok) return null;
       var saved = await res.json();
@@ -450,7 +450,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     instantMode = false;
     instantStep = 1;
     instantReqId = null;
-    instantForm = { needs:'', area:'', name:'', phone:'' };
+    instantForm = { needs:'', area:'', name:'', phone:'', addressDetail:'' };
     document.getElementById('hcSteps').style.display = '';
     renderInstantCta();
     render();
@@ -489,10 +489,12 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         + '<div class="hc-field"><label>称呼</label><input type="text" id="instantNameInput" placeholder="如何称呼您" value="'+instantForm.name+'"></div>'
         + '<div class="hc-field"><label>手机号</label><div class="hc-phone-row"><span class="hc-phone-prefix">+60</span><input type="text" id="instantPhoneInput" inputmode="numeric" placeholder="0123456789" value="'+instantForm.phone+'"></div>'
         + '<div class="hc-field-error" id="instantPhoneError">请输入正确的手机号（0开头，10-11位数字）</div></div>'
+        + '<div class="hc-field"><label>详细地址</label><textarea id="instantAddrInput" placeholder="门牌号、街道、邮编等详细地址（方便医师确认能否上门）">'+instantForm.addressDetail+'</textarea></div>'
         + '<button class="hc-next-btn" id="instantSubmitBtn" disabled>提交并匹配</button>';
       document.getElementById('stageArea').innerHTML = html;
       var nameEl = document.getElementById('instantNameInput');
       var phoneEl = document.getElementById('instantPhoneInput');
+      var addrEl = document.getElementById('instantAddrInput');
       var btn2 = document.getElementById('instantSubmitBtn');
       function refresh2(){
         var phoneOk = /^0\d{9,10}$/.test(phoneEl.value.trim());
@@ -503,6 +505,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       btn2.addEventListener('click', function(){
         instantForm.name = nameEl.value.trim();
         instantForm.phone = phoneEl.value.trim();
+        instantForm.addressDetail = addrEl.value.trim();
         openConsentModal(function(){
           instantForm.consentGivenAt = new Date().toISOString();
           instantStep = 3;

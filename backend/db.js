@@ -219,6 +219,7 @@ db.exec(`
     customer_contact TEXT NOT NULL,
     area TEXT NOT NULL,
     need TEXT,
+    address_detail TEXT,
     matched_practitioner_id TEXT,
     status TEXT NOT NULL DEFAULT 'unmatched' CHECK(status IN ('unmatched','pending_confirmation','accepted','declined','expired')),
     accepted_by TEXT,
@@ -226,6 +227,16 @@ db.exec(`
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     responded_at TEXT
   );
+  // 已有库迁移：给 instant_requests 补 address_detail 列（不存在才加，不影响现有数据）
+  try {
+    const irCols = db.prepare("PRAGMA table_info(instant_requests)").all();
+    if(!irCols.map(c => c.name).includes('address_detail')){
+      db.prepare('ALTER TABLE instant_requests ADD COLUMN address_detail TEXT').run();
+      console.log('✅ 已添加 instant_requests.address_detail 列');
+    }
+  } catch(e){
+    console.warn('添加 address_detail 列时出错（不影响功能）:', e.message);
+  }
 
   CREATE TABLE IF NOT EXISTS medical_records (
     id TEXT PRIMARY KEY,

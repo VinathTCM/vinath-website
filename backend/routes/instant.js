@@ -72,16 +72,16 @@ function genBookingNo(){
 
 // ---- 客户提交即时预约请求：公开接口 ----
 router.post('/instant-requests', (req, res) => {
-  const { name, phone, area, need, consentGivenAt } = req.body;
+  const { name, phone, area, need, addressDetail, consentGivenAt } = req.body;
   if(!name || !phone || !area){
     return res.status(400).json({ error: '姓名、手机号、地区都是必填的' });
   }
   const matched = findPractitionerForArea(area, phone);
   const id = 'ir_' + Date.now();
   db.prepare(`
-    INSERT INTO instant_requests (id, customer_name, customer_contact, area, need, matched_practitioner_id, status, consent_given_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(id, name, phone, area, need||null, matched ? matched.id : null, matched ? 'pending_confirmation' : 'unmatched', consentGivenAt||null);
+    INSERT INTO instant_requests (id, customer_name, customer_contact, area, need, address_detail, matched_practitioner_id, status, consent_given_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(id, name, phone, area, need||null, addressDetail||null, matched ? matched.id : null, matched ? 'pending_confirmation' : 'unmatched', consentGivenAt||null);
   const row = db.prepare('SELECT * FROM instant_requests WHERE id = ?').get(id);
   res.status(201).json(serializeRequest(row));
 });
