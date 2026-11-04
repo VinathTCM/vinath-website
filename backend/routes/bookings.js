@@ -162,7 +162,9 @@ router.post('/bookings', (req, res) => {
           // 用 UTC 构造日期再取星期几，避免服务器时区（Render 为 UTC）导致星期偏移一天
           const dp = String(apptDateISO).split('-');
           const dow = new Date(Date.UTC(Number(dp[0]), Number(dp[1])-1, Number(dp[2]))).getUTCDay();
-          if(!slotInAvailability(slot, av.days, dow)){
+          // days 数组语义为 0=周一..6=周日，而 getUTCDay() 为 0=周日..6=周六，做索引转换避免错位
+          const backendDow = (dow + 6) % 7;
+          if(!slotInAvailability(slot, av.days, backendDow)){
             return res.status(409).json({ error: '该时段不在医师服务时间内，请重新选择其他时段。' });
           }
         }

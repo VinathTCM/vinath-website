@@ -643,6 +643,35 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   {id:'2-3', label:'2:00pm - 3:00pm', startHour:14},
   {id:'4-5', label:'4:00pm - 5:00pm', startHour:16}
  ];
+ // Selected physician's service schedule & radius (saved in Smart Scheduling "Service Hours & Area");
+ // when the admin has never set availability, hasAvailability=false -> keep lenient default (no filtering)
+ var doctorAvail = { hasAvailability: false, days: null, radiusKm: null };
+ // backend days array uses 0=Monday..6=Sunday while JS getDay() uses 0=Sunday..6=Saturday;
+ // remap to frontend semantics to avoid weekday shift (admin opens Thu -> user sees Wed otherwise)
+ function remapBackendDays(bd){
+  var f = [];
+  for(var i=0;i<7;i++){ f[i] = bd[(i+6)%7]; }
+  return f;
+ }
+ function applyAvailFromData(data){
+  if(data && data.hasAvailability !== undefined){
+   doctorAvail.hasAvailability = !!data.hasAvailability;
+   doctorAvail.days = data.days ? remapBackendDays(data.days) : null;
+   doctorAvail.radiusKm = (data.radiusKm != null) ? Number(data.radiusKm) : null;
+  }
+ }
+ function toMin(t){
+  var p = String(t||'').split(':');
+  return Number(p[0])*60 + Number(p[1]||0);
+ }
+ // filter dates by physician availability when set; otherwise all dates bookable (no default Sunday rest)
+ function isDoctorDayBookable(d){
+  if(doctorAvail.hasAvailability && doctorAvail.days){
+   var dd = doctorAvail.days[d.getDay()];
+   return !!(dd && dd.enabled);
+  }
+  return true;
+ }
  var STAGE_LABELS = ['Needs', 'Physician', 'Time', 'Information'];
  var DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
  var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -684,7 +713,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   while(dates.length < count && scanned < 400){
    var closure = closed[toISODate(d)];
    var wholeDayClosed = closure && closure.slots === null; // slots:null = whole day; slots:[...] = only those slots
-   if(d.getDay() !== 0 && !wholeDayClosed){ dates.push(new Date(d)); }
+   if(!wholeDayClosed && isDoctorDayBookable(d)){ dates.push(new Date(d)); }
    d = new Date(d.getFullYear(), d.getMonth(), d.getDate()+1);
    scanned++;
   }
@@ -697,6 +726,16 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
  function isSlotAvailable(date, slot){
   var closure = getClosedDateSet()[toISODate(date)];
   if(closure && closure.slots && closure.slots.indexOf(slot.id) !== -1) return false;
+  // physician availability filter (only when admin set it in Smart Scheduling "Service Hours & Area")
+  if(doctorAvail.hasAvailability && doctorAvail.days){
+   var dd = doctorAvail.days[date.getDay()];
+   if(!dd || !dd.enabled) return false;
+   if(dd.start && dd.end){
+    var sMin = slot.startHour * 60, eMin = sMin + 60;
+    var stMin = toMin(dd.start), enMin = toMin(dd.end);
+    if(sMin < stMin || eMin > enMin) return false;
+   }
+  }
   if(!isToday(date)) return true;
   var h = new Date().getHours();
   if(h >= 12) return false;
@@ -954,10 +993,14 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   }
  }
 
- function renderStage3(){
+ async function renderStage3(){
+  // fetch the selected physician's service schedule config (weekly, date-independent)
+  await fetch(API_BASE + '/bookings/availability?practitionerId=' + encodeURIComponent(form.doctor) + '&date=' + toISODate(new Date()))
+   .then(function(r){ return r.ok ? r.json() : null; })
+   .then(function(data){ if(data) applyAvailFromData(data); })
+   .catch(function(){});
   var dates = getBookableDates(21);
   var html = '<div class="hc-stage-title">Select Date & Time</div>'
-   + '<div class="hc-stage-hint">Sunday is a rest day; once the afternoon has passed, no remaining same-day slots can be booked. Temporary closure dates such as public holidays will not appear among the available dates below, and partially suspended slots will be shown with a strikethrough.</div>'
    + '<div class="hc-date-strip" id="dateStrip">';
   dates.forEach(function(d, i){
    var selected = form.date && d.toDateString() === form.date.toDateString();

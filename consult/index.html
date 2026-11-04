@@ -607,10 +607,17 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   // 所选医师的服务时段与范围（智能排班"服务时段与范围"页保存的 availability）；
   // 管理员未设置过时 hasAvailability=false，前端保持宽松默认（不强制过滤）
   var doctorAvail = { hasAvailability: false, days: null, radiusKm: null };
+  // 后端 days 数组语义 0=周一..6=周日，前端 getDay() 语义 0=周日..6=周六，
+  // 读取时重排为前端语义，避免星期错位（管理员设周四 → 用户看到周三）
+  function remapBackendDays(bd){
+    var f = [];
+    for(var i=0;i<7;i++){ f[i] = bd[(i+6)%7]; }
+    return f;
+  }
   function applyAvailFromData(data){
     if(data && data.hasAvailability !== undefined){
       doctorAvail.hasAvailability = !!data.hasAvailability;
-      doctorAvail.days = data.days || null;
+      doctorAvail.days = data.days ? remapBackendDays(data.days) : null;
       doctorAvail.radiusKm = (data.radiusKm != null) ? Number(data.radiusKm) : null;
     }
   }
@@ -618,13 +625,13 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var p = String(t||'').split(':');
     return Number(p[0])*60 + Number(p[1]||0);
   }
-  // 医师 availability 设置过才按它过滤日期；未设置保持宽松默认（周日休）
+  // 医师 availability 设置过才按它过滤日期；未设置全部日期可约（不再默认周日休）
   function isDoctorDayBookable(d){
     if(doctorAvail.hasAvailability && doctorAvail.days){
       var dd = doctorAvail.days[d.getDay()];
       return !!(dd && dd.enabled);
     }
-    return d.getDay() !== 0;
+    return true;
   }
   var STAGE_LABELS = ['需求', '医师', '时间', '信息'];
   var DOW = ['周日','周一','周二','周三','周四','周五','周六'];
@@ -971,12 +978,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       .then(function(data){ if(data) applyAvailFromData(data); })
       .catch(function(){});
     var dates = getBookableDates(21);
-    var hint = doctorAvail.hasAvailability
-      ? '可选日期与时段以所选医师在"服务时段与范围"中的设置为准。公共假期等临时休诊日期不会出现在下方可选日期中，部分时段停诊则会以划线样式显示。已被其他客户预约的时段同样会划线锁定。'
-      : '周日为休息日，当日下午及公共假期等临时休整日则无法预约。公共假期等临时休诊日期不会出现在下方可选日期中，部分时段停诊则会以划线样式显示在对应时段上。已被其他客户预约的时段同样会划线锁定。';
     var html = '<div class="hc-stage-title">选择日期与时间</div>'
-      + '<div class="hc-stage-hint">'+hint+'</div>'
-      + (doctorAvail.hasAvailability && doctorAvail.radiusKm ? '<div class="hc-stage-hint">该医师上门服务范围：'+doctorAvail.radiusKm+' 公里。</div>' : '')
       + '<div class="hc-date-strip" id="dateStrip">';
     dates.forEach(function(d, i){
       var selected = form.date && d.toDateString() === form.date.toDateString();
