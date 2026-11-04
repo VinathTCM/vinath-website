@@ -283,7 +283,6 @@ window.scrollTo(0,0);
 
     var html = '<div class="wrap"><h1>智能排班</h1><div class="sub">今日预约按区域分组排列，方便规划路线。</div>'
       + renderTabs()
-      + '<div class="proto-banner"><b>跟订单预约管理首页的"今日工作任务"是什么关系？</b>那边是你打开后台第一眼看到的总览，什么都有（预约+商品订单混在一起，方便快速处理）；这里是专门给要出门跑上门服务的医师用的——只看预约、按区域分组方便规划顺路顺序、能看到详细地址、还能收订金、快速跳到这个患者的病历和处方。简单说：想知道"今天有什么事"看那边，想知道"今天怎么跑"用这里。<br><br><b>"按顺路程度排序"这里做的是按服务区域分组，不是真正的GPS路线优化。</b>要做到根据实际路程时间排序，需要真实的地图/地理编码API（比如Google Maps Distance Matrix），这个项目目前没有对接，需要真实的API Key才能往下做——但对单个医师一天通常不超过6-8单的量来说，按区域分组已经能大幅减少来回跑同一片区域的情况，是一个务实的替代方案。</div>'
       + '<div class="card">'
       + (areaOrder.length ? areaOrder.map(function(area){
           var stopsHtml = byArea[area].map(function(b){

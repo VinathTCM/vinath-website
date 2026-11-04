@@ -71,6 +71,29 @@ function slotAlreadyTaken(practitionerId, date, slot){
   return false;
 }
 
+// slot id '9-10'/'11-12'/'2-3'/'4-5'：起始数字 1-5 为下午（12小时制），9-11 为上午
+function slotStartHour24(slotId){
+  var parts = String(slotId||'').split('-');
+  if(parts.length < 2) return null;
+  var start = parseInt(parts[0],10);
+  if(isNaN(start)) return null;
+  return start <= 5 ? start + 12 : start;
+}
+function toMin(t){
+  var p = String(t||'').split(':');
+  return Number(p[0])*60 + Number(p[1]||0);
+}
+// 医师 availability（服务时段）内判断：slot 为 1 小时段，要求完整落在 [start,end] 内
+function slotInAvailability(slotId, days, dow){
+  var dd = days[dow];
+  if(!dd || !dd.enabled) return false;
+  if(!dd.start || !dd.end) return true;
+  var startH = slotStartHour24(slotId);
+  if(startH == null) return false;
+  var sMin = startH*60, eMin = sMin + 60;
+  return sMin >= toMin(dd.start) && eMin <= toMin(dd.end);
+}
+
 // 公开接口：居家会诊页选时段用——返回该医师该日已占用时段；
 // 同步开启时（且该医师是大管理员），同时返回其他大管理员同一日期的占用，前端一起锁掉
 router.get('/bookings/availability', (req, res) => {
@@ -86,7 +109,22 @@ router.get('/bookings/availability', (req, res) => {
     });
     syncedFrom = [...new Set(syncedFrom)];
   }
-  res.json({ sync, taken, syncedFrom });
+  // 附带该医师的服务时段与范围配置（智能排班页保存的 availability）：
+  // 前端据此过滤可预约日期与时段。管理员从未设置过 availability 时 hasAvailability=false，
+  // 前端保持宽松默认（不强制过滤），避免默认全关闭把可预约日期全锁掉。
+  let hasAvailability = false, days = null, radiusKm = null;
+  const adminRow = db.prepare('SELECT availability FROM admins WHERE id = ?').get(practitionerId);
+  if(adminRow && adminRow.availability){
+    try {
+      const a = JSON.parse(adminRow.availability);
+      if(a && Array.isArray(a.days) && a.days.length === 7){
+        hasAvailability = true;
+        days = a.days;
+        radiusKm = (a.radiusKm != null) ? Number(a.radiusKm) : 15;
+      }
+    } catch(e){}
+  }
+  res.json({ sync, taken, syncedFrom, hasAvailability, days, radiusKm });
 });
 
 // 客户填手机号是"0123456789"这种本地写法，黑名单存的可能是不带开头0的格式——
@@ -113,6 +151,21 @@ router.post('/bookings', (req, res) => {
   // 时段占用校验：本人同日期同时段已约 → 拒绝；大管理员同步出诊开启时，对方大管理员已约也拒绝
   if(apptDateISO && slot && slotAlreadyTaken(practitionerId, apptDateISO, slot)){
     return res.status(409).json({ error: '这个时段刚刚已经被预约了，请重新选择其他时段。' });
+  }
+  // 服务时段校验：医师在智能排班页设置过 availability（服务时段与范围）时，非服务时段拒绝
+  if(apptDateISO && slot && slot !== 'ASAP'){
+    const availRow = db.prepare('SELECT availability FROM admins WHERE id = ?').get(practitionerId);
+    if(availRow && availRow.availability){
+      try {
+        const av = JSON.parse(availRow.availability);
+        if(av && Array.isArray(av.days) && av.days.length === 7){
+          const d = new Date(apptDateISO + 'T00:00:00+08:00');
+          if(!slotInAvailability(slot, av.days, d.getDay())){
+            return res.status(409).json({ error: '该时段不在医师服务时间内，请重新选择其他时段。' });
+          }
+        }
+      } catch(e){}
+    }
   }
   const customer = findOrCreateCustomer(phone, name);
   const id = 'booking_' + Date.now();

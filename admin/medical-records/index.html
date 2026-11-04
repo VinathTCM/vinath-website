@@ -1376,10 +1376,16 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       + '</div>'
       + '</div>'
 
-      // 治疗项目：独立卡片，不勾选"开处方"也能直接添加并一起结算
+      // 治疗项目：独立卡片，不勾选"开处方"也能直接添加并一起结算。
+      // 手动填写添加（名称+价格）：小管理员与大管理员的治疗项目/价格不一致，不复用价目表下拉
       + '<div class="card"><div class="section-title">治疗项目（选填）</div>'
-      + '<div class="field"><label>从价目表选择，自动带出价格</label>'
-      + '<div class="rx-from-formula"><select id="rxTreatSel"><option value="">从价目表选择…</option></select><button type="button" class="btn-small" id="rxAddTreatBtn">+ 添加</button></div>'
+      + '<div class="field"><label>手动填写治疗项目与价格（小管理员可自定义自己的项目）</label>'
+      + '<div class="rx-from-formula">'
+      + '<input type="text" id="rxTreatNameInput" placeholder="治疗项目名称（如：针灸）" style="flex:1.4;">'
+      + '<input type="text" id="rxTreatNameEnInput" placeholder="英文名（选填，收据用）" style="flex:1;">'
+      + '<input type="number" id="rxTreatPriceInput" min="0" step="0.01" placeholder="价格 RM" style="width:110px;">'
+      + '<button type="button" class="btn-small" id="rxAddTreatBtn">+ 添加</button>'
+      + '</div>'
       + '<div id="rxTreatList" style="margin-top:8px;"></div></div>'
       + '<div style="margin-top:10px;padding-top:12px;border-top:1px dashed var(--line);">'
       + '<label style="display:block;font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:8px;">居家出诊费（先选距离 Zone，再手动填金额）</label>'
@@ -1631,8 +1637,8 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     function loadPriceList(){
       return fetch(API_BASE + '/site-settings/price_list')
         .then(function(res){ return res.ok ? res.json() : null; })
-        .then(function(v){ PRICE_LIST = (v && v.list && v.list.length) ? v.list : PRICE_LIST_FALLBACK; renderRxTreatSelect(); renderHvZoneSelect(); return PRICE_LIST; })
-        .catch(function(){ PRICE_LIST = PRICE_LIST_FALLBACK; renderRxTreatSelect(); renderHvZoneSelect(); return PRICE_LIST; });
+        .then(function(v){ PRICE_LIST = (v && v.list && v.list.length) ? v.list : PRICE_LIST_FALLBACK; renderHvZoneSelect(); return PRICE_LIST; })
+        .catch(function(){ PRICE_LIST = PRICE_LIST_FALLBACK; renderHvZoneSelect(); return PRICE_LIST; });
     }
     // 居家出诊费 Zone 下拉：只取价目表里"居家出诊费 Home Visit"分类的项（Zone1-5），金额由医师手动填
     function renderHvZoneSelect(){
@@ -1643,19 +1649,6 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
         var en = TREATMENT_EN[p.name] || p.nameEn || 'Home Visit';
         return '<option value="'+escapeHtml(p.name)+'" data-en="'+escapeHtml(en)+'">'+escapeHtml(p.name+(p.nameEn?' ('+en+')':''))+'</option>';
       }).join('');
-    }
-    function renderRxTreatSelect(){
-      var sel = document.getElementById('rxTreatSel');
-      if(!sel) return;
-      var groups = {};
-      (PRICE_LIST||PRICE_LIST_FALLBACK).forEach(function(p){ (groups[p.cat] = groups[p.cat]||[]).push(p); });
-      var html = '<option value="">从价目表选择…</option>';
-      Object.keys(groups).forEach(function(cat){
-        html += '<optgroup label="'+escapeHtml(cat)+'">' + groups[cat].map(function(p){
-          return '<option value="'+escapeHtml(p.name)+'" data-price="'+(Number(p.price)||0)+'">'+escapeHtml(p.name+(p.nameEn?' ('+p.nameEn+')':''))+' — RM'+(Number(p.price)||0)+'</option>';
-        }).join('') + '</optgroup>';
-      });
-      sel.innerHTML = html;
     }
     function renderRxTreatList(){
       var el = document.getElementById('rxTreatList');
@@ -1668,7 +1661,7 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
           + '<span style="font-size:13px;color:var(--ink-soft);white-space:nowrap;">× RM'+(Number(t.price)||0)+' = RM'+subtotal+'</span>'
           + '<button type="button" class="remove-herb" data-trt-rm="'+i+'">×</button>'
           + '</div>';
-      }).join('') : '<div style="font-size:12.5px;color:var(--ink-soft);">还没有添加治疗项目——从上方价目表选择后点"添加"</div>';
+      }).join('') : '<div style="font-size:12.5px;color:var(--ink-soft);">还没有添加治疗项目——填写名称和价格后点"添加"</div>';
       document.querySelectorAll('[data-trt-qty]').forEach(function(inp){
         inp.addEventListener('input', function(){ rxDraft.treatments[Number(this.getAttribute('data-trt-qty'))].qty = Number(this.value)||1; renderRxTreatList(); renderAmountSummary(); });
       });
@@ -2005,11 +1998,19 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
     document.getElementById('rxAddHerbBtn').addEventListener('click', function(){ rxDraft.items.push({herbName:'',dosageGrams:'',notes:''}); renderRxHerbList(); });
     document.getElementById('rxBkSelectMR').addEventListener('change', function(){ rxDraft.bookingId = this.value || null; });
     document.getElementById('rxAddTreatBtn').addEventListener('click', function(){
-      var sel = document.getElementById('rxTreatSel');
-      if(!sel.value){ showToast('请先选择一个价目表项目'); return; }
-      var _pt = (PRICE_LIST||PRICE_LIST_FALLBACK).find(function(x){ return x.name===sel.value; });
-      rxDraft.treatments.push({ name: sel.value, nameEn: _pt ? (_pt.nameEn||'') : '', qty: 1, price: Number(sel.options[sel.selectedIndex].getAttribute('data-price')) || 0 });
+      var nameInp = document.getElementById('rxTreatNameInput');
+      var enInp = document.getElementById('rxTreatNameEnInput');
+      var priceInp = document.getElementById('rxTreatPriceInput');
+      var nm = (nameInp && nameInp.value || '').trim();
+      if(!nm){ showToast('请填写治疗项目名称'); return; }
+      var price = Number(priceInp && priceInp.value);
+      if(!(price >= 0)){ showToast('请填写有效的价格（≥0）'); return; }
+      var en = (enInp && enInp.value || '').trim();
+      rxDraft.treatments.push({ name: nm, nameEn: en, qty: 1, price: price });
       renderRxTreatList(); renderAmountSummary();
+      if(nameInp) nameInp.value = '';
+      if(enInp) enInp.value = '';
+      if(priceInp) priceInp.value = '';
     });
     // 居家出诊费：先选 Zone 再手动填金额（需求2）
     document.getElementById('hvAddBtn').addEventListener('click', function(){

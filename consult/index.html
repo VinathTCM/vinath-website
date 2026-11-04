@@ -604,6 +604,28 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     {id:'2-3', label:'2:00pm - 3:00pm', startHour:14},
     {id:'4-5', label:'4:00pm - 5:00pm', startHour:16}
   ];
+  // 所选医师的服务时段与范围（智能排班"服务时段与范围"页保存的 availability）；
+  // 管理员未设置过时 hasAvailability=false，前端保持宽松默认（不强制过滤）
+  var doctorAvail = { hasAvailability: false, days: null, radiusKm: null };
+  function applyAvailFromData(data){
+    if(data && data.hasAvailability !== undefined){
+      doctorAvail.hasAvailability = !!data.hasAvailability;
+      doctorAvail.days = data.days || null;
+      doctorAvail.radiusKm = (data.radiusKm != null) ? Number(data.radiusKm) : null;
+    }
+  }
+  function toMin(t){
+    var p = String(t||'').split(':');
+    return Number(p[0])*60 + Number(p[1]||0);
+  }
+  // 医师 availability 设置过才按它过滤日期；未设置保持宽松默认（周日休）
+  function isDoctorDayBookable(d){
+    if(doctorAvail.hasAvailability && doctorAvail.days){
+      var dd = doctorAvail.days[d.getDay()];
+      return !!(dd && dd.enabled);
+    }
+    return d.getDay() !== 0;
+  }
   var STAGE_LABELS = ['需求', '医师', '时间', '信息'];
   var DOW = ['周日','周一','周二','周三','周四','周五','周六'];
   var MON = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
@@ -648,7 +670,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     while(dates.length < count && scanned < 400){
       var closure = closed[toISODate(d)];
       var wholeDayClosed = closure && closure.slots === null; // slots:null = whole day; slots:[...] = only those slots
-      if(d.getDay() !== 0 && !wholeDayClosed){ dates.push(new Date(d)); }
+      if(!wholeDayClosed && isDoctorDayBookable(d)){ dates.push(new Date(d)); }
       d = new Date(d.getFullYear(), d.getMonth(), d.getDate()+1);
       scanned++;
     }
@@ -661,6 +683,16 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   function isSlotAvailable(date, slot){
     var closure = getClosedDateSet()[toISODate(date)];
     if(closure && closure.slots && closure.slots.indexOf(slot.id) !== -1) return false;
+    // 医师服务时段过滤（智能排班"服务时段与范围"设置过才生效）
+    if(doctorAvail.hasAvailability && doctorAvail.days){
+      var dd = doctorAvail.days[date.getDay()];
+      if(!dd || !dd.enabled) return false;
+      if(dd.start && dd.end){
+        var sMin = slot.startHour * 60, eMin = sMin + 60;
+        var stMin = toMin(dd.start), enMin = toMin(dd.end);
+        if(sMin < stMin || eMin > enMin) return false;
+      }
+    }
     if(!isToday(date)) return true;
     var h = new Date().getHours();
     if(h >= 12) return false;
@@ -932,10 +964,19 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       renderStage3Inner();
     });
   }
-  function renderStage3Inner(){
+  async function renderStage3Inner(){
+    // 先拉取所选医师的服务时段与范围配置（周配置，与具体日期无关），用于过滤可预约日期与时段
+    await fetch(API_BASE + '/bookings/availability?practitionerId=' + encodeURIComponent(form.doctor) + '&date=' + toISODate(new Date()))
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(data){ if(data) applyAvailFromData(data); })
+      .catch(function(){});
     var dates = getBookableDates(21);
+    var hint = doctorAvail.hasAvailability
+      ? '可选日期与时段以所选医师在"服务时段与范围"中的设置为准。公共假期等临时休诊日期不会出现在下方可选日期中，部分时段停诊则会以划线样式显示。已被其他客户预约的时段同样会划线锁定。'
+      : '周日为休息日，当日下午及公共假期等临时休整日则无法预约。公共假期等临时休诊日期不会出现在下方可选日期中，部分时段停诊则会以划线样式显示在对应时段上。已被其他客户预约的时段同样会划线锁定。';
     var html = '<div class="hc-stage-title">选择日期与时间</div>'
-      + '<div class="hc-stage-hint">周日为休息日，当日下午及公共假期等临时休整日则无法预约。公共假期等临时休诊日期不会出现在下方可选日期中，部分时段停诊则会以划线样式显示在对应时段上。已被其他客户预约的时段同样会划线锁定。</div>'
+      + '<div class="hc-stage-hint">'+hint+'</div>'
+      + (doctorAvail.hasAvailability && doctorAvail.radiusKm ? '<div class="hc-stage-hint">该医师上门服务范围：'+doctorAvail.radiusKm+' 公里。</div>' : '')
       + '<div class="hc-date-strip" id="dateStrip">';
     dates.forEach(function(d, i){
       var selected = form.date && d.toDateString() === form.date.toDateString();
@@ -960,6 +1001,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
         .then(function(r){ return r.ok ? r.json() : null; })
         .then(function(data){
           if(!data) return;
+          applyAvailFromData(data);
           slotOccupancy[iso] = { taken: data.taken || [], synced: data.syncedFrom || [], sync: !!data.sync };
           renderSlots();
         })
