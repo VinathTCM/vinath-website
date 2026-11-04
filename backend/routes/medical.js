@@ -100,24 +100,15 @@ router.get('/admin/medical-records', authMiddleware, requireModuleAccess('medica
   const { patientPhone } = req.query;
   let rows;
   if(req.admin.role === 'PRACTITIONER'){
-    // 小管理员可见范围 = ①自己写过的病历（不限预约状态）②自己名下未过期预约对应的病人
-    //（该病人的全部历史病历，不限书写者）。原逻辑只按②过滤，导致自己接诊但预约已过期
-    // 或未关联预约的病历对本人不可见——已修复。
-    const visiblePhones = visiblePatientPhonesFor(req.admin.sub, Date.now());
+    // 小管理员仅可见自己接诊（practitioner_id 为自己）的病历——
+    // 同一病人的病历若由其他医师（如大管理员）书写，小管理员不可见。
     if(patientPhone){
       const own = db.prepare("SELECT 1 FROM medical_records WHERE patient_phone = ? AND practitioner_id = ? AND data NOT LIKE '%\"_deleted\":%' LIMIT 1").get(patientPhone, req.admin.sub);
-      if(!own && visiblePhones.indexOf(patientPhone) === -1) return res.json([]);
-      rows = db.prepare("SELECT * FROM medical_records WHERE patient_phone = ? AND data NOT LIKE '%\"_deleted\":%' ORDER BY visit_date DESC").all(patientPhone);
+      if(!own) return res.json([]);
+      rows = db.prepare("SELECT * FROM medical_records WHERE patient_phone = ? AND practitioner_id = ? AND data NOT LIKE '%\"_deleted\":%' ORDER BY visit_date DESC").all(patientPhone, req.admin.sub);
       logAccess(req, 'view', null, patientPhone);
     } else {
-      const conds = ["practitioner_id = ?"];
-      const params = [req.admin.sub];
-      if(visiblePhones.length){
-        const ph = visiblePhones.map(function(){ return '?'; }).join(',');
-        conds.push("patient_phone IN (" + ph + ")");
-        params.push.apply(params, visiblePhones);
-      }
-      rows = db.prepare("SELECT * FROM medical_records WHERE (" + conds.join(' OR ') + ") AND data NOT LIKE '%\"_deleted\":%' ORDER BY visit_date DESC").all(...params);
+      rows = db.prepare("SELECT * FROM medical_records WHERE practitioner_id = ? AND data NOT LIKE '%\"_deleted\":%' ORDER BY visit_date DESC").all(req.admin.sub);
       logAccess(req, 'view', null, null);
     }
   } else if(patientPhone){
@@ -134,16 +125,8 @@ router.get('/admin/medical-records', authMiddleware, requireModuleAccess('medica
 router.get('/admin/medical-records/patients', authMiddleware, requireModuleAccess('medicalRecords'), (req, res) => {
   let rows;
   if(req.admin.role === 'PRACTITIONER'){
-    // 小管理员患者列表 = 自己写过的病历（不限预约状态）∪ 自己名下未过期预约对应的病人
-    const visiblePhones = visiblePatientPhonesFor(req.admin.sub, Date.now());
-    const conds = ["practitioner_id = ?"];
-    const params = [req.admin.sub];
-    if(visiblePhones.length){
-      const ph = visiblePhones.map(function(){ return '?'; }).join(',');
-      conds.push("patient_phone IN (" + ph + ")");
-      params.push.apply(params, visiblePhones);
-    }
-    rows = db.prepare("SELECT patient_phone, patient_name, visit_date, data FROM medical_records WHERE (" + conds.join(' OR ') + ") AND data NOT LIKE '%\"_deleted\":%'").all(...params);
+    // 小管理员患者列表 = 仅自己接诊的病历（其他医师书写的病历不出现）
+    rows = db.prepare("SELECT patient_phone, patient_name, visit_date, data FROM medical_records WHERE practitioner_id = ? AND data NOT LIKE '%\"_deleted\":%'").all(req.admin.sub);
   } else {
     rows = db.prepare("SELECT patient_phone, patient_name, visit_date, data FROM medical_records WHERE data NOT LIKE '%\"_deleted\":%'").all();
   }

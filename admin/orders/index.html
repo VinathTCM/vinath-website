@@ -1257,6 +1257,11 @@ window.escapeHtml = function(s){
   function getCurrentAdmin(){
     try { var raw = localStorage.getItem(CURRENT_ADMIN_KEY); return raw ? JSON.parse(raw) : null; } catch(e){ return null; }
   }
+  // 小管理员（非大管理员）判定：收据/发票等带公司抬头的外部单据仅大管理员可用
+  function isJuniorAdmin(){
+    var c = getCurrentAdmin();
+    return !c || c.type !== 'senior';
+  }
   function setCurrentAdmin(admin){
     try {
       if(admin) localStorage.setItem(CURRENT_ADMIN_KEY, JSON.stringify(admin));
@@ -3798,6 +3803,7 @@ window.escapeHtml = function(s){
   // wanted, it needs testing on the person's own real device before shipping again — happy to
   // take another pass with them driving verification on their end.
   function printBookingReceipt(b, lang){
+    if(isJuniorAdmin()){ alert('无权限 · 收据仅限大管理员使用'); return; }
     preparePrint('normal');
     var itemsHtml = b.treatments.map(function(t){
       return '<tr><td>'+blItem(t.name,lang,t.nameEn,t.productId)+'</td><td class="num">'+(t.price<0?'—':t.qty)+'</td><td class="num">'+(t.price<0?'—':fmtMYR(t.price))+'</td><td class="num">'+fmtMYR(t.qty*t.price)+'</td></tr>';
@@ -3838,6 +3844,7 @@ window.escapeHtml = function(s){
     root.style.lineHeight = '1.6';
   }
   function printBookingReceiptThermal(b, lang){
+    if(isJuniorAdmin()){ alert('无权限 · 收据仅限大管理员使用'); return; }
     preparePrint('thermal');
     var itemsHtml = b.treatments.map(function(t){
       var nm = blItem(t.name, lang, t.nameEn, t.productId);
@@ -5314,12 +5321,13 @@ window.escapeHtml = function(s){
       return '<div class="visit-row">'
         + '<div class="visit-row-hd"><span>'+b.apptDate+' '+slotCN(b.slot)+'</span><span class="vdoc">'+escapeHtml(b.doctor)+'</span></div>'
         + '<div class="visit-row-need">客户自述：'+escapeHtml(b.need)+'</div>'
+        + '<div class="visit-row-need">上门地址：'+escapeHtml(b.addressDetail||'-')+'</div>'
         + (b.doctorNote ? '<div class="visit-row-note">医师记录：'+b.doctorNote+'</div>' : '')
         + treatHtml
-        + '<div class="visit-row-actions" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">'
-        + '<button class="row-edit" data-print-a4="'+vi+'" type="button">打印收据（A4）</button>'
-        + '<button class="row-edit" data-print-58="'+vi+'" type="button">58mm 小票</button>'
-        + '</div>'
+        + (isJuniorAdmin() ? '' : '<div class="visit-row-actions" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">'
+          + '<button class="row-edit" data-print-a4="'+vi+'" type="button">打印收据（A4）</button>'
+          + '<button class="row-edit" data-print-58="'+vi+'" type="button">58mm 小票</button>'
+          + '</div>')
         + '</div>';
     }).join('');
     var mrList = [];
