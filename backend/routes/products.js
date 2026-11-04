@@ -92,6 +92,13 @@ router.get('/admin/products', authMiddleware, requireRole('SENIOR'), async (req,
   res.json(await Promise.all(rows.map(serializeAdminProductList)));
 });
 
+// 拿货目录：I类执业中医师按拿货价向总部下单时读的商品列表——只暴露拿货所需字段
+// （id/名称/拿货价），绝不包含 cost 成本价等商业机密（小管理员不可见）。只返回上架商品。
+router.get('/admin/wholesale-catalog', authMiddleware, requireRole('SENIOR', 'PRACTITIONER', 'FULFILLMENT'), (req, res) => {
+  const rows = db.prepare('SELECT id, name, name_en, wholesale_price, wholesale_trial_price FROM products WHERE active = 1 ORDER BY created_at DESC').all();
+  res.json(rows.map(p => ({ id: p.id, name: p.name, nameEn: p.name_en, wholesalePrice: p.wholesale_price, wholesaleTrialPrice: p.wholesale_trial_price })));
+});
+
 function productFieldsFromBody(b){
   return {
     name: b.name, name_en: b.nameEn||null, type: b.type, price: b.price, trial_price: b.trialPrice||null,

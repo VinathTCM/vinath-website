@@ -20,6 +20,21 @@ body{ margin:0; min-height:100vh; background:#F4F2EE; font-family:"Noto Sans SC"
 .hdr .brand{ font-family:var(--font-serif); font-weight:700; font-size:15px; letter-spacing:.14em; color:var(--clay); text-transform:uppercase; }
 .hdr .brand .tm{ text-transform:none; font-size:.62em; vertical-align:super; margin-left:1px; }
 .admin-footer{ margin-top:44px; padding-top:18px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; font-size:12px; color:var(--ink-soft); }
+
+/* 拿货/订单支付凭证样式（对齐前台结算：收款码、银行信息、付款截图上传） */
+.wholesale-pay-detail{ margin-top:12px; }
+.wholesale-pay-detail .pay-qr-box{ display:flex; justify-content:center; padding:20px; background:#FFF; border:1px solid var(--line); border-radius:14px; margin-bottom:12px; }
+.wholesale-pay-detail .pay-qr-box img{ max-width:100%; max-height:300px; object-fit:contain; }
+.wholesale-pay-detail .pay-bank-detail{ background:#FFF; border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin-bottom:12px; }
+.wholesale-pay-detail .pbd-row{ display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--line); font-size:14px; }
+.wholesale-pay-detail .pbd-row:last-child{ border-bottom:none; }
+.wholesale-pay-detail .pbd-l{ color:var(--ink-soft); }
+.wholesale-pay-detail .pbd-v{ font-weight:700; }
+.wholesale-pay-detail .pay-qr-hint{ text-align:center; font-size:13px; color:var(--ink-soft); margin-bottom:8px; line-height:1.7; }
+.pay-field{ margin-bottom:14px; }
+.pay-field label{ display:block; font-size:12.5px; font-weight:700; color:var(--ink); margin-bottom:6px; }
+.pay-screenshot-box{ border:1.5px dashed var(--line); border-radius:14px; min-height:120px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-soft); font-size:13.5px; overflow:hidden; background:#FFF; }
+.pay-screenshot-box img{ width:100%; max-height:280px; object-fit:contain; }
 .admin-footer .my{ font-weight:700; letter-spacing:.03em; white-space:nowrap; }
 .login-overlay{ position:fixed; inset:0; background:var(--cream); z-index:1000; display:flex; align-items:center; justify-content:center; padding:24px; }
 .vinath-admin-nav{ background:#332A21; }
@@ -1046,11 +1061,13 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
         </div>
         <div class="field">
           <label>支付方式</label>
-          <div class="seg" id="wholesalePaySeg">
-            <div class="seg-btn on" data-pay="信用卡">信用卡</div>
-            <div class="seg-btn" data-pay="DuitNow">DuitNow</div>
-            <div class="seg-btn" data-pay="银行转账">银行转账</div>
-          </div>
+          <div class="seg" id="wholesalePaySeg"></div>
+        </div>
+        <div class="wholesale-pay-detail" id="wholesalePayDetail"></div>
+        <div class="pay-field">
+          <label>上传付款截图</label>
+          <div class="pay-screenshot-box" id="wholesaleScreenshotBox"><span>点击上传付款成功的截图</span></div>
+          <input type="file" id="wholesaleScreenshotFile" accept="image/*" style="display:none;">
         </div>
         <div class="wholesale-total-box" id="wholesaleTotalBox"></div>
         <button type="button" class="btn-primary" id="wholesaleSubmitBtn" style="margin-top:14px;">提交进货申请</button>
@@ -1986,7 +2003,7 @@ window.escapeHtml = function(s){
           + '<td style="max-width:220px;">'+itemsSummary+'</td>'
           + '<td class="price-cell">MYR '+o.total.toFixed(2)+'</td>'
           + '<td>'+(o.region==='west'?'西马':'东马')+'</td>'
-          + '<td><span class="badge badge-o'+(o.status||0)+'">'+wholesaleStatusLabel(o)+'</span></td>'
+          + '<td><span class="badge '+((o.status||0)===0 && o.paymentScreenshot && !o.paymentVerified ? 'badge-pending-verify' : 'badge-o'+(o.status||0))+'">'+wholesaleStatusLabel(o)+'</span></td>'
           + '<td><button class="row-edit" data-id="'+o.id+'" data-wholesale="1">查看</button>'+((cur&&cur.type==='senior')?'<button class="row-edit row-del-btn" data-id="'+o._backendId+'" data-type="wholesale" style="color:#c0392b;border-color:#c0392b;margin-left:4px;">删除</button>':'')+'</td>'
           + '</tr>';
       }).join('');
@@ -2149,6 +2166,8 @@ window.escapeHtml = function(s){
     if(!o) return;
     var cur = getCurrentAdmin();
     var isSenior = cur && (cur.role === 'SENIOR' || cur.type === 'senior');
+    var isFulfillment = cur && cur.type === 'junior' && cur.adminType === 'fulfillment';
+    var canManageStatus = isSenior || isFulfillment;
     var canInvoice = ((o.status||0) >= 1) || isSenior;
     document.getElementById('panelTitle').textContent = '拿货订单详情';
     var shipLabel = o.shipping === 0 ? shipFreeNoteZh(o.region) : '运费（'+(o.region==='west'?'西马':'东马')+'）';
@@ -2161,6 +2180,14 @@ window.escapeHtml = function(s){
       + '<div class="detail-row"><span class="l">拿货单编号</span><span class="r">'+o.id+'</span></div>'
       + '<div class="detail-row"><span class="l">提交日期</span><span class="r">'+o.date+'</span></div>'
       + '<div class="detail-row"><span class="l">支付方式</span><span class="r">'+o.payMethod+'</span></div></div>'
+      + (o.paymentScreenshot ? (
+          '<div class="detail-section"><div class="detail-section-title">付款凭证'
+          + (o.paymentVerified ? '<span style="color:#4C6B3F;font-weight:700;margin-left:8px;">✓ 已核实</span>' : '<span style="color:var(--amber);font-weight:700;margin-left:8px;">待核实</span>')
+          + '</div>'
+          + '<img src="'+o.paymentScreenshot+'" style="max-width:100%;max-height:320px;border-radius:10px;border:1px solid var(--line);cursor:zoom-in;" id="wholesalePaymentScreenshotImg">'
+          + (o.paymentVerified ? '' : '<button type="button" class="btn-primary" id="markWholesalePaymentVerifiedBtn" style="margin-top:12px;">核对无误，标记为已核实</button>')
+          + '</div>'
+        ) : '')
       + '<div class="detail-section"><div class="detail-section-title">拿货人信息</div>'
       + '<div class="detail-row"><span class="l">小管理员</span><span class="r">'+escapeHtml(o.orderedByName)+'（I类·执业中医师）</span></div>'
       + '<div class="detail-row"><span class="l">收货地区</span><span class="r">'+(o.region==='west'?'西马':'东马')+'</span></div>'
@@ -2178,7 +2205,7 @@ window.escapeHtml = function(s){
     document.getElementById('panelBody').innerHTML = html;
     document.querySelectorAll('#wholesaleStepper .status-step-btn').forEach(function(b){
       b.addEventListener('click', async function(){
-        if(!(cur && (cur.role === 'SENIOR' || cur.type === 'senior'))){ showToast('只有大管理员可以变更拿货订单状态'); return; }
+        if(!(cur && canManageStatus)){ showToast('只有大管理员和II类打包出货员可以变更拿货订单状态'); return; }
         var newStatus = Number(this.getAttribute('data-i'));
         o.status = newStatus;
         document.querySelectorAll('#wholesaleStepper .status-step-btn').forEach(function(x){ x.classList.remove('on'); });
@@ -2194,6 +2221,29 @@ window.escapeHtml = function(s){
         }
       });
     });
+    var markWVerifiedBtn = document.getElementById('markWholesalePaymentVerifiedBtn');
+    if(markWVerifiedBtn){
+      markWVerifiedBtn.addEventListener('click', async function(){
+        o.paymentVerified = true;
+        openWholesalePanel(id);
+        renderOrders(); renderSummary();
+        showToast('已标记为已核实付款');
+        if(o._backendId && authToken){
+          try {
+            await fetch(API_BASE + '/admin/wholesale-orders/' + o._backendId + '/verify-payment', {
+              method: 'PUT', headers: { 'Authorization': 'Bearer ' + authToken }
+            });
+          } catch(e){ console.error('核实状态更新到后端失败:', e); }
+        }
+      });
+    }
+    var wScreenshotImg = document.getElementById('wholesalePaymentScreenshotImg');
+    if(wScreenshotImg){
+      wScreenshotImg.addEventListener('click', function(){
+        var w = window.open('');
+        if(w) w.document.write('<img src="'+o.paymentScreenshot+'" style="max-width:100%;">');
+      });
+    }
     if(canInvoice){
       document.getElementById('exportWInvBtnBi').addEventListener('click', function(){ printWholesaleInvoice(o, 'bi'); });
       document.getElementById('exportWInvBtnEn').addEventListener('click', function(){ printWholesaleInvoice(o, 'en'); });
@@ -2326,7 +2376,8 @@ window.escapeHtml = function(s){
   async function getSharedCatalogForWholesale(){
     if(!authToken) return [];
     try {
-      var res = await fetch(API_BASE + '/admin/products', { headers: { 'Authorization': 'Bearer ' + authToken } });
+      // 拿货目录专用接口：I类执业中医师也有权限读（不再 403），只含上架商品与拿货价
+      var res = await fetch(API_BASE + '/admin/wholesale-catalog', { headers: { 'Authorization': 'Bearer ' + authToken } });
       if(!res.ok) return [];
       var products = await res.json();
       cachedWholesaleCatalog = products.map(function(p){ return { id:p.id, name:p.name, wholesalePrice:p.wholesalePrice }; });
@@ -2342,7 +2393,8 @@ window.escapeHtml = function(s){
       return orders.map(function(o){
         return { id:o.order_no, orderedById:o.ordered_by_id, orderedByName:o.ordered_by_name, address:o.address,
           date:(o.created_at||'').slice(0,10), items:o.items, subtotal:o.subtotal, region:o.region,
-          shipping:o.shipping, total:o.subtotal+o.shipping, payMethod:o.pay_method, status:o.status, _backendId:o.id };
+          shipping:o.shipping, total:o.subtotal+o.shipping, payMethod:o.pay_method, status:o.status,
+          paymentVerified: !!o.payment_verified, paymentScreenshot:o.payment_screenshot, _backendId:o.id };
       });
     } catch(e){ console.error('拉取拿货订单失败:', e); return []; }
   }
@@ -2356,6 +2408,8 @@ window.escapeHtml = function(s){
     var shipSettings = getShippingSettings();
     document.getElementById('shipWestLabel').textContent = '西马（运费 MYR'+shipSettings.west+'）';
     document.getElementById('shipEastLabel').textContent = '东马（运费 MYR'+shipSettings.east+'）';
+    // 支付方式动态加载（系统已录入的激活项：DuitNow / 银行转账）
+    if(typeof loadWholesalePayMethods === 'function') loadWholesalePayMethods();
     var fullCatalog = await getSharedCatalogForWholesale();
     var catalog = fullCatalog.filter(function(c){ return c.wholesalePrice; });
     var grid = document.getElementById('wholesaleGrid');
@@ -2411,7 +2465,71 @@ window.escapeHtml = function(s){
     document.getElementById('wholesaleCartSummary').textContent = '已选 '+totalQty+' 件 · 商品合计 MYR '+totalAmt.toFixed(2);
     updateWholesaleTotalBox();
   }
-  var wholesaleRegion = 'west', wholesalePayMethod = '信用卡';
+  var wholesaleRegion = 'west', wholesalePayMethod = null, wholesalePayLabel = '', wholesalePaymentScreenshotData = '';
+  var wholesalePayMethods = [];
+  function payLabelOf(m){
+    return m.type==='bank_transfer' ? ('银行转账（'+m.bankName+'）') : (m.type==='duitnow' ? 'DuitNow' : (m.accountName || '其他方式'));
+  }
+  function renderWholesalePayDetail(m){
+    var box = document.getElementById('wholesalePayDetail');
+    if(!box) return;
+    if(m.type==='duitnow'){
+      box.innerHTML = '<div class="pay-qr-hint">请扫描下方收款码完成付款，然后上传付款截图</div>'
+        + '<div class="pay-qr-box"><img src="'+m.qrImage+'" alt="DuitNow 收款码"></div>';
+    } else if(m.type==='bank_transfer'){
+      box.innerHTML = '<div class="pay-bank-detail">'
+        + '<div class="pbd-row"><span class="pbd-l">收款银行</span><span class="pbd-v">'+escapeHtml(m.bankName||'—')+'</span></div>'
+        + '<div class="pbd-row"><span class="pbd-l">收款户名</span><span class="pbd-v">'+escapeHtml(m.accountName||'—')+'</span></div>'
+        + '<div class="pbd-row"><span class="pbd-l">账号</span><span class="pbd-v">'+escapeHtml(m.accountNumber||'—')+'</span></div>'
+        + (m.customNote ? '<div class="pbd-row"><span class="pbd-l">备注</span><span class="pbd-v">'+escapeHtml(m.customNote)+'</span></div>' : '')
+        + '</div>';
+    } else {
+      box.innerHTML = '';
+    }
+  }
+  async function loadWholesalePayMethods(){
+    try {
+      // 支付方式读取系统已录入的激活项（公开接口，DuitNow / 银行转账，无信用卡）
+      var res = await fetch(API_BASE + '/payment-methods');
+      if(!res.ok) return;
+      wholesalePayMethods = await res.json();
+      var seg = document.getElementById('wholesalePaySeg');
+      if(!seg) return;
+      seg.innerHTML = wholesalePayMethods.map(function(m,i){
+        return '<div class="seg-btn'+(i===0?' on':'')+'" data-pay-id="'+m.id+'">'+payLabelOf(m)+'</div>';
+      }).join('');
+      document.querySelectorAll('#wholesalePaySeg .seg-btn').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          document.querySelectorAll('#wholesalePaySeg .seg-btn').forEach(function(b){ b.classList.remove('on'); });
+          this.classList.add('on');
+          var pid = this.getAttribute('data-pay-id');
+          var m = wholesalePayMethods.find(function(x){ return String(x.id)===String(pid); });
+          if(!m) return;
+          wholesalePayMethod = m;
+          wholesalePayLabel = payLabelOf(m);
+          renderWholesalePayDetail(m);
+        });
+      });
+      if(wholesalePayMethods.length){
+        wholesalePayMethod = wholesalePayMethods[0];
+        wholesalePayLabel = payLabelOf(wholesalePayMethod);
+        renderWholesalePayDetail(wholesalePayMethod);
+      }
+    } catch(e){ console.error('加载支付方式失败:', e); }
+  }
+  document.getElementById('wholesaleScreenshotBox').addEventListener('click', function(){
+    document.getElementById('wholesaleScreenshotFile').click();
+  });
+  document.getElementById('wholesaleScreenshotFile').addEventListener('change', function(){
+    var file = this.files && this.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      wholesalePaymentScreenshotData = String(ev.target.result);
+      document.getElementById('wholesaleScreenshotBox').innerHTML = '<img src="'+wholesalePaymentScreenshotData+'">';
+    };
+    reader.readAsDataURL(file);
+  });
   document.getElementById('wholesaleCheckoutBtn').addEventListener('click', function(){
     document.getElementById('wholesaleCheckoutBox').style.display = 'block';
     document.getElementById('wholesaleCheckoutBox').scrollIntoView({behavior:'smooth', block:'center'});
@@ -2422,13 +2540,6 @@ window.escapeHtml = function(s){
       this.classList.add('on');
       wholesaleRegion = this.getAttribute('data-region');
       updateWholesaleTotalBox();
-    });
-  });
-  document.querySelectorAll('#wholesalePaySeg .seg-btn').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      document.querySelectorAll('#wholesalePaySeg .seg-btn').forEach(function(b){ b.classList.remove('on'); });
-      this.classList.add('on');
-      wholesalePayMethod = this.getAttribute('data-pay');
     });
   });
   function wholesaleItemsSubtotal(){
@@ -2466,7 +2577,7 @@ window.escapeHtml = function(s){
     try {
       var res = await fetch(API_BASE + '/admin/wholesale-orders', {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
-        body: JSON.stringify({ items: items, address: addressInput.value.trim(), region: wholesaleRegion, shipping: shipFee, payMethod: wholesalePayMethod })
+        body: JSON.stringify({ items: items, address: addressInput.value.trim(), region: wholesaleRegion, shipping: shipFee, payMethod: wholesalePayLabel, paymentScreenshot: wholesalePaymentScreenshotData })
       });
       if(!res.ok){
         var err = await res.json();
@@ -2485,7 +2596,10 @@ window.escapeHtml = function(s){
     }
     submitBtn.disabled = false;
   });
-  function wholesaleStatusLabel(o){ return ORDER_STATUS[o.status || 0]; }
+  function wholesaleStatusLabel(o){
+    if((o.status||0)===0 && o.paymentScreenshot && !o.paymentVerified) return '待核实付款';
+    return ORDER_STATUS[o.status || 0];
+  }
   async function renderWholesaleHistory(){
     var cur = getCurrentAdmin();
     if(!cur) return;

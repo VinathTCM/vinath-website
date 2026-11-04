@@ -632,6 +632,30 @@ db.exec(`
   console.log('invoice_seq 初始化完成，' + year + ' 起点 ' + maxNo);
 })();
 
+// 拿货订单付款凭证与回收箱列：wholesale_orders 建表时未定义 payment_screenshot /
+// payment_verified（拿货付款截图与"已核实付款"状态），deleted_at/deleted_by 也被软删除
+// 逻辑引用但未建列——统一在此补列，避免线上运行时报错
+(function migrateWholesalePaymentColumns(){
+  const sql = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='wholesale_orders'").get();
+  if(!sql) return;
+  if(!sql.sql.includes('payment_screenshot')){
+    console.log('检测到 wholesale_orders 表缺少 payment_screenshot 列，正在补列…');
+    db.exec('ALTER TABLE wholesale_orders ADD COLUMN payment_screenshot TEXT');
+    console.log('wholesale_orders 表 payment_screenshot 列已补充。');
+  }
+  if(!sql.sql.includes('payment_verified')){
+    console.log('检测到 wholesale_orders 表缺少 payment_verified 列，正在补列…');
+    db.exec('ALTER TABLE wholesale_orders ADD COLUMN payment_verified INTEGER NOT NULL DEFAULT 0');
+    console.log('wholesale_orders 表 payment_verified 列已补充。');
+  }
+  if(!sql.sql.includes('deleted_at')){
+    console.log('检测到 wholesale_orders 表缺少 deleted_at/deleted_by 列，正在补列…');
+    db.exec('ALTER TABLE wholesale_orders ADD COLUMN deleted_at TEXT');
+    db.exec('ALTER TABLE wholesale_orders ADD COLUMN deleted_by TEXT');
+    console.log('wholesale_orders 表 deleted_at/deleted_by 列已补充。');
+  }
+})();
+
 // 手动编辑保护标记：收据页"编辑明细"手动改过的收据 manual_override=1，此后订单/病历重新打印走 POST
 // 复用分支时不再用源数据覆盖明细/付款字段（用户手动修正为权威值）；默认 0 保持原有同步行为。
 (function migrateManualOverride(){

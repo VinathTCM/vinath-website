@@ -17,7 +17,7 @@ function genWholesaleOrderNo(){
 // [stated] 拿货是医师自己找总部申请库存，价格用商品的"拿货价"这一档——跟客户下单一样，
 // 服务端自己去查这个价格，不采信客户端传来的任何金额，同一套安全考虑
 router.post('/admin/wholesale-orders', authMiddleware, requireRole('SENIOR', 'PRACTITIONER'), (req, res) => {
-  const { items, address, region, payMethod } = req.body;
+  const { items, address, region, payMethod, paymentScreenshot } = req.body;
   if(!address || !items || !items.length){
     return res.status(400).json({ error: '地址和商品明细都是必填的' });
   }
@@ -36,9 +36,9 @@ router.post('/admin/wholesale-orders', authMiddleware, requireRole('SENIOR', 'PR
     const id = 'wo_' + Date.now();
     const orderNo = genWholesaleOrderNo();
     db.prepare(`
-      INSERT INTO wholesale_orders (id, order_no, ordered_by_id, ordered_by_name, address, items, subtotal, region, shipping, pay_method)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(id, orderNo, req.admin.sub, req.admin.name, address, JSON.stringify(validatedItems), subtotal, region||'west', req.body.shipping||0, payMethod||null);
+      INSERT INTO wholesale_orders (id, order_no, ordered_by_id, ordered_by_name, address, items, subtotal, region, shipping, pay_method, payment_screenshot)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(id, orderNo, req.admin.sub, req.admin.name, address, JSON.stringify(validatedItems), subtotal, region||'west', req.body.shipping||0, payMethod||null, paymentScreenshot||null);
     return db.prepare('SELECT * FROM wholesale_orders WHERE id = ?').get(id);
   });
 
@@ -68,6 +68,13 @@ router.put('/admin/wholesale-orders/:id/status', authMiddleware, requireRole('SE
   if(![0,1,2,3].includes(status)) return res.status(400).json({ error: '状态值不对' });
   const result = db.prepare('UPDATE wholesale_orders SET status = ? WHERE id = ?').run(status, req.params.id);
   if(result.changes === 0) return res.status(404).json({ error: '订单不存在' });
+  res.json({ ok: true });
+});
+
+// 核实拿货订单付款：II类打包出货员/大管理员核对付款截图后标记已付款，之后才推进发货
+router.put('/admin/wholesale-orders/:id/verify-payment', authMiddleware, requireRole('SENIOR', 'FULFILLMENT'), (req, res) => {
+  const result = db.prepare('UPDATE wholesale_orders SET payment_verified = 1 WHERE id = ?').run(req.params.id);
+  if(result.changes === 0) return res.status(404).json({ error: '拿货订单不存在' });
   res.json({ ok: true });
 });
 
