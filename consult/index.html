@@ -1351,13 +1351,18 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 
   // 先取医师与服务地区数据再渲染第一步：区域下拉要按"有医师出诊的地区"过滤，
   // 数据没到手的话只能退回全量兜底列表；最多等 1.5s，超时则照常渲染（不阻塞下单）
-  Promise.race([
-    Promise.all([fetchPractitionersFromApi(), fetchServiceAreasFromApi()]),
-    new Promise(function(res){ setTimeout(res, 1500); })
-  ]).then(function(){
-    render();
-    renderInstantCta();
-  });
+  var __dataReady = Promise.all([fetchPractitionersFromApi(), fetchServiceAreasFromApi()]);
+  var __delayDone = new Promise(function(res){ setTimeout(res, 1500); });
+  Promise.race([__dataReady.then(function(){ return 'data'; }), __delayDone.then(function(){ return 'timeout'; })])
+    .then(function(winner){
+      render();
+      renderInstantCta();
+      // 超时兜底先渲染时，医师数据可能还没回来（此时下拉会列出无医师出诊的地区）——
+      // 数据晚到后再补一次渲染，保证"只显示有医师出诊的地区"最终生效
+      if(winner === 'timeout'){
+        __dataReady.then(function(){ render(); renderInstantCta(); });
+      }
+    });
 })();
 </script>
 <script>
