@@ -64,6 +64,24 @@ function requireModuleAccess(moduleName){
   };
 }
 
+// 任一开关开启即可放行。用于「协定方」这类依附于病历开方的功能：
+// 医师能写电子病历（medicalRecords=true）就该能用自己的协定方，
+// 不该因为独立处方模块（prescriptions）没单独开而被拦住。
+function requireModuleAccessAny(moduleNames){
+  return (req, res, next) => {
+    if(req.admin.role === 'SENIOR') return next();
+    if(req.admin.role !== 'PRACTITIONER'){
+      return res.status(403).json({ error: '没有权限执行此操作' });
+    }
+    try {
+      const row = db.prepare("SELECT value FROM site_settings WHERE key = 'module_access'").get();
+      const access = row ? JSON.parse(row.value) : {};
+      if(moduleNames.some(function(m){ return access[m] === true; })) return next();
+    } catch(e){ console.error('查询功能开关失败:', e); }
+    return res.status(403).json({ error: '这个功能目前还没有对你开放，请联系大管理员' });
+  };
+}
+
 // [stated] 通用审计日志——不只是病历访问，商品价格改动、订单状态/付款核实、账号管理、黑名单这些
 // 敏感操作也要记下"谁在什么时候做了什么"。复用同一张access_log表(resource_type区分类型)，
 // 各个路由文件都调用这一个函数，不用各自重复写记录逻辑。detail是给人看的一句话摘要（比如
@@ -93,4 +111,4 @@ function signToken(admin){
   );
 }
 
-module.exports = { authMiddleware, requireRole, requireModuleAccess, logAdminAction, appendAuditLog, signToken, JWT_SECRET };
+module.exports = { authMiddleware, requireRole, requireModuleAccess, requireModuleAccessAny, logAdminAction, appendAuditLog, signToken, JWT_SECRET };

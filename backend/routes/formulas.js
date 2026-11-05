@@ -1,8 +1,11 @@
 // routes/formulas.js —— 个人协定方：每位管理员各自维护自己的协定方组合，互不互通。
-// 开方时可一键载入基础方再加减。仅 SENIOR / PRACTITIONER（有 prescriptions 开关）可用。
+// 开方时可一键载入基础方再加减。SENIOR 默认可用；PRACTITIONER 只要
+// 「电子病历」或「处方」任一模块开启即可（协定方依附于病历开方）。
 const express = require('express');
 const db = require('../db');
-const { authMiddleware, requireModuleAccess } = require('../middleware/auth');
+const { authMiddleware, requireModuleAccessAny } = require('../middleware/auth');
+
+const FORMULA_ACCESS = requireModuleAccessAny(['medicalRecords', 'prescriptions']);
 
 const router = express.Router();
 
@@ -11,12 +14,12 @@ function serializeFormula(f){
 }
 
 // 当前管理员的协定方列表（只返回自己的）
-router.get('/admin/personal-formulas', authMiddleware, requireModuleAccess('prescriptions'), (req, res) => {
+router.get('/admin/personal-formulas', authMiddleware, FORMULA_ACCESS, (req, res) => {
   const rows = db.prepare('SELECT * FROM personal_formulas WHERE practitioner_id = ? ORDER BY updated_at DESC, created_at DESC').all(req.admin.sub);
   res.json(rows.map(serializeFormula));
 });
 
-router.post('/admin/personal-formulas', authMiddleware, requireModuleAccess('prescriptions'), (req, res) => {
+router.post('/admin/personal-formulas', authMiddleware, FORMULA_ACCESS, (req, res) => {
   const { name, formulaType, items, usageInstructions, price } = req.body;
   if(!name || !String(name).trim()) return res.status(400).json({ error: '请填写协定方名称' });
   const validItems = (items || []).filter(function(it){ return it && it.herbName && String(it.herbName).trim() && it.dosageGrams; });
@@ -30,7 +33,7 @@ router.post('/admin/personal-formulas', authMiddleware, requireModuleAccess('pre
   res.status(201).json(serializeFormula(row));
 });
 
-router.put('/admin/personal-formulas/:id', authMiddleware, requireModuleAccess('prescriptions'), (req, res) => {
+router.put('/admin/personal-formulas/:id', authMiddleware, FORMULA_ACCESS, (req, res) => {
   const existing = db.prepare('SELECT * FROM personal_formulas WHERE id = ? AND practitioner_id = ?').get(req.params.id, req.admin.sub);
   if(!existing) return res.status(404).json({ error: '协定方不存在或不属于你' });
   const { name, formulaType, items, usageInstructions, price } = req.body;
@@ -53,7 +56,7 @@ router.put('/admin/personal-formulas/:id', authMiddleware, requireModuleAccess('
   res.json(serializeFormula(row));
 });
 
-router.delete('/admin/personal-formulas/:id', authMiddleware, requireModuleAccess('prescriptions'), (req, res) => {
+router.delete('/admin/personal-formulas/:id', authMiddleware, FORMULA_ACCESS, (req, res) => {
   const result = db.prepare('DELETE FROM personal_formulas WHERE id = ? AND practitioner_id = ?').run(req.params.id, req.admin.sub);
   if(result.changes === 0) return res.status(404).json({ error: '协定方不存在或不属于你' });
   res.json({ ok: true });

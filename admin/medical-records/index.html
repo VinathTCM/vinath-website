@@ -3009,7 +3009,7 @@ function fillPrintArea(receipt, size, lang){
           var url = API_BASE + '/admin/personal-formulas' + (f.id ? '/' + f.id : '');
           var res = await fetch(url, { method: f.id ? 'PUT' : 'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},
             body: JSON.stringify({ name:name, formulaType:type, items:validItems, usageInstructions:usage }) });
-          if(!res.ok){ showToast('保存失败，请重试'); btn.disabled = false; return; }
+          if(!res.ok){ var errBody = {}; try { errBody = await res.json(); } catch(e){} showToast(errBody.error || '保存失败，请重试'); btn.disabled = false; return; }
           showToast('协定方已保存');
           editingFormula = null;
           renderFormulas();
