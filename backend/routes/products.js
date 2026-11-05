@@ -96,18 +96,37 @@ router.get('/admin/products', authMiddleware, requireRole('SENIOR'), async (req,
 });
 
 // 拿货目录：I类执业中医师按拿货价向总部下单时读的商品列表——只暴露拿货所需字段
-// （id/名称/拿货价/所属系列），绝不包含 cost 成本价等商业机密（小管理员不可见）。只返回上架商品。
+// （id/名称/拿货价/售价/所属系列/首图），绝不包含 cost 成本价等商业机密（小管理员不可见）。只返回上架商品。
 // 专属小管理员商品（wholesale_only=1）也在此目录中——小管理员照常可拿货，仅普通用户前台不可见。
-router.get('/admin/wholesale-catalog', authMiddleware, requireRole('SENIOR', 'PRACTITIONER', 'FULFILLMENT'), (req, res) => {
+// 列表只给一张压缩缩略图（与后台商品列表同规格），完整图集在小管理员点开商品弹窗时单独拉取。
+router.get('/admin/wholesale-catalog', authMiddleware, requireRole('SENIOR', 'PRACTITIONER', 'FULFILLMENT'), async (req, res) => {
   const rows = db.prepare(`
     SELECT p.id, p.name, p.name_en, p.type, c.name AS category_name,
-      p.wholesale_price, p.wholesale_trial_price
+      p.price, p.trial_price, p.wholesale_price, p.wholesale_trial_price,
+      p.stock_qty, p.trial_per_full, p.images
     FROM products p LEFT JOIN shop_categories c ON c.key = p.type
     WHERE p.active = 1 ORDER BY p.created_at DESC
   `).all();
-  res.json(rows.map(p => ({ id: p.id, name: p.name, nameEn: p.name_en, type: p.type,
-    categoryName: p.category_name || p.type || '其他',
-    wholesalePrice: p.wholesale_price, wholesaleTrialPrice: p.wholesale_trial_price })));
+  const items = await Promise.all(rows.map(async p => {
+    const allImages = JSON.parse(p.images||'[]');
+    const thumb = allImages.length ? await makeThumb(allImages[0]) : null;
+    return { id: p.id, name: p.name, nameEn: p.name_en, type: p.type,
+      categoryName: p.category_name || p.type || '其他',
+      price: p.price, trialPrice: p.trial_price,
+      wholesalePrice: p.wholesale_price, wholesaleTrialPrice: p.wholesale_trial_price,
+      stockQty: p.stock_qty, inStock: p.stock_qty > 0, trialPerFull: p.trial_per_full,
+      images: thumb ? [thumb] : [], imageCount: allImages.length };
+  }));
+  res.json(items);
+});
+
+// 拿货商品详情：小管理员在"拿货"Tab 点开商品弹窗时读完整图集与描述（与商店页弹窗同源数据）
+// 同样只暴露公开字段 + 拿货价，不含 cost 成本价。
+router.get('/admin/wholesale-product/:id', authMiddleware, requireRole('SENIOR', 'PRACTITIONER', 'FULFILLMENT'), (req, res) => {
+  const row = db.prepare('SELECT * FROM products WHERE id = ? AND active = 1').get(req.params.id);
+  if(!row) return res.status(404).json({ error: '商品不存在' });
+  res.json({ ...serializePublicProduct(row),
+    wholesalePrice: row.wholesale_price, wholesaleTrialPrice: row.wholesale_trial_price });
 });
 
 function productFieldsFromBody(b){

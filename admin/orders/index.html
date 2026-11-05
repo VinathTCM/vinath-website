@@ -501,19 +501,56 @@ tbody tr:hover{ background:#FBFAF7; }
 .instant-trash-info .meta{ font-size:11.5px; color:#9A8F80; margin-top:3px; }
 .instant-trash-restore{ flex:none; padding:7px 16px; border-radius:100px; border:none; background:#8BA878; color:#fff; font-weight:600; font-size:12px; cursor:pointer; }
 .instant-trash-restore:hover{ background:#7A9768; }
-.wholesale-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:14px; }
+.wholesale-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:14px; }
 .wholesale-group{ margin-bottom:26px; }
 .wholesale-group-title{ font-weight:700; font-size:15px; color:var(--ink); margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:8px; }
 .wholesale-group-title::before{ content:''; width:4px; height:16px; border-radius:2px; background:var(--clay); }
 .wholesale-group:last-child{ margin-bottom:0; }
-.wholesale-card{ background:var(--white); border:1.5px solid var(--line); border-radius:14px; padding:14px 16px; box-shadow:var(--shadow); }
-.wholesale-card-name{ font-weight:700; font-size:14px; margin-bottom:4px; }
-.wholesale-card-price{ font-size:12.5px; color:var(--ink-soft); margin-bottom:10px; }
-.wholesale-card-price b{ color:var(--clay); font-size:15px; }
-.wholesale-qty-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
-.wholesale-qty-row .wq-btn{ width:28px; height:28px; border-radius:8px; border:1.5px solid var(--line); background:var(--cream); cursor:pointer; font-size:15px; display:flex; align-items:center; justify-content:center; }
-.wholesale-qty-row .wq-num{ font-weight:700; font-size:14px; min-width:24px; text-align:center; }
+/* 拿货商品卡片：与前台商店页视觉一致（图片 + 名称 + 划线售价/拿货价） */
+.wh-card{ cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+.wh-thumb{ width:100%; aspect-ratio:4/3; border-radius:14px; overflow:hidden; position:relative; background:#f3efe6; box-shadow:0 3px 12px var(--shadow); }
+.wh-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+.wh-thumb .wh-icon{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#b8a894; }
+.wh-thumb .wh-icon svg{ width:26%; height:26%; }
+.wh-thumb .wh-oos{ position:absolute; top:8px; left:8px; background:rgba(40,31,22,.82); color:#fdf8f0; font-size:10.5px; padding:3px 9px; border-radius:12px; font-weight:600; }
+.wh-name{ font-weight:700; font-size:14px; margin-top:9px; line-height:1.35; }
+.wh-price-row{ font-size:12.5px; margin-top:3px; display:flex; align-items:baseline; gap:5px; flex-wrap:wrap; }
+.wh-price-orig{ text-decoration:line-through; color:var(--ink-soft); opacity:.75; font-weight:500; font-size:12px; }
+.wh-price-now{ color:var(--clay); font-weight:700; font-size:14.5px; }
+.wh-price-tag{ font-size:10px; color:#fff; background:var(--clay); border-radius:4px; padding:1px 5px; font-weight:600; letter-spacing:.03em; }
+.wh-qty{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:9px; }
+.wh-qty .wq-btn{ width:28px; height:28px; border-radius:8px; border:1.5px solid var(--line); background:var(--cream); cursor:pointer; font-size:15px; display:flex; align-items:center; justify-content:center; }
+.wh-qty .wq-num{ font-weight:700; font-size:14px; min-width:24px; text-align:center; }
 .wholesale-empty{ color:var(--ink-soft); font-size:13.5px; padding:20px; text-align:center; }
+/* 拿货商品详情弹窗 */
+.wh-modal-overlay{ position:fixed; inset:0; background:rgba(30,24,18,.42); opacity:0; pointer-events:none; transition:opacity .25s; z-index:80; }
+.wh-modal-overlay.open{ opacity:1; pointer-events:auto; }
+.wh-modal-sheet{ position:fixed; left:50%; top:50%; transform:translate(-50%,-46%); width:min(460px,94vw); max-height:88vh; overflow-y:auto; background:#fff; border-radius:20px; z-index:81; opacity:0; pointer-events:none; transition:transform .3s cubic-bezier(.22,.61,.36,1), opacity .25s; box-shadow:0 20px 60px rgba(30,24,18,.32); }
+.wh-modal-sheet.open{ transform:translate(-50%,-50%); opacity:1; pointer-events:auto; }
+.wh-modal-close{ position:absolute; top:12px; right:12px; width:32px; height:32px; border-radius:50%; background:rgba(255,253,249,.92); border:none; display:flex; align-items:center; justify-content:center; color:var(--ink); cursor:pointer; z-index:3; font-size:16px; }
+.wh-modal-hero{ aspect-ratio:16/10; overflow:hidden; position:relative; background:#f3efe6; }
+.wh-modal-track{ display:flex; height:100%; transition:transform .35s cubic-bezier(.22,.61,.36,1); }
+.wh-modal-slide{ flex:0 0 100%; height:100%; position:relative; }
+.wh-modal-slide img{ width:100%; height:100%; object-fit:cover; display:block; }
+.wh-modal-slide .wh-icon{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#b8a894; }
+.wh-modal-slide .wh-icon svg{ width:22%; height:22%; }
+.wh-modal-nav{ position:absolute; top:50%; transform:translateY(-50%); width:30px; height:30px; border-radius:50%; background:rgba(255,253,249,.85); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:2; color:var(--ink); }
+.wh-modal-nav.prev{ left:10px; } .wh-modal-nav.next{ right:10px; }
+.wh-modal-nav.hide{ display:none; }
+.wh-modal-dots{ position:absolute; bottom:10px; left:0; right:0; display:flex; justify-content:center; gap:5px; z-index:2; }
+.wh-modal-dot{ width:5px; height:5px; border-radius:3px; background:rgba(255,255,255,.55); transition:width .25s; }
+.wh-modal-dot.on{ width:14px; background:#fff; }
+.wh-modal-body{ padding:18px 22px 24px; }
+.wh-modal-type{ font-size:11px; font-weight:700; color:#a98b6a; letter-spacing:.06em; text-transform:uppercase; margin-bottom:5px; }
+.wh-modal-name{ font-family:var(--font-serif, Georgia, "Noto Serif SC", serif); font-weight:700; font-size:21px; margin-bottom:10px; line-height:1.3; }
+.wh-modal-price{ display:flex; align-items:baseline; gap:10px; padding:10px 14px; background:#F8F4EC; border-radius:12px; margin-bottom:12px; flex-wrap:wrap; }
+.wh-modal-price .orig{ text-decoration:line-through; color:var(--ink-soft); font-size:13.5px; }
+.wh-modal-price .now{ color:var(--clay); font-weight:800; font-size:19px; }
+.wh-modal-price .tag{ font-size:10.5px; color:#fff; background:var(--clay); border-radius:4px; padding:2px 6px; font-weight:600; }
+.wh-modal-price .lbl{ font-size:11px; color:var(--ink-soft); }
+.wh-modal-desc{ font-size:13.5px; line-height:1.75; color:var(--ink-soft); }
+.wh-modal-desc :first-child{ margin-top:0; }
+.wh-modal-alert{ font-size:12.5px; color:var(--clay); background:rgba(188,110,78,.08); border-radius:10px; padding:9px 13px; margin-top:12px; }
 .wholesale-cart-bar{ position:sticky; bottom:16px; margin-top:20px; background:var(--ink); color:#fff; border-radius:100px; padding:12px 20px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 10px 28px rgba(0,0,0,.22); }
 .wholesale-cart-bar .btn-primary{ background:var(--clay); }
 .wholesale-history-row{ display:flex; justify-content:space-between; align-items:flex-start; padding:13px 2px; border-bottom:1px solid var(--line); font-size:13px; }
@@ -1044,6 +1081,24 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
 
   <div id="tab-wholesale" style="display:none;">
     <div class="wholesale-grid" id="wholesaleGrid"></div>
+    <!-- 拿货商品详情弹窗（与前台商店页视觉一致；不含跳转到独立商品页的链接） -->
+    <div class="wh-modal-overlay" id="whModalOverlay"></div>
+    <div class="wh-modal-sheet" id="whModalSheet">
+      <button type="button" class="wh-modal-close" id="whModalClose" aria-label="关闭">✕</button>
+      <div class="wh-modal-hero" id="whModalHero">
+        <div class="wh-modal-track" id="whModalTrack"></div>
+        <div class="wh-modal-nav prev hide" id="whModalPrev">‹</div>
+        <div class="wh-modal-nav next hide" id="whModalNext">›</div>
+        <div class="wh-modal-dots" id="whModalDots"></div>
+      </div>
+      <div class="wh-modal-body">
+        <div class="wh-modal-type" id="whModalType"></div>
+        <div class="wh-modal-name" id="whModalName"></div>
+        <div class="wh-modal-price" id="whModalPrice"></div>
+        <div class="wh-modal-desc" id="whModalDesc"></div>
+        <div class="wh-modal-alert" id="whModalOos" style="display:none;">这款暂时缺货，补货后会自动恢复上架。</div>
+      </div>
+    </div>
     <div class="wholesale-cart-bar" id="wholesaleCartBar" style="display:none;">
       <span id="wholesaleCartSummary"></span>
       <button type="button" class="btn-primary" id="wholesaleCheckoutBtn">下一步：配送与付款</button>
@@ -2384,7 +2439,13 @@ window.escapeHtml = function(s){
       var res = await fetch(API_BASE + '/admin/wholesale-catalog', { headers: { 'Authorization': 'Bearer ' + authToken } });
       if(!res.ok) return [];
       var products = await res.json();
-      cachedWholesaleCatalog = products.map(function(p){ return { id:p.id, name:p.name, type:p.type, categoryName:p.categoryName, wholesalePrice:p.wholesalePrice, wholesaleTrialPrice:p.wholesaleTrialPrice }; });
+      cachedWholesaleCatalog = products.map(function(p){ return {
+        id:p.id, name:p.name, nameEn:p.nameEn, type:p.type, categoryName:p.categoryName,
+        price:p.price, trialPrice:p.trialPrice,
+        wholesalePrice:p.wholesalePrice, wholesaleTrialPrice:p.wholesaleTrialPrice,
+        stockQty:p.stockQty, inStock:p.inStock, trialPerFull:p.trialPerFull,
+        images:p.images || [], imageCount:p.imageCount || 0
+      }; });
       return cachedWholesaleCatalog;
     } catch(e){ console.error('拉取拿货商品目录失败:', e); return []; }
   }
@@ -2407,6 +2468,16 @@ window.escapeHtml = function(s){
     cachedWholesaleOrders = await getWholesaleOrders();
     return cachedWholesaleOrders;
   }
+
+  // 商品类型图标（与前台商店页同一套线性图标；无图商品的占位）
+  var WHOLESALE_GENERIC_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="16" height="13" rx="2"/><path d="M4 11h16"/><path d="M9 7V5a2 2 0 012-2h2a2 2 0 012 2v2"/></svg>';
+  var WHOLESALE_ICON = {
+    plaster:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="5"/><line x1="12" y1="9" x2="12" y2="15"/><line x1="9" y1="12" x2="15" y2="12"/></svg>',
+    tea:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9z"/><path d="M17 10.5h1.5a2.3 2.3 0 0 1 0 4.6H17"/><path d="M8 4.2c-1 1-1 1.8 0 2.8M12.5 4.2c-1 1-1 1.8 0 2.8"/></svg>',
+    soak:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18c0 4.5-4 8-9 8s-9-3.5-9-8z"/><path d="M9 4.2c0 1.2.9 1.2.9 2.4S9 7.8 9 9"/><path d="M14 4.2c0 1.2.9 1.2.9 2.4S14 7.8 14 9"/></svg>',
+    mask:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4c-4.5 0-7 3.3-7 7.5 0 5.5 3.3 9.5 7 9.5s7-4 7-9.5C19 7.3 16.5 4 12 4z"/><path d="M9 12c.6.6 1.2.6 1.8 0M13.2 12c.6.6 1.2.6 1.8 0"/><path d="M9.5 15.8c1 .8 4 .8 5 0"/></svg>'
+  };
+  function wholesaleCardIcon(type){ return WHOLESALE_ICON[type] || WHOLESALE_GENERIC_ICON; }
 
   async function renderWholesaleGrid(){
     var shipSettings = getShippingSettings();
@@ -2435,17 +2506,30 @@ window.escapeHtml = function(s){
       return '<div class="wholesale-group"><div class="wholesale-group-title">'+k+'</div><div class="wholesale-grid">'
         + groups[k].map(function(c){
             var qty = wholesaleCart[c.id] || 0;
-            return '<div class="wholesale-card" data-cid="'+c.id+'">'
-              + '<div class="wholesale-card-name">'+c.name+'</div>'
-              + '<div class="wholesale-card-price">拿货价 <b>MYR '+c.wholesalePrice.toFixed(2)+'</b> / 件（正装）</div>'
-              + '<div class="wholesale-qty-row">'
+            var hasImg = c.images && c.images[0];
+            // 价格行：划线展示零售售价 → 旁边标注拿货价
+            var priceOrig = (c.price != null && Number(c.price) > 0)
+              ? '<span class="wh-price-orig">RM '+Number(c.price).toFixed(2)+'</span>' : '';
+            return '<div class="wh-card" data-cid="'+c.id+'">'
+              + '<div class="wh-thumb">'
+                + (hasImg ? '<img src="'+c.images[0]+'" loading="lazy" decoding="async" alt="'+c.name+'">' : '<div class="wh-icon">'+wholesaleCardIcon(c.type)+'</div>')
+                + (c.inStock === false ? '<span class="wh-oos">缺货</span>' : '')
+              + '</div>'
+              + '<div class="wh-name">'+c.name+'</div>'
+              + '<div class="wh-price-row">'+priceOrig+'<span class="wh-price-now">MYR '+Number(c.wholesalePrice).toFixed(2)+'</span><span class="wh-price-tag">拿货价</span></div>'
+              + '<div class="wh-qty">'
               + '<div class="wq-btn" data-wminus="'+c.id+'">－</div><div class="wq-num" id="wq-'+c.id+'">'+qty+'</div><div class="wq-btn" data-wplus="'+c.id+'">＋</div>'
               + '</div></div>';
           }).join('')
         + '</div></div>';
     }).join('');
+    // 卡片点击 → 商品详情弹窗（数量按钮不触发）
+    document.querySelectorAll('.wh-card[data-cid]').forEach(function(card){
+      card.addEventListener('click', function(){ openWholesaleProduct(this.getAttribute('data-cid')); });
+    });
     document.querySelectorAll('[data-wplus]').forEach(function(btn){
-      btn.addEventListener('click', function(){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
         var id = this.getAttribute('data-wplus');
         wholesaleCart[id] = (wholesaleCart[id]||0) + 1;
         document.getElementById('wq-'+id).textContent = wholesaleCart[id];
@@ -2453,7 +2537,8 @@ window.escapeHtml = function(s){
       });
     });
     document.querySelectorAll('[data-wminus]').forEach(function(btn){
-      btn.addEventListener('click', function(){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
         var id = this.getAttribute('data-wminus');
         wholesaleCart[id] = Math.max(0, (wholesaleCart[id]||0) - 1);
         document.getElementById('wq-'+id).textContent = wholesaleCart[id];
@@ -2462,6 +2547,71 @@ window.escapeHtml = function(s){
     });
     updateWholesaleCartBar();
   }
+
+  // ---- 拿货商品详情弹窗 ----
+  var whModalImgs = [], whModalIdx = 0, whModalProduct = null;
+  function renderWhModalImage(){
+    var track = document.getElementById('whModalTrack');
+    track.innerHTML = whModalImgs.map(function(src){
+      return '<div class="wh-modal-slide">' + (src
+        ? '<img src="'+src+'" alt="'+(whModalProduct ? whModalProduct.name : '')+'">'
+        : '<div class="wh-icon">'+wholesaleCardIcon(whModalProduct ? whModalProduct.type : '')+'</div>') + '</div>';
+    }).join('');
+    track.style.transform = 'translateX(-'+(whModalIdx*100)+'%)';
+    document.getElementById('whModalDots').innerHTML = whModalImgs.length > 1
+      ? whModalImgs.map(function(_,i){ return '<span class="wh-modal-dot'+(i===whModalIdx?' on':'')+'"></span>'; }).join('') : '';
+    document.getElementById('whModalPrev').classList.toggle('hide', !(whModalImgs.length>1 && whModalIdx>0));
+    document.getElementById('whModalNext').classList.toggle('hide', !(whModalImgs.length>1 && whModalIdx<whModalImgs.length-1));
+  }
+  function goWhModalImg(d){
+    whModalIdx = Math.max(0, Math.min(whModalImgs.length-1, whModalIdx + d));
+    renderWhModalImage();
+  }
+  function openWholesaleProduct(id){
+    var c = cachedWholesaleCatalog.find(function(x){ return String(x.id)===String(id); });
+    if(!c) return;
+    whModalProduct = c;
+    whModalImgs = (c.images && c.images.length) ? c.images.slice() : [null];
+    whModalIdx = 0;
+    document.getElementById('whModalType').textContent = c.categoryName || '';
+    document.getElementById('whModalName').textContent = c.name;
+    // 价格区：划线零售售价 + 拿货价（明确标注）
+    var orig = (c.price != null && Number(c.price) > 0)
+      ? '<span class="orig">零售售价 RM '+Number(c.price).toFixed(2)+'</span>' : '';
+    document.getElementById('whModalPrice').innerHTML = orig
+      + '<span class="now">MYR '+Number(c.wholesalePrice).toFixed(2)+'</span><span class="tag">拿货价</span>';
+    document.getElementById('whModalDesc').innerHTML = '';
+    document.getElementById('whModalOos').style.display = (c.inStock === false) ? '' : 'none';
+    renderWhModalImage();
+    document.getElementById('whModalOverlay').classList.add('open');
+    document.getElementById('whModalSheet').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // 列表接口只带首图缩略图；点开弹窗时再拉完整图集与描述（数据源与前台商店页详情一致，但走拿货鉴权接口）
+    fetch(API_BASE + '/admin/wholesale-product/' + id, { headers: { 'Authorization': 'Bearer ' + authToken } })
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(full){
+        if(!full) return;
+        if(full.images && full.images.length){
+          whModalImgs = full.images.slice();
+          whModalIdx = 0;
+          renderWhModalImage();
+        }
+        var descEl = document.getElementById('whModalDesc');
+        if(full.description) descEl.innerHTML = full.description;
+        if(full.usage_note) descEl.innerHTML += '<div style="margin-top:10px;font-size:12.5px;color:#8a7f70;">'+full.usage_note+'</div>';
+      })
+      .catch(function(){});
+  }
+  function closeWholesaleProduct(){
+    document.getElementById('whModalOverlay').classList.remove('open');
+    document.getElementById('whModalSheet').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('whModalClose').addEventListener('click', closeWholesaleProduct);
+  document.getElementById('whModalOverlay').addEventListener('click', closeWholesaleProduct);
+  document.getElementById('whModalPrev').addEventListener('click', function(){ goWhModalImg(-1); });
+  document.getElementById('whModalNext').addEventListener('click', function(){ goWhModalImg(1); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeWholesaleProduct(); });
   function updateWholesaleCartBar(){
     var catalog = cachedWholesaleCatalog;
     var bar = document.getElementById('wholesaleCartBar');
