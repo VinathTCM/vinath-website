@@ -790,7 +790,7 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
 
     <div class="closure-card">
       <div class="closure-card-title">居家会诊服务地区设置</div>
-      <div class="closure-card-hint">按州属管理「居家会诊」目前实际服务的地区——客户预约时"您所在的区域"下拉菜单只会显示这里开启、且至少有一位未过期医师出诊的地区。已经按马来西亚官方行政区划（县/District 层级）预先把全马13个州属+3个联邦直辖区、共171个县/市列进来了（原先 Masai、Larkin、Tebrau 这类社区级细分项已分别归并到「巴西古当 Pasir Gudang」和「新山市区 Johor Bahru」），方便以后开分店时直接开启对应地区。目前开启的是巴西古当、新山、古来、莎阿南、八打灵再也、巴生与美里，其余默认关闭，你可以随时调整。</div>
+      <div class="closure-card-hint">按州属管理「居家会诊」目前实际服务的地区——客户预约时"您所在的区域"下拉菜单只会显示这里开启、且至少有一位未过期医师出诊的地区。已经按马来西亚官方行政区划（县/District 层级）预先把全马13个州属+3个联邦直辖区、共171个县/市列进来了（原先 Masai、Larkin、Tebrau 这类社区级细分项已分别归并到「巴西古当 Pasir Gudang」和「新山 Johor Bahru」），方便以后开分店时直接开启对应地区。目前开启的是巴西古当、新山、古来、莎阿南、八打灵再也、巴生与美里，其余默认关闭，你可以随时调整。</div>
       <div class="area-search-row">
         <input type="text" id="areaSearchInput" placeholder="搜索州属或地区名称，例如：Miri">
         <span class="area-summary" id="areaSummary"></span>
@@ -1351,7 +1351,7 @@ window.escapeHtml = function(s){
     return cur.regions; // I类·执业中医师 stays region-scoped
   }
   // fuzzy match since order.city ("Johor Bahru") and the area list's neighborhood-level Johor
-  // entries ("新山市区 Johor Bahru") don't line up as exact strings — a substring match either way
+  // entries ("新山 Johor Bahru") don't line up as exact strings — a substring match either way
   // covers that without needing to rebuild the seeded demo orders' city field
   function matchesCurrentRegions(locationStr){
     var regions = currentRegions();
@@ -1854,11 +1854,11 @@ window.escapeHtml = function(s){
     toggleEl.classList.toggle('on', on);
     document.getElementById('acceptingToggleHint').textContent = isSenior
       ? (on
-          ? '目前开放接单——您负责的 '+((cur.regions||[]).join('、')||'服务')+' 地区的"立即预约"客户请求会自动匹配给您。'
+          ? '目前开放接单——您负责的 '+((cur.regions||[]).map(normalizeAreaName).join('、')||'服务')+' 地区的"立即预约"客户请求会自动匹配给您。'
           : '目前未开放接单——"立即预约"客户请求会派给该地区开放接单的执业医师；都没人开的话，由您（大管理员）在后台兜底尽快联系顾客。')
       : (on
-          ? '目前开放接单——'+cur.regions.join('、')+' 地区的"立即预约"客户请求会自动匹配给您。'
-          : '目前未开放接单——'+cur.regions.join('、')+' 地区的"立即预约"客户请求会派给同地区其他开放接单的I类管理员（都没人开的话，由总部处理）。');
+          ? '目前开放接单——'+cur.regions.map(normalizeAreaName).join('、')+' 地区的"立即预约"客户请求会自动匹配给您。'
+          : '目前未开放接单——'+cur.regions.map(normalizeAreaName).join('、')+' 地区的"立即预约"客户请求会派给同地区其他开放接单的I类管理员（都没人开的话，由总部处理）。');
   }
   document.getElementById('acceptingToggle').addEventListener('click', async function(){
     var cur = getCurrentAdmin();
@@ -1911,7 +1911,7 @@ window.escapeHtml = function(s){
   function slotEN(s){ if(!s || s==='ASAP') return 'ASAP'; return s; }
 
   // full Malaysia state/area list, seeded once into localStorage on first load (see below)
-    var MALAYSIA_AREAS_SEED = [{"state":"Johor","cities":[{"name":"巴西古当 Pasir Gudang","active":true},{"name":"新山市区 Johor Bahru","active":true},{"name":"Iskandar Puteri","active":false},{"name":"Kulai","active":true},{"name":"Pontian","active":true},{"name":"Batu Pahat","active":false},{"name":"Muar","active":false},{"name":"Kluang","active":false},{"name":"Segamat","active":false},{"name":"Kota Tinggi","active":false},{"name":"Mersing","active":false},{"name":"Tangkak","active":false}]},{"state":"Kedah","cities":[{"name":"Alor Setar","active":false},{"name":"Sungai Petani","active":false},{"name":"Kulim","active":false},{"name":"Langkawi","active":false},{"name":"Jitra","active":false},{"name":"Baling","active":false},{"name":"Bandar Baharu","active":false},{"name":"Kuala Nerang","active":false},{"name":"Pendang","active":false},{"name":"Sik","active":false},{"name":"Yan","active":false}]},{"state":"Kelantan","cities":[{"name":"Kota Bharu","active":false},{"name":"Pasir Mas","active":false},{"name":"Tanah Merah","active":false},{"name":"Gua Musang","active":false},{"name":"Tumpat","active":false},{"name":"Bachok","active":false},{"name":"Machang","active":false},{"name":"Pasir Puteh","active":false},{"name":"Kuala Krai","active":false},{"name":"Jeli","active":false},{"name":"Lojing","active":false}]},{"state":"Malacca","cities":[{"name":"Melaka City","active":false},{"name":"Alor Gajah","active":false},{"name":"Jasin","active":false}]},{"state":"Negeri Sembilan","cities":[{"name":"Seremban","active":false},{"name":"Port Dickson","active":false},{"name":"Nilai","active":false},{"name":"Bahau","active":false},{"name":"Kuala Pilah","active":false},{"name":"Jelebu","active":false},{"name":"Rembau","active":false},{"name":"Tampin","active":false},{"name":"Jempol","active":false}]},{"state":"Pahang","cities":[{"name":"Kuantan","active":false},{"name":"Temerloh","active":false},{"name":"Bentong","active":false},{"name":"Raub","active":false},{"name":"Cameron Highlands","active":false},{"name":"Mentakab","active":false},{"name":"Jerantut","active":false},{"name":"Lipis","active":false},{"name":"Maran","active":false},{"name":"Pekan","active":false},{"name":"Rompin","active":false},{"name":"Bera","active":false}]},{"state":"Penang","cities":[{"name":"George Town","active":false},{"name":"Bukit Mertajam","active":false},{"name":"Butterworth","active":false},{"name":"Bayan Lepas","active":false},{"name":"Nibong Tebal","active":false}]},{"state":"Perak","cities":[{"name":"Ipoh","active":false},{"name":"Taiping","active":false},{"name":"Teluk Intan","active":false},{"name":"Sitiawan","active":false},{"name":"Kampar","active":false},{"name":"Batu Gajah","active":false},{"name":"Kuala Kangsar","active":false},{"name":"Parit","active":false},{"name":"Bagan Datuk","active":false},{"name":"Selama","active":false},{"name":"Tapah","active":false},{"name":"Tanjung Malim","active":false},{"name":"Gerik","active":false}]},{"state":"Perlis","cities":[{"name":"Kangar","active":false},{"name":"Arau","active":false},{"name":"Padang Besar","active":false}]},{"state":"Sabah","cities":[{"name":"Kota Kinabalu","active":false},{"name":"Sandakan","active":false},{"name":"Tawau","active":false},{"name":"Lahad Datu","active":false},{"name":"Keningau","active":false},{"name":"Semporna","active":false},{"name":"Kudat","active":false},{"name":"Papar","active":false},{"name":"Beaufort","active":false},{"name":"Ranau","active":false},{"name":"Tuaran","active":false},{"name":"Penampang","active":false},{"name":"Tambunan","active":false},{"name":"Tenom","active":false},{"name":"Nabawan","active":false},{"name":"Pitas","active":false},{"name":"Kota Belud","active":false},{"name":"Kota Marudu","active":false},{"name":"Beluran","active":false},{"name":"Kinabatangan","active":false},{"name":"Tongod","active":false},{"name":"Telupid","active":false},{"name":"Kunak","active":false},{"name":"Kalabakan","active":false},{"name":"Sipitang","active":false},{"name":"Kuala Penyu","active":false},{"name":"Putatan","active":false}]},{"state":"Sarawak","cities":[{"name":"Kuching","active":true},{"name":"Miri","active":true},{"name":"Sibu","active":false},{"name":"Bintulu","active":true},{"name":"Limbang","active":false},{"name":"Sri Aman","active":false},{"name":"Sarikei","active":false},{"name":"Mukah","active":false},{"name":"Kapit","active":false},{"name":"Betong","active":false},{"name":"Bau","active":false},{"name":"Lundu","active":false},{"name":"Samarahan","active":false},{"name":"Serian","active":false},{"name":"Simunjan","active":false},{"name":"Lubok Antu","active":false},{"name":"Saratok","active":false},{"name":"Meradong","active":false},{"name":"Daro","active":false},{"name":"Julau","active":false},{"name":"Dalat","active":false},{"name":"Kanowit","active":false},{"name":"Tatau","active":false},{"name":"Song","active":false},{"name":"Belaga","active":false},{"name":"Marudi","active":false},{"name":"Lawas","active":false},{"name":"Matu","active":false},{"name":"Asajaya","active":false},{"name":"Pakan","active":false},{"name":"Selangau","active":false},{"name":"Tebedu","active":false},{"name":"Pusa","active":false},{"name":"Kabong","active":false},{"name":"Tanjung Manis","active":false},{"name":"Sebauh","active":false},{"name":"Bukit Mabong","active":false},{"name":"Subis","active":false},{"name":"Beluru","active":false},{"name":"Telang Usan","active":false}]},{"state":"Selangor","cities":[{"name":"Shah Alam","active":true},{"name":"Petaling Jaya","active":true},{"name":"Subang Jaya","active":false},{"name":"Klang","active":true},{"name":"Kajang","active":false},{"name":"Ampang","active":false},{"name":"Puchong","active":false},{"name":"Rawang","active":false},{"name":"Selayang","active":false},{"name":"Sepang","active":false},{"name":"Kuala Selangor","active":false},{"name":"Kuala Langat","active":false},{"name":"Sabak Bernam","active":false},{"name":"Kuala Kubu Baharu","active":false}]},{"state":"Terengganu","cities":[{"name":"Kuala Terengganu","active":false},{"name":"Kemaman","active":false},{"name":"Dungun","active":false},{"name":"Marang","active":false},{"name":"Besut","active":false},{"name":"Setiu","active":false},{"name":"Hulu Terengganu","active":false},{"name":"Kuala Nerus","active":false}]},{"state":"Kuala Lumpur","cities":[{"name":"Kuala Lumpur","active":false}]},{"state":"Putrajaya","cities":[{"name":"Putrajaya","active":false}]},{"state":"Labuan","cities":[{"name":"Labuan","active":false}]}];
+      var MALAYSIA_AREAS_SEED = [{"state":"Johor","cities":[{"name":"巴西古当 Pasir Gudang","active":true},{"name":"新山 Johor Bahru","active":true},{"name":"依斯干达公主城 Iskandar Puteri","active":false},{"name":"古来 Kulai","active":true},{"name":"笨珍 Pontian","active":true},{"name":"峇株巴辖 Batu Pahat","active":false},{"name":"麻坡 Muar","active":false},{"name":"居銮 Kluang","active":false},{"name":"昔加末 Segamat","active":false},{"name":"哥打丁宜 Kota Tinggi","active":false},{"name":"丰盛港 Mersing","active":false},{"name":"东甲 Tangkak","active":false}]},{"state":"Kedah","cities":[{"name":"亚罗士打 Alor Setar","active":false},{"name":"双溪大年 Sungai Petani","active":false},{"name":"居林 Kulim","active":false},{"name":"浮罗交怡 Langkawi","active":false},{"name":"日得拉 Jitra","active":false},{"name":"华玲 Baling","active":false},{"name":"万拉峇鲁 Bandar Baharu","active":false},{"name":"瓜拉尼浪 Kuala Nerang","active":false},{"name":"本同 Pendang","active":false},{"name":"锡 Sik","active":false},{"name":"铅 Yan","active":false}]},{"state":"Kelantan","cities":[{"name":"哥打巴鲁 Kota Bharu","active":false},{"name":"巴西马 Pasir Mas","active":false},{"name":"丹那美拉 Tanah Merah","active":false},{"name":"话望生 Gua Musang","active":false},{"name":"道北 Tumpat","active":false},{"name":"巴佐 Bachok","active":false},{"name":"马樟 Machang","active":false},{"name":"巴西富地 Pasir Puteh","active":false},{"name":"瓜拉吉赖 Kuala Krai","active":false},{"name":"日里 Jeli","active":false},{"name":"罗京 Lojing","active":false}]},{"state":"Malacca","cities":[{"name":"马六甲 Melaka City","active":false},{"name":"亚罗牙也 Alor Gajah","active":false},{"name":"野新 Jasin","active":false}]},{"state":"Negeri Sembilan","cities":[{"name":"芙蓉 Seremban","active":false},{"name":"波德申 Port Dickson","active":false},{"name":"汝来 Nilai","active":false},{"name":"马口 Bahau","active":false},{"name":"瓜拉庇劳 Kuala Pilah","active":false},{"name":"日叻务 Jelebu","active":false},{"name":"林茂 Rembau","active":false},{"name":"淡边 Tampin","active":false},{"name":"仁保 Jempol","active":false}]},{"state":"Pahang","cities":[{"name":"关丹 Kuantan","active":false},{"name":"淡马鲁 Temerloh","active":false},{"name":"文冬 Bentong","active":false},{"name":"劳勿 Raub","active":false},{"name":"金马仑高原 Cameron Highlands","active":false},{"name":"明加叻 Mentakab","active":false},{"name":"而连突 Jerantut","active":false},{"name":"立卑 Lipis","active":false},{"name":"马兰 Maran","active":false},{"name":"北根 Pekan","active":false},{"name":"云冰 Rompin","active":false},{"name":"百乐 Bera","active":false}]},{"state":"Penang","cities":[{"name":"乔治市 George Town","active":false},{"name":"大山脚 Bukit Mertajam","active":false},{"name":"北海 Butterworth","active":false},{"name":"峇六拜 Bayan Lepas","active":false},{"name":"高渊 Nibong Tebal","active":false}]},{"state":"Perak","cities":[{"name":"怡保 Ipoh","active":false},{"name":"太平 Taiping","active":false},{"name":"安顺 Teluk Intan","active":false},{"name":"实兆远 Sitiawan","active":false},{"name":"金宝 Kampar","active":false},{"name":"华都牙也 Batu Gajah","active":false},{"name":"江沙 Kuala Kangsar","active":false},{"name":"巴力 Parit","active":false},{"name":"峇眼拿督 Bagan Datuk","active":false},{"name":"士拉末 Selama","active":false},{"name":"打巴 Tapah","active":false},{"name":"丹绒马林 Tanjung Malim","active":false},{"name":"宜力 Gerik","active":false}]},{"state":"Perlis","cities":[{"name":"加央 Kangar","active":false},{"name":"亚娄 Arau","active":false},{"name":"巴东勿刹 Padang Besar","active":false}]},{"state":"Sabah","cities":[{"name":"亚庇 Kota Kinabalu","active":false},{"name":"山打根 Sandakan","active":false},{"name":"斗湖 Tawau","active":false},{"name":"拿笃 Lahad Datu","active":false},{"name":"根地咬 Keningau","active":false},{"name":"仙本那 Semporna","active":false},{"name":"古达 Kudat","active":false},{"name":"吧巴 Papar","active":false},{"name":"保佛 Beaufort","active":false},{"name":"兰瑙 Ranau","active":false},{"name":"斗亚兰 Tuaran","active":false},{"name":"兵南邦 Penampang","active":false},{"name":"担布南 Tambunan","active":false},{"name":"丹南 Tenom","active":false},{"name":"纳巴湾 Nabawan","active":false},{"name":"必达 Pitas","active":false},{"name":"哥打毛律 Kota Belud","active":false},{"name":"哥打马鲁都 Kota Marudu","active":false},{"name":"比鲁兰 Beluran","active":false},{"name":"京那巴当岸 Kinabatangan","active":false},{"name":"东谷 Tongod","active":false},{"name":"特鲁必 Telupid","active":false},{"name":"古纳 Kunak","active":false},{"name":"加拉巴干 Kalabakan","active":false},{"name":"实必丹 Sipitang","active":false},{"name":"瓜拉班尤 Kuala Penyu","active":false},{"name":"布达丹 Putatan","active":false}]},{"state":"Sarawak","cities":[{"name":"古晋 Kuching","active":true},{"name":"美里 Miri","active":true},{"name":"诗巫 Sibu","active":false},{"name":"民都鲁 Bintulu","active":true},{"name":"林梦 Limbang","active":false},{"name":"斯里阿曼 Sri Aman","active":false},{"name":"泗里街 Sarikei","active":false},{"name":"沐胶 Mukah","active":false},{"name":"加帛 Kapit","active":false},{"name":"木中 Betong","active":false},{"name":"石隆门 Bau","active":false},{"name":"伦乐 Lundu","active":false},{"name":"三马拉汉 Samarahan","active":false},{"name":"西连 Serian","active":false},{"name":"实文然 Simunjan","active":false},{"name":"鲁勃安都 Lubok Antu","active":false},{"name":"砂拉卓 Saratok","active":false},{"name":"马拉端 Meradong","active":false},{"name":"达罗 Daro","active":false},{"name":"如楼 Julau","active":false},{"name":"达叻 Dalat","active":false},{"name":"加拿逸 Kanowit","active":false},{"name":"达岛 Tatau","active":false},{"name":"桑 Song","active":false},{"name":"峇拉加 Belaga","active":false},{"name":"马鲁帝 Marudi","active":false},{"name":"老越 Lawas","active":false},{"name":"马都 Matu","active":false},{"name":"阿沙再也 Asajaya","active":false},{"name":"巴干 Pakan","active":false},{"name":"实兰沟 Selangau","active":false},{"name":"打必禄 Tebedu","active":false},{"name":"巴沙 Pusa","active":false},{"name":"卡邦 Kabong","active":false},{"name":"丹绒马尼 Tanjung Manis","active":false},{"name":"实巴荷 Sebauh","active":false},{"name":"武吉玛邦 Bukit Mabong","active":false},{"name":"苏比斯 Subis","active":false},{"name":"峇鲁鲁 Beluru","active":false},{"name":"特兰乌山 Telang Usan","active":false}]},{"state":"Selangor","cities":[{"name":"莎阿南 Shah Alam","active":true},{"name":"八打灵再也 Petaling Jaya","active":true},{"name":"梳邦再也 Subang Jaya","active":false},{"name":"巴生 Klang","active":true},{"name":"加影 Kajang","active":false},{"name":"安邦 Ampang","active":false},{"name":"蒲种 Puchong","active":false},{"name":"万挠 Rawang","active":false},{"name":"士拉央 Selayang","active":false},{"name":"雪邦 Sepang","active":false},{"name":"瓜拉雪兰莪 Kuala Selangor","active":false},{"name":"瓜拉冷岳 Kuala Langat","active":false},{"name":"沙白安南 Sabak Bernam","active":false},{"name":"新古毛 Kuala Kubu Baharu","active":false}]},{"state":"Terengganu","cities":[{"name":"瓜拉登嘉楼 Kuala Terengganu","active":false},{"name":"甘马挽 Kemaman","active":false},{"name":"龙运 Dungun","active":false},{"name":"马江 Marang","active":false},{"name":"勿述 Besut","active":false},{"name":"士兆 Setiu","active":false},{"name":"乌鲁登嘉楼 Hulu Terengganu","active":false},{"name":"瓜拉尼鲁斯 Kuala Nerus","active":false}]},{"state":"Kuala Lumpur","cities":[{"name":"吉隆坡 Kuala Lumpur","active":false}]},{"state":"Putrajaya","cities":[{"name":"布城 Putrajaya","active":false}]},{"state":"Labuan","cities":[{"name":"纳闽 Labuan","active":false}]}];
 
   function daysSince(dateStr){
     var d = new Date(dateStr+'T00:00:00');
@@ -3303,7 +3303,7 @@ window.escapeHtml = function(s){
   function getAllPractitionersForBlacklist(){
     var list = [{id:'gong', name:'龚诗宏医师（大管理员）'}, {id:'yu', name:'余采恩医师（大管理员）'}];
     getJuniorAdmins().filter(function(j){ return (j.adminType||'practitioner')==='practitioner'; })
-      .forEach(function(j){ list.push({id:j.id, name:j.name+'（'+(j.regions||[]).join('、')+'）'}); });
+      .forEach(function(j){ list.push({id:j.id, name:j.name+'（'+(j.regions||[]).map(normalizeAreaName).join('、')+'）'}); });
     return list;
   }
   async function renderBlacklist(){
@@ -4322,14 +4322,189 @@ window.escapeHtml = function(s){
   var AREAS_KEY = 'vinath_service_areas';
   // 旧版地区清单里是"社区级"细分项，现在统一归并到所属城市/县；派单匹配与前台过滤都按此归一化
   var AREA_MERGE_MAP = {
-    'Masai': '巴西古当 Pasir Gudang',
-    'Bandar Seri Alam': '巴西古当 Pasir Gudang',
-    'Permas Jaya': '巴西古当 Pasir Gudang',
-    'Johor Jaya': '巴西古当 Pasir Gudang',
-    'Ulu Tiram': '新山市区 Johor Bahru',
-    'Plentong': '新山市区 Johor Bahru',
-    'Tebrau': '新山市区 Johor Bahru',
-    'Larkin': '新山市区 Johor Bahru'
+    'Masai':'巴西古当 Pasir Gudang',
+    'Bandar Seri Alam':'巴西古当 Pasir Gudang',
+    'Permas Jaya':'巴西古当 Pasir Gudang',
+    'Johor Jaya':'巴西古当 Pasir Gudang',
+    'Ulu Tiram':'新山 Johor Bahru',
+    'Plentong':'新山 Johor Bahru',
+    'Tebrau':'新山 Johor Bahru',
+    'Larkin':'新山 Johor Bahru',
+    'Alor Gajah':'亚罗牙也 Alor Gajah',
+    'Alor Setar':'亚罗士打 Alor Setar',
+    'Ampang':'安邦 Ampang',
+    'Arau':'亚娄 Arau',
+    'Asajaya':'阿沙再也 Asajaya',
+    'Bachok':'巴佐 Bachok',
+    'Bagan Datuk':'峇眼拿督 Bagan Datuk',
+    'Bahau':'马口 Bahau',
+    'Baling':'华玲 Baling',
+    'Bandar Baharu':'万拉峇鲁 Bandar Baharu',
+    'Batu Gajah':'华都牙也 Batu Gajah',
+    'Batu Pahat':'峇株巴辖 Batu Pahat',
+    'Bau':'石隆门 Bau',
+    'Bayan Lepas':'峇六拜 Bayan Lepas',
+    'Beaufort':'保佛 Beaufort',
+    'Belaga':'峇拉加 Belaga',
+    'Beluran':'比鲁兰 Beluran',
+    'Beluru':'峇鲁鲁 Beluru',
+    'Bentong':'文冬 Bentong',
+    'Bera':'百乐 Bera',
+    'Besut':'勿述 Besut',
+    'Betong':'木中 Betong',
+    'Bintulu':'民都鲁 Bintulu',
+    'Bukit Mabong':'武吉玛邦 Bukit Mabong',
+    'Bukit Mertajam':'大山脚 Bukit Mertajam',
+    'Butterworth':'北海 Butterworth',
+    'Cameron Highlands':'金马仑高原 Cameron Highlands',
+    'Dalat':'达叻 Dalat',
+    'Daro':'达罗 Daro',
+    'Dungun':'龙运 Dungun',
+    'George Town':'乔治市 George Town',
+    'Gerik':'宜力 Gerik',
+    'Gua Musang':'话望生 Gua Musang',
+    'Hulu Terengganu':'乌鲁登嘉楼 Hulu Terengganu',
+    'Ipoh':'怡保 Ipoh',
+    'Iskandar Puteri':'依斯干达公主城 Iskandar Puteri',
+    'Jasin':'野新 Jasin',
+    'Jelebu':'日叻务 Jelebu',
+    'Jeli':'日里 Jeli',
+    'Jempol':'仁保 Jempol',
+    'Jerantut':'而连突 Jerantut',
+    'Jitra':'日得拉 Jitra',
+    'Johor Bahru':'新山 Johor Bahru',
+    'Julau':'如楼 Julau',
+    'Kabong':'卡邦 Kabong',
+    'Kajang':'加影 Kajang',
+    'Kalabakan':'加拉巴干 Kalabakan',
+    'Kampar':'金宝 Kampar',
+    'Kangar':'加央 Kangar',
+    'Kanowit':'加拿逸 Kanowit',
+    'Kapit':'加帛 Kapit',
+    'Kemaman':'甘马挽 Kemaman',
+    'Keningau':'根地咬 Keningau',
+    'Kinabatangan':'京那巴当岸 Kinabatangan',
+    'Klang':'巴生 Klang',
+    'Kluang':'居銮 Kluang',
+    'Kota Belud':'哥打毛律 Kota Belud',
+    'Kota Bharu':'哥打巴鲁 Kota Bharu',
+    'Kota Kinabalu':'亚庇 Kota Kinabalu',
+    'Kota Marudu':'哥打马鲁都 Kota Marudu',
+    'Kota Tinggi':'哥打丁宜 Kota Tinggi',
+    'Kuala Kangsar':'江沙 Kuala Kangsar',
+    'Kuala Krai':'瓜拉吉赖 Kuala Krai',
+    'Kuala Kubu Baharu':'新古毛 Kuala Kubu Baharu',
+    'Kuala Langat':'瓜拉冷岳 Kuala Langat',
+    'Kuala Lumpur':'吉隆坡 Kuala Lumpur',
+    'Kuala Nerang':'瓜拉尼浪 Kuala Nerang',
+    'Kuala Nerus':'瓜拉尼鲁斯 Kuala Nerus',
+    'Kuala Penyu':'瓜拉班尤 Kuala Penyu',
+    'Kuala Pilah':'瓜拉庇劳 Kuala Pilah',
+    'Kuala Selangor':'瓜拉雪兰莪 Kuala Selangor',
+    'Kuala Terengganu':'瓜拉登嘉楼 Kuala Terengganu',
+    'Kuantan':'关丹 Kuantan',
+    'Kuching':'古晋 Kuching',
+    'Kudat':'古达 Kudat',
+    'Kulai':'古来 Kulai',
+    'Kulim':'居林 Kulim',
+    'Kunak':'古纳 Kunak',
+    'Labuan':'纳闽 Labuan',
+    'Lahad Datu':'拿笃 Lahad Datu',
+    'Langkawi':'浮罗交怡 Langkawi',
+    'Lawas':'老越 Lawas',
+    'Limbang':'林梦 Limbang',
+    'Lipis':'立卑 Lipis',
+    'Lojing':'罗京 Lojing',
+    'Lubok Antu':'鲁勃安都 Lubok Antu',
+    'Lundu':'伦乐 Lundu',
+    'Machang':'马樟 Machang',
+    'Maran':'马兰 Maran',
+    'Marang':'马江 Marang',
+    'Marudi':'马鲁帝 Marudi',
+    'Matu':'马都 Matu',
+    'Melaka City':'马六甲 Melaka City',
+    'Mentakab':'明加叻 Mentakab',
+    'Meradong':'马拉端 Meradong',
+    'Mersing':'丰盛港 Mersing',
+    'Miri':'美里 Miri',
+    'Muar':'麻坡 Muar',
+    'Mukah':'沐胶 Mukah',
+    'Nabawan':'纳巴湾 Nabawan',
+    'Nibong Tebal':'高渊 Nibong Tebal',
+    'Nilai':'汝来 Nilai',
+    'Padang Besar':'巴东勿刹 Padang Besar',
+    'Pakan':'巴干 Pakan',
+    'Papar':'吧巴 Papar',
+    'Parit':'巴力 Parit',
+    'Pasir Gudang':'巴西古当 Pasir Gudang',
+    'Pasir Mas':'巴西马 Pasir Mas',
+    'Pasir Puteh':'巴西富地 Pasir Puteh',
+    'Pekan':'北根 Pekan',
+    'Penampang':'兵南邦 Penampang',
+    'Pendang':'本同 Pendang',
+    'Petaling Jaya':'八打灵再也 Petaling Jaya',
+    'Pitas':'必达 Pitas',
+    'Pontian':'笨珍 Pontian',
+    'Port Dickson':'波德申 Port Dickson',
+    'Puchong':'蒲种 Puchong',
+    'Pusa':'巴沙 Pusa',
+    'Putatan':'布达丹 Putatan',
+    'Putrajaya':'布城 Putrajaya',
+    'Ranau':'兰瑙 Ranau',
+    'Raub':'劳勿 Raub',
+    'Rawang':'万挠 Rawang',
+    'Rembau':'林茂 Rembau',
+    'Rompin':'云冰 Rompin',
+    'Sabak Bernam':'沙白安南 Sabak Bernam',
+    'Samarahan':'三马拉汉 Samarahan',
+    'Sandakan':'山打根 Sandakan',
+    'Saratok':'砂拉卓 Saratok',
+    'Sarikei':'泗里街 Sarikei',
+    'Sebauh':'实巴荷 Sebauh',
+    'Segamat':'昔加末 Segamat',
+    'Selama':'士拉末 Selama',
+    'Selangau':'实兰沟 Selangau',
+    'Selayang':'士拉央 Selayang',
+    'Semporna':'仙本那 Semporna',
+    'Sepang':'雪邦 Sepang',
+    'Seremban':'芙蓉 Seremban',
+    'Serian':'西连 Serian',
+    'Setiu':'士兆 Setiu',
+    'Shah Alam':'莎阿南 Shah Alam',
+    'Sibu':'诗巫 Sibu',
+    'Sik':'锡 Sik',
+    'Simunjan':'实文然 Simunjan',
+    'Sipitang':'实必丹 Sipitang',
+    'Sitiawan':'实兆远 Sitiawan',
+    'Song':'桑 Song',
+    'Sri Aman':'斯里阿曼 Sri Aman',
+    'Subang Jaya':'梳邦再也 Subang Jaya',
+    'Subis':'苏比斯 Subis',
+    'Sungai Petani':'双溪大年 Sungai Petani',
+    'Taiping':'太平 Taiping',
+    'Tambunan':'担布南 Tambunan',
+    'Tampin':'淡边 Tampin',
+    'Tanah Merah':'丹那美拉 Tanah Merah',
+    'Tangkak':'东甲 Tangkak',
+    'Tanjung Malim':'丹绒马林 Tanjung Malim',
+    'Tanjung Manis':'丹绒马尼 Tanjung Manis',
+    'Tapah':'打巴 Tapah',
+    'Tatau':'达岛 Tatau',
+    'Tawau':'斗湖 Tawau',
+    'Tebedu':'打必禄 Tebedu',
+    'Telang Usan':'特兰乌山 Telang Usan',
+    'Teluk Intan':'安顺 Teluk Intan',
+    'Telupid':'特鲁必 Telupid',
+    'Temerloh':'淡马鲁 Temerloh',
+    'Tenom':'丹南 Tenom',
+    'Tongod':'东谷 Tongod',
+    'Tuaran':'斗亚兰 Tuaran',
+    'Tumpat':'道北 Tumpat',
+    'Yan':'铅 Yan',
+    '巴西古当 Pasir Gudang':'巴西古当 Pasir Gudang',
+    '新山 Johor Bahru':'新山 Johor Bahru',
+    'Johor Bahru City':'新山 Johor Bahru',
+    '柔佛新山':'新山 Johor Bahru',
   };
   function normalizeAreaName(name){ return AREA_MERGE_MAP[name] || name; }
   function getServiceAreas(){
@@ -4612,7 +4787,7 @@ window.escapeHtml = function(s){
       cachedSeniorAccounts = all.filter(function(a){ return a.role==='SENIOR'; });
     } catch(e){ console.error('拉取大管理员列表失败:', e); cachedSeniorAccounts = []; }
     document.getElementById('seniorList').innerHTML = cachedSeniorAccounts.map(function(a){
-      var regionsText = a.regions && a.regions.length ? a.regions.join('、') : '未设置（暂不参与地区匹配的医师卡片展示）';
+      var regionsText = a.regions && a.regions.length ? a.regions.map(normalizeAreaName).join('、') : '未设置（暂不参与地区匹配的医师卡片展示）';
       return '<div class="junior-row"><div class="practitioner-avatar">'+(a.avatar ? '<img src="'+a.avatar+'">' : '<span>'+a.name.charAt(0)+'</span>')+'</div>'
         + '<div style="flex:1;"><div class="junior-name">'+a.name+'</div><div class="login-item-role senior">全部地区 · 全部tab（管理员权限不受下方地区影响）</div>'
         + '<div class="region-tag-row"><span class="region-tag">出诊地区：'+regionsText+'</span></div>'
@@ -4845,7 +5020,7 @@ window.escapeHtml = function(s){
       return '<div class="junior-row">'
         + (type==='practitioner' ? '<div class="practitioner-avatar">'+(avatarSrc ? '<img src="'+avatarSrc+'">' : '<span>'+j.name.charAt(0)+'</span>')+'</div>' : '')
         + '<div style="flex:1;"><div class="junior-name">'+j.name+'<span class="admin-type-badge '+type+'">'+adminTypeLabel(type)+'</span></div>'
-        + (type==='practitioner' ? '<div class="region-tag-row">'+j.regions.map(function(r){ return '<span class="region-tag">'+r+'</span>'; }).join('')+'</div>' : '<div class="region-tag-row"><span class="region-tag">'+roleDesc+'</span></div>')
+        + (type==='practitioner' ? '<div class="region-tag-row">'+j.regions.map(function(r){ return '<span class="region-tag">'+normalizeAreaName(r)+'</span>'; }).join('')+'</div>' : '<div class="region-tag-row"><span class="region-tag">'+roleDesc+'</span></div>')
         + (prof && prof.specialty ? '<div class="region-tag-row"><span class="region-tag">擅长：'+prof.specialty+'</span></div>' : '')
         + (type==='practitioner' ? licenseStatusHtml(j) : '')
         + '<div class="coupon-code-edit-row">专属优惠码：<input type="text" class="coupon-code-input" data-id="'+j.id+'" value="'+(j.couponCode||'')+'"></div></div>'
