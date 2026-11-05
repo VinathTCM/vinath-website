@@ -503,8 +503,12 @@ tbody tr:hover{ background:#FBFAF7; }
 .instant-trash-restore:hover{ background:#7A9768; }
 .wholesale-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(168px,1fr)); gap:16px 14px; }
 .wholesale-group{ margin-bottom:26px; }
-.wholesale-group-title{ font-weight:700; font-size:15px; color:var(--ink); margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:8px; }
+.wholesale-group-title{ font-weight:700; font-size:15px; color:var(--ink); margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none; }
 .wholesale-group-title::before{ content:''; width:4px; height:16px; border-radius:2px; background:var(--clay); }
+.wholesale-group-title .wg-caret{ margin-left:8px; font-size:12px; line-height:1; color:#8a7f70; transition:transform .2s; }
+.wholesale-group-title .wg-count{ margin-left:auto; font-size:12px; font-weight:500; color:#a39a8c; }
+.wholesale-group.collapsed .wholesale-grid{ display:none; }
+.wholesale-group.collapsed .wg-caret{ transform:rotate(-90deg); }
 .wholesale-group:last-child{ margin-bottom:0; }
 /* 拿货商品卡片：与前台商店页视觉一致（图片 + 名称 + 划线售价/拿货价） */
 .wh-card{ cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
@@ -2431,6 +2435,7 @@ window.escapeHtml = function(s){
   }
   var WHOLESALE_ORDERS_KEY = 'vinath_wholesale_orders';
   var wholesaleCart = {}; // {productId: qty}
+  var whCollapsedGroups = {}; // {系列名: true} 拿货列表里被收起的系列
   var cachedWholesaleCatalog = [];
   async function getSharedCatalogForWholesale(){
     if(!authToken) return [];
@@ -2503,7 +2508,11 @@ window.escapeHtml = function(s){
       return;
     }
     grid.innerHTML = groupKeys.map(function(k){
-      return '<div class="wholesale-group"><div class="wholesale-group-title">'+k+'</div><div class="wholesale-grid">'
+      var collapsed = !!whCollapsedGroups[k];
+      return '<div class="wholesale-group'+(collapsed?' collapsed':'')+'" data-wgroup="'+k+'">'
+        + '<div class="wholesale-group-title">'+k
+        + '<span class="wg-count">'+groups[k].length+' 款</span>'
+        + '<span class="wg-caret">▾</span></div><div class="wholesale-grid">'
         + groups[k].map(function(c){
             var qty = wholesaleCart[c.id] || 0;
             var hasImg = c.images && c.images[0];
@@ -2543,6 +2552,15 @@ window.escapeHtml = function(s){
         wholesaleCart[id] = Math.max(0, (wholesaleCart[id]||0) - 1);
         document.getElementById('wq-'+id).textContent = wholesaleCart[id];
         updateWholesaleCartBar();
+      });
+    });
+    // 系列标题点击 → 展开 / 收起该系列（状态按系列名记忆，重渲染后保持）
+    document.querySelectorAll('.wholesale-group-title').forEach(function(t){
+      t.addEventListener('click', function(){
+        var g = this.parentNode;
+        var key = g.getAttribute('data-wgroup');
+        g.classList.toggle('collapsed');
+        whCollapsedGroups[key] = g.classList.contains('collapsed');
       });
     });
     updateWholesaleCartBar();
