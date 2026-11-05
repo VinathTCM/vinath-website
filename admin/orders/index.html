@@ -4628,12 +4628,10 @@ window.escapeHtml = function(s){
     document.getElementById('seniorAvatarFile').addEventListener('change', function(e){
       var file = e.target.files[0];
       if(!file) return;
-      var reader = new FileReader();
-      reader.onload = function(ev){
-        avatarData = ev.target.result;
+      compressAvatarFile(file, function(dataUrl){
+        avatarData = dataUrl;
         document.getElementById('seniorAvatarBox').innerHTML = '<img src="'+avatarData+'">';
-      };
-      reader.readAsDataURL(file);
+      });
     });
 
     var seniorPickedTags = (prof.tags || []).slice();
@@ -4903,17 +4901,20 @@ window.escapeHtml = function(s){
   });
   var newJuniorAvatar = '';
   document.getElementById('juniorAvatarBox').addEventListener('click', function(){ document.getElementById('juniorAvatarFile').click(); });
-  // 头像统一压到最长边 400px 的 JPEG：原图直存 base64 会撑爆 localStorage（5MB）并拖慢接口
+  // 头像统一压到最长边 512px 的 WebP：与系统其它上传（价格表/病历照片）保持同一格式，
+  // 原图直存 base64 会撑爆 localStorage（5MB）并拖慢接口；浏览器不支持 WebP 编码时回退 JPEG
   function compressAvatarFile(file, cb){
     var reader = new FileReader();
     reader.onload = function(ev){
       var img = new Image();
       img.onload = function(){
-        var max = 400, w = img.width, h = img.height;
+        var max = 512, w = img.width, h = img.height;
         if(w > max || h > max){ var r = Math.min(max/w, max/h); w = Math.round(w*r); h = Math.round(h*r); }
         var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
         cv.getContext('2d').drawImage(img, 0, 0, w, h);
-        cb(cv.toDataURL('image/jpeg', 0.82));
+        var out = cv.toDataURL('image/webp', 0.85);
+        if(out.indexOf('data:image/webp') !== 0){ out = cv.toDataURL('image/jpeg', 0.85); }
+        cb(out);
       };
       img.onerror = function(){ cb(ev.target.result); };
       img.src = ev.target.result;
