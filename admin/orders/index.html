@@ -1854,11 +1854,11 @@ window.escapeHtml = function(s){
     toggleEl.classList.toggle('on', on);
     document.getElementById('acceptingToggleHint').textContent = isSenior
       ? (on
-          ? '目前开放接单——您负责的 '+((cur.regions||[]).map(normalizeAreaName).join('、')||'服务')+' 地区的"立即预约"客户请求会自动匹配给您。'
+          ? '目前开放接单——您负责的 '+(normalizeAreaList(cur.regions).join('、')||'服务')+' 地区的"立即预约"客户请求会自动匹配给您。'
           : '目前未开放接单——"立即预约"客户请求会派给该地区开放接单的执业医师；都没人开的话，由您（大管理员）在后台兜底尽快联系顾客。')
       : (on
-          ? '目前开放接单——'+cur.regions.map(normalizeAreaName).join('、')+' 地区的"立即预约"客户请求会自动匹配给您。'
-          : '目前未开放接单——'+cur.regions.map(normalizeAreaName).join('、')+' 地区的"立即预约"客户请求会派给同地区其他开放接单的I类管理员（都没人开的话，由总部处理）。');
+          ? '目前开放接单——'+normalizeAreaList(cur.regions).join('、')+' 地区的"立即预约"客户请求会自动匹配给您。'
+          : '目前未开放接单——'+normalizeAreaList(cur.regions).join('、')+' 地区的"立即预约"客户请求会派给同地区其他开放接单的I类管理员（都没人开的话，由总部处理）。');
   }
   document.getElementById('acceptingToggle').addEventListener('click', async function(){
     var cur = getCurrentAdmin();
@@ -3303,7 +3303,7 @@ window.escapeHtml = function(s){
   function getAllPractitionersForBlacklist(){
     var list = [{id:'gong', name:'龚诗宏医师（大管理员）'}, {id:'yu', name:'余采恩医师（大管理员）'}];
     getJuniorAdmins().filter(function(j){ return (j.adminType||'practitioner')==='practitioner'; })
-      .forEach(function(j){ list.push({id:j.id, name:j.name+'（'+(j.regions||[]).map(normalizeAreaName).join('、')+'）'}); });
+      .forEach(function(j){ list.push({id:j.id, name:j.name+'（'+normalizeAreaList(j.regions).join('、')+'）'}); });
     return list;
   }
   async function renderBlacklist(){
@@ -4503,10 +4503,28 @@ window.escapeHtml = function(s){
     'Yan':'铅 Yan',
     '巴西古当 Pasir Gudang':'巴西古当 Pasir Gudang',
     '新山 Johor Bahru':'新山 Johor Bahru',
+    '新山市区 Johor Bahru':'新山 Johor Bahru',
+
     'Johor Bahru City':'新山 Johor Bahru',
     '柔佛新山':'新山 Johor Bahru',
   };
   function normalizeAreaName(name){ return AREA_MERGE_MAP[name] || name; }
+  // 归一化 + 去重：历史数据里同一个地区可能同时以「旧细分名」和「归并后的城市名」出现
+  // （例：Tebrau / Plentong / Ulu Tiram / Larkin 都归到 新山 Johor Bahru），
+  // 直接逐条显示会出现重复标签，也必须去重后再用于编辑弹窗的勾选状态。
+  function normalizeAreaList(list){
+    var out = [], seen = {};
+    (list||[]).forEach(function(r){
+      var n = normalizeAreaName(r);
+      if(n && !seen[n]){ seen[n] = 1; out.push(n); }
+    });
+    return out;
+  }
+  // 当前登录账号是否大管理员（用于只在大管理员端做后端数据清理）
+  function isSeniorNow(){
+    var cur = getCurrentAdmin();
+    return !!(cur && cur.type === 'senior');
+  }
   function getServiceAreas(){
     var raw = null;
     try { raw = localStorage.getItem(AREAS_KEY); } catch(e){}
@@ -4787,7 +4805,7 @@ window.escapeHtml = function(s){
       cachedSeniorAccounts = all.filter(function(a){ return a.role==='SENIOR'; });
     } catch(e){ console.error('拉取大管理员列表失败:', e); cachedSeniorAccounts = []; }
     document.getElementById('seniorList').innerHTML = cachedSeniorAccounts.map(function(a){
-      var regionsText = a.regions && a.regions.length ? a.regions.map(normalizeAreaName).join('、') : '未设置（暂不参与地区匹配的医师卡片展示）';
+      var regionsText = a.regions && a.regions.length ? normalizeAreaList(a.regions).join('、') : '未设置（暂不参与地区匹配的医师卡片展示）';
       return '<div class="junior-row"><div class="practitioner-avatar">'+(a.avatar ? '<img src="'+a.avatar+'">' : '<span>'+a.name.charAt(0)+'</span>')+'</div>'
         + '<div style="flex:1;"><div class="junior-name">'+a.name+'</div><div class="login-item-role senior">全部地区 · 全部tab（管理员权限不受下方地区影响）</div>'
         + '<div class="region-tag-row"><span class="region-tag">出诊地区：'+regionsText+'</span></div>'
@@ -4872,7 +4890,7 @@ window.escapeHtml = function(s){
     }
     renderSeniorTagChips();
 
-    var seniorPickedRegions = (prof.regions || []).slice();
+    var seniorPickedRegions = normalizeAreaList(prof.regions);
     var seniorAreaSearchQ = '';
     var seniorAreaOpenStates = {};
     function renderSeniorAreaPicker(){
@@ -5012,6 +5030,29 @@ window.escapeHtml = function(s){
       all = await fetchAllAdminAccounts();
       juniors = all.filter(function(a){ return a.role!=='SENIOR'; });
     }
+    // 历史 regions 里混着旧细分名（Tebrau / Plentong / Ulu Tiram / Larkin…）与归并后的城市名，
+    // 会造成管理员 tab 的标签重复、编辑弹窗勾选状态对不上。大管理员打开页面时静默规范一次，
+    // 让后端数据本身也变干净（只作用于 PRACTITIONER，且只改 regions）。
+    // 管理员负责的地区要与其在「服务地区设置」里开启的地区保持同步：
+    // 打开管理员 tab 时逐个对一遍，有差异才写（syncServiceAreasFromJunior 内部已判 changed）
+    if(isSeniorNow()){
+      juniors.filter(function(j){ return j.role==='PRACTITIONER'; }).forEach(function(j){
+        syncServiceAreasFromJunior({regions: normalizeAreaList(j.regions)});
+      });
+    }
+    if(isSeniorNow()){
+      juniors.filter(function(j){ return j.role==='PRACTITIONER'; }).forEach(function(j){
+        var oldList = j.regions || [];
+        var newList = normalizeAreaList(oldList);
+        if(JSON.stringify(oldList) !== JSON.stringify(newList)){
+          fetch(API_BASE + '/admin/admins/' + j.id, {
+            method:'PUT',
+            headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},
+            body: JSON.stringify({regions:newList})
+          }).then(function(r){ if(r.ok) j.regions = newList; });
+        }
+      });
+    }
     document.getElementById('juniorList').innerHTML = juniors.length ? juniors.map(function(j){
       var type = j.role.toLowerCase();
       var prof = type==='practitioner' ? getPractitionerProfile(j.id) : null;
@@ -5020,7 +5061,7 @@ window.escapeHtml = function(s){
       return '<div class="junior-row">'
         + (type==='practitioner' ? '<div class="practitioner-avatar">'+(avatarSrc ? '<img src="'+avatarSrc+'">' : '<span>'+j.name.charAt(0)+'</span>')+'</div>' : '')
         + '<div style="flex:1;"><div class="junior-name">'+j.name+'<span class="admin-type-badge '+type+'">'+adminTypeLabel(type)+'</span></div>'
-        + (type==='practitioner' ? '<div class="region-tag-row">'+j.regions.map(function(r){ return '<span class="region-tag">'+normalizeAreaName(r)+'</span>'; }).join('')+'</div>' : '<div class="region-tag-row"><span class="region-tag">'+roleDesc+'</span></div>')
+        + (type==='practitioner' ? '<div class="region-tag-row">'+normalizeAreaList(j.regions).map(function(r){ return '<span class="region-tag">'+r+'</span>'; }).join('')+'</div>' : '<div class="region-tag-row"><span class="region-tag">'+roleDesc+'</span></div>')
         + (prof && prof.specialty ? '<div class="region-tag-row"><span class="region-tag">擅长：'+prof.specialty+'</span></div>' : '')
         + (type==='practitioner' ? licenseStatusHtml(j) : '')
         + '<div class="coupon-code-edit-row">专属优惠码：<input type="text" class="coupon-code-input" data-id="'+j.id+'" value="'+(j.couponCode||'')+'"></div></div>'
@@ -5163,7 +5204,7 @@ window.escapeHtml = function(s){
     });
     document.getElementById('juniorAreaPickerWrap').style.display = newJuniorType==='practitioner' ? '' : 'none';
     document.getElementById('juniorProfileWrap').style.display = newJuniorType==='practitioner' ? '' : 'none';
-    juniorPickedRegions = (j.regions||[]).slice();
+    juniorPickedRegions = normalizeAreaList(j.regions);
     renderJuniorAreaPicker();
     var prof = getPractitionerProfile(id);
     newJuniorAvatar = j.avatar || prof.avatar || '';
