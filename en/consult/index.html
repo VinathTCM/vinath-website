@@ -386,20 +386,62 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
  ];
  // reads the same admin-configured list as 订单预约管理's "服务地区设置" — only currently-active
  // areas show up here, grouped by state so the list stays usable once more than one is open
+ // 统计"确实有医师出诊"的地区：后台「服务地区设置」active=true 的城市，还要至少一位
+ // 未过期医师的 regions 覆盖它，才允许出现在前台下拉里。
+ // 医师 regions 为空 = 不限地区（沿用 getPractitionersForArea 的既有语义），此时不做过滤。
+ // 返回 null 表示医师数据还没加载到 / 加载失败 —— 这时也不过滤，避免整套预约流程不可用。
+ function getPractitionerCoveredAreas(){
+  var covered = {}, unlimited = false, known = false;
+  var profiles = getPractitionerProfilesLocal();
+  if(__apiPractitioners) known = true;
+  function addRegions(regions, emptyMeansAll){
+   known = true;
+   if(!regions || !regions.length){ if(emptyMeansAll) unlimited = true; return; }
+   regions.forEach(function(r){ if(r) covered[r] = 1; });
+  }
+  DOCTORS.forEach(function(d){
+   var apiDoc = null;
+   if(__apiPractitioners){
+    for(var i=0;i<__apiPractitioners.length;i++){ if(__apiPractitioners[i].id === d.id){ apiDoc = __apiPractitioners[i]; break; } }
+   }
+   var prof = profiles[d.id];
+   if(apiDoc && apiDoc.regions !== undefined && apiDoc.regions !== null){ addRegions(apiDoc.regions, true); return; }
+   if(prof && prof.regions !== undefined && prof.regions !== null){ addRegions(prof.regions || [], true); }
+  });
+  var todayISO = new Date().toISOString().slice(0,10);
+  var juniors = getJuniorAdminsLocal() || [];
+  if(juniors.length) known = true;
+  juniors.forEach(function(j){
+   if((j.adminType||'practitioner') !== 'practitioner') return;
+   if(j.licenseExpiry && j.licenseExpiry < todayISO) return; // 执照过期不再出诊
+   addRegions(j.regions || [], false); // 小管理员 regions 为空 = 不覆盖任何地区
+  });
+  if(!known) return null;
+  return { unlimited: unlimited, areas: covered };
+ }
  function getActiveServiceAreaGroups(){
+  var groups;
   try {
    var raw = localStorage.getItem('vinath_service_areas');
-   if(!raw) return [{state:'', cities:SERVICE_AREAS_FALLBACK}];
-   var areas = JSON.parse(raw);
-   var groups = [];
-   areas.forEach(function(s){
-    var activeCities = s.cities.filter(function(c){ return c.active; }).map(function(c){ return c.name; });
-    if(activeCities.length) groups.push({state:s.state, cities:activeCities});
-   });
-   return groups.length ? groups : [{state:'', cities:SERVICE_AREAS_FALLBACK}];
+   if(!raw){
+    groups = [{state:'', cities:SERVICE_AREAS_FALLBACK}];
+   } else {
+    var areas = JSON.parse(raw);
+    groups = [];
+    areas.forEach(function(s){
+     var activeCities = s.cities.filter(function(c){ return c.active; }).map(function(c){ return c.name; });
+     if(activeCities.length) groups.push({state:s.state, cities:activeCities});
+    });
+    if(!groups.length) groups = [{state:'', cities:SERVICE_AREAS_FALLBACK}];
+   }
   } catch(e){
-   return [{state:'', cities:SERVICE_AREAS_FALLBACK}];
+   groups = [{state:'', cities:SERVICE_AREAS_FALLBACK}];
   }
+  var cov = getPractitionerCoveredAreas();
+  if(!cov || cov.unlimited) return groups;
+  return groups.map(function(g){
+   return { state:g.state, cities:g.cities.filter(function(c){ return cov.areas[c] === 1; }) };
+  }).filter(function(g){ return g.cities.length > 0; });
  }
  // 英文版:下拉 value 保留后台原始地名(用于和医师 regions 精确匹配), 仅把显示文本里的中文去掉
  function enAreaName(a){ return (a||'').replace(/[\u4e00-\u9fff]/g,'').replace(/\s+/g,' ').trim(); }
@@ -782,7 +824,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
    html += '<div class="hc-stage-hint">Please briefly describe your discomfort symptoms, or the direction you want to regulate, to help the Physician understand Your Situation in advance.</div>'
     + '<div class="hc-field"><label>Your Situation</label><textarea id="needsInput" placeholder="e.g., easily fatigued, light sleep, want to improve constitution…">'+form.needs+'</textarea></div>';
   }
-  html += '<div class="hc-field"><label>Your Service Area</label>'
+  html += '<div class="hc-field"><label>Your Area</label>'
    + '<select id="areaInput"><option value="">Please select your area</option>'
    + getActiveServiceAreaGroups().map(function(g){
      var opts = g.cities.map(function(a){ return '<option value="'+a+'"'+(form.area===a?' selected':'')+'>'+enAreaName(a)+'</option>'; }).join('');
@@ -1289,10 +1331,15 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   window.location.href = withCart('/en/checkout/', cartItems);
  });
 
- fetchPractitionersFromApi();
- fetchServiceAreasFromApi();
- render();
- renderInstantCta();
+ // 先取医师与服务地区数据再渲染第一步：区域下拉要按"有医师出诊的地区"过滤，
+ // 数据没到手的话只能退回全量兜底列表；最多等 1.5s，超时则照常渲染（不阻塞下单）
+ Promise.race([
+  Promise.all([fetchPractitionersFromApi(), fetchServiceAreasFromApi()]),
+  new Promise(function(res){ setTimeout(res, 1500); })
+ ]).then(function(){
+  render();
+  renderInstantCta();
+ });
 })();
 </script>
 <script>
