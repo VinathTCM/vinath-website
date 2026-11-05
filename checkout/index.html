@@ -652,6 +652,25 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   var completedOrder = null; // {orderNo, items, total, contact}
   var pendingOrder = null; // {items, total, contact} captured when moving cart -> payment
   var selectedPaymentMethodId = null;
+  // 付款截图凭证：最长边 1600px、WebP 0.88（金额/时间等文字需可辨），浏览器不支持 WebP 编码时回退 JPEG
+  function compressPaymentProof(file, cb){
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      var img = new Image();
+      img.onload = function(){
+        var max = 1600, w = img.width, h = img.height;
+        if(w > max || h > max){ var r = Math.min(max/w, max/h); w = Math.round(w*r); h = Math.round(h*r); }
+        var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+        cv.getContext('2d').drawImage(img, 0, 0, w, h);
+        var out = cv.toDataURL('image/webp', 0.88);
+        if(out.indexOf('data:image/webp') !== 0){ out = cv.toDataURL('image/jpeg', 0.88); }
+        cb(out);
+      };
+      img.onerror = function(){ cb(ev.target.result); };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
   var paymentScreenshotData = null;
 
   function genOrderNo(){
@@ -699,13 +718,11 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     document.getElementById('screenshotFile').addEventListener('change', function(e){
       var file = e.target.files[0];
       if(!file) return;
-      var reader = new FileReader();
-      reader.onload = function(ev){
-        paymentScreenshotData = ev.target.result;
+      compressPaymentProof(file, function(dataUrl){
+        paymentScreenshotData = dataUrl;
         document.getElementById('screenshotBox').innerHTML = '<img src="'+paymentScreenshotData+'">';
         refreshConfirmBtn();
-      };
-      reader.readAsDataURL(file);
+      });
     });
     refreshConfirmBtn();
   }
