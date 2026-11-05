@@ -108,6 +108,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 .hc-doc-radio{ position:absolute; top:14px; right:14px; width:20px; height:20px; border-radius:50%; border:1.5px solid var(--line); background:var(--white-warm); }
 .hc-doc-card.on .hc-doc-radio{ border-color:var(--clay); }
 .hc-doc-card.on .hc-doc-radio::after{ content:''; position:absolute; inset:3px; border-radius:50%; background:var(--clay); }
+.hc-doc-price-btn{ margin-top:9px; border:1.5px solid var(--tan-deep); background:transparent; color:var(--tan-deep); font-family:inherit; font-size:12.5px; font-weight:600; padding:5px 13px; border-radius:100px; cursor:pointer; transition:background .18s, color .18s; }
+.hc-doc-price-btn:hover{ background:var(--tan-deep); color:#fff; }
 
 /* ---- date strip ---- */
 .hc-date-strip{ display:flex; gap:9px; overflow-x:auto; padding-bottom:10px; margin-bottom:22px; scrollbar-width:none; }
@@ -232,7 +234,6 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   <h1 class="hc-title">Home Consultation</h1>
   <div class="hc-sub-row">
     <div class="hc-sub">Book a licensed TCM Practitioner home visit, enjoy wellness without leaving home</div>
-    <button class="hc-price-btn" id="priceBtn" style="display:none;">Home Visit Price List</button>
   </div>
 
   <div id="instantCtaArea"></div>
@@ -973,7 +974,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
    }
    html += '<div class="hc-doc-card'+(form.doctor===doc.id?' on':'')+'" data-id="'+doc.id+'">'
     + '<div class="hc-doc-avatar">'+avatarInner+'</div>'
-    + '<div class="hc-doc-info"><div class="hc-doc-name">'+doc.name+'</div><div class="hc-doc-title">Specialties: '+doc.specialtyText+'</div></div>'
+    + '<div class="hc-doc-info"><div class="hc-doc-name">'+doc.name+'</div><div class="hc-doc-title">Specialties: '+doc.specialtyText+'</div>'
+    + '<button type="button" class="hc-doc-price-btn" data-price-doc="'+doc.id+'" style="display:none;">Home Visit Price List</button></div>'
     + '<span class="hc-doc-radio"></span></div>';
   });
   html += '<button class="hc-next-btn" id="nextBtn"'+(form.doctor?'':' disabled')+'>Next</button>'
@@ -981,13 +983,21 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   document.getElementById('stageArea').innerHTML = html;
 
   document.querySelectorAll('.hc-doc-card').forEach(function(card){
-   card.addEventListener('click', function(){
+   card.addEventListener('click', function(e){
+    if(e.target.closest('.hc-doc-price-btn')) return; // price-list button must not select the physician
     form.doctor = this.getAttribute('data-id');
     document.querySelectorAll('.hc-doc-card').forEach(function(c){ c.classList.remove('on'); });
     this.classList.add('on');
     document.getElementById('nextBtn').disabled = false;
    });
   });
+  document.querySelectorAll('.hc-doc-price-btn').forEach(function(btn){
+   btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    if(window.openPriceFor) window.openPriceFor(this.getAttribute('data-price-doc'));
+   });
+  });
+  if(window.syncPriceBtns) window.syncPriceBtns();
   document.getElementById('nextBtn').addEventListener('click', function(){ stage = 3; render(); });
   document.getElementById('backLink').addEventListener('click', function(){ stage = 1; render(); });
   practitioners.filter(function(d){ return d.video; }).forEach(setupAvatarVideo);
@@ -1343,59 +1353,80 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
 })();
 </script>
 <script>
-// Home Visit price list: shows images uploaded under admin > Content > Price List (auto WEBP; swipe / arrows when multiple)
+// Home Visit price list: per-physician images (admin > Content > Price List, auto WEBP),
+// same data source and placement as the Chinese page — button sits inside each physician card
 (function(){
-  var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
-  var imgs = [];
-  var idx = 0;
-  var btn = document.getElementById('priceBtn');
-  var lb = document.getElementById('priceLightbox');
-  var img = document.getElementById('lbImg');
-  var prev = document.getElementById('lbPrev');
-  var next = document.getElementById('lbNext');
-  var dots = document.getElementById('lbDots');
-  var hint = document.getElementById('lbHint');
-  var touchX = null;
+ var API_BASE = window.VINATH_API_BASE || 'https://api.vinathtcm.com/api';
+ var imgs = [];
+ var idx = 0;
+ var lb = document.getElementById('priceLightbox');
+ var img = document.getElementById('lbImg');
+ var prev = document.getElementById('lbPrev');
+ var next = document.getElementById('lbNext');
+ var dots = document.getElementById('lbDots');
+ var hint = document.getElementById('lbHint');
+ var touchX = null;
 
-  function render(){
-    if(!imgs.length) return;
-    img.src = imgs[idx];
-    prev.hidden = imgs.length < 2;
-    next.hidden = imgs.length < 2;
-    dots.innerHTML = imgs.map(function(_, i){ return '<span class="'+(i===idx?'on':'')+'"></span>'; }).join('');
-    hint.textContent = imgs.length > 1 ? ('Page ' + (idx + 1) + ' / ' + imgs.length + ' · swipe to browse') : '';
-  }
-  function open(){ lb.style.display = 'flex'; document.body.style.overflow = 'hidden'; render(); }
-  function close(){ lb.style.display = 'none'; document.body.style.overflow = ''; }
-  function step(d){ idx = (idx + d + imgs.length) % imgs.length; render(); }
+ var PRICE_MAP = {};   // docId -> [urls]
 
-  btn.addEventListener('click', open);
-  document.getElementById('lbClose').addEventListener('click', close);
-  lb.addEventListener('click', function(e){ if(e.target === lb) close(); });
-  prev.addEventListener('click', function(){ step(-1); });
-  next.addEventListener('click', function(){ step(1); });
-  document.addEventListener('keydown', function(e){
-    if(lb.style.display === 'none') return;
-    if(e.key === 'Escape') close();
-    else if(e.key === 'ArrowLeft') step(-1);
-    else if(e.key === 'ArrowRight') step(1);
+ function render(){
+  if(!imgs.length) return;
+  img.src = imgs[idx];
+  prev.hidden = imgs.length < 2;
+  next.hidden = imgs.length < 2;
+  dots.innerHTML = imgs.map(function(_, i){ return '<span class="'+(i===idx?'on':'')+'"></span>'; }).join('');
+  hint.textContent = imgs.length > 1 ? ('Page ' + (idx + 1) + ' / ' + imgs.length + ' · swipe to browse') : '';
+ }
+ function close(){ lb.style.display = 'none'; document.body.style.overflow = ''; }
+ function step(d){ idx = (idx + d + imgs.length) % imgs.length; render(); }
+
+ function openFor(docId){
+  var list = PRICE_MAP[docId] || [];
+  if(!list.length) return;
+  imgs = list; idx = 0;
+  lb.style.display = 'flex'; document.body.style.overflow = 'hidden'; render();
+ }
+ window.openPriceFor = openFor;
+ window.hasPriceFor = function(docId){ return !!(PRICE_MAP[docId] && PRICE_MAP[docId].length); };
+ window.syncPriceBtns = function(){
+  document.querySelectorAll('.hc-doc-price-btn').forEach(function(btn){
+   btn.style.display = window.hasPriceFor(btn.getAttribute('data-price-doc')) ? '' : 'none';
   });
-  var view = document.getElementById('lbView');
-  view.addEventListener('touchstart', function(e){ touchX = e.touches[0].clientX; }, {passive:true});
-  view.addEventListener('touchend', function(e){
-    if(touchX === null) return;
-    var dx = e.changedTouches[0].clientX - touchX;
-    if(Math.abs(dx) > 40) step(dx < 0 ? 1 : -1);
-    touchX = null;
-  }, {passive:true});
+ };
 
-  fetch(API_BASE + '/site-settings/consult_price_images')
-    .then(function(r){ return r.ok ? r.json() : []; })
-    .then(function(list){
-      imgs = (Array.isArray(list) ? list : []).filter(function(s){ return s && typeof s === 'string'; });
-      if(imgs.length) btn.style.display = '';
-    })
-    .catch(function(){});
+ document.getElementById('lbClose').addEventListener('click', close);
+ lb.addEventListener('click', function(e){ if(e.target === lb) close(); });
+ prev.addEventListener('click', function(){ step(-1); });
+ next.addEventListener('click', function(){ step(1); });
+ document.addEventListener('keydown', function(e){
+  if(lb.style.display === 'none') return;
+  if(e.key === 'Escape') close();
+  else if(e.key === 'ArrowLeft') step(-1);
+  else if(e.key === 'ArrowRight') step(1);
+ });
+ var view = document.getElementById('lbView');
+ view.addEventListener('touchstart', function(e){ touchX = e.touches[0].clientX; }, {passive:true});
+ view.addEventListener('touchend', function(e){
+  if(touchX === null) return;
+  var dx = e.changedTouches[0].clientX - touchX;
+  if(Math.abs(dx) > 40) step(dx < 0 ? 1 : -1);
+  touchX = null;
+ }, {passive:true});
+
+ // same mapping as the Chinese page; gong falls back to the legacy global price list
+ Promise.all([
+  fetch(API_BASE + '/site-settings/consult_price_images_by_doc').then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; }),
+  fetch(API_BASE + '/site-settings/consult_price_images').then(function(r){ return r.ok ? r.json() : []; }).catch(function(){ return []; })
+ ]).then(function(results){
+  var map = results[0] && typeof results[0] === 'object' ? results[0] : {};
+  Object.keys(map).forEach(function(k){
+   if(Array.isArray(map[k])) PRICE_MAP[k] = map[k].filter(function(s){ return s && typeof s === 'string'; });
+  });
+  if(!PRICE_MAP['gong']){
+   PRICE_MAP['gong'] = (Array.isArray(results[1]) ? results[1] : []).filter(function(s){ return s && typeof s === 'string'; });
+  }
+  if(window.syncPriceBtns) window.syncPriceBtns();
+ });
 })();
 </script>
 <style>
