@@ -790,14 +790,14 @@ tr.row-cancelled .badge, tr.row-cancelled .row-edit{ text-decoration:none; }
 
     <div class="closure-card">
       <div class="closure-card-title">居家会诊服务地区设置</div>
-      <div class="closure-card-hint">按州属管理「居家会诊」目前实际服务的地区——客户预约时"您所在的区域"下拉菜单只会显示这里开启的地区。已经预先把全马13个州属+3个联邦直辖区、共92个地区都列进来了，方便以后开分店时直接开启对应地区，不用再重新开发。目前只有新山（Johor Bahru）市区的10个地区是开启状态，其余全部默认关闭，你可以随时调整。</div>
+      <div class="closure-card-hint">按州属管理「居家会诊」目前实际服务的地区——客户预约时"您所在的区域"下拉菜单只会显示这里开启、且至少有一位未过期医师出诊的地区。已经按马来西亚官方行政区划（县/District 层级）预先把全马13个州属+3个联邦直辖区、共171个县/市列进来了（原先 Masai、Larkin、Tebrau 这类社区级细分项已分别归并到「巴西古当 Pasir Gudang」和「新山市区 Johor Bahru」），方便以后开分店时直接开启对应地区。目前开启的是巴西古当、新山、古来、莎阿南、八打灵再也、巴生与美里，其余默认关闭，你可以随时调整。</div>
       <div class="area-search-row">
         <input type="text" id="areaSearchInput" placeholder="搜索州属或地区名称，例如：Miri">
         <span class="area-summary" id="areaSummary"></span>
       </div>
       <div id="areaStateList"></div>
     </div>
-    <div class="note"><b>提示：</b>跟上面的休诊日期一样，这里的开关也保存在当前浏览器的本地存储里，只在同一台设备、同一个浏览器里对「居家会诊」页面生效。</div>
+    <div class="note"><b>提示：</b>这里的开关会同时保存到后台，其它设备打开「居家会诊」页面也会读到同一份地区列表。</div>
   </div>
 
   <div id="tab-records" style="display:none;">
@@ -1358,7 +1358,7 @@ window.escapeHtml = function(s){
     if(!regions) return true;
     var loc = (locationStr||'').toLowerCase();
     if(!loc) return false;
-    return regions.some(function(r){
+    return regions.map(normalizeAreaName).some(function(r){
       var rl = r.toLowerCase();
       return loc.indexOf(rl) !== -1 || rl.indexOf(loc) !== -1;
     });
@@ -1911,7 +1911,7 @@ window.escapeHtml = function(s){
   function slotEN(s){ if(!s || s==='ASAP') return 'ASAP'; return s; }
 
   // full Malaysia state/area list, seeded once into localStorage on first load (see below)
-  var MALAYSIA_AREAS_SEED = [{"state":"Johor","cities":[{"name":"巴西古当 Pasir Gudang","active":true},{"name":"Masai","active":true},{"name":"Bandar Seri Alam","active":true},{"name":"Ulu Tiram","active":true},{"name":"Plentong","active":true},{"name":"新山市区 Johor Bahru","active":true},{"name":"Tebrau","active":true},{"name":"Permas Jaya","active":true},{"name":"Johor Jaya","active":true},{"name":"Larkin","active":true},{"name":"Batu Pahat","active":false},{"name":"Muar","active":false},{"name":"Kluang","active":false},{"name":"Pontian","active":false},{"name":"Segamat","active":false},{"name":"Kulai","active":false}]},{"state":"Kedah","cities":[{"name":"Alor Setar","active":false},{"name":"Sungai Petani","active":false},{"name":"Kulim","active":false},{"name":"Langkawi","active":false},{"name":"Jitra","active":false}]},{"state":"Kelantan","cities":[{"name":"Kota Bharu","active":false},{"name":"Pasir Mas","active":false},{"name":"Tanah Merah","active":false},{"name":"Gua Musang","active":false},{"name":"Tumpat","active":false}]},{"state":"Malacca","cities":[{"name":"Melaka City","active":false},{"name":"Alor Gajah","active":false},{"name":"Jasin","active":false}]},{"state":"Negeri Sembilan","cities":[{"name":"Seremban","active":false},{"name":"Port Dickson","active":false},{"name":"Nilai","active":false},{"name":"Bahau","active":false},{"name":"Kuala Pilah","active":false}]},{"state":"Pahang","cities":[{"name":"Kuantan","active":false},{"name":"Temerloh","active":false},{"name":"Bentong","active":false},{"name":"Raub","active":false},{"name":"Cameron Highlands","active":false},{"name":"Mentakab","active":false}]},{"state":"Penang","cities":[{"name":"George Town","active":false},{"name":"Bukit Mertajam","active":false},{"name":"Butterworth","active":false},{"name":"Bayan Lepas","active":false},{"name":"Nibong Tebal","active":false}]},{"state":"Perak","cities":[{"name":"Ipoh","active":false},{"name":"Taiping","active":false},{"name":"Teluk Intan","active":false},{"name":"Sitiawan","active":false},{"name":"Kampar","active":false},{"name":"Batu Gajah","active":false}]},{"state":"Perlis","cities":[{"name":"Kangar","active":false},{"name":"Arau","active":false},{"name":"Padang Besar","active":false}]},{"state":"Sabah","cities":[{"name":"Kota Kinabalu","active":false},{"name":"Sandakan","active":false},{"name":"Tawau","active":false},{"name":"Lahad Datu","active":false},{"name":"Keningau","active":false},{"name":"Semporna","active":false},{"name":"Kudat","active":false},{"name":"Papar","active":false},{"name":"Beaufort","active":false},{"name":"Ranau","active":false},{"name":"Tuaran","active":false},{"name":"Penampang","active":false}]},{"state":"Sarawak","cities":[{"name":"Kuching","active":false},{"name":"Miri","active":false},{"name":"Sibu","active":false},{"name":"Bintulu","active":false},{"name":"Limbang","active":false},{"name":"Sri Aman","active":false},{"name":"Sarikei","active":false},{"name":"Mukah","active":false},{"name":"Kapit","active":false},{"name":"Betong","active":false}]},{"state":"Selangor","cities":[{"name":"Shah Alam","active":false},{"name":"Petaling Jaya","active":false},{"name":"Subang Jaya","active":false},{"name":"Klang","active":false},{"name":"Kajang","active":false},{"name":"Ampang","active":false},{"name":"Puchong","active":false},{"name":"Rawang","active":false},{"name":"Selayang","active":false}]},{"state":"Terengganu","cities":[{"name":"Kuala Terengganu","active":false},{"name":"Kemaman","active":false},{"name":"Dungun","active":false},{"name":"Marang","active":false}]},{"state":"Kuala Lumpur","cities":[{"name":"Kuala Lumpur","active":false}]},{"state":"Putrajaya","cities":[{"name":"Putrajaya","active":false}]},{"state":"Labuan","cities":[{"name":"Labuan","active":false}]}];
+    var MALAYSIA_AREAS_SEED = [{"state":"Johor","cities":[{"name":"巴西古当 Pasir Gudang","active":true},{"name":"新山市区 Johor Bahru","active":true},{"name":"Iskandar Puteri","active":false},{"name":"Kulai","active":true},{"name":"Pontian","active":true},{"name":"Batu Pahat","active":false},{"name":"Muar","active":false},{"name":"Kluang","active":false},{"name":"Segamat","active":false},{"name":"Kota Tinggi","active":false},{"name":"Mersing","active":false},{"name":"Tangkak","active":false}]},{"state":"Kedah","cities":[{"name":"Alor Setar","active":false},{"name":"Sungai Petani","active":false},{"name":"Kulim","active":false},{"name":"Langkawi","active":false},{"name":"Jitra","active":false},{"name":"Baling","active":false},{"name":"Bandar Baharu","active":false},{"name":"Kuala Nerang","active":false},{"name":"Pendang","active":false},{"name":"Sik","active":false},{"name":"Yan","active":false}]},{"state":"Kelantan","cities":[{"name":"Kota Bharu","active":false},{"name":"Pasir Mas","active":false},{"name":"Tanah Merah","active":false},{"name":"Gua Musang","active":false},{"name":"Tumpat","active":false},{"name":"Bachok","active":false},{"name":"Machang","active":false},{"name":"Pasir Puteh","active":false},{"name":"Kuala Krai","active":false},{"name":"Jeli","active":false},{"name":"Lojing","active":false}]},{"state":"Malacca","cities":[{"name":"Melaka City","active":false},{"name":"Alor Gajah","active":false},{"name":"Jasin","active":false}]},{"state":"Negeri Sembilan","cities":[{"name":"Seremban","active":false},{"name":"Port Dickson","active":false},{"name":"Nilai","active":false},{"name":"Bahau","active":false},{"name":"Kuala Pilah","active":false},{"name":"Jelebu","active":false},{"name":"Rembau","active":false},{"name":"Tampin","active":false},{"name":"Jempol","active":false}]},{"state":"Pahang","cities":[{"name":"Kuantan","active":false},{"name":"Temerloh","active":false},{"name":"Bentong","active":false},{"name":"Raub","active":false},{"name":"Cameron Highlands","active":false},{"name":"Mentakab","active":false},{"name":"Jerantut","active":false},{"name":"Lipis","active":false},{"name":"Maran","active":false},{"name":"Pekan","active":false},{"name":"Rompin","active":false},{"name":"Bera","active":false}]},{"state":"Penang","cities":[{"name":"George Town","active":false},{"name":"Bukit Mertajam","active":false},{"name":"Butterworth","active":false},{"name":"Bayan Lepas","active":false},{"name":"Nibong Tebal","active":false}]},{"state":"Perak","cities":[{"name":"Ipoh","active":false},{"name":"Taiping","active":false},{"name":"Teluk Intan","active":false},{"name":"Sitiawan","active":false},{"name":"Kampar","active":false},{"name":"Batu Gajah","active":false},{"name":"Kuala Kangsar","active":false},{"name":"Parit","active":false},{"name":"Bagan Datuk","active":false},{"name":"Selama","active":false},{"name":"Tapah","active":false},{"name":"Tanjung Malim","active":false},{"name":"Gerik","active":false}]},{"state":"Perlis","cities":[{"name":"Kangar","active":false},{"name":"Arau","active":false},{"name":"Padang Besar","active":false}]},{"state":"Sabah","cities":[{"name":"Kota Kinabalu","active":false},{"name":"Sandakan","active":false},{"name":"Tawau","active":false},{"name":"Lahad Datu","active":false},{"name":"Keningau","active":false},{"name":"Semporna","active":false},{"name":"Kudat","active":false},{"name":"Papar","active":false},{"name":"Beaufort","active":false},{"name":"Ranau","active":false},{"name":"Tuaran","active":false},{"name":"Penampang","active":false},{"name":"Tambunan","active":false},{"name":"Tenom","active":false},{"name":"Nabawan","active":false},{"name":"Pitas","active":false},{"name":"Kota Belud","active":false},{"name":"Kota Marudu","active":false},{"name":"Beluran","active":false},{"name":"Kinabatangan","active":false},{"name":"Tongod","active":false},{"name":"Telupid","active":false},{"name":"Kunak","active":false},{"name":"Kalabakan","active":false},{"name":"Sipitang","active":false},{"name":"Kuala Penyu","active":false},{"name":"Putatan","active":false}]},{"state":"Sarawak","cities":[{"name":"Kuching","active":true},{"name":"Miri","active":true},{"name":"Sibu","active":false},{"name":"Bintulu","active":true},{"name":"Limbang","active":false},{"name":"Sri Aman","active":false},{"name":"Sarikei","active":false},{"name":"Mukah","active":false},{"name":"Kapit","active":false},{"name":"Betong","active":false},{"name":"Bau","active":false},{"name":"Lundu","active":false},{"name":"Samarahan","active":false},{"name":"Serian","active":false},{"name":"Simunjan","active":false},{"name":"Lubok Antu","active":false},{"name":"Saratok","active":false},{"name":"Meradong","active":false},{"name":"Daro","active":false},{"name":"Julau","active":false},{"name":"Dalat","active":false},{"name":"Kanowit","active":false},{"name":"Tatau","active":false},{"name":"Song","active":false},{"name":"Belaga","active":false},{"name":"Marudi","active":false},{"name":"Lawas","active":false},{"name":"Matu","active":false},{"name":"Asajaya","active":false},{"name":"Pakan","active":false},{"name":"Selangau","active":false},{"name":"Tebedu","active":false},{"name":"Pusa","active":false},{"name":"Kabong","active":false},{"name":"Tanjung Manis","active":false},{"name":"Sebauh","active":false},{"name":"Bukit Mabong","active":false},{"name":"Subis","active":false},{"name":"Beluru","active":false},{"name":"Telang Usan","active":false}]},{"state":"Selangor","cities":[{"name":"Shah Alam","active":true},{"name":"Petaling Jaya","active":true},{"name":"Subang Jaya","active":false},{"name":"Klang","active":true},{"name":"Kajang","active":false},{"name":"Ampang","active":false},{"name":"Puchong","active":false},{"name":"Rawang","active":false},{"name":"Selayang","active":false},{"name":"Sepang","active":false},{"name":"Kuala Selangor","active":false},{"name":"Kuala Langat","active":false},{"name":"Sabak Bernam","active":false},{"name":"Kuala Kubu Baharu","active":false}]},{"state":"Terengganu","cities":[{"name":"Kuala Terengganu","active":false},{"name":"Kemaman","active":false},{"name":"Dungun","active":false},{"name":"Marang","active":false},{"name":"Besut","active":false},{"name":"Setiu","active":false},{"name":"Hulu Terengganu","active":false},{"name":"Kuala Nerus","active":false}]},{"state":"Kuala Lumpur","cities":[{"name":"Kuala Lumpur","active":false}]},{"state":"Putrajaya","cities":[{"name":"Putrajaya","active":false}]},{"state":"Labuan","cities":[{"name":"Labuan","active":false}]}];
 
   function daysSince(dateStr){
     var d = new Date(dateStr+'T00:00:00');
@@ -4320,14 +4320,42 @@ window.escapeHtml = function(s){
 
   // ---- 居家会诊服务地区设置: which Malaysia states/areas are currently served ----
   var AREAS_KEY = 'vinath_service_areas';
+  // 旧版地区清单里是"社区级"细分项，现在统一归并到所属城市/县；派单匹配与前台过滤都按此归一化
+  var AREA_MERGE_MAP = {
+    'Masai': '巴西古当 Pasir Gudang',
+    'Bandar Seri Alam': '巴西古当 Pasir Gudang',
+    'Permas Jaya': '巴西古当 Pasir Gudang',
+    'Johor Jaya': '巴西古当 Pasir Gudang',
+    'Ulu Tiram': '新山市区 Johor Bahru',
+    'Plentong': '新山市区 Johor Bahru',
+    'Tebrau': '新山市区 Johor Bahru',
+    'Larkin': '新山市区 Johor Bahru'
+  };
+  function normalizeAreaName(name){ return AREA_MERGE_MAP[name] || name; }
   function getServiceAreas(){
-    try {
-      var raw = localStorage.getItem(AREAS_KEY);
-      if(raw) return JSON.parse(raw);
-    } catch(e){}
-    var seed = JSON.parse(JSON.stringify(MALAYSIA_AREAS_SEED));
-    saveServiceAreas(seed);
-    return seed;
+    var raw = null;
+    try { raw = localStorage.getItem(AREAS_KEY); } catch(e){}
+    if(raw){
+      try {
+        var old = JSON.parse(raw);
+        var seed = JSON.parse(JSON.stringify(MALAYSIA_AREAS_SEED));
+        var activeByName = {};
+        (old || []).forEach(function(s){
+          (s.cities || []).forEach(function(c){
+            if(c.active) activeByName[normalizeAreaName(c.name)] = true;
+          });
+        });
+        seed.forEach(function(s){
+          s.cities.forEach(function(c){ if(activeByName[c.name]) c.active = true; });
+        });
+        // 只有清单真的变了才回写，避免每次打开页面都发一次同步请求
+        if(JSON.stringify(seed) !== JSON.stringify(old)) saveServiceAreas(seed);
+        return seed;
+      } catch(e){}
+    }
+    var seed2 = JSON.parse(JSON.stringify(MALAYSIA_AREAS_SEED));
+    saveServiceAreas(seed2);
+    return seed2;
   }
   function saveServiceAreas(areas){
     try { localStorage.setItem(AREAS_KEY, JSON.stringify(areas)); } catch(e){}

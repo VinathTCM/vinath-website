@@ -344,11 +344,23 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
   // fallback if the admin tool has never been opened in this browser yet (localStorage empty) —
   // matches what this list always was before area management existed
   var SERVICE_AREAS_FALLBACK = [
-    '巴西古当 Pasir Gudang', 'Masai', 'Bandar Seri Alam', 'Ulu Tiram', 'Plentong',
-    '新山市区 Johor Bahru', 'Tebrau', 'Permas Jaya', 'Johor Jaya', 'Larkin'
+    '巴西古当 Pasir Gudang', '新山市区 Johor Bahru'
   ];
   // reads the same admin-configured list as 订单预约管理's "服务地区设置" — only currently-active
   // areas show up here, grouped by state so the list stays usable once more than one is open
+  // 旧版地区清单里的社区级细分项（Masai、Larkin…）已统一归并到所属城市/县，
+  // 这里做一次名字归一化，让旧的医师 regions 与历史订单仍然能正确匹配
+  var AREA_ALIAS = {
+    'Masai':'巴西古当 Pasir Gudang',
+    'Bandar Seri Alam':'巴西古当 Pasir Gudang',
+    'Permas Jaya':'巴西古当 Pasir Gudang',
+    'Johor Jaya':'巴西古当 Pasir Gudang',
+    'Ulu Tiram':'新山市区 Johor Bahru',
+    'Plentong':'新山市区 Johor Bahru',
+    'Tebrau':'新山市区 Johor Bahru',
+    'Larkin':'新山市区 Johor Bahru'
+  };
+  function normArea(n){ return AREA_ALIAS[n] || n; }
   // 统计"确实有医师出诊"的地区：后台「服务地区设置」active=true 的城市，还要至少一位
   // 未过期医师的 regions 覆盖它，才允许出现在前台下拉里。
   // 医师 regions 为空 = 不限地区（沿用 getPractitionersForArea 的既有语义），此时不做过滤。
@@ -360,7 +372,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     function addRegions(regions, emptyMeansAll){
       known = true;
       if(!regions || !regions.length){ if(emptyMeansAll) unlimited = true; return; }
-      regions.forEach(function(r){ if(r) covered[r] = 1; });
+      regions.map(normArea).forEach(function(r){ if(r) covered[r] = 1; });
     }
     DOCTORS.forEach(function(d){
       var apiDoc = null;
@@ -888,14 +900,14 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       } else {
         regions = prof.regions || [];
       }
-      if(!regions.length || regions.indexOf(area)!==-1){
+      if(!regions.length || regions.map(normArea).indexOf(area)!==-1){
         results.push({ id:doc.id, name:doc.name, video:doc.video,
           specialtyText: apiDoc.specialty || prof.specialty || doc.specialties.join('、'), avatar: apiDoc.avatar || prof.avatar || '' });
       }
     });
     getJuniorAdminsLocal().forEach(function(j){
       if((j.adminType||'practitioner')!=='practitioner') return;
-      if((j.regions||[]).indexOf(area)===-1) return;
+      if((j.regions||[]).map(normArea).indexOf(area)===-1) return;
       if(phone && isBlacklisted(j.id, phone)) return;
       var todayISO = new Date().toISOString().slice(0,10);
       if(j.licenseExpiry && j.licenseExpiry < todayISO) return; // 执照已过期，不再作为可预约医师展示
