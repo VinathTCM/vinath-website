@@ -4384,9 +4384,10 @@ window.escapeHtml = function(s){
     var areas = getServiceAreas();
     var changed = false;
     junior.regions.forEach(function(regionName){
+      var target = normalizeAreaName(regionName);
       areas.forEach(function(s){
         s.cities.forEach(function(c){
-          if(c.name===regionName && !c.active){ c.active = true; changed = true; }
+          if(c.name===target && !c.active){ c.active = true; changed = true; }
         });
       });
     });
