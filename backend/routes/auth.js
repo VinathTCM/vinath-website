@@ -100,7 +100,7 @@ router.get('/me', authMiddleware, (req, res) => {
 router.get('/admins', authMiddleware, requireRole('SENIOR'), (req, res) => {
   const admins = db.prepare('SELECT id, name, username, role, regions, accepting_orders, coupon_code, license_expiry, avatar, specialty, title, creds, moh_reg_no, apc_no, description, tags FROM admins').all();
   res.json(admins.map(a => ({
-    id: a.id, name: a.name, role: a.role, regions: JSON.parse(a.regions || '[]'),
+    id: a.id, name: a.name, username: a.username, role: a.role, regions: JSON.parse(a.regions || '[]'),
     acceptingOrders: !!a.accepting_orders, couponCode: a.coupon_code, licenseExpiry: a.license_expiry,
     avatar: a.avatar, specialty: a.specialty, title: a.title, creds: a.creds,
     mohRegNo: a.moh_reg_no, apcNo: a.apc_no, desc: a.description, tags: JSON.parse(a.tags || '[]')
@@ -163,7 +163,7 @@ function genJuniorId(){
 
 // ---- 小管理员（I类执业医师/II类出货员/III类客服）完整管理：只有大管理员能操作 ----
 router.post('/admin/admins', authMiddleware, requireRole('SENIOR'), (req, res) => {
-  const { name, username, role, regions, licenseExpiry, specialty } = req.body;
+  const { name, username, role, regions, licenseExpiry, specialty, avatar } = req.body;
   if(!name || !['PRACTITIONER','FULFILLMENT','SUPPORT'].includes(role)){
     return res.status(400).json({ error: '姓名和角色类型是必填的' });
   }
@@ -172,9 +172,9 @@ router.post('/admin/admins', authMiddleware, requireRole('SENIOR'), (req, res) =
   }
   const id = genJuniorId();
   db.prepare(`
-    INSERT INTO admins (id, name, username, role, regions, accepting_orders, license_expiry, specialty)
-    VALUES (?, ?, ?, ?, ?, 1, ?, ?)
-  `).run(id, name, username||null, role, JSON.stringify(role==='PRACTITIONER' ? regions : []), role==='PRACTITIONER' ? (licenseExpiry||null) : null, specialty||null);
+    INSERT INTO admins (id, name, username, role, regions, accepting_orders, license_expiry, specialty, avatar)
+    VALUES (?, ?, ?, ?, ?, 1, ?, ?, ?)
+  `).run(id, name, username||null, role, JSON.stringify(role==='PRACTITIONER' ? regions : []), role==='PRACTITIONER' ? (licenseExpiry||null) : null, specialty||null, avatar||null);
   logAdminAction(req, 'create', 'admin_account', id, name+'（'+role+'）');
   res.status(201).json({ id, name, role });
 });
@@ -188,7 +188,7 @@ router.put('/admin/admins/:id', authMiddleware, requireRole('SENIOR'), (req, res
     UPDATE admins SET name = ?, username = ?, regions = ?, license_expiry = ?, specialty = ?, avatar = ? WHERE id = ?
   `).run(
     name ?? existing.name,
-    username !== undefined ? username : existing.username,
+    username !== undefined && String(username).trim() ? String(username).trim() : existing.username,
     regions ? JSON.stringify(existing.role==='PRACTITIONER' ? regions : []) : existing.regions,
     licenseExpiry !== undefined ? licenseExpiry : existing.license_expiry,
     specialty !== undefined ? specialty : existing.specialty,

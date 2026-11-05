@@ -4756,6 +4756,27 @@ window.escapeHtml = function(s){
     return '<div class="region-tag-row"><span class="region-tag" style="'+(warn?'background:#FBE4DE;color:#B0503A;':'')+'">'+text+'</span></div>';
   }
   var cachedAdminAccounts = [];
+  var localAvatarSyncDone = false;
+  // 存量头像只存在本机 localStorage，后端为空：管理员打开列表时把这些头像静默补写进后端，
+  // 这样前台（访客设备）和别的电脑才看得到。
+  async function syncLocalAvatarsToBackend(juniors){
+    if(localAvatarSyncDone) return;
+    localAvatarSyncDone = true;
+    if(!authToken) return;
+    try {
+      var profiles = getPractitionerProfiles();
+      for(var i=0;i<juniors.length;i++){
+        var j = juniors[i];
+        if(j.role !== 'PRACTITIONER' || j.avatar) continue;
+        var p = profiles[j.id];
+        if(!p || !p.avatar) continue;
+        await fetch(API_BASE + '/auth/admin/admins/' + j.id, {
+          method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+          body: JSON.stringify({ avatar: p.avatar, specialty: p.specialty || undefined })
+        });
+      }
+    } catch(e){ console.error('同步本机头像到后端失败:', e); }
+  }
   async function fetchAllAdminAccounts(){
     if(!authToken) return [];
     try {
@@ -4767,12 +4788,18 @@ window.escapeHtml = function(s){
   async function renderJuniorList(){
     var all = await fetchAllAdminAccounts();
     var juniors = all.filter(function(a){ return a.role!=='SENIOR'; });
+    if(!localAvatarSyncDone){
+      await syncLocalAvatarsToBackend(juniors);
+      all = await fetchAllAdminAccounts();
+      juniors = all.filter(function(a){ return a.role!=='SENIOR'; });
+    }
     document.getElementById('juniorList').innerHTML = juniors.length ? juniors.map(function(j){
       var type = j.role.toLowerCase();
       var prof = type==='practitioner' ? getPractitionerProfile(j.id) : null;
+      var avatarSrc = j.avatar || (prof && prof.avatar) || '';
       var roleDesc = type==='fulfillment' ? '不分地区 · 处理全部商品订单' : (type==='support' ? '负责及时回复用户消息' : '');
       return '<div class="junior-row">'
-        + (type==='practitioner' ? '<div class="practitioner-avatar">'+(prof.avatar ? '<img src="'+prof.avatar+'">' : '<span>'+j.name.charAt(0)+'</span>')+'</div>' : '')
+        + (type==='practitioner' ? '<div class="practitioner-avatar">'+(avatarSrc ? '<img src="'+avatarSrc+'">' : '<span>'+j.name.charAt(0)+'</span>')+'</div>' : '')
         + '<div style="flex:1;"><div class="junior-name">'+j.name+'<span class="admin-type-badge '+type+'">'+adminTypeLabel(type)+'</span></div>'
         + (type==='practitioner' ? '<div class="region-tag-row">'+j.regions.map(function(r){ return '<span class="region-tag">'+r+'</span>'; }).join('')+'</div>' : '<div class="region-tag-row"><span class="region-tag">'+roleDesc+'</span></div>')
         + (prof && prof.specialty ? '<div class="region-tag-row"><span class="region-tag">擅长：'+prof.specialty+'</span></div>' : '')
@@ -4876,15 +4903,30 @@ window.escapeHtml = function(s){
   });
   var newJuniorAvatar = '';
   document.getElementById('juniorAvatarBox').addEventListener('click', function(){ document.getElementById('juniorAvatarFile').click(); });
+  // 头像统一压到最长边 400px 的 JPEG：原图直存 base64 会撑爆 localStorage（5MB）并拖慢接口
+  function compressAvatarFile(file, cb){
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      var img = new Image();
+      img.onload = function(){
+        var max = 400, w = img.width, h = img.height;
+        if(w > max || h > max){ var r = Math.min(max/w, max/h); w = Math.round(w*r); h = Math.round(h*r); }
+        var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+        cv.getContext('2d').drawImage(img, 0, 0, w, h);
+        cb(cv.toDataURL('image/jpeg', 0.82));
+      };
+      img.onerror = function(){ cb(ev.target.result); };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
   document.getElementById('juniorAvatarFile').addEventListener('change', function(e){
     var file = e.target.files[0];
     if(!file) return;
-    var reader = new FileReader();
-    reader.onload = function(ev){
-      newJuniorAvatar = ev.target.result;
+    compressAvatarFile(file, function(dataUrl){
+      newJuniorAvatar = dataUrl;
       document.getElementById('juniorAvatarBox').innerHTML = '<img src="'+newJuniorAvatar+'">';
-    };
-    reader.readAsDataURL(file);
+    });
   });
   var editingJuniorId = null; // null = 新增模式；否则是正在编辑这个id的小管理员
   function startEditJunior(id){
@@ -4902,7 +4944,7 @@ window.escapeHtml = function(s){
     juniorPickedRegions = (j.regions||[]).slice();
     renderJuniorAreaPicker();
     var prof = getPractitionerProfile(id);
-    newJuniorAvatar = prof.avatar || '';
+    newJuniorAvatar = j.avatar || prof.avatar || '';
     document.getElementById('juniorAvatarBox').innerHTML = newJuniorAvatar ? '<img src="'+newJuniorAvatar+'">' : '<span>点击上传头像</span>';
     document.getElementById('juniorSpecialtyInput').value = prof.specialty || '';
     document.getElementById('juniorLicenseInput').value = j.licenseExpiry || '';
@@ -4952,7 +4994,7 @@ window.escapeHtml = function(s){
       if(editingJuniorId){
         var res = await fetch(API_BASE + '/auth/admin/admins/' + editingJuniorId, {
           method: 'PUT', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
-          body: JSON.stringify({ name: name, username: usernameVal, regions: juniorPickedRegions, licenseExpiry: newJuniorType==='practitioner' ? licenseVal : '' })
+          body: JSON.stringify({ name: name, username: usernameVal, regions: juniorPickedRegions, licenseExpiry: newJuniorType==='practitioner' ? licenseVal : '', specialty: newJuniorType==='practitioner' ? (specialtyVal || undefined) : undefined, avatar: newJuniorType==='practitioner' ? (newJuniorAvatar || undefined) : undefined })
         });
         if(!res.ok){ var err = await res.json(); errEl.textContent = err.error || '保存失败'; errEl.classList.add('show'); btn.disabled = false; return; }
         if(newJuniorType==='practitioner') syncServiceAreasFromJunior({regions:juniorPickedRegions});
@@ -4968,7 +5010,7 @@ window.escapeHtml = function(s){
       } else {
         var res2 = await fetch(API_BASE + '/auth/admin/admins', {
           method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
-          body: JSON.stringify({ name: name, username: usernameVal, role: newJuniorType.toUpperCase(), regions: juniorPickedRegions, licenseExpiry: licenseVal, specialty: specialtyVal })
+          body: JSON.stringify({ name: name, username: usernameVal, role: newJuniorType.toUpperCase(), regions: juniorPickedRegions, licenseExpiry: licenseVal, specialty: specialtyVal, avatar: newJuniorAvatar || undefined })
         });
         if(!res2.ok){ var err2 = await res2.json(); errEl.textContent = err2.error || '新增失败'; errEl.classList.add('show'); btn.disabled = false; return; }
         var created = await res2.json();

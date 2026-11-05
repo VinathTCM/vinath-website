@@ -834,7 +834,8 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
     var profiles = getPractitionerProfilesLocal();
     var results = [];
     var apiSeniors = {};
-    if(__apiPractitioners){ __apiPractitioners.forEach(function(p){ if(p.role==='SENIOR') apiSeniors[p.id] = p; }); }
+    var apiAll = {};
+    if(__apiPractitioners){ __apiPractitioners.forEach(function(p){ apiAll[p.id] = p; if(p.role==='SENIOR') apiSeniors[p.id] = p; }); }
     DOCTORS.forEach(function(doc){
       if(phone && isBlacklisted(doc.id, phone)) return;
       var prof = profiles[doc.id] || {};
@@ -847,7 +848,7 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       }
       if(!regions.length || regions.indexOf(area)!==-1){
         results.push({ id:doc.id, name:doc.name, video:doc.video,
-          specialtyText: prof.specialty || doc.specialties.join('、'), avatar: prof.avatar || '' });
+          specialtyText: apiDoc.specialty || prof.specialty || doc.specialties.join('、'), avatar: apiDoc.avatar || prof.avatar || '' });
       }
     });
     getJuniorAdminsLocal().forEach(function(j){
@@ -857,8 +858,9 @@ body{ margin:0; min-height:100vh; background:#F7F3EC; font-family:"Noto Sans SC"
       var todayISO = new Date().toISOString().slice(0,10);
       if(j.licenseExpiry && j.licenseExpiry < todayISO) return; // 执照已过期，不再作为可预约医师展示
       var prof = profiles[j.id] || {};
+      var apiJ = apiAll[j.id] || {};
       results.push({ id:j.id, name:j.name, video:null,
-        specialtyText: prof.specialty || '执业中医师', avatar: prof.avatar || '' });
+        specialtyText: apiJ.specialty || prof.specialty || '执业中医师', avatar: apiJ.avatar || prof.avatar || '' });
     });
     return results;
   }
