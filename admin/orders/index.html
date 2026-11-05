@@ -2793,18 +2793,9 @@ window.escapeHtml = function(s){
     box.innerHTML = mine.length ? mine.slice().reverse().map(function(o){
       var itemSummary = o.items.map(function(it){ return it.name+' ×'+it.qty; }).join('，');
       return '<div class="wholesale-history-row"><div><b>'+o.id+'</b> · '+o.date+'<br><span style="color:var(--ink-soft);">'+itemSummary+'</span></div>'
-        + '<div style="text-align:right;">MYR '+o.total.toFixed(2)+'<br><span class="wholesale-history-status">'+wholesaleStatusLabel(o)+'</span><br>'
-        + (((o.status||0) >= 1) || (cur && (cur.role === 'SENIOR' || cur.type === 'senior'))
-            ? '<button class="btn-export" style="margin-top:6px;" data-winv="'+o.id+'" type="button">打印发票</button>'
-            : '<span style="display:inline-block;margin-top:8px;font-size:12px;color:#b8860b;">管理员确认收款后可打印发票</span>')
+        + '<div style="text-align:right;">MYR '+o.total.toFixed(2)+'<br><span class="wholesale-history-status">'+wholesaleStatusLabel(o)+'</span>'
         + '</div></div>';
     }).join('') : '<div class="wholesale-empty">还没有拿货记录</div>';
-    box.querySelectorAll('[data-winv]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var o = mine.find(function(x){ return x.id === this.getAttribute('data-winv'); });
-        if(o) printWholesaleInvoice(o, 'bi');
-      });
-    });
   }
 
   function treatTotal(b){ return b.treatments.reduce(function(s,t){ return s+t.qty*t.price; },0); }
