@@ -66,6 +66,22 @@ function migrateBackfillReceiptSources(){
   return changed;
 }
 
+// 明细合计口径（唯一权威）：
+// - 商品行同时带原价且原价高于成交价（origPrice > price）时，说明该行单价已是折后实付价，
+//   此时「折扣」行只是信息展示，若再参与求和会二次扣减，故跳过；
+// - 其余情况（商品行按原价记录、或手工补录的折扣行）折扣行按负值正常参与求和，
+//   保证"明细里看得见的负数一定从合计里扣掉"。
+// 订单页早期生成的收据商品行可能按原价记录，靠这一条即可算出正确合计。
+function calcLineItemsTotal(items){
+  const discounted = items.some(function(it){
+    return String(it.category || '') === 'product' && it.origPrice != null && Number(it.origPrice) > Number(it.price);
+  });
+  return items.reduce(function(s, it){
+    if(String(it.category || '') === 'discount' && discounted) return s;
+    return s + (Number(it.price) || 0) * (Number(it.qty) || 1);
+  }, 0);
+}
+
 router.get('/admin/receipts', authMiddleware, requireModuleAccess('receipts'), (req, res) => {
   const rows = db.prepare('SELECT * FROM receipts ORDER BY issued_at DESC').all();
   res.json(rows.map(serializeReceipt));
@@ -82,12 +98,10 @@ router.post('/admin/receipts', authMiddleware, requireModuleAccess('receipts'), 
   // 这样账本导出、双语发票才能按类型分列；折扣行 price 为负数，下面 total 的求和会自动扣减
   let detailItems = (lineItems || []).filter(function(it){ return it && it.name && String(it.name).trim(); })
     .map(function(it){ return { name: String(it.name).trim(), nameEn: it.nameEn ? String(it.nameEn).trim() : '', category: it.category ? String(it.category).trim() : '', qty: Number(it.qty) || 1, price: Number(it.price) || 0, origPrice: it.origPrice != null ? Number(it.origPrice) : null }; });
-  // 订单收据（source_type=order）：订单页明细存的是折后实付价，折扣行仅作信息展示，
-  // total 只合计商品与运费（折扣已含在折后价中）；病历等其他来源维持原口径（售价 + 负折扣行扣减）
-  const isOrderReceipt = String(req.body.sourceType || '') === 'order';
+  // 订单来源的明细可能存折后实付价（折扣行仅展示），也可能存原价（折扣行需扣减），
+  // 由 calcLineItemsTotal 按每行是否标注折后价自动区分，不再对订单收据一律剔除折扣行
   const totalAmount = detailItems.length
-    ? detailItems.filter(function(it){ return !isOrderReceipt || it.category !== 'discount'; })
-        .reduce(function(s, it){ return s + it.price * it.qty; }, 0)
+    ? calcLineItemsTotal(detailItems)
     : ['consultation','transport','medication','other'].reduce((s,k) => s + (Number(items && items[k]) || 0), 0);
 
   // 同一来源（病历/订单）重复打印：复用已有收据，更新明细与合计，保留原 receipt_no 与 issued_at——
@@ -164,10 +178,9 @@ router.put('/admin/receipts/:id', authMiddleware, requireModuleAccess('receipts'
   // 明细清洗与 POST 完全一致（含负价折扣行）
   const detailItems = (lineItems || []).filter(function(it){ return it && it.name && String(it.name).trim(); })
     .map(function(it){ return { name: String(it.name).trim(), nameEn: it.nameEn ? String(it.nameEn).trim() : '', category: it.category ? String(it.category).trim() : '', qty: Number(it.qty) || 1, price: Number(it.price) || 0, origPrice: it.origPrice != null ? Number(it.origPrice) : null }; });
-  const isOrderReceipt = String(existing.source_type || '') === 'order';
+  // 与 POST 同一套合计口径：折后价商品行的折扣行不二次扣减，其余折扣行（含手工补录的负数）照常参与求和
   const totalAmount = detailItems.length
-    ? detailItems.filter(function(it){ return !isOrderReceipt || it.category !== 'discount'; })
-        .reduce(function(s, it){ return s + it.price * it.qty; }, 0)
+    ? calcLineItemsTotal(detailItems)
     : ['consultation','transport','medication','other'].reduce((s,k) => s + (Number(items && items[k]) || 0), 0);
 
   const newItems = items ? JSON.stringify(items) : existing.items;

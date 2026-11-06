@@ -3916,7 +3916,9 @@ window.escapeHtml = function(s){
     var rc = null;
     try {
       var lineItems = (Array.isArray(o.items) ? o.items : []).map(function(i){
-        return { name: i.name || '', nameEn: i.nameEn || '', category: 'product', qty: Number(i.qty) || 1, price: Number(i.price) || 0, origPrice: lookupOriginalPrice(i) };
+        // 英文名兜底：订单快照没存 nameEn 时按 productId/名称回查商品目录与已知词表，
+        // 否则收据页的英文发票只能落回中文名
+        return { name: i.name || '', nameEn: itemNameEn(i.name, i.nameEn, i.productId) || '', category: 'product', qty: Number(i.qty) || 1, price: Number(i.price) || 0, origPrice: lookupOriginalPrice(i) };
       });
       var shipFee = orderShipping(o);
       if(shipFee > 0) lineItems.push({ name: '运费', nameEn: 'Shipping', category: 'delivery', qty: 1, price: shipFee });
@@ -4005,7 +4007,7 @@ window.escapeHtml = function(s){
     var rc = null;
     try {
       var wlineItems = (Array.isArray(o.items) ? o.items : []).map(function(i){
-        return { name: i.name || '', nameEn: i.nameEn || '', category: 'product', qty: Number(i.qty) || 1, price: Number(i.price) || 0 };
+        return { name: i.name || '', nameEn: itemNameEn(i.name, i.nameEn, i.productId) || '', category: 'product', qty: Number(i.qty) || 1, price: Number(i.price) || 0 };
       });
       if(Number(o.shipping) > 0) wlineItems.push({ name: '运费', nameEn: 'Shipping', category: 'delivery', qty: 1, price: Number(o.shipping) });
       var wres = await fetch(API_BASE + '/admin/receipts', { method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken}, body: JSON.stringify({

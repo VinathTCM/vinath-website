@@ -2682,7 +2682,10 @@ function fillPrintArea(receipt, size, lang){
       (result.products || []).forEach(function(p){
         var formCn = p.form === 'trial' ? ' · 试用装' : ' · 正装';
         var formEn = p.form === 'trial' ? ' · Trial' : ' · Full';
-        items.push({ name: p.name + formCn, nameEn: (p.nameEn || p.name) + formEn, category: 'product', qty: Number(p.qty) || 1, price: Number(p.unitPrice) || 0 });
+        // 商品英文名：商品自带 nameEn 优先；没有就用中药词表翻译（别把中文名当英文名塞进 nameEn，
+        // 否则收据页的英文发票会原样打印中文）
+        var prodEn = p.nameEn || herbEn(p.name) || '';
+        items.push({ name: p.name + formCn, nameEn: prodEn ? prodEn + formEn : '', category: 'product', qty: Number(p.qty) || 1, price: Number(p.unitPrice) || 0 });
       });
       // 邮费 / Delivery Fee（category=delivery，随发票一并计算）
       if(Number(result.deliveryFee) > 0){
