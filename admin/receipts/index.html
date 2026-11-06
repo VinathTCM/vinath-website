@@ -879,11 +879,19 @@ var HERB_EN = {'党参':'Codonopsis Root','生黄芪':'Astragalus Root','黄芪'
       + '<div style="border-top:1px dashed #000;margin:0.8mm 0;"></div>'
       + (hasDetail ? rc.lineItems.map(function(it){
           var nm = escapeHtml(itName(it));
-          if(it.price > 0){
-            return '<div style="margin-top:1mm;"><div>'+nm+'</div>'
-              + '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span>x'+(it.qty||1)+' @ RM '+(Number(it.price)||0).toFixed(2)+'</span><span style="margin-left:auto;text-align:right;">RM '+(Number(it.price)*(it.qty||1)).toFixed(2)+'</span></div></div>';
+          var q = Number(it.qty) || 1;
+          var p = Number(it.price) || 0;
+          // 负数行（折扣/优惠码）：必须单独打印「- RM 金额」。
+          // 早期只判 p>0，负价行会落进下面的 billed separately 分支，折扣金额整行消失。
+          if(p < 0){
+            return '<div style="margin-top:1mm;"><div style="word-break:break-word;">'+nm+'</div>'
+              + '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span>x'+q+'</span><span style="margin-left:auto;text-align:right;">- RM '+Math.abs(p*q).toFixed(2)+'</span></div></div>';
           }
-          return '<div style="margin-top:1mm;"><div>'+nm+'</div>'
+          if(p > 0){
+            return '<div style="margin-top:1mm;"><div style="word-break:break-word;">'+nm+'</div>'
+              + '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;"><span>x'+q+' @ RM '+p.toFixed(2)+'</span><span style="margin-left:auto;text-align:right;">RM '+(p*q).toFixed(2)+'</span></div></div>';
+          }
+          return '<div style="margin-top:1mm;"><div style="word-break:break-word;">'+nm+'</div>'
             + '<div style="text-align:right;color:#555;">(billed separately)</div></div>';
         }).join('') : Object.keys(FEE_LABELS).filter(function(k){ return rc.items[k] > 0; }).map(function(k){
           return '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;margin-top:1mm;"><span>'+FEE_LABELS[k]+'</span><span style="margin-left:auto;text-align:right;">RM '+Number(rc.items[k]).toFixed(2)+'</span></div>';
